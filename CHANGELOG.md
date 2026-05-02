@@ -22,17 +22,25 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
   - Charte de cadrage consolidant les 10 décisions structurantes.
   - Planning détaillé en 7 phases.
   - Journal des décisions (Architecture Decision Records).
-
-### Planned (Phase 2)
-- Architecture de l'information complète : sitemap, gabarits de pages.
-- Design system : design tokens, composants, règles RTL.
-- Personas utilisateurs détaillés.
-- Parcours utilisateurs principaux.
+- Phase 2 — Architecture et design system :
+  - Sitemap exhaustif (78 pages × 3 langues) avec conventions d'URL.
+  - Taxonomie de tags à 4 dimensions (module, technologie, secteur, niveau).
+  - 9 gabarits de pages (home, overview, module, case study, resources, quiz, capstone, glossary, FAQ) avec wireframes textuels, microcopies trilingues et composants associés.
+  - 4 personas détaillés (Claire COO, Karim consultant, Léa enseignante, Yacine étudiant).
+  - 4 user journeys principaux avec points de friction et moments de vérité.
+  - Design tokens complets (couleurs, espacement, typographie, breakpoints, ombres, animations) en CSS custom properties.
+  - Système typographique IBM Plex Sans + IBM Plex Sans Arabic, self-hosted.
+  - Catalogue de 70+ composants UI structurés en 14 catégories.
+  - Règles RTL pour la version arabe (propriétés logiques, miroir d'icônes, contenu mixte).
+  - Engagements WCAG 2.1 AA et patterns d'accessibilité.
+  - Conventions iconographiques Lucide Icons avec catalogue par usage.
 
 ### Planned (Phase 3)
 - Scaffolding Astro avec configuration i18n FR/EN/AR.
 - Workflow GitHub Actions de déploiement vers OVH.
-- Composants de mise en page de base (Header, Footer, LanguageSwitcher).
+- Composants de mise en page de base (Header, Footer, LanguageSwitcher, IndependenceNotice).
+- Mise en place Tailwind avec import des design tokens.
+- Tests Pa11y et Lighthouse en CI.
 
 ---
 
