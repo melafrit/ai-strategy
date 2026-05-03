@@ -1,0 +1,515 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème adressé' },
+  { id: 'solution', label: 'Approche méthodologique' },
+  { id: 'benefices', label: 'Apports observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: "Risques d'usage" },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+const takeaways = [
+  "Le MIT IDE illustre ce qu'est une démarche d'anticipation stratégique structurée — ni de la prévision (un futur unique), ni de la veille passive (collecte d'information), mais un travail actif d'analyse des implications, construction de scénarios, traduction en cadres décisionnels.",
+  "La rigueur académique est ce qui distingue le MIT IDE d'une think tank d'opinion : publications soumises à comité de lecture, données empiriques, transparence sur les méthodes, critique entre pairs. Cette rigueur est transposable à l'échelle d'une organisation — pas comme niveau absolu, mais comme exigence méthodologique.",
+  "L'anticipation stratégique est un investissement, pas un coût. Une organisation qui se contente de réagir aux annonces médiatiques prend des décisions optimisées pour des scénarios qui ne se réalisent pas toujours — et manque les ruptures réellement structurantes.",
+  "Le MIT IDE produit régulièrement des contenus accessibles aux praticiens (publications grand public, conférences, MIT Sloan Management Review) — modèle utile pour les organisations qui veulent rendre leur veille stratégique exploitable au-delà du cercle des spécialistes.",
+  "Pour transposer la démarche, l'enjeu est moins de répliquer l'institution que d'adopter le réflexe : poser la question des implications stratégiques de chaque évolution observée, pas seulement la décrire.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'MIT Initiative on the Digital Economy — site officiel',
+    author: 'MIT Sloan',
+    description:
+      "Site officiel du MIT IDE — initiative de recherche du MIT Sloan sur l'avenir du travail, de l'économie numérique, et de l'impact des technologies. Présente les axes de recherche, publications, événements, équipe. Source primaire pour ce cas.",
+    href: 'https://ide.mit.edu/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'MIT Center for Collective Intelligence — Generative AI and Collective Intelligence',
+    author: 'MIT CCI',
+    description:
+      "Ressource MIT CCI articulant explicitement IA générative et intelligence collective. Complémentaire du MIT IDE pour qui veut articuler perspective humaine et perspective technologique dans une démarche d'anticipation.",
+    href: 'https://cci.mit.edu/generative-ai-and-collective-intelligence/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Future of Jobs Report',
+    author: 'World Economic Forum',
+    description:
+      "Rapport biennal du WEF sur l'évolution attendue des emplois et compétences. Référence complémentaire au MIT IDE pour le cadrage compétences d'une roadmap IA — angle complémentaire (enquêtes auprès d'employeurs vs recherche académique).",
+    href: 'https://www.weforum.org/publications/series/future-of-jobs/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+];
+
+const module6Url = getLocalizedUrl('/modules/06-futur-ia/', locale);
+const aiActEuUrl = getLocalizedUrl('/cas/ai-act-eu-haut-risque/', locale);
+const casIndexUrl = getLocalizedUrl('/cas/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="MIT Initiative on the Digital Economy — Étude de cas"
+  description="Le MIT IDE illustre ce qu'est une démarche d'anticipation stratégique structurée sur l'avenir du travail et de l'économie numérique. Méthode académique transposable à l'échelle d'une organisation."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 6"
+    title="MIT Initiative on the Digital Economy"
+    lead="Initiative de recherche du MIT Sloan sur l'avenir du travail, de l'économie numérique et de l'impact des technologies. Modèle d'anticipation stratégique structurée — combinaison de recherche rigoureuse, données empiriques, et traduction en cadres décisionnels."
+  >
+    <span slot="stats">
+      Recherche académique appliquée · Anticipation stratégique structurée · MIT Sloan
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organisation</dt>
+              <dd>MIT IDE — MIT Initiative on the Digital Economy, initiative de recherche structurée au sein du MIT Sloan School of Management. Fondée en 2013 (origines plus anciennes via les travaux des chercheurs associés)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Périmètre</dt>
+              <dd>Recherche sur l'impact des technologies numériques sur l'économie, le travail, les organisations et la société. Axes principaux : automatisation et IA, futur du travail, transformation des organisations, productivité, plateformes numériques</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Approche</dt>
+              <dd>Recherche académique rigoureuse (publications soumises à comité de lecture) combinée avec traduction pour les praticiens (publications grand public, MIT Sloan Management Review, conférences, ouvrages de référence)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Notoriété</dt>
+              <dd>L'un des principaux centres académiques mondiaux sur ces sujets ; cité dans les médias internationaux, les rapports gouvernementaux, les stratégies d'entreprise. Plusieurs ouvrages de référence issus des chercheurs associés</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Site officiel du MIT IDE et publications publiques associées <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            Le <strong>MIT Initiative on the Digital Economy</strong> (MIT IDE) est l'un des
+            principaux dispositifs académiques au niveau international structurant la recherche
+            prospective sur l'avenir du travail et de l'économie numérique. Hébergé par le MIT
+            Sloan School of Management, il combine recherche académique rigoureuse, données
+            empiriques, et traduction en implications stratégiques pour les décideurs.
+          </p>
+          <p>
+            Le cas est exemplaire pour le Module 6 (Futur de l'IA) parce qu'il illustre ce qu'est
+            une <strong>démarche d'anticipation stratégique structurée</strong> — ni de la
+            prévision (qui suppose un futur unique prévisible), ni de la veille passive (qui
+            collecte de l'information sans en tirer des décisions), mais un <strong>travail actif</strong>
+            d'analyse des implications, de construction de scénarios, et de traduction en cadres
+            décisionnels. Cette démarche est transposable à l'échelle d'une organisation —
+            pas comme niveau absolu, mais comme exigence méthodologique.
+          </p>
+          <p>
+            Pour un dirigeant, la leçon centrale est que <strong>l'anticipation stratégique est un
+            investissement</strong>, pas un coût. Une organisation qui se contente de réagir aux
+            annonces médiatiques prend des décisions optimisées pour des scénarios qui ne se
+            réalisent pas toujours — et manque les ruptures réellement structurantes. Le MIT IDE
+            illustre ce qu'est une approche disciplinée du futur, applicable au-delà du contexte
+            académique.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'organisation</h2>
+          <p>
+            Le <strong>MIT IDE</strong> a été fondé en 2013 mais s'inscrit dans une lignée de
+            recherche plus ancienne au MIT sur l'économie numérique et l'automatisation. Plusieurs
+            chercheurs influents ont été associés à l'initiative et ont publié des ouvrages de
+            référence (notamment dans la lignée de <em>The Second Machine Age</em> et d'autres
+            travaux qui ont contribué à structurer le débat académique et public sur l'impact des
+            technologies sur l'emploi et la productivité).
+          </p>
+          <p>
+            Plusieurs caractéristiques structurelles font du MIT IDE un cas exemplaire pour
+            illustrer une démarche d'anticipation :
+          </p>
+          <ul>
+            <li>
+              <strong>Adossement à une institution académique de premier plan</strong> — MIT Sloan
+              fournit la rigueur méthodologique, l'accès aux données, le réseau international.
+              L'indépendance de la recherche est protégée par les standards académiques (peer
+              review, transparence des méthodes, critique entre pairs).
+            </li>
+            <li>
+              <strong>Approche multi-disciplinaire</strong> — économistes, sociologues, ingénieurs,
+              chercheurs en sciences de gestion travaillent ensemble. Ce n'est pas une perspective
+              unique mais une intégration de plusieurs angles.
+            </li>
+            <li>
+              <strong>Combinaison rigueur académique + accessibilité praticien</strong> — les
+              publications scientifiques sont complétées par des publications dans MIT Sloan
+              Management Review, des conférences ouvertes, des ouvrages grand public. La
+              recherche est traduite pour les décideurs sans perdre sa rigueur.
+            </li>
+            <li>
+              <strong>Continuité dans la durée</strong> — plus de dix ans d'activité documentée,
+              capitalisation des apprentissages, évolution des thèmes au gré des évolutions
+              technologiques (mainframe → web → smartphones → IA générative).
+            </li>
+            <li>
+              <strong>Liens avec d'autres initiatives MIT</strong> — articulation avec MIT CSAIL
+              (recherche IA technique), MIT Center for Collective Intelligence (intelligence
+              collective humain × machine), Jameel Clinic for AI and Health (IA en santé). Cette
+              écosystémique enrichit la perspective IDE.
+            </li>
+          </ul>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème adressé</h2>
+          <p>
+            Le MIT IDE répond à plusieurs problèmes que beaucoup d'organisations rencontrent
+            quand elles tentent d'anticiper l'avenir technologique :
+          </p>
+          <ul>
+            <li>
+              <strong>Comment dépasser les annonces médiatiques</strong> et construire une
+              compréhension solide des évolutions technologiques ? Les communications des
+              fournisseurs (annonces de modèles, démonstrations) sont structurées pour
+              l'attention, pas pour la rigueur. Une démarche d'anticipation doit s'en distinguer.
+            </li>
+            <li>
+              <strong>Comment articuler les dimensions techniques, économiques et sociales</strong>
+              d'une transformation ? L'IA n'est pas qu'une technologie — elle a des effets sur
+              le travail, les compétences, la productivité, l'inégalité, la concurrence
+              internationale. Une vue technique seule ne suffit pas.
+            </li>
+            <li>
+              <strong>Comment produire des cadres transposables</strong> aux décideurs sans
+              imposer un point de vue unique ? Le MIT IDE publie des analyses, mais reconnaît
+              les incertitudes, les perspectives alternatives, les limites de ce qu'on peut
+              prévoir.
+            </li>
+            <li>
+              <strong>Comment ancrer l'analyse dans des données empiriques</strong> plutôt que
+              dans des intuitions ? Beaucoup de discours sur le futur du travail sont peu
+              empiriques — anecdotes, projections vagues, hypothèses non testées. La démarche
+              IDE cherche à combler ce vide.
+            </li>
+            <li>
+              <strong>Comment construire la durée</strong> sur des sujets qui évoluent
+              rapidement ? Une publication ponctuelle peut être dépassée en quelques mois. Un
+              dispositif structuré permet de capitaliser dans la durée.
+            </li>
+          </ul>
+        </section>
+
+        {/* === APPROCHE === */}
+        <section id="solution">
+          <h2>Approche méthodologique du MIT IDE</h2>
+
+          <h3>1. Recherche académique rigoureuse</h3>
+          <p>
+            Le socle est la <strong>recherche scientifique</strong> publiée dans des revues
+            académiques avec comité de lecture. Cette rigueur (transparence des méthodes,
+            réplicabilité, critique entre pairs, données empiriques) distingue le MIT IDE d'une
+            think tank d'opinion. Sans ce socle, les conclusions seraient des points de vue
+            parmi d'autres.
+          </p>
+
+          <h3>2. Approche multi-disciplinaire</h3>
+          <p>
+            L'analyse combine <strong>plusieurs angles</strong> : économique (productivité,
+            inégalités, marché du travail), technologique (capacités des systèmes IA, évolution
+            des modèles), organisationnel (transformation des entreprises), sociologique (impact
+            sur les compétences, dynamique sociale). Cette intégration multi-disciplinaire est
+            ce qui produit une perspective équilibrée.
+          </p>
+
+          <h3>3. Données empiriques et études de cas</h3>
+          <p>
+            Plutôt que de spéculer sur l'avenir abstraitement, le MIT IDE produit ou exploite
+            des <strong>données empiriques</strong> — études de cas en entreprise, expérimentations
+            contrôlées, analyses statistiques de bases de données massives sur le travail et la
+            productivité. Cela ancre l'analyse dans le réel.
+          </p>
+
+          <h3>4. Traduction pour les praticiens</h3>
+          <p>
+            La <strong>traduction</strong> de la recherche en publications accessibles est une
+            dimension intentionnelle du dispositif. Articles dans MIT Sloan Management Review,
+            ouvrages grand public, conférences, podcasts, cours exécutifs — autant de canaux qui
+            rendent les apports exploitables pour les décideurs.
+          </p>
+
+          <h3>5. Capitalisation dans la durée</h3>
+          <p>
+            La <strong>continuité</strong> de l'initiative permet de capitaliser les apprentissages
+            au fil du temps. Les analyses publiées en 2018 sur l'automatisation servent de base
+            aux analyses publiées en 2024 sur l'IA générative. Cette mémoire institutionnelle
+            est précieuse — elle évite de réinventer à chaque vague technologique.
+          </p>
+
+          <h3>6. Articulation avec d'autres initiatives</h3>
+          <p>
+            Le MIT IDE est <strong>articulé</strong> avec d'autres initiatives MIT (CSAIL, CCI,
+            Jameel Clinic for AI and Health) et avec un réseau de chercheurs internationaux.
+            Cette articulation enrichit la perspective et évite l'isolement disciplinaire.
+          </p>
+        </section>
+
+        {/* === APPORTS === */}
+        <section id="benefices">
+          <h2>Apports observés et adoption</h2>
+          <p>
+            Plusieurs apports du MIT IDE sont observables, à la fois dans le débat académique et
+            dans la pratique des organisations :
+          </p>
+          <ul>
+            <li>
+              <strong>Cadrage du débat public</strong> sur l'impact des technologies sur l'emploi
+              et la productivité. Les concepts diffusés par les chercheurs associés ont structuré
+              une grande partie du débat international des dix dernières années.
+            </li>
+            <li>
+              <strong>Recommandations méthodologiques</strong> pour évaluer rigoureusement
+              l'impact d'un déploiement technologique — méthodologies (groupe traitement vs
+              contrôle, métriques multiples, durée suffisante) qu'on retrouve dans des études
+              comme GitHub × Accenture (cas Module 3).
+            </li>
+            <li>
+              <strong>Influence sur les politiques publiques</strong> — les travaux sont cités
+              dans des rapports gouvernementaux (États-Unis, OCDE, Banque mondiale) sur l'avenir
+              du travail et la régulation de l'IA.
+            </li>
+            <li>
+              <strong>Ressources pédagogiques</strong> pour les praticiens — cours exécutifs,
+              ouvrages, articles, conférences, qui rendent les apports exploitables au-delà du
+              cercle des chercheurs.
+            </li>
+            <li>
+              <strong>Modèle institutionnel inspirant</strong> pour d'autres initiatives
+              équivalentes (Stanford HAI, Oxford Future of Humanity Institute, autres instituts
+              dédiés à l'IA et la société) — le MIT IDE a contribué à structurer la pratique
+              académique sur ces sujets.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Les apports d'une initiative académique sont par nature diffus et difficiles
+            à chiffrer précisément. La valeur du cas tient à l'institutionnalisation de la
+            démarche — elle existe, dure, produit, et est citée internationalement.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <ul>
+            <li>
+              <strong>L'échelle académique n'est pas l'échelle d'une organisation</strong>. Le
+              MIT IDE est une institution académique avec ses ressources, son temps long, ses
+              méthodologies. Une organisation ne peut pas répliquer cette échelle — l'enjeu est
+              d'adopter le réflexe et la rigueur, pas de devenir un MIT IDE en miniature.
+            </li>
+            <li>
+              <strong>Le rythme académique est lent</strong> par rapport au rythme technologique.
+              Une publication soumise à comité de lecture met typiquement 12 à 24 mois entre
+              soumission et publication. Pour des sujets qui évoluent en mois, cela limite
+              l'agilité — d'où l'importance des canaux complémentaires (blogs, conférences) qui
+              permettent une diffusion plus rapide tout en conservant la rigueur.
+            </li>
+            <li>
+              <strong>L'objectivité n'est jamais totale</strong>. Comme tout dispositif de recherche,
+              le MIT IDE a des angles de vue, des préférences méthodologiques, parfois des
+              conclusions contestées par d'autres écoles de pensée. La crédibilité tient à la
+              transparence sur les méthodes — pas à une prétention d'objectivité absolue.
+            </li>
+            <li>
+              <strong>La transposition au contexte d'une organisation</strong> demande un
+              travail d'adaptation. Les cadres et concepts produits par le MIT IDE sont génériques —
+              les appliquer à une organisation spécifique requiert un effort de contextualisation
+              que le MIT IDE ne fait pas pour vous.
+            </li>
+            <li>
+              <strong>Le risque de surinvestissement académique</strong>. Une organisation qui
+              voudrait se doter d'un mini-MIT IDE en interne risque la sur-spécialisation
+              académique sans bénéfice opérationnel. L'enjeu pour une organisation est plus
+              modeste : avoir une cellule capable de traduire les évolutions en implications
+              stratégiques, pas de produire de la recherche académique originale.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES D'USAGE === */}
+        <section id="risques">
+          <h2>Risques d'usage et garde-fous</h2>
+          <ul>
+            <li>
+              <strong>Risque de citer sans appliquer</strong>. Une organisation peut citer le MIT
+              IDE pour donner du poids à une décision déjà prise, sans réellement intégrer la
+              démarche d'anticipation. Garde-fou : intégrer les analyses dans un processus
+              décisionnel structuré (comité, scénarios, options), pas en post-rationalisation.
+            </li>
+            <li>
+              <strong>Risque de sur-confiance dans les conclusions</strong>. Les analyses
+              académiques sont solides mais comportent toujours des incertitudes et des hypothèses.
+              Une organisation qui prend une décision irréversible sur la seule base d'une
+              publication court un risque. Garde-fou : combiner plusieurs sources (académiques,
+              professionnelles, retours terrain), construire des scénarios alternatifs.
+            </li>
+            <li>
+              <strong>Risque de retard dans la traduction opérationnelle</strong>. Les analyses
+              académiques publiées en 2024 reflètent des données collectées en 2022 ou avant.
+              Pour des décisions à court terme, ce délai peut être problématique. Garde-fou :
+              compléter les analyses académiques par de la veille active sur les évolutions
+              récentes, en gardant la rigueur méthodologique.
+            </li>
+            <li>
+              <strong>Risque de paralysie analytique</strong>. La rigueur peut conduire à toujours
+              vouloir attendre plus de données, plus d'études, avant de décider. Or les décisions
+              doivent être prises dans l'incertitude. Garde-fou : combiner anticipation et
+              décision — l'analyse éclaire, la décision tranche.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Pour transposer la démarche MIT IDE à votre organisation, à quelle <strong>échelle
+              modeste</strong> commenceriez-vous ? Une cellule interne ? Un partenariat avec un
+              institut académique ? Un abonnement structuré à des sources de qualité ?
+            </li>
+            <li>
+              Le MIT IDE distingue <strong>recherche académique</strong> (publications
+              scientifiques) et <strong>traduction praticien</strong> (Sloan Management Review,
+              ouvrages, conférences). Comment équivalent-vous ce double registre dans votre
+              veille interne ?
+            </li>
+            <li>
+              Sur les <strong>3 sujets technologiques</strong> les plus structurants pour votre
+              secteur, quelles sont aujourd'hui vos sources d'analyse les plus rigoureuses ? Sont-
+              elles à la hauteur de l'enjeu ?
+            </li>
+            <li>
+              Le MIT IDE produit des analyses sans imposer un point de vue unique. Comment votre
+              organisation gère-t-elle les <strong>perspectives alternatives</strong> sur l'avenir
+              technologique ? Y a-t-il un mécanisme pour les confronter ?
+            </li>
+            <li>
+              Si vous deviez structurer un <strong>petit dispositif d'anticipation stratégique</strong>
+              dans votre organisation, quelles seraient les 3-5 composantes minimales ?
+              (cellule, sources, livrables, articulation avec la décision, cycle de mise à jour) ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module6Url}><strong>Module 6 — Futur de
+            l'IA</strong></a> (cas principal) — anticipation stratégique structurée,
+            distinction veille / anticipation, scenario planning, démarche académique transposable.
+            Il est complémentaire des autres cas du parcours qui éclairent chacun un module
+            spécifique. Il est aussi un point d'appui pour le Module 1 (perspective d'intelligence
+            collective humain × machine) et pour le Module 5 (gouvernance, articulation avec
+            l'évolution réglementaire).
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: aiActEuUrl,
+            label: "AI Act EU classification haut risque",
+            context: 'Cas précédent',
+          }}
+          next={{
+            href: casIndexUrl,
+            label: "Toutes les études de cas",
+            context: 'Index',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

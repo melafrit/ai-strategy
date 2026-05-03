@@ -1,0 +1,499 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème métier' },
+  { id: 'solution', label: 'Solution IA' },
+  { id: 'benefices', label: 'Bénéfices observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: 'Risques identifiés' },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+const takeaways = [
+  "Universal Robots illustre que la robotique collaborative — les cobots — n'est pas réservée aux grandes industries : la conception modulaire, la facilité de programmation et la conformité aux normes de sécurité (ISO/TS 15066) ouvrent la robotique aux PME industrielles.",
+  "Le cobot lui-même n'est qu'une partie du coût total — l'intégration (capteurs, outillage, logique métier), la mise en service et la formation représentent typiquement la majorité de l'investissement. Sous-estimer ce ratio est le piège classique d'un premier projet PME.",
+  "La distinction cobot vs robot industriel classique est cruciale : un cobot conforme à ISO/TS 15066 peut travailler à proximité d'humains sans cage de sécurité — sous certaines conditions précises de force, vitesse et tâche. Cela change radicalement l'économie d'un projet d'automatisation.",
+  "Universal Robots a structuré un écosystème (UR+) de partenaires d'intégration et de fournisseurs d'outillage certifié — c'est cet écosystème, plus que le cobot pris isolément, qui rend la solution viable pour des PME sans expertise robotique interne.",
+  "Le cas est exemplaire pour comprendre comment l'innovation se diffuse au-delà des grands acteurs (Amazon-style) vers le tissu industriel plus diffus — clé d'une transformation économique et sociale plus large.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Universal Robots — site corporate',
+    author: 'Universal Robots A/S',
+    description:
+      "Site officiel d'Universal Robots, fabricant danois de cobots fondé en 2005 et propriété de Teradyne depuis 2015. Présente la gamme produit (UR3e, UR5e, UR10e, UR16e, UR20, UR30), les certifications, l'écosystème UR+. Source primaire pour ce cas.",
+    href: 'https://www.universal-robots.com/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'ISO/TS 15066:2016 — Robots and robotic devices — Collaborative robots',
+    author: 'International Organization for Standardization',
+    description:
+      "Standard international qui spécifie les exigences de sécurité pour les robots collaboratifs (cobots). Définit les quatre méthodes d'opération collaborative (arrêt surveillé, guidage manuel, séparation, limitation de force/puissance). Référence pour qui veut comprendre techniquement ce qui distingue un cobot d'un robot industriel classique.",
+    href: 'https://www.iso.org/standard/62996.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Introduction to Robotics (cours complet)',
+    author: 'MIT OpenCourseWare — 2.12',
+    description:
+      "Cours d'introduction MIT à la robotique. Pour solidifier les bases conceptuelles — perception, cinématique, contrôle — qui structurent les robots collaboratifs comme ceux d'Universal Robots.",
+    href: 'https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module4Url = getLocalizedUrl('/modules/04-robotique/', locale);
+const mitBarzilayUrl = getLocalizedUrl('/cas/mit-barzilay-cancer/', locale);
+const nistAiRmfUrl = getLocalizedUrl('/cas/nist-ai-rmf/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="Universal Robots — Cobots pour PME — Étude de cas"
+  description="Universal Robots illustre comment la robotique collaborative — les cobots conformes ISO/TS 15066 — devient accessible aux PME industrielles. Reconfigurabilité, intégration, écosystème UR+. Cas exemplaire pour le Module 4."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 4 (mini-cas)"
+    title="Universal Robots — Cobots pour PME industrielles"
+    lead="Comment Universal Robots illustre que la robotique collaborative n'est pas réservée aux grandes industries. Cobots conformes ISO/TS 15066, écosystème de partenaires d'intégration, prix d'achat accessibles — mais l'intégration reste majoritaire dans le coût total."
+  >
+    <span slot="stats">
+      Industrie manufacturière (PME) · Cobots ISO/TS 15066 · Universal Robots
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organisation</dt>
+              <dd>Universal Robots A/S — fabricant danois de cobots fondé en 2005, propriété de Teradyne (États-Unis) depuis 2015. L'un des principaux acteurs mondiaux de la robotique collaborative légère</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Secteur cible</dt>
+              <dd>Industrie manufacturière, particulièrement les PME — ateliers d'usinage, assemblage, manutention, conditionnement, contrôle qualité</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technologie</dt>
+              <dd>Bras articulés à 6 axes, conçus pour collaborer avec des humains sans cage de sécurité dans la majorité des cas, conformes à la norme ISO/TS 15066 sur les robots collaboratifs</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Gamme principale</dt>
+              <dd>UR3e (3 kg de charge utile, ~500 mm de portée), UR5e (5 kg), UR10e (12,5 kg), UR16e (16 kg), UR20 (20 kg), UR30 (30 kg) — selon documentation produit officielle</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Site corporate Universal Robots et standard ISO/TS 15066 sur les robots collaboratifs <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Universal Robots</strong> est l'un des principaux fabricants mondiaux de
+            cobots — robots collaboratifs légers conçus pour travailler à proximité d'humains
+            sans cage de sécurité dans la majorité des cas. Fondée en 2005 au Danemark et acquise
+            par Teradyne en 2015, la firme illustre comment la robotique collaborative est devenue
+            accessible aux <strong>PME industrielles</strong> qui n'auraient pas pu engager un
+            projet de robotique industrielle classique.
+          </p>
+          <p>
+            Le cas est important pour le Module 4 (Robotique en entreprise) parce qu'il illustre
+            <strong> le côté diffus de l'innovation robotique</strong>. Au-delà des grands acteurs
+            comme Amazon (cas principal Module 4), la transformation économique réelle se joue
+            dans le tissu industriel plus diffus — ateliers d'usinage, assembleurs, sous-traitants
+            de l'aéronautique ou de l'automobile, fabricants alimentaires. Universal Robots, avec
+            d'autres acteurs (FANUC CRX, Doosan, Techman), structure cette diffusion.
+          </p>
+          <p>
+            Pour un dirigeant de PME industrielle, la leçon centrale est claire :
+            <strong> le cobot lui-même n'est qu'une partie du coût total</strong>. L'intégration
+            (capteurs, outillage spécifique, logique métier, sécurité), la mise en service et la
+            formation représentent typiquement la majorité de l'investissement. Sous-estimer ce
+            ratio est le piège classique d'un premier projet de robotique en PME — d'où
+            l'importance de l'écosystème de partenaires d'intégration que Universal Robots a
+            construit (UR+).
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'organisation et du marché</h2>
+          <p>
+            <strong>Universal Robots A/S</strong> a été fondée en 2005 à Odense au Danemark. Son
+            premier cobot commercial — l'<strong>UR5</strong> — a été lancé en 2008. La firme a
+            été acquise par <strong>Teradyne</strong> (groupe américain spécialisé dans les
+            équipements de test pour semiconducteurs) en 2015. Cette acquisition a apporté à
+            Universal Robots les ressources financières et la maturité industrielle pour passer
+            à l'échelle internationale.
+          </p>
+          <p>
+            Le marché des cobots est structurellement différent de celui des robots industriels
+            classiques :
+          </p>
+          <ul>
+            <li>
+              <strong>Les cobots ciblent un volume large de petites séries</strong> et non pas
+              une production de masse à très grande échelle. Ils sont conçus pour être
+              reconfigurables — passer d'une tâche à une autre en quelques heures de
+              reprogrammation.
+            </li>
+            <li>
+              <strong>Les acheteurs sont des PME industrielles</strong> qui n'ont typiquement
+              pas d'expertise robotique interne. Le cobot doit être facile à programmer et à
+              maintenir par des techniciens existants.
+            </li>
+            <li>
+              Le <strong>prix d'achat</strong> est sensiblement inférieur à un robot industriel
+              classique avec sa cage de sécurité, son ingénierie de cellule et ses systèmes
+              auxiliaires — ce qui rend l'investissement amortissable sur des volumes plus
+              modestes.
+            </li>
+            <li>
+              La <strong>conformité aux normes de sécurité</strong> (ISO 10218 pour les robots
+              industriels, ISO/TS 15066 pour les cobots) est centrale — elle conditionne la
+              possibilité légale de faire travailler le cobot à proximité d'humains.
+            </li>
+          </ul>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème métier</h2>
+          <p>
+            Le problème métier qu'Universal Robots adresse est triple :
+          </p>
+          <ul>
+            <li>
+              <strong>Rendre la robotique accessible aux PME</strong>. Les robots industriels
+              classiques (FANUC, ABB, KUKA, Yaskawa de génération antérieure) supposent une
+              cellule de production complète avec cage de sécurité, ingénierie d'intégration
+              spécifique, équipes formées. L'investissement total se compte en centaines de
+              milliers d'euros — hors d'atteinte pour beaucoup de PME.
+            </li>
+            <li>
+              <strong>Permettre la cohabitation humain-machine</strong> sans compromis de
+              sécurité. Une PME ne peut pas dédier des zones complètes à des robots — l'espace
+              est limité, les tâches changent, les humains restent centraux. Un cobot conforme
+              ISO/TS 15066 peut, sous certaines conditions, opérer à côté d'humains sans cage —
+              ce qui transforme l'économie de l'automatisation.
+            </li>
+            <li>
+              <strong>Faciliter la programmation et la reconfiguration</strong>. Un cobot doit
+              pouvoir être reprogrammé pour une nouvelle tâche par un technicien — pas seulement
+              par un roboticien. Universal Robots a investi sur l'interface (PolyScope) et la
+              programmation par démonstration pour rendre cela réaliste.
+            </li>
+          </ul>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>Solution IA / robotique mise en place</h2>
+
+          <h3>1. Cobot léger 6 axes conforme ISO/TS 15066</h3>
+          <p>
+            Universal Robots a conçu une gamme de bras articulés 6 axes <strong>légers et à
+            force limitée</strong>. La conformité à <strong>ISO/TS 15066</strong> (standard
+            international des robots collaboratifs) permet, après évaluation de risque,
+            l'opération sans cage dans la majorité des configurations — à condition de respecter
+            les limites de force, vitesse et tâche prévues par la norme.
+          </p>
+
+          <h3>2. Programmation accessible (PolyScope + démonstration)</h3>
+          <p>
+            L'interface logicielle <strong>PolyScope</strong> permet une programmation par
+            interface graphique et par démonstration physique (l'opérateur déplace le bras à la
+            main pour enseigner les positions). Cela réduit substantiellement la barrière de
+            compétences — un technicien existant peut apprendre à programmer un UR en quelques
+            jours de formation, pas en mois.
+          </p>
+
+          <h3>3. Écosystème UR+ d'intégrateurs et d'outillages certifiés</h3>
+          <p>
+            Universal Robots a structuré un <strong>écosystème de partenaires</strong> (réseau
+            UR+) qui fournit des outillages certifiés (préhenseurs, capteurs de vision, systèmes
+            de soudure, équipements de palettisation) compatibles plug-and-play avec les cobots
+            UR. Les intégrateurs UR+ accompagnent les PME dans la mise en service. Cet
+            écosystème est ce qui rend la solution viable pour des organisations sans expertise
+            robotique interne — c'est probablement l'investissement stratégique le plus
+            structurant de la firme, plus que le cobot lui-même.
+          </p>
+
+          <h3>4. Conformité réglementaire et sécurité</h3>
+          <p>
+            Chaque déploiement passe par une <strong>évaluation de risque</strong> conformément
+            aux normes applicables (ISO 10218 pour la robotique, ISO/TS 15066 pour la
+            collaboration, normes machines locales). Cette évaluation détermine si le cobot peut
+            opérer sans cage, avec barrières immatérielles, ou avec cage. Universal Robots
+            fournit la documentation et les certifications nécessaires ; l'intégrateur ou la PME
+            elle-même conduit l'évaluation finale dans son contexte spécifique.
+          </p>
+
+          <h3>5. Reconfigurabilité comme proposition de valeur centrale</h3>
+          <p>
+            Un cobot Universal Robots est conçu pour être <strong>déplacé d'une tâche à une
+            autre</strong> — pas figé sur un poste unique sur 10 ans. C'est une rupture
+            philosophique avec la robotique industrielle classique : la valeur est dans la
+            polyvalence, pas dans la spécialisation extrême. Cette polyvalence est ce qui rend
+            l'investissement amortissable sur les volumes modestes des PME.
+          </p>
+        </section>
+
+        {/* === BENEFICES === */}
+        <section id="benefices">
+          <h2>Bénéfices observés</h2>
+          <p>
+            Selon les communications corporate d'Universal Robots et les retours documentés
+            d'études de cas client publiques :
+          </p>
+          <ul>
+            <li>
+              <strong>Accès à l'automatisation pour les PME</strong> — des organisations qui
+              n'auraient pas pu engager un projet de robotique classique peuvent automatiser
+              certaines tâches répétitives (palettisation, assemblage simple, machine tending,
+              soudure de petites séries).
+            </li>
+            <li>
+              <strong>Polyvalence opérationnelle</strong> — un cobot peut être redéployé entre
+              plusieurs postes selon les besoins de production. Cette flexibilité est précieuse
+              pour des PME qui produisent en petites séries variées.
+            </li>
+            <li>
+              <strong>Cohabitation directe avec les opérateurs humains</strong> — les opérateurs
+              peuvent intervenir, ajuster, reprogrammer sans procédure de mise en sécurité
+              lourde. La collaboration au sens propre devient possible.
+            </li>
+            <li>
+              <strong>Amélioration des conditions de travail</strong> sur les tâches pénibles
+              (charge lourde répétitive, postures contraignantes, tâches monotones) — souvent
+              l'argument principal en interne pour faire accepter le projet.
+            </li>
+            <li>
+              <strong>Diffusion de la robotique au-delà des grandes entreprises</strong> —
+              c'est l'enjeu macro-économique : la transformation industrielle ne se joue pas
+              seulement chez les Amazon ou Tesla mais aussi dans le tissu PME, qui représente
+              une part substantielle de l'emploi industriel.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Universal Robots publie des chiffres globaux (nombre de cobots vendus,
+            payback moyen) mais les chiffres précis varient fortement selon les cas. La valeur
+            du cas tient à l'architecture commerciale et technologique documentée publiquement.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <ul>
+            <li>
+              <strong>L'intégration domine le coût total</strong>. Le cobot pris isolément
+              représente typiquement 30 à 50 % du coût total ; le reste va à l'outillage, à
+              l'intégration, à la mise en service, à la formation. Une PME qui ne budgétise que
+              le cobot sous-estime massivement le projet réel.
+            </li>
+            <li>
+              <strong>La capacité utile est limitée</strong>. Les cobots UR sont conçus pour
+              des charges modestes (3 à 30 kg) et des cadences moyennes. Ils ne remplacent pas
+              les robots industriels classiques pour des productions à très haute cadence ou
+              très haute charge — ce sont deux marchés complémentaires, pas substituables.
+            </li>
+            <li>
+              <strong>L'évaluation de risque est exigeante</strong>. ISO/TS 15066 ne garantit
+              pas qu'un cobot peut opérer sans cage dans n'importe quel contexte. Selon la
+              tâche (présence d'objets coupants, vitesses élevées, vision obstruée), une cage
+              ou des barrières peuvent rester nécessaires. Le sans-cage est une possibilité,
+              pas une garantie.
+            </li>
+            <li>
+              <strong>La concurrence s'intensifie</strong>. FANUC (CRX), Doosan, Techman, KUKA
+              et autres acteurs ont développé leurs propres gammes de cobots. Universal Robots
+              n'a plus le quasi-monopole qu'il avait à ses débuts. La différenciation repose
+              désormais sur l'écosystème (UR+) plus que sur le produit isolé.
+            </li>
+            <li>
+              <strong>L'AI Act EU et autres réglementations</strong> imposent une vigilance
+              continue. Si l'usage du cobot évolue vers des décisions plus autonomes ou
+              data-driven (vision IA pour adapter en temps réel), les obligations réglementaires
+              peuvent évoluer aussi.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES === */}
+        <section id="risques">
+          <h2>Risques identifiés et garde-fous</h2>
+          <ul>
+            <li>
+              <strong>Risque de sécurité physique</strong>. Même conforme ISO/TS 15066, un
+              cobot peut blesser un opérateur si l'évaluation de risque n'a pas été faite
+              correctement, si l'outillage présente des risques (objets coupants, projections),
+              ou si la maintenance est négligée. Garde-fous : évaluation de risque rigoureuse,
+              outillage certifié, formation des opérateurs, maintenance régulière, audits.
+            </li>
+            <li>
+              <strong>Risque économique de sous-estimation des coûts</strong>. Un projet PME
+              budgétisé sur le seul prix d'achat du cobot dérape typiquement avec l'intégration.
+              Garde-fous : appel à un intégrateur UR+ certifié dès la phase de cadrage,
+              budgétisation explicite de l'outillage et de la mise en service, plan de
+              formation chiffré.
+            </li>
+            <li>
+              <strong>Risque social et acceptation</strong>. Les opérateurs concernés peuvent
+              percevoir le cobot comme une menace ou comme une charge supplémentaire (devoir
+              le superviser). Garde-fous : information-consultation IRP en amont si applicable,
+              accompagnement des opérateurs concernés, mise en avant des bénéfices ergonomiques,
+              redéploiement explicite des humains sur des tâches à plus forte valeur.
+            </li>
+            <li>
+              <strong>Risque de dépendance fournisseur</strong>. Une PME engagée dans
+              l'écosystème UR+ peut être dépendante de la disponibilité de pièces, de
+              l'évolution des produits, des prix d'Universal Robots. Garde-fous : choix
+              raisonné multi-sources quand possible, contrats de service, plan de continuité.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Comparez le cas Universal Robots avec le cas Amazon Robotics (Module 4). Quelles
+              <strong> leçons sont communes</strong>, et quelles leçons sont spécifiques à
+              chaque contexte (grand groupe vs PME) ?
+            </li>
+            <li>
+              L'<strong>écosystème UR+</strong> est présenté comme l'avantage stratégique le plus
+              structurant — plus que le cobot lui-même. Cette logique d'écosystème vous semble-t-
+              elle pertinente dans d'autres secteurs ? Donnez un exemple.
+            </li>
+            <li>
+              Pour une PME industrielle de votre connaissance, <strong>quels seraient les
+              premiers cas d'usage candidats</strong> pour un cobot ? Quelles seraient les
+              questions à poser pour évaluer la faisabilité ?
+            </li>
+            <li>
+              La conformité <strong>ISO/TS 15066</strong> est centrale dans la proposition de
+              valeur. Comment cette norme s'articule-t-elle avec d'autres exigences réglementaires
+              (Code du travail, AI Act EU si évolution vers IA, normes sectorielles) ?
+            </li>
+            <li>
+              Si vous deviez défendre en COMEX un projet de premier cobot dans une PME, quel
+              <strong> argumentaire</strong> mettriez-vous en avant ? Comment éviter l'écueil
+              d'un argumentaire purement productivité ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module4Url}><strong>Module 4 — Robotique
+            en entreprise</strong></a> (mini-cas) — distinction cobot/robot industriel,
+            normes ISO 10218 et ISO/TS 15066, écosystème, économie d'un projet PME.
+            Il est complémentaire du cas principal Amazon Robotics (qui illustre l'échelle
+            d'un acteur global) — ensemble, les deux cas couvrent l'essentiel du paysage
+            robotique en entreprise. Il est aussi un point d'appui pour le Module 5
+            (gouvernance, dialogue social pour les déploiements PME) et le Module 6 (scenario
+            planning sur la diffusion de la robotique dans le tissu industriel).
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: mitBarzilayUrl,
+            label: "Recherche MIT — Regina Barzilay",
+            context: 'Cas précédent',
+          }}
+          next={{
+            href: nistAiRmfUrl,
+            label: "NIST AI Risk Management Framework",
+            context: 'Cas suivant',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

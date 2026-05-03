@@ -1,0 +1,509 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème métier' },
+  { id: 'solution', label: 'Structure du cadre' },
+  { id: 'benefices', label: 'Bénéfices observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: 'Risques d\'usage' },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+const takeaways = [
+  "Le NIST AI RMF est l'un des cadres opérationnels de gouvernance IA les plus reconnus internationalement — il fournit la structure (Govern / Map / Measure / Manage) que beaucoup d'organisations adoptent comme socle de leur charte interne, même hors États-Unis.",
+  "La force du cadre est sa structure systémique : la gouvernance n'est pas un livrable isolé mais un système articulant identification du contexte (Map), mesure des risques (Measure), traitement (Manage), avec une fonction Govern transverse qui structure l'organisation.",
+  "Le NIST AI RMF est volontaire et non contraignant — sa valeur vient de sa qualité méthodologique reconnue, pas d'une obligation légale. Cela en fait une référence transposable au-delà du contexte américain, et compatible avec des cadres réglementaires comme l'AI Act EU.",
+  "Le cadre est complémentaire à l'AI Act EU plutôt que concurrent : l'AI Act fournit les obligations légales (notamment pour les systèmes haut risque), le NIST AI RMF fournit la méthode opérationnelle pour s'y conformer concrètement.",
+  "Le cas illustre qu'un cadre de gouvernance IA opérationnel ne consiste pas à publier des principes éthiques — il consiste à structurer un système de processus, de rôles, de mesures, et de capacités d'action. Les principes sans système sont ornementaux.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework — page officielle',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "Page officielle du NIST sur l'AI Risk Management Framework. Présente le cadre AI RMF 1.0 (publié en janvier 2023), le Playbook associé, les ressources complémentaires (NIST AI 600-1 sur l'IA générative, par exemple). Source primaire pour ce cas.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI RMF 1.0 — document complet (PDF)',
+    author: 'NIST',
+    description:
+      "Document de référence complet de l'AI Risk Management Framework 1.0 publié par le NIST. Décrit les 4 fonctions (Govern, Map, Measure, Manage) et leurs sous-catégories. Document de référence librement accessible.",
+    href: 'https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Principes de l'OCDE sur l'intelligence artificielle",
+    author: 'OCDE',
+    description:
+      "Cinq principes pour un déploiement responsable de l'IA, adoptés par 47 pays. Compatible et complémentaire avec le NIST AI RMF — les principes OCDE donnent les valeurs, le NIST RMF donne la méthode opérationnelle. Disponible en français.",
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+];
+
+const module5Url = getLocalizedUrl('/modules/05-ia-societe/', locale);
+const universalRobotsUrl = getLocalizedUrl('/cas/universal-robots/', locale);
+const aiActEuUrl = getLocalizedUrl('/cas/ai-act-eu-haut-risque/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="NIST AI Risk Management Framework — Étude de cas"
+  description="Le NIST AI RMF est l'un des cadres opérationnels de gouvernance IA les plus reconnus internationalement. Quatre fonctions (Govern, Map, Measure, Manage). Cas exemplaire pour le Module 5."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 5 (cas principal)"
+    title="NIST AI Risk Management Framework"
+    lead="Cadre opérationnel américain de référence pour la gouvernance et la gestion des risques IA. Quatre fonctions interreliées — Govern, Map, Measure, Manage — adoptées comme socle par de nombreuses organisations dans le monde."
+  >
+    <span slot="stats">
+      Standards et bonnes pratiques · États-Unis et international · NIST
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organisation</dt>
+              <dd>NIST — National Institute of Standards and Technology, agence du Département du Commerce américain spécialisée dans la production de standards et de cadres méthodologiques de référence</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Cadre</dt>
+              <dd>AI Risk Management Framework 1.0 (AI RMF 1.0) — publié en janvier 2023, accompagné d'un Playbook pratique et de profils sectoriels (notamment NIST AI 600-1 pour l'IA générative)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Statut</dt>
+              <dd>Cadre <strong>volontaire</strong> et non contraignant — pas une obligation légale. Sa valeur vient de la rigueur méthodologique et de l'adoption volontaire par les organisations</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Structure</dt>
+              <dd>Quatre fonctions interreliées : <strong>Govern</strong> (gouvernance organisationnelle), <strong>Map</strong> (identifier le contexte et les risques), <strong>Measure</strong> (analyser et mesurer), <strong>Manage</strong> (prioriser et traiter). Chaque fonction se décline en sous-catégories opérationnelles</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Page officielle NIST + document AI RMF 1.0 PDF + Playbook + profils sectoriels <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            Le <strong>NIST AI Risk Management Framework</strong> (AI RMF 1.0), publié en janvier
+            2023 par le National Institute of Standards and Technology, est l'un des cadres
+            opérationnels de gouvernance IA les plus reconnus internationalement. Il a été
+            développé en réponse à une demande explicite du Congrès américain (National AI
+            Initiative Act of 2020) et co-construit avec une large consultation publique
+            associant entreprises, recherche académique et société civile.
+          </p>
+          <p>
+            La force du cadre est sa <strong>structure systémique</strong>. Plutôt que de publier
+            une liste de principes éthiques (qui restent souvent ornementaux), le NIST AI RMF
+            structure un <strong>système de gouvernance opérationnelle</strong> articulant quatre
+            fonctions interreliées — <strong>Govern</strong> (transverse, pilote), <strong>Map</strong>
+            (identification du contexte et des risques), <strong>Measure</strong> (analyse et
+            mesure), <strong>Manage</strong> (traitement et priorisation). Chacune se décline en
+            sous-catégories opérationnelles documentées dans le Playbook complémentaire.
+          </p>
+          <p>
+            Pour un dirigeant, le cas est important pour le Module 5 (IA dans l'entreprise et la
+            société) parce qu'il fournit la <strong>méthode</strong> que beaucoup d'organisations
+            adoptent comme socle de leur charte interne — y compris hors États-Unis. Le NIST AI
+            RMF est <strong>complémentaire à l'AI Act EU</strong> plutôt que concurrent : l'AI
+            Act fournit les obligations légales (notamment haut risque), le NIST RMF fournit la
+            méthode opérationnelle pour s'y conformer concrètement.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'organisation et de l'élaboration</h2>
+          <p>
+            Le <strong>NIST</strong> est une agence du Département du Commerce américain dont la
+            mission centrale est de produire des standards et des cadres méthodologiques de
+            référence — pour la mesure scientifique (étalons), pour la cybersécurité (NIST
+            Cybersecurity Framework, devenu standard international de fait), pour la gestion des
+            risques. La crédibilité du NIST tient à sa rigueur méthodologique et à son
+            indépendance vis-à-vis des intérêts commerciaux.
+          </p>
+          <p>
+            Plusieurs caractéristiques structurelles expliquent pourquoi le NIST AI RMF est devenu
+            une référence internationale :
+          </p>
+          <ul>
+            <li>
+              <strong>Mandat législatif fort</strong> — le cadre a été demandé par le Congrès
+              américain (National AI Initiative Act of 2020), ce qui lui donne une légitimité
+              institutionnelle.
+            </li>
+            <li>
+              <strong>Co-construction avec consultation publique</strong> — entreprises, chercheurs,
+              société civile, agences gouvernementales ont contribué à plusieurs versions de
+              consultation publique avant la publication finale en janvier 2023.
+            </li>
+            <li>
+              <strong>Approche basée sur le risque</strong>, compatible avec les cadres
+              réglementaires émergents (AI Act EU notamment) — pas une concurrence mais une
+              complémentarité.
+            </li>
+            <li>
+              <strong>Caractère volontaire</strong> — pas une obligation légale, donc pas
+              perçu comme une contrainte imposée. Cela facilite l'adoption.
+            </li>
+            <li>
+              <strong>Mise à jour vivante</strong> — le NIST publie régulièrement des compléments
+              (par exemple NIST AI 600-1 sur l'IA générative en juillet 2024) qui adaptent le
+              cadre aux évolutions technologiques.
+            </li>
+          </ul>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème adressé</h2>
+          <p>
+            Le NIST AI RMF répond à plusieurs problèmes que beaucoup d'organisations rencontrent
+            quand elles cherchent à structurer leur gouvernance IA :
+          </p>
+          <ul>
+            <li>
+              <strong>Comment passer des principes éthiques aux processus opérationnels</strong> ?
+              Beaucoup d'organisations publient des chartes éthiques IA mais peinent à les
+              traduire en processus, rôles et capacités d'action concrètes. Le NIST RMF fournit
+              cette traduction.
+            </li>
+            <li>
+              <strong>Comment intégrer la gouvernance IA aux processus existants</strong> de
+              gestion des risques (cybersécurité, conformité, opérationnel) ? Le RMF est conçu
+              pour s'articuler avec les cadres existants (NIST Cybersecurity Framework, ISO
+              27001, COSO ERM, etc.).
+            </li>
+            <li>
+              <strong>Comment couvrir le cycle de vie complet</strong> d'un système IA — de la
+              conception à la décommissionnement, en passant par les données, l'entraînement, le
+              déploiement, le monitoring ? Le RMF traite explicitement ce cycle de vie.
+            </li>
+            <li>
+              <strong>Comment articuler les rôles</strong> internes (DSI, métier, conformité,
+              data, RH, sécurité) sur un sujet par construction transverse ? Les sous-catégories
+              du RMF identifient explicitement les rôles concernés.
+            </li>
+            <li>
+              <strong>Comment rester compatible avec des cadres réglementaires</strong>
+              (AI Act EU, sectoriels, juridictionnels) qui imposent des obligations spécifiques ?
+              Le RMF est conçu comme socle méthodologique compatible.
+            </li>
+          </ul>
+        </section>
+
+        {/* === STRUCTURE DU CADRE === */}
+        <section id="solution">
+          <h2>Structure du cadre — quatre fonctions interreliées</h2>
+          <p>
+            Le AI RMF 1.0 articule quatre fonctions, chacune avec des catégories et sous-catégories
+            opérationnelles documentées dans le document principal et dans le Playbook
+            complémentaire.
+          </p>
+
+          <h3>1. Govern — Gouvernance organisationnelle (transverse)</h3>
+          <p>
+            La fonction <strong>Govern</strong> est <strong>transverse aux trois autres</strong>.
+            Elle structure les politiques, processus, procédures, et structures organisationnelles
+            qui permettent à l'ensemble de fonctionner. Sous-catégories typiques : politiques et
+            procédures IA, rôles et responsabilités, intégration aux processus de gestion des
+            risques existants, formation, supervision, transparence, mécanismes de redressement.
+            Sans la fonction Govern, les autres fonctions n'ont pas d'épine dorsale organisationnelle.
+          </p>
+
+          <h3>2. Map — Identifier le contexte et les risques</h3>
+          <p>
+            La fonction <strong>Map</strong> consiste à <strong>caractériser le système IA</strong>
+            dans son contexte d'usage : périmètre d'application, parties prenantes, dépendances,
+            risques potentiels, impacts attendus et non attendus. C'est la phase de cadrage —
+            sans elle, on ne sait pas ce qu'on essaie de mesurer ni de gérer. Sous-catégories
+            typiques : périmètre du système, contexte d'usage, parties prenantes affectées, risques
+            identifiés, dépendances techniques et organisationnelles.
+          </p>
+
+          <h3>3. Measure — Analyser et mesurer</h3>
+          <p>
+            La fonction <strong>Measure</strong> consiste à <strong>quantifier et qualifier les
+            risques</strong> identifiés au Map. Cela inclut les performances techniques (précision,
+            robustesse, cybersécurité), les biais (par sous-groupes), l'impact sur les utilisateurs,
+            la traçabilité, la conformité réglementaire. La mesure est continue — pas seulement à
+            la mise en service, mais tout au long du cycle de vie. Sous-catégories typiques :
+            métriques de performance, audits de biais, tests de robustesse, monitoring de production,
+            évaluation indépendante.
+          </p>
+
+          <h3>4. Manage — Prioriser et traiter</h3>
+          <p>
+            La fonction <strong>Manage</strong> consiste à <strong>prioriser les risques mesurés
+            et à les traiter</strong> — accepter, atténuer, transférer ou éviter. C'est la
+            fonction qui produit les décisions opérationnelles. Sous-catégories typiques : plans
+            de traitement des risques, communication aux parties prenantes, gestion d'incidents,
+            décommissionnement contrôlé, retour d'expérience.
+          </p>
+
+          <h3>Articulation des quatre fonctions</h3>
+          <p>
+            Les quatre fonctions ne sont pas séquentielles mais interreliées. <strong>Govern</strong>
+            structure transversalement. <strong>Map</strong>, <strong>Measure</strong> et
+            <strong> Manage</strong> peuvent itérer plusieurs fois dans le cycle de vie d'un
+            système — chaque fois qu'un changement important se produit (mise à jour technique,
+            évolution du contexte d'usage, détection d'un incident). Cette structure systémique
+            est ce qui distingue le NIST RMF d'une simple liste de bonnes pratiques.
+          </p>
+        </section>
+
+        {/* === BENEFICES === */}
+        <section id="benefices">
+          <h2>Bénéfices observés et adoption</h2>
+          <p>
+            Le NIST AI RMF est devenu, en quelques années, l'un des cadres de référence
+            internationaux les plus cités sur la gouvernance IA :
+          </p>
+          <ul>
+            <li>
+              <strong>Adoption large et diverse</strong> — entreprises (toutes tailles), agences
+              gouvernementales américaines, organisations internationales adoptent le cadre
+              comme socle. La page NIST documente régulièrement les usages.
+            </li>
+            <li>
+              <strong>Compatibilité avec les cadres réglementaires</strong> — l'AI Act EU peut
+              être mis en œuvre opérationnellement avec le NIST RMF comme méthode. Beaucoup
+              d'organisations européennes adoptent les deux.
+            </li>
+            <li>
+              <strong>Évolutivité documentée</strong> — le NIST publie des profils sectoriels
+              (par exemple NIST AI 600-1 pour l'IA générative en juillet 2024) qui adaptent le
+              cadre aux évolutions technologiques sans rupture.
+            </li>
+            <li>
+              <strong>Crédibilité méthodologique</strong> — la rigueur de la consultation publique,
+              l'indépendance du NIST, et la qualité documentaire en font une référence respectée
+              au-delà des frontières américaines.
+            </li>
+            <li>
+              <strong>Effet pédagogique structurant</strong> — le cadre est utilisé en formation
+              de praticiens IA, comme socle dans des cursus universitaires, comme référence dans
+              des certifications professionnelles. Cette diffusion académique renforce son
+              ancrage.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Le NIST publie des éléments qualitatifs sur l'adoption du cadre. Pour des
+            chiffres précis sur les organisations utilisatrices, consulter directement les
+            publications du NIST et les retours d'expérience documentés.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <ul>
+            <li>
+              <strong>Le caractère volontaire est à double tranchant</strong>. Sa force est
+              l'adoption sans contrainte — sa limite est qu'une organisation peut publier qu'elle
+              suit le cadre sans en respecter la rigueur opérationnelle. Le NIST n'a pas de
+              capacité d'audit externe sur l'application réelle.
+            </li>
+            <li>
+              <strong>L'application demande des compétences et des ressources</strong>. Mettre en
+              œuvre les quatre fonctions de manière opérationnelle suppose des équipes
+              transverses, des outils, du temps. Une PME ne peut pas appliquer le cadre dans toute
+              sa profondeur — il faudra adapter à l'échelle.
+            </li>
+            <li>
+              <strong>Le cadre n'est pas une solution clé-en-main</strong>. Il fournit la
+              structure, pas le contenu. À chaque organisation de définir comment, dans son
+              contexte spécifique, mettre en œuvre les quatre fonctions. Cette adaptation locale
+              est exigeante.
+            </li>
+            <li>
+              <strong>L'articulation avec l'AI Act EU demande du travail</strong>. Les deux
+              cadres sont compatibles mais pas identiques. Pour une organisation européenne,
+              cartographier les obligations AI Act sur les sous-catégories NIST RMF est un
+              exercice utile mais pas trivial.
+            </li>
+            <li>
+              <strong>Le rythme d'évolution technologique</strong> peut dépasser celui du cadre.
+              Le NIST publie des compléments (NIST AI 600-1 sur GenAI), mais maintenir la
+              cohérence dans la durée est un défi continu.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES === */}
+        <section id="risques">
+          <h2>Risques d'usage et garde-fous</h2>
+          <ul>
+            <li>
+              <strong>Risque d'usage cosmétique</strong>. Une organisation peut prétendre suivre
+              le cadre sans réellement appliquer les processus — le NIST AI RMF devient alors
+              ornemental. Garde-fous : audits internes, transparence sur l'application réelle,
+              comparaison avec les retours d'expérience publiés par d'autres organisations.
+            </li>
+            <li>
+              <strong>Risque de confusion avec une obligation légale</strong>. Le cadre est
+              volontaire — il ne se substitue pas aux obligations AI Act EU, RGPD, sectorielles,
+              juridictionnelles. Garde-fous : clarification interne sur ce qui relève de la
+              conformité légale (non négociable) vs des bonnes pratiques NIST (méthodologie
+              opérationnelle).
+            </li>
+            <li>
+              <strong>Risque de surcharge documentaire</strong>. Une application littérale et
+              exhaustive de toutes les sous-catégories peut produire une bureaucratie sans valeur
+              ajoutée réelle. Garde-fou : adapter à l'échelle et au contexte, prioriser les
+              sous-catégories les plus pertinentes pour les systèmes effectivement déployés.
+            </li>
+            <li>
+              <strong>Risque d'évolution réglementaire</strong>. Le cadre peut évoluer (versions
+              successives) ; les obligations légales évoluent aussi (AI Act EU en application
+              progressive jusqu'en 2027). Garde-fou : veille réglementaire et méthodologique
+              continue, capacité d'adaptation des chartes internes.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Comparez la <strong>structure NIST AI RMF</strong> (Govern / Map / Measure / Manage)
+              avec celle d'un cadre que vous connaissez (par exemple NIST Cybersecurity Framework,
+              ISO 27001, COSO ERM). Quelles sont les analogies ? Quelles sont les spécificités IA ?
+            </li>
+            <li>
+              Pour votre organisation, quelles seraient les <strong>3-5 sous-catégories</strong>
+              les plus prioritaires à mettre en œuvre en premier ? Pourquoi celles-ci et pas
+              d'autres ?
+            </li>
+            <li>
+              Le NIST AI RMF est <strong>compatible avec l'AI Act EU</strong> — comment articuler
+              les deux concrètement dans une organisation européenne ? Quel est le meilleur
+              découpage rôles/responsabilités ?
+            </li>
+            <li>
+              Le cadre est <strong>volontaire et non contraignant</strong>. Cette nature est-elle
+              un avantage ou une limite pour son adoption durable ? Quels mécanismes (internes
+              ou externes) compensent l'absence d'obligation ?
+            </li>
+            <li>
+              Pour <strong>éviter l'usage cosmétique</strong> du cadre, quels indicateurs
+              permettraient de distinguer une organisation qui l'applique réellement d'une
+              organisation qui prétend le faire ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module5Url}><strong>Module 5 — IA dans
+            l'entreprise et la société</strong></a> (cas principal) — gouvernance IA opérationnelle,
+            articulation entre principes éthiques et processus, compatibilité avec les cadres
+            réglementaires. Il est complémentaire du mini-cas AI Act EU classification haut risque
+            (qui couvre la dimension légale européenne). Il est aussi un point d'appui pour le
+            Module 6 (anticipation stratégique sur l'évolution des cadres de gouvernance).
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: universalRobotsUrl,
+            label: "Universal Robots",
+            context: 'Cas précédent',
+          }}
+          next={{
+            href: aiActEuUrl,
+            label: "AI Act EU classification haut risque",
+            context: 'Cas suivant',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

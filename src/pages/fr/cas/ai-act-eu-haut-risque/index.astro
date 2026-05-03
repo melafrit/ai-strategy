@@ -1,0 +1,546 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème adressé' },
+  { id: 'solution', label: "Architecture de l'AI Act" },
+  { id: 'benefices', label: 'Bénéfices observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: 'Risques de mise en œuvre' },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+const takeaways = [
+  "L'AI Act EU est le premier cadre réglementaire global et structuré sur l'IA — son approche basée sur le risque (4 catégories : interdit / haut risque / risque limité / risque minimal) est devenue une référence internationale, même au-delà de l'UE.",
+  "De nombreux usages business « ordinaires » tombent en haut risque : tri de CV, scoring de crédit, allocation de places dans une formation, dispositifs médicaux, identification biométrique. Ne pas identifier qu'un cas d'usage est haut risque est l'erreur la plus coûteuse possible — les obligations sont substantielles.",
+  "Les obligations haut risque sont une liste structurée : système de gestion des risques, gouvernance des données, documentation technique, transparence vis-à-vis des utilisateurs, supervision humaine, exactitude/robustesse/cybersécurité, évaluation de conformité, registre, notification aux autorités. Ce ne sont pas des principes — ce sont des exigences légales documentables.",
+  "Les sanctions sont substantielles : jusqu'à 35 millions d'euros ou 7 % du chiffre d'affaires mondial annuel pour les pratiques interdites — ordres de grandeur RGPD-compatibles. La dimension financière du non-respect est directe.",
+  "L'application est progressive jusqu'en 2027 — l'organisation a le temps de se préparer mais ne peut pas l'ignorer. La classification de chaque cas d'usage IA (existant ou planifié) est la première étape, à conduire dès maintenant.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Règlement (UE) 2024/1689 — texte intégral en français',
+    author: "Journal officiel de l'Union européenne (EUR-Lex)",
+    description:
+      "Texte intégral et officiel du Règlement européen sur l'IA, en français, publié au Journal officiel de l'Union européenne. Source primaire indispensable pour ce cas.",
+    href: 'https://eur-lex.europa.eu/legal-content/FR/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "AI Act — page d'information officielle de la Commission européenne",
+    author: 'Commission européenne — DG CNECT',
+    description:
+      "Page de la Commission européenne dédiée à l'AI Act. Présente le calendrier d'application, les obligations par catégorie, les acteurs (fournisseurs, déployeurs, importateurs, distributeurs). Source primaire complémentaire.",
+    href: 'https://digital-strategy.ec.europa.eu/fr/policies/regulatory-framework-ai',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (NIST RMF 1.0)',
+    author: 'NIST',
+    description:
+      "Cadre méthodologique américain compatible avec l'AI Act EU. Fournit la méthode opérationnelle pour mettre en œuvre concrètement les obligations AI Act — la combinaison des deux est puissante pour les organisations européennes.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+];
+
+const module5Url = getLocalizedUrl('/modules/05-ia-societe/', locale);
+const nistAiRmfUrl = getLocalizedUrl('/cas/nist-ai-rmf/', locale);
+const mitIdeUrl = getLocalizedUrl('/cas/mit-ide/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="AI Act EU — Classification haut risque — Étude de cas"
+  description="L'AI Act européen (Règlement UE 2024/1689) adopte une approche basée sur le risque (interdit / haut risque / risque limité / risque minimal). De nombreux usages business « ordinaires » tombent en haut risque avec obligations strictes."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 5 (mini-cas)"
+    title="AI Act EU — Classification haut risque"
+    lead="Le Règlement européen sur l'IA (UE 2024/1689) est le premier cadre réglementaire global et structuré sur l'IA. Approche basée sur le risque, obligations différenciées selon la catégorie, sanctions substantielles. Cas exemplaire pour le Module 5."
+  >
+    <span slot="stats">
+      Réglementation européenne · Cadre légal · 4 catégories de risque
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Référence légale</dt>
+              <dd>Règlement (UE) 2024/1689 du Parlement européen et du Conseil — communément appelé <em>AI Act</em> ou <em>Règlement européen sur l'IA</em></dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Adoption</dt>
+              <dd>Adopté en mai 2024, publié au Journal officiel de l'Union européenne le 12 juillet 2024, entré en vigueur le 1er août 2024</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Application</dt>
+              <dd>Application progressive jusqu'en août 2027 — pratiques interdites depuis février 2025, modèles à usage général depuis août 2025, systèmes haut risque progressivement</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Approche</dt>
+              <dd>Basée sur le risque — quatre catégories : <strong>pratiques interdites</strong> / <strong>haut risque</strong> / <strong>risque limité</strong> / <strong>risque minimal</strong>. Obligations différenciées par catégorie</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sanctions</dt>
+              <dd>Jusqu'à 35 millions d'euros ou 7 % du chiffre d'affaires mondial annuel pour les pratiques interdites — ordres de grandeur comparables au RGPD</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Texte intégral du Règlement publié au JOUE et page d'information de la Commission européenne <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            L'<strong>AI Act EU</strong> (Règlement UE 2024/1689) est le premier cadre
+            réglementaire global et structuré sur l'intelligence artificielle dans le monde. Il
+            adopte une <strong>approche basée sur le risque</strong> — plutôt que d'imposer les
+            mêmes obligations à tous les systèmes IA, le règlement calibre les exigences selon
+            l'impact potentiel sur les droits fondamentaux, la santé, la sécurité, et le bon
+            fonctionnement du marché unique.
+          </p>
+          <p>
+            Quatre catégories structurent les obligations. Les <strong>pratiques interdites</strong>
+            (notation sociale par les autorités publiques, manipulation cognitive subliminale,
+            identification biométrique massive en temps réel dans les espaces publics, sauf
+            exceptions) ne peuvent pas être déployées dans l'UE. Les systèmes <strong>haut risque</strong>
+            (recrutement et gestion RH, scoring de crédit, justice, services publics essentiels,
+            infrastructures critiques, certains dispositifs médicaux) sont soumis à des obligations
+            strictes. Les systèmes à <strong>risque limité</strong> (chatbots, deepfakes) ont des
+            obligations de transparence. Le reste relève du <strong>risque minimal</strong>.
+          </p>
+          <p>
+            Pour un dirigeant, le cas est central pour le Module 5 (IA dans l'entreprise et la
+            société) parce que l'AI Act change concrètement la manière de concevoir et déployer
+            des systèmes IA en Europe. <strong>De nombreux usages business « ordinaires » tombent
+            en haut risque</strong> (un système de tri de CV est en haut risque, par exemple) —
+            ne pas identifier cette qualification est l'erreur la plus coûteuse possible. La
+            classification de chaque cas d'usage IA est la première étape, à conduire dès
+            maintenant — l'application progressive jusqu'en 2027 laisse du temps mais ne dispense
+            pas de l'analyse.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'élaboration</h2>
+          <p>
+            L'AI Act EU a été proposé par la <strong>Commission européenne</strong> en avril 2021,
+            après plusieurs années de travaux préparatoires (groupe d'experts de haut niveau,
+            livre blanc 2020). Il a fait l'objet d'un long processus législatif au Parlement
+            européen et au Conseil, marqué par des négociations intenses sur plusieurs points
+            (modèles à usage général, identification biométrique, équilibre innovation/protection).
+            Le texte final a été adopté en mai 2024 et publié au JOUE le 12 juillet 2024.
+          </p>
+          <p>
+            Plusieurs caractéristiques structurelles expliquent l'importance de ce cadre :
+          </p>
+          <ul>
+            <li>
+              <strong>Premier cadre réglementaire global au monde</strong> sur l'IA — il a
+              influencé la pensée réglementaire dans plusieurs autres juridictions (Royaume-Uni,
+              États-Unis, Brésil, Corée du Sud, Japon, etc.).
+            </li>
+            <li>
+              <strong>Approche par le risque</strong> — innovation réglementaire majeure : pas
+              une obligation uniforme mais une calibration selon l'impact potentiel. Plus
+              pragmatique pour les organisations, plus protecteur pour les personnes concernées.
+            </li>
+            <li>
+              <strong>Champ d'application large</strong> — couvre les fournisseurs de systèmes
+              IA, les déployeurs (utilisateurs professionnels), les importateurs, les
+              distributeurs. Effet extraterritorial : un système déployé dans l'UE doit se
+              conformer même si le fournisseur est hors UE.
+            </li>
+            <li>
+              <strong>Articulation avec d'autres cadres</strong> — le règlement coexiste avec le
+              RGPD (données personnelles), les réglementations sectorielles (santé, finance,
+              transports), les normes (ISO 42001 IA management system, normes sectorielles).
+            </li>
+            <li>
+              <strong>Application progressive</strong> — entrée en vigueur immédiate mais
+              application progressive jusqu'en 2027 selon la nature des obligations. Cela donne
+              du temps aux organisations pour s'adapter.
+            </li>
+          </ul>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème adressé</h2>
+          <p>
+            L'AI Act répond à plusieurs problèmes structurants :
+          </p>
+          <ul>
+            <li>
+              <strong>Comment protéger les droits fondamentaux</strong> face à des systèmes IA
+              dont les décisions affectent directement des personnes (recrutement, crédit,
+              justice, santé, services publics) ?
+            </li>
+            <li>
+              <strong>Comment éviter les usages les plus dangereux</strong> (notation sociale
+              généralisée, manipulation cognitive, surveillance de masse) tout en permettant
+              l'innovation utile ?
+            </li>
+            <li>
+              <strong>Comment harmoniser le marché unique</strong> sur un sujet émergent où
+              chaque État membre risquerait sinon de produire ses propres règles fragmentées,
+              avec un coût de conformité multi-juridictionnel élevé ?
+            </li>
+            <li>
+              <strong>Comment articuler avec la souveraineté numérique européenne</strong> sans
+              entraver excessivement l'innovation européenne face à des concurrents américains
+              et chinois moins contraints réglementairement ?
+            </li>
+            <li>
+              <strong>Comment créer un cadre durable</strong> qui résiste aux évolutions
+              technologiques rapides — d'où l'approche par le risque qui ne dépend pas des
+              technologies spécifiques mais des impacts.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ARCHITECTURE === */}
+        <section id="solution">
+          <h2>Architecture de l'AI Act — quatre catégories de risque</h2>
+
+          <h3>1. Pratiques interdites (Article 5)</h3>
+          <p>
+            Certaines pratiques sont <strong>interdites par principe</strong> dans l'UE :
+            notation sociale généralisée par les autorités publiques, manipulation cognitive
+            subliminale ou exploitative de groupes vulnérables, identification biométrique en
+            temps réel dans les espaces publics par les forces de l'ordre (sauf exceptions
+            strictes), reconnaissance des émotions sur le lieu de travail ou en milieu éducatif,
+            scoring social par autorités publiques. Ces interdictions s'appliquent depuis
+            février 2025 — six mois après l'entrée en vigueur.
+          </p>
+
+          <h3>2. Systèmes à haut risque (Annexe III)</h3>
+          <p>
+            Le cœur du règlement. Les systèmes IA <strong>haut risque</strong> sont listés
+            limitativement à l'Annexe III, avec quelques sous-catégories majeures :
+            <strong> infrastructures critiques</strong> (énergie, transports, eau, communications) ;
+            <strong> éducation et formation professionnelle</strong> (admission, notation,
+            allocation de places) ; <strong>emploi et gestion RH</strong> (recrutement, tri de CV,
+            évaluation des employés, allocation des tâches) ; <strong>services privés et publics
+            essentiels</strong> (scoring de crédit, accès aux prestations sociales, services
+            d'urgence) ; <strong>application de la loi</strong> (police, justice, contrôle
+            frontalier) ; <strong>migration et asile</strong> ; <strong>justice et processus
+            démocratiques</strong> ; <strong>dispositifs médicaux</strong> (relevant déjà du
+            règlement MDR mais avec couches AI Act supplémentaires).
+          </p>
+          <p>
+            Les <strong>obligations</strong> pour les systèmes haut risque sont substantielles
+            (Articles 8 à 17) : système de gestion des risques, gouvernance des données (qualité,
+            biais, représentativité), documentation technique exhaustive, traçabilité (logs),
+            transparence vis-à-vis des utilisateurs, supervision humaine effective, exactitude
+            et robustesse, cybersécurité, évaluation de conformité avant mise sur le marché,
+            registre dans la base de données européenne, notification aux autorités. Ces
+            obligations ne sont pas optionnelles.
+          </p>
+
+          <h3>3. Systèmes à risque limité (transparence)</h3>
+          <p>
+            Certains systèmes ont des <strong>obligations principalement de transparence</strong>
+            (Article 50) : informer les utilisateurs qu'ils interagissent avec une IA (chatbots),
+            marquer les contenus générés ou substantiellement modifiés par IA (deepfakes),
+            informer les personnes filmées par des systèmes de reconnaissance des émotions ou
+            d'identification biométrique (quand l'usage est autorisé). Pas d'obligation de
+            conformité technique préalable, mais des obligations d'information continues.
+          </p>
+
+          <h3>4. Risque minimal (le reste)</h3>
+          <p>
+            La grande majorité des systèmes IA en entreprise (filtres anti-spam, moteurs de
+            recommandation simples, outils internes d'optimisation) <strong>relève du risque
+            minimal</strong> — pas d'obligations spécifiques au-delà du droit commun et des
+            engagements volontaires (codes de conduite). Cette catégorie est la plus large en
+            volume.
+          </p>
+
+          <h3>5. Modèles à usage général (couche transversale)</h3>
+          <p>
+            Le règlement comporte aussi un chapitre spécifique sur les <strong>modèles à usage
+            général</strong> (foundation models, LLMs comme GPT-4, Claude, Gemini) — Articles
+            51 à 56. Obligations principales : documentation technique, transparence du jeu
+            d'entraînement, respect du droit d'auteur, mesures de cybersécurité. Pour les modèles
+            présentant des risques systémiques (capacités de calcul élevées), des obligations
+            renforcées s'appliquent.
+          </p>
+
+          <h3>6. Calendrier d'application</h3>
+          <p>
+            <strong>Application progressive</strong> : pratiques interdites dès février 2025 ;
+            modèles à usage général dès août 2025 ; obligations haut risque applicables
+            progressivement jusqu'en août 2027 selon les sous-catégories. Ce calendrier laisse
+            du temps aux organisations pour se préparer mais impose de commencer l'analyse
+            dès maintenant.
+          </p>
+        </section>
+
+        {/* === BENEFICES === */}
+        <section id="benefices">
+          <h2>Bénéfices observés</h2>
+          <p>
+            L'AI Act produit déjà plusieurs effets observables, malgré son application
+            progressive :
+          </p>
+          <ul>
+            <li>
+              <strong>Effet de référence international</strong> — d'autres juridictions
+              (Royaume-Uni, États-Unis, Brésil, Corée, Japon) s'inspirent de l'approche par le
+              risque pour leurs propres cadres. Le cadre européen devient un standard de fait
+              au-delà des frontières de l'UE.
+            </li>
+            <li>
+              <strong>Structuration de la gouvernance interne</strong> dans les organisations
+              — la nécessité de classifier les systèmes IA et de documenter les obligations
+              pousse les organisations à structurer leur gouvernance IA (souvent en s'appuyant
+              sur des cadres complémentaires comme NIST AI RMF).
+            </li>
+            <li>
+              <strong>Émergence d'un écosystème de conformité</strong> — cabinets juridiques,
+              consultants, éditeurs spécialisés se développent pour accompagner les organisations.
+              Cela professionnalise le sujet et facilite la mise en œuvre.
+            </li>
+            <li>
+              <strong>Protection des personnes</strong> sur des cas d'usage à fort impact
+              (recrutement, crédit, justice) — obligation de supervision humaine, traçabilité,
+              voies de recours.
+            </li>
+            <li>
+              <strong>Clarté juridique pour les acteurs économiques</strong> — un cadre commun
+              au niveau européen évite la fragmentation par État membre. Coût de conformité
+              élevé mais prévisible et harmonisé.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Les bénéfices à long terme (protection effective des droits, équilibre
+            innovation/protection) seront évalués progressivement à mesure que le cadre s'applique
+            pleinement et que la jurisprudence émerge.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <ul>
+            <li>
+              <strong>La complexité technique du cadre</strong> est élevée. Plus de 100 articles,
+              plusieurs annexes, vocabulaire technique précis. Une PME ou une administration
+              moyenne n'a pas l'expertise interne pour appliquer le cadre seule — d'où le besoin
+              d'accompagnement.
+            </li>
+            <li>
+              <strong>Le coût de conformité</strong> peut être substantiel pour certains acteurs,
+              en particulier les fournisseurs de systèmes haut risque. Une conséquence possible
+              est la sortie de certains acteurs du marché européen (« effet Bruxelles inversé »
+              redouté par certains).
+            </li>
+            <li>
+              <strong>L'évaluation des modèles à usage général</strong> reste un sujet en
+              construction — comment évaluer concrètement les risques systémiques d'un foundation
+              model ? Quelles métriques ? Le règlement pose le cadre, les modalités précises se
+              construisent en pratique.
+            </li>
+            <li>
+              <strong>L'articulation avec d'autres réglementations</strong> peut produire des
+              superpositions — un dispositif médical avec IA est soumis à MDR + AI Act + RGPD,
+              avec des obligations parfois redondantes ou difficiles à articuler en pratique.
+            </li>
+            <li>
+              <strong>L'application effective</strong> dépend des autorités nationales (chaque
+              État membre désigne une ou plusieurs autorités). Risque de divergences
+              d'interprétation dans l'application — le AI Office au niveau européen (créé par le
+              règlement) cherche à harmoniser.
+            </li>
+            <li>
+              <strong>Le rythme d'évolution technologique</strong> peut dépasser celui du cadre
+              légal. Les actes délégués et lignes directrices de la Commission complètent et
+              adaptent le règlement, mais avec des délais incompressibles.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES === */}
+        <section id="risques">
+          <h2>Risques de mise en œuvre et garde-fous</h2>
+          <ul>
+            <li>
+              <strong>Risque de mauvaise classification.</strong> Un système haut risque
+              classifié à tort en risque limité expose l'organisation à des sanctions et à des
+              coûts de remédiation tardifs. Garde-fous : analyse de classification systématique
+              dès le cadrage, validation par la fonction conformité, revue régulière.
+            </li>
+            <li>
+              <strong>Risque de conformité formelle sans application réelle</strong>. Une
+              organisation peut produire la documentation requise sans réellement appliquer les
+              processus. Garde-fous : audit interne régulier, transparence sur l'application
+              réelle, articulation avec la gouvernance opérationnelle (typiquement NIST AI RMF
+              ou équivalent).
+            </li>
+            <li>
+              <strong>Risque de retard d'innovation</strong> par sur-prudence. Une lecture trop
+              restrictive du cadre peut conduire à abandonner des projets utiles qui ne tomberaient
+              pas effectivement en haut risque ou en interdit. Garde-fou : analyse précise de la
+              classification, recours à des experts juridiques quand nécessaire, équilibre entre
+              prudence et utilité.
+            </li>
+            <li>
+              <strong>Risque de surinvestissement documentaire</strong>. Toute la documentation
+              légale n'apporte pas la même valeur de gouvernance réelle. Garde-fou : intégrer la
+              documentation requise dans des processus opérationnels qui produisent de la valeur
+              au-delà de la conformité (gestion des risques, traçabilité, monitoring).
+            </li>
+            <li>
+              <strong>Risque d'évolution réglementaire</strong>. Les actes délégués, lignes
+              directrices et interprétations jurisprudentielles évoluent. Garde-fou : veille
+              réglementaire continue, capacité d'adaptation des chartes et processus internes.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Pour votre organisation, identifiez <strong>3 cas d'usage IA</strong> existants ou
+              envisagés et classifiez-les selon les 4 catégories AI Act. Quel cas est le plus
+              difficile à classifier ? Pourquoi ?
+            </li>
+            <li>
+              L'AI Act est compatible avec le <strong>NIST AI RMF</strong>. Comment articulez-
+              vous concrètement les deux dans une organisation européenne — qui fait quoi ? Quel
+              découpage rôles/responsabilités entre fonction conformité et fonction gouvernance
+              IA opérationnelle ?
+            </li>
+            <li>
+              L'<strong>application progressive jusqu'en 2027</strong> donne du temps. Comment
+              planifieriez-vous le programme de conformité dans votre organisation ? Quelles
+              actions à 0-6 / 6-12 / 12-24 mois ?
+            </li>
+            <li>
+              Certains acteurs craignent que l'AI Act <strong>défavorise l'innovation européenne</strong>
+              face à des concurrents américains et chinois moins contraints. Cette crainte est-elle
+              fondée ? Comment la nuancer ? Quelles actions au niveau organisation ou au niveau
+              politique pourraient mitiger ce risque ?
+            </li>
+            <li>
+              Si votre organisation déploie un système qui tombe en <strong>haut risque</strong>,
+              quels seraient les <strong>3 obligations</strong> les plus difficiles à mettre en
+              œuvre concrètement ? Pourquoi celles-ci ? Comment les adresser ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module5Url}><strong>Module 5 — IA dans
+            l'entreprise et la société</strong></a> (mini-cas) — cadre réglementaire européen,
+            classification par le risque, obligations différenciées, sanctions. Il est
+            complémentaire du cas principal NIST AI RMF (qui fournit la méthode opérationnelle
+            compatible). Il est aussi un point d'appui pour le Module 6 (anticipation stratégique
+            sur l'évolution réglementaire et son impact sur les roadmaps IA des organisations).
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: nistAiRmfUrl,
+            label: "NIST AI RMF",
+            context: 'Cas précédent',
+          }}
+          next={{
+            href: mitIdeUrl,
+            label: "MIT Initiative on the Digital Economy",
+            context: 'Cas suivant',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>
