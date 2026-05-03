@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
+import react from '@astrojs/react';
 
 /**
  * Astro configuration for AI Strategy.
@@ -46,6 +47,13 @@ export default defineConfig({
     tailwind({
       // We provide our own base/component layers via src/styles/global.css.
       applyBaseStyles: false,
+    }),
+    react({
+      // React island for interactive components (Phase 5+).
+      // Used for: <QuizInteractive /> (formative quiz with localStorage
+      // persistence, scoring, immediate feedback). Other islands may be
+      // added later (capstone roadmap builder, etc.).
+      include: ['**/components/**/*.tsx'],
     }),
   ],
 

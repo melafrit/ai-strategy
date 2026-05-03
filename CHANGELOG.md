@@ -77,7 +77,26 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 4.10 : FAQ + Capstone + Resources hub.~~ **→ ✅ COMPLÈTE : Resources hub (sub-1) + Capstone (sub-2) + FAQ (sub-3) publiés**
+- ~~Phase 5 — Composants interactifs et fiches PDF~~ **→ EN COURS : sub-1 publié (QuizInteractive React island sur Module 1, validation pattern)**
+
+- Phase 5 sub-1 — QuizInteractive React island :
+  - **NEW DEPENDENCIES** : `@astrojs/react@^3.6.3`, `react@^18.3.1`, `react-dom@^18.3.1`, `@types/react@^18.3.12`, `@types/react-dom@^18.3.1`. Ajout de l'intégration React à `astro.config.mjs` avec scope d'inclusion `**/components/**/*.tsx` (n'affecte pas les pages, ne crée pas de surcoût pour les composants .astro).
+  - **NEW COMPONENT — `src/components/QuizInteractive.tsx`** (~280 lignes) — île React avec :
+    - Sélection radio par question (4 options A-D)
+    - Validation par bouton « Valider ma réponse » (bouton désactivé tant qu'aucune option n'est choisie)
+    - Révélation immédiate après validation : verdict (correct/incorrect) + explication pédagogique, avec mise en évidence visuelle (border + background colorés)
+    - Indicateur de progression live (X révélées / N total + restantes/en attente)
+    - Score final avec scoring band match + interprétation, affiché uniquement quand toutes les questions sont révélées
+    - Bouton « Recommencer » (apparait dès une réponse validée) et « Réinitialiser » (avec confirmation)
+    - **Persistance localStorage** sous clé `ai-strategy:quiz:{id}` — état hydraté au mount
+    - Accessibilité : ARIA labels, keyboard navigation native sur radios, role status sur feedback
+    - Graceful SSR : rend toutes les questions et options en HTML server-side (visible sans JS, hydraté à la visibilité)
+  - **NEW STYLES** dans `src/styles/global.css` (~250 lignes ajoutées) — design tokens cohérents : couleurs vertes pour bonne réponse, rouges pour incorrect, accent pour picked, chip kind coloré par type (comprehension blue / application orange / judgment purple).
+  - **MODULE 1 ACTIVATION** — `src/pages/fr/modules/01-introduction-ia/index.astro` : remplacement de `<QuizPlaceholder>` par `<QuizInteractive client:visible>` (lazy hydration uniquement quand le quiz devient visible dans le viewport — économise le bundle JS sur les visiteurs qui ne descendent pas jusque-là).
+  - **VALIDATION PATTERN** : Module 1 sert de pilote. Modules 2-6 conservent QuizPlaceholder pour le sub-tour suivant (sub-2).
+  - Build validé : 82 pages, 0 erreur / 0 warning / 0 hint Astro check sur 130 fichiers. Bundle React `QuizInteractive.{hash}.js` séparé via code-splitting Astro. SSR vérifié : 7 questions × 4 options = 28 éléments rendus, scoring bands inclus, hydratation directive `astro-island opts=QuizInteractive` correctement injectée.
+
+
 
 ## 🎯 PHASE 4 COMPLÈTE — Tous les contenus FR publiés
 

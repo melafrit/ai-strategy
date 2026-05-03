@@ -243,3 +243,300 @@
     font-style: italic;
   }
 }
+
+/* ============================================================================
+ * QuizInteractive — Phase 5
+ *
+ * React island styles. Uses the same design tokens as Astro components.
+ * ========================================================================== */
+@layer components {
+  .ai-quiz {
+    margin-block: var(--ai-space-6);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+
+  .ai-quiz__header {
+    margin-block-end: var(--ai-space-4);
+    padding-block-end: var(--ai-space-3);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-quiz__title {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-quiz__intro {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-quiz__progress {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-quiz__progress-saved {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-xs);
+  }
+
+  .ai-quiz__bands-preview {
+    margin-block: var(--ai-space-4);
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-quiz__bands-preview summary {
+    cursor: pointer;
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-quiz__bands-list {
+    list-style: none;
+    margin: var(--ai-space-2) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-1);
+  }
+  .ai-quiz__band {
+    padding: var(--ai-space-1) var(--ai-space-2);
+    border-radius: var(--ai-radius-sm);
+  }
+  .ai-quiz__band--matched {
+    background: var(--ai-accent-subtle);
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-quiz__questions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-5);
+  }
+  .ai-quiz__question {
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    transition: background-color 200ms ease;
+  }
+  .ai-quiz__question--correct {
+    background: color-mix(in srgb, #5a8c63 8%, var(--ai-bg-base));
+  }
+  .ai-quiz__question--incorrect {
+    background: color-mix(in srgb, #c4514f 6%, var(--ai-bg-base));
+  }
+  .ai-quiz__question-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-quiz__question-number {
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-quiz__kind {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-medium);
+    background: var(--ai-bg-base);
+    color: var(--ai-fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ai-quiz__kind--comprehension {
+    background: color-mix(in srgb, #4a90e2 16%, var(--ai-bg-base));
+    color: #2563a5;
+  }
+  .ai-quiz__kind--application {
+    background: color-mix(in srgb, #d4904a 18%, var(--ai-bg-base));
+    color: #8b5a1f;
+  }
+  .ai-quiz__kind--judgment {
+    background: color-mix(in srgb, #8e6cb5 18%, var(--ai-bg-base));
+    color: #5b3d8a;
+  }
+  .ai-quiz__question-text {
+    margin: 0 0 var(--ai-space-3);
+    font-weight: var(--ai-weight-medium);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-quiz__options {
+    border: 0;
+    margin: 0 0 var(--ai-space-3);
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+  .ai-quiz__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .ai-quiz__option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-quiz__option:hover:not(:has(input:disabled)) {
+    border-color: var(--ai-accent-primary);
+  }
+  .ai-quiz__option--picked {
+    border-color: var(--ai-accent-primary);
+    background: var(--ai-accent-subtle);
+  }
+  .ai-quiz__option--answer {
+    border-color: #5a8c63;
+    background: color-mix(in srgb, #5a8c63 12%, var(--ai-bg-base));
+  }
+  .ai-quiz__option--wrong {
+    border-color: #c4514f;
+    background: color-mix(in srgb, #c4514f 8%, var(--ai-bg-base));
+  }
+  .ai-quiz__option input[type="radio"] {
+    flex-shrink: 0;
+    margin-block-start: 0.25rem;
+    accent-color: var(--ai-accent-primary);
+  }
+  .ai-quiz__option-letter {
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+    width: 1.25rem;
+  }
+  .ai-quiz__option-text {
+    flex: 1;
+    color: var(--ai-fg-primary);
+  }
+  .ai-quiz__option-mark {
+    flex-shrink: 0;
+    font-weight: var(--ai-weight-bold);
+    font-size: 1.1em;
+  }
+  .ai-quiz__option--answer .ai-quiz__option-mark {
+    color: #5a8c63;
+  }
+  .ai-quiz__option--wrong .ai-quiz__option-mark {
+    color: #c4514f;
+  }
+
+  .ai-quiz__submit {
+    padding: var(--ai-space-2) var(--ai-space-4);
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border: 0;
+    border-radius: var(--ai-radius-sm);
+    cursor: pointer;
+    font-weight: var(--ai-weight-semibold);
+    font-size: var(--ai-text-sm);
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+  .ai-quiz__submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .ai-quiz__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-quiz__feedback {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3);
+    border-radius: var(--ai-radius-sm);
+  }
+  .ai-quiz__feedback--correct {
+    background: color-mix(in srgb, #5a8c63 12%, var(--ai-bg-base));
+    border-inline-start: 3px solid #5a8c63;
+  }
+  .ai-quiz__feedback--incorrect {
+    background: color-mix(in srgb, #c4514f 8%, var(--ai-bg-base));
+    border-inline-start: 3px solid #c4514f;
+  }
+  .ai-quiz__feedback-verdict {
+    margin: 0 0 var(--ai-space-1);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-quiz__feedback-explanation {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-quiz__final {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4);
+    background: var(--ai-accent-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-quiz__final-title {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-quiz__final-score {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-lg);
+    color: var(--ai-fg-primary);
+  }
+  .ai-quiz__final-score em {
+    font-style: normal;
+    color: var(--ai-accent-primary);
+  }
+  .ai-quiz__final-interpretation {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-quiz__reset {
+    padding: var(--ai-space-2) var(--ai-space-4);
+    background: transparent;
+    color: var(--ai-fg-secondary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    cursor: pointer;
+    font-size: var(--ai-text-sm);
+    transition: border-color 120ms ease, color 120ms ease;
+  }
+  .ai-quiz__reset:hover {
+    border-color: var(--ai-accent-primary);
+    color: var(--ai-accent-primary);
+  }
+  .ai-quiz__reset-row {
+    margin-block-start: var(--ai-space-4);
+    text-align: end;
+  }
+  .ai-quiz__reset--inline {
+    font-size: var(--ai-text-xs);
+    padding: var(--ai-space-1) var(--ai-space-3);
+  }
+}
