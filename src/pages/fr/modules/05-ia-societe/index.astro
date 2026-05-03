@@ -9,7 +9,7 @@ import SourceTag from '@/components/SourceTag.astro';
 import PitfallList from '@/components/PitfallList.astro';
 import CaseCardCompact from '@/components/CaseCardCompact.astro';
 import Activity from '@/components/Activity.astro';
-import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import QuizInteractive from '@/components/QuizInteractive';
 import Checklist from '@/components/Checklist.astro';
 import KeyTakeaways from '@/components/KeyTakeaways.astro';
 import ResourceList from '@/components/ResourceList.astro';
@@ -626,7 +626,7 @@ const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
             d'application, une de jugement. Chaque réponse incorrecte déplie une explication
             pédagogique qui pointe vers la section à revoir.
           </p>
-          <QuizPlaceholder
+          <QuizInteractive client:visible
             id="quiz-module-5"
             title={quizModule5.title}
             intro={quizModule5.intro}

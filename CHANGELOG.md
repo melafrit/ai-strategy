@@ -77,7 +77,17 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 5 — Composants interactifs et fiches PDF~~ **→ EN COURS : sub-1 publié (QuizInteractive React island sur Module 1, validation pattern)**
+- ~~Phase 5 — Composants interactifs et fiches PDF~~ **→ EN COURS : sub-1 (QuizInteractive Module 1) et sub-2 (Modules 2-6 + UX polish) publiés**, sub-3 (PDFs stylisés) restant.
+
+- Phase 5 sub-2 — Déploiement aux Modules 2-6 + UX polish :
+  - **DÉPLOIEMENT MASSE** : remplacement de `<QuizPlaceholder>` par `<QuizInteractive client:visible>` dans les pages des Modules 2 (Machine Learning), 3 (IA générative), 4 (Robotique), 5 (IA et société), 6 (Futur de l'IA). Pattern uniforme — 5 imports + 5 invocations changés en une seule passe sed. Module 1 conservait déjà QuizInteractive depuis sub-1.
+  - **UX POLISH — Raccourcis clavier** : touches <kbd>1</kbd>-<kbd>4</kbd> pour choisir l'option correspondante (sans modificateurs), <kbd>Entrée</kbd> pour valider quand une option est cochée. Handler attaché par question via `onKeyDown` sur le `<li>` — ne capture les touches que quand le focus est dans la carte de question (n'interfère pas avec d'autres parties de la page).
+  - **UX POLISH — Astuce clavier visible** : nouveau bloc `.ai-quiz__kbd-hint` au-dessus des questions, n'apparaît qu'après hydratation et seulement si le quiz n'est pas terminé. Utilise des éléments `<kbd>` stylisés (font mono, bordure, ombre subtile).
+  - **UX POLISH — Focus management après révélation** : `requestAnimationFrame` après `setState` pour laisser React commiter, puis `scrollIntoView({behavior:'smooth', block:'nearest'})` + `focus({preventScroll:true})` sur le bloc feedback. Combiné avec `aria-live="polite"` et `tabIndex={-1}` sur le feedback, les screen readers annoncent automatiquement le verdict + l'explication.
+  - **UX POLISH — Auto-ouverture du scoring** : `<details open={allRevealed}>` ouvre automatiquement le panneau de scoring bands quand toutes les questions sont révélées, et change le `<summary>` pour signaler que le niveau atteint est mis en évidence.
+  - **NEW STYLES** ajoutés à `src/styles/global.css` : styles `.ai-quiz__kbd-hint` + `kbd` + focus ring sur `.ai-quiz__feedback:focus`.
+  - Build validé : 82 pages, 0 erreur / 0 warning / 0 hint Astro check sur 130 fichiers. Bundle React `QuizInteractive.{hash}.js` = 7.4 kB après ajouts (compact). SSR vérifié sur les 6 modules : 28 option-letters chacun (7 questions × 4 options) + astro-island markers correctement injectés.
+  - Pattern d'hydration vérifié : `hydrated` flag prévient les mismatches React, le kbd-hint et les feedbacks ne sont rendus qu'après mount client-side (cohérent avec l'attente que ces éléments dépendent de JS).
 
 - Phase 5 sub-1 — QuizInteractive React island :
   - **NEW DEPENDENCIES** : `@astrojs/react@^3.6.3`, `react@^18.3.1`, `react-dom@^18.3.1`, `@types/react@^18.3.12`, `@types/react-dom@^18.3.1`. Ajout de l'intégration React à `astro.config.mjs` avec scope d'inclusion `**/components/**/*.tsx` (n'affecte pas les pages, ne crée pas de surcoût pour les composants .astro).

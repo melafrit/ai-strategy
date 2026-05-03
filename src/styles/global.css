@@ -540,3 +540,34 @@
     padding: var(--ai-space-1) var(--ai-space-3);
   }
 }
+
+/* QuizInteractive — UX polish (Phase 5 sub-2) */
+@layer components {
+  .ai-quiz__kbd-hint {
+    margin: var(--ai-space-2) 0 0;
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-quiz__kbd-hint kbd {
+    display: inline-block;
+    padding: 0.05rem 0.35rem;
+    margin: 0 0.05rem;
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    font-size: 0.85em;
+    font-family: var(--ai-font-mono, ui-monospace, monospace);
+    color: var(--ai-fg-primary);
+    box-shadow: 0 1px 0 var(--ai-border-subtle);
+  }
+
+  /* Focus ring on the feedback region when programmatically focused */
+  .ai-quiz__feedback:focus {
+    outline: 2px solid var(--ai-accent-primary);
+    outline-offset: 2px;
+  }
+  .ai-quiz__feedback:focus:not(:focus-visible) {
+    outline: none;
+  }
+}

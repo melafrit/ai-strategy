@@ -9,7 +9,7 @@ import SourceTag from '@/components/SourceTag.astro';
 import PitfallList from '@/components/PitfallList.astro';
 import CaseCardCompact from '@/components/CaseCardCompact.astro';
 import Activity from '@/components/Activity.astro';
-import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import QuizInteractive from '@/components/QuizInteractive';
 import Checklist from '@/components/Checklist.astro';
 import KeyTakeaways from '@/components/KeyTakeaways.astro';
 import ResourceList from '@/components/ResourceList.astro';
@@ -569,7 +569,7 @@ const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
             pédagogique qui pointe vers la section à revoir. Le quiz est diagnostique — son but est
             de cadrer votre lecture du Module 3, pas de noter votre progression.
           </p>
-          <QuizPlaceholder
+          <QuizInteractive client:visible
             id="quiz-module-2"
             title={quizModule2.title}
             intro={quizModule2.intro}

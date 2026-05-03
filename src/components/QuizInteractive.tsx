@@ -139,15 +139,71 @@ export default function QuizInteractive({
     []
   );
 
-  const onSubmit = useCallback((qIdx: number) => {
-    setState((prev) => {
-      if (prev.revealed[qIdx]) return prev;
-      if (prev.answers[qIdx] === -1) return prev; // nothing picked
-      const revealed = [...prev.revealed];
-      revealed[qIdx] = true;
-      return { ...prev, revealed };
-    });
-  }, []);
+  const onSubmit = useCallback(
+    (qIdx: number) => {
+      setState((prev) => {
+        if (prev.revealed[qIdx]) return prev;
+        if (prev.answers[qIdx] === -1) return prev; // nothing picked
+        const revealed = [...prev.revealed];
+        revealed[qIdx] = true;
+        return { ...prev, revealed };
+      });
+      // After the DOM updates, focus the feedback region so screen readers
+      // announce it, and scroll it gently into view. Using rAF lets React
+      // commit the state change first.
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(
+            `${componentId}-q${qIdx}-feedback`
+          );
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            el.focus({ preventScroll: true });
+          }
+        });
+      }
+    },
+    [componentId]
+  );
+
+  /**
+   * Per-question keyboard shortcuts:
+   * - Digits 1-4 pick the corresponding option
+   * - Enter validates if not yet revealed
+   * The handler is attached on each <li> via onKeyDown — it only fires when
+   * the question (or one of its descendants) has focus, so it cannot steal
+   * keystrokes from outside the quiz.
+   */
+  const handleQuestionKeyDown = useCallback(
+    (qIdx: number) => (e: React.KeyboardEvent<HTMLLIElement>) => {
+      if (state.revealed[qIdx]) return; // no-op once revealed
+      // Skip if the user is typing in an input/textarea (none here today,
+      // but defensive against future enrichment).
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'TEXTAREA' || (tag === 'INPUT' && (e.target as HTMLInputElement).type === 'text')) {
+        return;
+      }
+      // Digits 1..4 → pick option (no modifiers)
+      if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (e.key >= '1' && e.key <= '4') {
+          e.preventDefault();
+          onPick(qIdx, parseInt(e.key, 10) - 1);
+          return;
+        }
+        // Enter validates — but only if a pick is made and the focused element
+        // is not the validate button itself (which already submits via click).
+        if (e.key === 'Enter') {
+          const focused = document.activeElement as HTMLElement | null;
+          const isButton = focused?.tagName === 'BUTTON';
+          if (!isButton && state.answers[qIdx] !== -1) {
+            e.preventDefault();
+            onSubmit(qIdx);
+          }
+        }
+      }
+    },
+    [onPick, onSubmit, state.answers, state.revealed]
+  );
 
   const onReset = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -205,12 +261,24 @@ export default function QuizInteractive({
             </span>
           )}
         </div>
+
+        {hydrated && !allRevealed && (
+          <p className="ai-quiz__kbd-hint">
+            <span aria-hidden="true">⌨️</span> Astuce clavier — utilisez{' '}
+            <kbd>1</kbd> à <kbd>4</kbd> pour choisir une option et{' '}
+            <kbd>Entrée</kbd> pour valider la question.
+          </p>
+        )}
       </header>
 
-      {/* Scoring bands preview (always visible) */}
+      {/* Scoring bands preview (always visible — auto-opens at completion) */}
       {scoringBands && scoringBands.length > 0 && (
-        <details className="ai-quiz__bands-preview">
-          <summary>Échelle de scoring (à titre indicatif)</summary>
+        <details className="ai-quiz__bands-preview" open={allRevealed}>
+          <summary>
+            {allRevealed
+              ? 'Échelle de scoring (votre niveau atteint est mis en évidence)'
+              : 'Échelle de scoring (à titre indicatif)'}
+          </summary>
           <ul className="ai-quiz__bands-list">
             {scoringBands.map((b) => (
               <li
@@ -251,6 +319,7 @@ export default function QuizInteractive({
                     : 'ai-quiz__question--incorrect'
                   : ''
               }`}
+              onKeyDown={handleQuestionKeyDown(qIdx)}
             >
               <header className="ai-quiz__question-head">
                 <span className="ai-quiz__question-number">
@@ -269,7 +338,7 @@ export default function QuizInteractive({
               <fieldset
                 className="ai-quiz__options"
                 disabled={revealed}
-                aria-describedby={revealed ? `${groupName}-feedback` : undefined}
+                aria-describedby={revealed ? `${componentId}-q${qIdx}-feedback` : undefined}
               >
                 <legend className="ai-quiz__sr-only">
                   Options de réponse
@@ -327,13 +396,15 @@ export default function QuizInteractive({
 
               {revealed && (
                 <div
-                  id={`${groupName}-feedback`}
+                  id={`${componentId}-q${qIdx}-feedback`}
+                  tabIndex={-1}
                   className={`ai-quiz__feedback ${
                     isCorrect
                       ? 'ai-quiz__feedback--correct'
                       : 'ai-quiz__feedback--incorrect'
                   }`}
                   role="status"
+                  aria-live="polite"
                 >
                   <p className="ai-quiz__feedback-verdict">
                     {isCorrect ? '✓ Bonne réponse.' : '✗ Réponse incorrecte.'}
