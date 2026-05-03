@@ -1,0 +1,845 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule4 from '@/content/quizzes/module-4';
+
+const locale = 'fr';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Synthèse exécutive' },
+  { id: 'objectifs', label: "Objectifs d'apprentissage" },
+  { id: 'concepts', label: 'Concepts clés' },
+  { id: 'erreurs-frequentes', label: 'Erreurs fréquentes' },
+  { id: 'cas-reel', label: 'Cas réel' },
+  { id: 'activite', label: 'Activité pratique' },
+  { id: 'quiz', label: 'Quiz formatif' },
+  { id: 'checklist', label: 'Checklist manager' },
+  { id: 'application', label: 'Application dans votre organisation' },
+  { id: 'a-retenir', label: 'À retenir' },
+  { id: 'pour-aller-plus-loin', label: 'Pour aller plus loin' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  "Distinguer robot industriel classique, cobot et robot mobile autonome (AMR/AGV) — et savoir lequel correspond à un cas d'usage.",
+  "Comprendre les trois piliers d'un système robotique (perception, planification, contrôle) et leurs implications pour le cadrage de projet.",
+  "Connaître les normes de sécurité applicables (ISO 10218 pour les robots industriels, ISO/TS 15066 pour les cobots) et les obligations qui en découlent.",
+  "Évaluer le coût total réel d'un projet robotique en intégrant la part décisive de l'intégration (50-70 % du total).",
+  "Construire un cadrage économique et social défendable : payback, dimension RH, dialogue social, conduite du changement.",
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Comparer des prix de robots sans comparer le coût total",
+    error:
+      "Choisir un robot ou un cobot en se fondant principalement sur son prix d'achat (« 25 000 € pour celui-ci, 35 000 € pour celui-là »), et découvrir en cours d'intégration que les coûts réels (préhenseurs, programmation, certification, formation, modifications de l'environnement) bouleversent complètement le classement initial.",
+    mechanism:
+      "Le prix d'achat du robot est une métrique facile à comparer entre fournisseurs. Le coût d'intégration est diffus, propre au site, et difficile à anticiper sans expérience. L'intégration représente typiquement 50 à 70 % du coût total du projet — le robot lui-même n'est que 30 à 50 %. Sous-estimer cette répartition mène à des dossiers économiquement faux.",
+    mitigation:
+      "Toujours raisonner en coût total du projet, jamais en prix de robot. Découper le budget en au moins 8 lignes (robot + outillage + étude de poste + programmation + mise au point + sécurité + formation + maintenance première année). Si le robot représente plus de 50 % du total, l'intégration est probablement sous-estimée.",
+  },
+  {
+    title: "Confondre robotique standalone et robotique collaborative",
+    error:
+      "Choisir un robot industriel classique en supposant qu'on pourra le « rendre collaboratif » avec des dispositifs ajoutés (capteurs externes, barrières immatérielles), ou inversement choisir un cobot en pensant qu'il atteindra les performances d'un robot industriel — et constater que les deux paris sont perdus.",
+    mechanism:
+      "Robot industriel et cobot répondent à des cadres normatifs et techniques différents. Le robot industriel (ISO 10218) est conçu pour la performance brute en isolation des humains ; le cobot (ISO/TS 15066) est conçu pour la coexistence avec contrôle de force et de vitesse. Tenter de combler l'écart par des ajouts ne change pas la nature du système et peut compromettre la sécurité.",
+    mitigation:
+      "Décider tôt et clairement entre les deux familles. Si le poste exige une coexistence humaine fréquente, le cobot est la bonne réponse — accepter ses limites de performance. Si la performance brute prime et que le poste peut être isolé, le robot industriel est la bonne réponse — accepter la cellule grillagée. Les solutions hybrides existent mais demandent une expertise spécifique en intégration de sécurité.",
+  },
+  {
+    title: "Sous-estimer les enjeux RH, sociaux et juridiques",
+    error:
+      "Présenter un projet robotique en COMEX uniquement sur les chiffres de productivité et de payback, sans traiter explicitement les conséquences pour les opérateurs concernés (redéploiement, formation, suppression de postes), et découvrir tardivement les blocages — refus du CSE, contestation syndicale, conflit prud'homal, atteinte à la marque employeur.",
+    mechanism:
+      "La robotique change le cadre de travail. La législation française et européenne impose des obligations spécifiques : information-consultation du CSE, étude d'impact, plan de formation, accompagnement des salariés concernés. Ignorer ces obligations expose juridiquement l'employeur, et abaisse les chances de réussite opérationnelle (un projet contesté est mal adopté par les équipes).",
+    mitigation:
+      "Intégrer dès le cadrage initial une dimension RH explicite : qui est concerné, quel parcours est proposé (redéploiement, formation, mobilité), comment le dialogue social est conduit. Privilégier les projets dont le bénéfice combine productivité + ergonomie + qualité, plus défendables socialement que les projets de pure réduction de masse salariale.",
+  },
+  {
+    title: "Négliger la maintenance et le run après mise en service",
+    error:
+      "Considérer le projet robotique comme « fini » à la mise en service, sans budget récurrent pour la maintenance, sans contrat de service avec l'intégrateur, sans personnel formé en interne pour les interventions de premier niveau — et constater que les arrêts non programmés détruisent le ROI initialement calculé.",
+    mechanism:
+      "Un robot en production est exposé à l'usure mécanique, à la dégradation des capteurs, à la dérive des programmes au fil des évolutions de produits, à des incidents (collision, surcharge). Sans dispositif de maintenance préventive et corrective, le taux de disponibilité chute. Or le calcul de payback suppose une disponibilité élevée et durable.",
+    mitigation:
+      "Budgétiser explicitement la maintenance préventive (typiquement 5-10 % de l'investissement par an), le contrat de service avec l'intégrateur, et la formation interne d'un référent maintenance. Mesurer en continu le taux de disponibilité (TRS) et le comparer à l'hypothèse du calcul de payback. Adapter dès qu'un écart se confirme.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Décrire le poste candidat",
+    body: "Choisissez un poste candidat à la robotisation dans votre organisation. Décrivez précisément le travail actuel : qui le fait, avec quels outils, à quelle cadence. Identifiez les caractéristiques (répétitif, pénible, précis, risqué). Formulez en une phrase pourquoi ce poste est candidat — privilégier les motivations combinées (ergonomie + productivité) aux pures réductions de coûts salariaux.",
+  },
+  {
+    heading: "Choisir la famille robotique",
+    body: "Décidez entre robot industriel classique (ISO 10218, performance brute, isolation), cobot (ISO/TS 15066, coexistence humaine), ou robot mobile autonome (AMR/AGV pour transport en environnements changeants). Justifiez le choix en 2 lignes — il doit être traçable jusqu'à l'argumentaire COMEX.",
+  },
+  {
+    heading: "Analyser sécurité et intégration",
+    body: "Identifiez le cadre normatif applicable, listez les exigences de sécurité (analyse de risque, mesure de force/vitesse pour cobots, formation, procédures incident, maintenance). Inventoriez les composants d'intégration nécessaires (préhenseurs, convoyeurs, capteurs, interfaces SI, modifications environnement). Estimez la durée d'intégration en semaines.",
+  },
+  {
+    heading: "Évaluer coût total et payback",
+    body: "Découpez le coût en au moins 8 lignes (robot + outillage + étude + programmation + mise au point + sécurité + formation + maintenance). Estimez les gains multi-dimensionnels (productivité + qualité + ergonomie + flexibilité). Calculez le payback. Cible : 18-36 mois pour un projet bien cadré, 36-60 mois acceptable si l'ergonomie ou la qualité justifient.",
+  },
+];
+
+const activityCriteria = [
+  "Le poste candidat est décrit précisément (qui, quoi, combien).",
+  "La famille robotique est choisie et justifiée (industriel/cobot/AMR).",
+  "Le cadre normatif applicable est identifié et au moins 4 exigences de sécurité prévues.",
+  "Le coût total est découpé en au moins 8 lignes ; le robot représente moins de 50 % du total.",
+  "Les gains sont multi-dimensionnels et la dimension RH est traitée explicitement.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Cadrage technique du projet",
+    items: [
+      "Le poste candidat est décrit avec précision (volume, cadence, environnement, contraintes).",
+      "Le choix de famille robotique (industriel, cobot, AMR) est justifié au regard du poste.",
+      "Les trois piliers (perception, planification, contrôle) sont correctement positionnés pour le cas.",
+      "L'intégrateur retenu a des références vérifiables sur des projets similaires.",
+    ],
+  },
+  {
+    title: "Sécurité, normes et conformité",
+    items: [
+      "Le cadre normatif applicable est identifié (ISO 10218 / ISO/TS 15066 / Directive Machines).",
+      "Une analyse de risque formelle est prévue avant la mise en service (par l'intégrateur, contre-expertise interne).",
+      "La formation et la certification des opérateurs sont planifiées (procédures d'urgence, signalement d'incident).",
+      "Un plan de maintenance préventive et de contrôle de sécurité périodique est défini.",
+    ],
+  },
+  {
+    title: "Économie et social",
+    items: [
+      "Le coût total intègre l'intégration (50-70 % typiques) en plus du robot lui-même.",
+      "Les gains attendus sont multi-dimensionnels (productivité + qualité + ergonomie + flexibilité).",
+      "Le payback estimé est dans une fourchette défendable (18-36 mois cible, 36-60 mois si ergonomie/qualité forts).",
+      "La dimension RH est traitée : information-consultation CSE, plan de formation, accompagnement des salariés concernés.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "Le concept clé : la robotique en entreprise repose sur trois piliers (perception, planification, contrôle) — le choix de famille (robot industriel, cobot, AMR) est structurant pour la suite.",
+  "Le cas exemplaire : Amazon Robotics montre comment l'intégration massive de robotique mobile autonome dans la logistique transforme l'économie de la chaîne de distribution — orchestration humain + machine, pas remplacement.",
+  "Le piège majeur : comparer des prix de robots sans comparer les coûts totaux — l'intégration représente 50-70 % du coût d'un projet robotique en entreprise.",
+  "L'outil opérationnel : le canvas d'évaluation projet robotique en 4 étapes (poste / famille / sécurité+intégration / coût total et payback) avant tout engagement.",
+  "La suite : le Module 5 prend du recul et explore les enjeux d'IA dans l'entreprise et la société (gouvernance, éthique, travail, conformité) — qui dépassent une famille technologique particulière.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'video' as const,
+    title: 'Introduction to Robotics (cours complet)',
+    author: 'MIT OpenCourseWare — 2.12',
+    description:
+      "Cours d'introduction MIT à la robotique. Bases techniques (cinématique, dynamique, contrôle, perception) accessibles à un public motivé. Vidéos, polycopiés, exercices.",
+    href: 'https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Amazon deploys over 1 million robots and launches new AI foundation model',
+    author: 'About Amazon (communications officielles)',
+    description:
+      "Communication officielle Amazon sur le déploiement de plus d'un million de robots dans son réseau logistique et le lancement de DeepFleet. Cas exemplaire d'orchestration humain-machine à très grande échelle.",
+    href: 'https://www.aboutamazon.com/news/operations/amazon-million-robots-ai-foundation-model',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "Cadre opérationnel américain pour la gestion des risques IA, applicable aussi aux systèmes robotiques autonomes ou intégrant de l'IA. Référence pour les responsables gouvernance et sécurité.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Règlement (UE) 2024/1689 — AI Act',
+    author: "Journal officiel de l'Union européenne",
+    description:
+      "Texte intégral du règlement européen sur l'IA, en français. Indispensable pour cadrer la conformité des projets robotiques intégrant des composants IA — particulièrement pour les usages à haut risque (santé, sécurité critique).",
+    href: 'https://eur-lex.europa.eu/legal-content/FR/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Principes de l'OCDE sur l'intelligence artificielle",
+    author: 'OCDE',
+    description:
+      "Cinq principes pour un déploiement responsable de l'IA (et par extension des systèmes robotiques autonomes). Adoptés par 47 pays. Disponible en français.",
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: "Canvas d'évaluation d'un projet robotique",
+    author: 'AI Strategy — Module 4',
+    description:
+      "Canvas Markdown imprimable pour structurer l'évaluation d'un projet robotique en 4 étapes (poste / famille / sécurité+intégration / coût total et payback).",
+    href: '/downloads/canvas-evaluation-projet-robotique-module-4.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module3Url = getLocalizedUrl('/modules/03-ia-generative/', locale);
+const module5Url = getLocalizedUrl('/modules/05-ia-societe/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+---
+
+<BaseLayout
+  title="Module 4 — Robotique en entreprise"
+  description="Robot industriel, cobot, AMR/AGV : choisir la bonne famille. Cadre normatif (ISO 10218, ISO/TS 15066), coût total réel (intégration 50-70 %), cadrage économique et social. Cas Amazon Robotics."
+>
+  <HeroSecondary
+    surtitle="Module 4 · Robotique en entreprise"
+    title="Cadrer un projet robotique : famille, sécurité, coût total"
+    lead="Quatrième module du parcours. On y apprend à distinguer les familles robotiques (industriel, cobot, AMR), à connaître les normes de sécurité applicables, à évaluer honnêtement le coût total d'un projet (avec une intégration qui pèse 50-70 % du total), et à construire un cadrage économique et social défendable. Cas exemplaire : Amazon Robotics."
+  >
+    <span slot="stats">
+      Durée recommandée : 6-8 h · Niveau : Découverte / Applicable · Prérequis : Modules 1 à 3
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — SYNTHÈSE EXÉCUTIVE === */}
+        <ExecutiveSummary>
+          <p>
+            La <strong>robotique</strong> est l'une des technologies les plus matures de l'IA
+            appliquée — la production de série existe depuis les années 1960 — et l'une des plus en
+            mouvement aujourd'hui, sous l'effet de deux ruptures : l'arrivée des <strong>cobots</strong>
+            (robots collaboratifs, ISO/TS 15066) qui peuvent partager l'espace humain, et l'intégration
+            croissante d'<strong>IA</strong> (vision par ordinateur, apprentissage, planification) qui
+            permet à des robots mobiles autonomes (AMR/AGV) d'opérer dans des environnements moins
+            structurés.
+          </p>
+          <p>
+            Pour un dirigeant, la décision robotique se cadre sur trois axes. Le <strong>choix de
+            famille</strong> — industriel classique (performance brute, isolation), cobot (coexistence
+            humaine), AMR (mobilité autonome) — est structurant pour toute la suite. Le <strong>coût
+            total</strong> est le piège le plus fréquent : l'intégration représente typiquement 50 à
+            70 % du coût total d'un projet, le robot lui-même seulement 30 à 50 %. Comparer des prix
+            de robots entre eux sans comparer les coûts totaux mène à des décisions économiquement
+            fausses. La <strong>dimension RH et sociale</strong> est non négociable : information-consultation
+            du CSE, plan de formation, accompagnement des salariés concernés sont à la fois des
+            obligations légales et des conditions de réussite opérationnelle.
+          </p>
+          <p>
+            Les projets robotiques bien cadrés combinent productivité, qualité et ergonomie — pas
+            la pure réduction de masse salariale. Le payback typique d'un projet bien cadré se situe
+            entre 18 et 36 mois ; au-delà de 60 mois, le périmètre ou l'ambition sont à revoir. Le
+            cas Amazon Robotics, détaillé dans ce module, illustre comment l'orchestration de plus
+            d'un million de robots en logistique peut transformer durablement une économie de
+            distribution — non en remplaçant les humains mais en réorganisant leur travail.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIFS === */}
+        <section id="objectifs">
+          <h2>Objectifs d'apprentissage</h2>
+          <p>À l'issue de ce module, vous saurez :</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Concepts clés</h2>
+          <p>
+            Cinq concepts structurent ce module. Chacun est sourcé. La hiérarchie des sources est
+            <a href={methodeUrl}> expliquée dans la méthode</a>.
+          </p>
+
+          <ConceptCard
+            id="familles-robotique"
+            title="Trois familles robotiques pour trois cas d'usage"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              La robotique en entreprise se décline aujourd'hui en trois grandes familles, chacune
+              avec son cadre normatif, ses cas d'usage typiques, et ses contraintes :
+            </p>
+            <p>
+              <strong>Robot industriel classique</strong> (norme ISO 10218). Conçu pour la performance
+              brute — vitesse, précision, charge utile élevée. Doit être isolé des humains par cellule
+              grillagée ou barrières immatérielles. Adapté à la production en série, environnement
+              structuré, volumes très importants. Les exemples canoniques : robots de soudure
+              automobile, peinture, manipulation lourde.
+            </p>
+            <p>
+              <strong>Cobot</strong> (norme ISO/TS 15066). Conçu d'emblée pour la coexistence avec
+              l'humain : capteurs détectant le contact, force limitée, vitesse adaptée à la zone de
+              travail. Adapté aux postes mixtes, montage assisté, contrôle qualité partagé. Permet
+              à des PME d'accéder à la robotique sans cellules complexes. Les exemples typiques :
+              cobots Universal Robots ou équivalents, sur des postes de palettisation légère, vissage
+              ou assemblage de petits composants.
+            </p>
+            <p>
+              <strong>Robot mobile autonome (AMR/AGV)</strong>. Conçu pour le transport de charges
+              dans des environnements potentiellement changeants (entrepôts, hôpitaux, ateliers).
+              Combine perception (lidar, caméras), navigation autonome, planification de trajectoire.
+              Adapté à l'intralogistique. Les exemples canoniques : robots Amazon dans les centres
+              de distribution, AGV dans les entrepôts manufacturiers.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test rapide.</strong> Si le poste exige une coexistence humaine fréquente
+                → cobot. Si le poste est isolable et exige performance brute → robot industriel.
+                Si la mission est de transporter en environnement variable → AMR. Si vous hésitez,
+                le projet n'est probablement pas encore mûr — précisez le poste.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="trois-piliers"
+            title="Perception, planification, contrôle — les trois piliers"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Tout système robotique moderne combine trois capacités fondamentales :
+            </p>
+            <ul>
+              <li>
+                <strong>Perception.</strong> Transformer le monde physique en représentation
+                numérique : caméras, lidar, capteurs de force, capteurs de proximité. La perception
+                conditionne tout le reste — un robot ne peut agir intelligemment que sur ce qu'il
+                perçoit correctement.
+              </li>
+              <li>
+                <strong>Planification.</strong> Décider de l'action à effectuer en fonction de la
+                perception et du but assigné : détection d'obstacles, choix de trajectoire, adaptation
+                aux imprévus. C'est la capacité où l'IA contribue le plus aujourd'hui.
+              </li>
+              <li>
+                <strong>Contrôle.</strong> Exécuter l'action de manière physiquement précise via les
+                actionneurs (moteurs, pinces, vérins). C'est l'aspect le plus mature — la précision
+                des robots industriels est souvent submillimétrique.
+              </li>
+            </ul>
+            <p>
+              Comprendre ces trois piliers permet de cadrer ce qui est mature aujourd'hui (perception
+              et contrôle dans des environnements structurés) et ce qui reste un défi (planification
+              dans des environnements ouverts, imprévisibles). Les progrès récents en IA ouvrent
+              progressivement la planification à des contextes plus variés — c'est ce qui rend possible
+              les AMR modernes ou les robots collaboratifs avec vision.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Conséquence pour le cadrage.</strong> Plus l'environnement de travail est
+                structuré (positions fixes, éclairage maîtrisé, objets identiques), plus la robotisation
+                est facile. Si votre poste candidat exige beaucoup d'adaptation contextuelle, le
+                projet est plus complexe et plus coûteux — il faut le savoir avant l'engagement.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="securite-humain-machine"
+            title="Sécurité humain-machine et cadre normatif"
+            sourceLevel="external-verifiable"
+          >
+            <p>
+              La sécurité humain-machine en robotique repose sur un cadre normatif structuré :
+            </p>
+            <ul>
+              <li>
+                <strong>ISO 10218</strong> (parties 1 et 2) — sécurité des robots industriels et
+                de leurs cellules. Définit les exigences pour les robots conçus à opérer en isolation
+                des humains.
+              </li>
+              <li>
+                <strong>ISO/TS 15066</strong> — exigences spécifiques aux cobots. Définit les seuils
+                de force et de vitesse acceptables au contact avec un humain, par zone du corps.
+              </li>
+              <li>
+                <strong>Directive Machines 2006/42/CE</strong> — cadre européen pour le marquage CE
+                des machines, applicable à tout système robotique mis sur le marché ou en service
+                dans l'UE.
+              </li>
+              <li>
+                <strong>Réglementations sectorielles</strong> spécifiques (alimentaire, pharmaceutique,
+                médical) qui ajoutent des contraintes propres.
+              </li>
+            </ul>
+            <p>
+              Pour le manager, la conséquence est claire : la sécurité ne se délègue pas
+              intégralement à l'intégrateur. L'employeur reste responsable de l'analyse de risque
+              finale, du plan de formation, des procédures d'arrêt d'urgence et de signalement
+              d'incident. Une contre-expertise interne (au moins une lecture critique du livrable
+              de l'intégrateur) est une bonne pratique.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test rapide.</strong> Demandez à votre intégrateur le cadre normatif
+                appliqué et l'analyse de risque associée. Si la réponse est imprécise (« ça respecte
+                les normes »), exigez la documentation détaillée. La traçabilité de la sécurité est
+                à la fois une exigence légale et un signal de sérieux du fournisseur.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cout-total-projet"
+            title="Le coût total réel d'un projet robotique"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Une règle de bonne pratique observée dans l'industrie est que dans un projet robotique
+              en entreprise, <strong>l'intégration représente 50 à 70 % du coût total</strong>, le
+              robot lui-même seulement 30 à 50 %. L'intégration couvre :
+            </p>
+            <ul>
+              <li>L'<strong>étude de poste</strong> — comprendre l'opération réelle, ses variations, ses contraintes.</li>
+              <li>La <strong>mécanique sur mesure</strong> — préhenseurs adaptés au produit, gabarits, convoyeurs, dispositifs de présentation.</li>
+              <li>La <strong>programmation</strong> des trajectoires et des séquences.</li>
+              <li>La <strong>mise au point</strong> sur site, qui révèle toujours des cas non anticipés.</li>
+              <li>La <strong>certification de sécurité</strong> et les analyses de risque.</li>
+              <li>La <strong>formation</strong> des opérateurs et du personnel de maintenance.</li>
+              <li>Les <strong>modifications de l'environnement</strong> (sol renforcé, alimentation électrique, accès aux fluides).</li>
+              <li>La <strong>maintenance première année</strong>, souvent incluse dans le projet.</li>
+            </ul>
+            <p>
+              Pour le cadrage économique, conséquence directe : comparer des prix de robots entre
+              eux sans comparer les coûts totaux est trompeur. Le payback réaliste d'un projet bien
+              cadré se situe typiquement entre 18 et 36 mois. Plus court : à valider par POC
+              (probablement trop optimiste). Plus long : à justifier par des bénéfices d'ergonomie
+              ou de qualité forts, sinon le périmètre est à revoir.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test budgétaire.</strong> Découpez votre budget projet robotique en au moins
+                8 lignes (robot + outillage + étude + programmation + mise au point + sécurité +
+                formation + maintenance). Si le robot dépasse 50 % du total, l'intégration est
+                probablement sous-estimée. Si la formation est à zéro, c'est probablement une
+                omission, pas une économie.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cadrage-rh-social"
+            title="Cadrage économique et social"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Un projet robotique change le cadre de travail. Présenter un dossier robotique en
+              COMEX uniquement sur les chiffres de productivité et de payback, sans traiter
+              explicitement la dimension RH, est à la fois juridiquement risqué et opérationnellement
+              fragile.
+            </p>
+            <p>
+              Trois exigences à intégrer dès le cadrage initial :
+            </p>
+            <ul>
+              <li>
+                <strong>Information-consultation des instances représentatives</strong> (CSE en
+                France) — obligation légale pour tout projet impactant l'organisation du travail.
+                À traiter en amont, pas en aval.
+              </li>
+              <li>
+                <strong>Plan de formation et d'accompagnement</strong> des salariés concernés.
+                Quels parcours sont proposés (redéploiement, montée en compétence, mobilité
+                interne) ? À quel coût et sur quel horizon ?
+              </li>
+              <li>
+                <strong>Argumentaire combiné</strong>. Un projet défendable combine plusieurs
+                bénéfices : productivité + qualité + ergonomie + flexibilité. Un projet limité à la
+                pure réduction de masse salariale est fragile socialement et juridiquement.
+              </li>
+            </ul>
+            <p>
+              Pour le manager, la dimension RH n'est pas un coût additionnel — c'est une condition
+              de réussite. Un projet contesté est mal adopté par les équipes, ce qui dégrade le ROI
+              réellement obtenu, indépendamment de la performance technique.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Bonnes pratiques observées.</strong> Démarrer par des projets améliorant
+                clairement les conditions de travail (postes pénibles, troubles musculo-squelettiques)
+                — défendables socialement, retours d'expérience positifs en interne, base pour des
+                projets ultérieurs plus ambitieux. Le pilote idéal n'est pas seulement économique :
+                il est aussi pédagogique pour l'organisation.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — ERREURS FRÉQUENTES === */}
+        <section id="erreurs-frequentes">
+          <h2>Erreurs fréquentes</h2>
+          <p>
+            Quatre pièges récurrents en projet robotique à reconnaître et à mitiger dès le cadrage.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — CAS RÉEL === */}
+        <section id="cas-reel">
+          <h2>Cas réel — Amazon Robotics</h2>
+          <p>
+            <strong>Amazon Robotics</strong> est l'un des plus grands déploiements de robotique
+            mobile autonome au monde. Selon les communications officielles publiques d'Amazon,
+            l'entreprise a déployé plus d'un million de robots dans son réseau logistique mondial,
+            et a annoncé en 2025 le lancement de DeepFleet, un foundation model d'IA dédié à
+            l'orchestration de cette flotte. Le cas est exemplaire pour comprendre l'intégration
+            massive de robotique en logistique avec orchestration humain + machine.
+          </p>
+          <CaseCardCompact
+            organization="Amazon Robotics — DeepFleet et orchestration robotique"
+            sector="Logistique / E-commerce"
+            technology="Robots mobiles autonomes (AMR) + IA d'orchestration"
+            tagline="Amazon a atteint le seuil symbolique d'un million de robots déployés dans son réseau logistique mondial. La valeur ne vient pas du robot pris isolément, mais de l'orchestration : DeepFleet, un foundation model d'IA dédié, gère le trafic et la coordination de l'ensemble de la flotte. Les humains restent centraux dans les phases de jugement (qualité, exception, gestion d'incident) — la robotique traite le transport et le picking simple."
+            href={getLocalizedUrl('/cas/amazon-robotics/', locale)}
+            available={false}
+          />
+
+          <h3>Mini-cas additionnel — Universal Robots et la robotique pour PME</h3>
+          <p>
+            Universal Robots, fabricant danois de cobots, illustre une approche complémentaire :
+            rendre la robotique accessible aux PME industrielles via des cobots simples à programmer,
+            certifiés ISO/TS 15066, à un prix d'achat sensiblement inférieur aux robots industriels
+            classiques. Plusieurs leçons transposables :
+          </p>
+          <ul>
+            <li>
+              <strong>L'accessibilité ne réduit pas l'intégration.</strong> Même avec un cobot
+              relativement simple à programmer, l'intégration (préhenseur sur mesure, étude de
+              poste, certification de sécurité, formation) reste majoritaire dans le coût total.
+              Le piège « cobot = projet simple » est un mythe à éviter.
+            </li>
+            <li>
+              <strong>La reconfigurabilité a une vraie valeur.</strong> Un cobot peut être déplacé
+              et reprogrammé pour un autre poste si les besoins changent — flexibilité précieuse
+              pour les PME aux volumes incertains. Cette flexibilité doit entrer dans le calcul de
+              valeur.
+            </li>
+            <li>
+              <strong>Le marché normatif évolue vite.</strong> Les normes ISO/TS 15066 et leurs
+              déclinaisons sectorielles continuent d'évoluer — un projet engagé aujourd'hui doit
+              prévoir une marge pour intégrer les évolutions à 2-3 ans.
+            </li>
+            <li>
+              <strong>L'écosystème compte autant que le robot.</strong> Le choix d'un fournisseur
+              de cobot dépend autant de l'écosystème d'intégrateurs locaux et de pièces détachées
+              que des spécifications du robot lui-même.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source : <a href="https://www.universal-robots.com/" rel="noopener noreferrer" target="_blank">communications publiques Universal Robots</a>,
+              normes ISO 10218 et ISO/TS 15066.
+            </em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITÉ === */}
+        <section id="activite">
+          <h2>Activité pratique — Cadrer un projet robotique</h2>
+          <p>
+            Cette activité vous fait dérouler concrètement le cadrage d'un projet robotique. À
+            réaliser seul ou en petit groupe, en 60 à 90 minutes.
+          </p>
+          <Activity
+            id="activite-projet-robotique"
+            title="Cadrer un projet robotique pour votre organisation"
+            duration="60-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Canvas projet robotique (Markdown imprimable)"
+            downloadHref="/downloads/canvas-evaluation-projet-robotique-module-4.md"
+          />
+          <p class="ai-text-muted">
+            <em>Le canvas est fourni en format Markdown imprimable. La version PDF stylisée arrive
+            en Phase 5 du projet.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Quiz formatif</h2>
+          <p>
+            Sept questions pour vérifier votre compréhension. Trois questions de compréhension, trois
+            d'application, une de jugement. Chaque réponse incorrecte déplie une explication
+            pédagogique qui pointe vers la section à revoir.
+          </p>
+          <QuizPlaceholder
+            id="quiz-module-4"
+            title={quizModule4.title}
+            intro={quizModule4.intro}
+            questions={quizModule4.questions}
+            scoringBands={quizModule4.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Checklist manager — Cadrage robotique</h2>
+          <p>
+            Douze points de contrôle avant de présenter un projet robotique en COMEX ou en CSE.
+            Trois groupes : cadrage technique, sécurité et conformité, économie et social.
+          </p>
+          <Checklist
+            id="checklist-module-4"
+            title="Cadrage robotique — 12 points de contrôle"
+            intro="Avant de défendre un projet robotique en comité de direction ou en information-consultation CSE, parcourez ces douze points. Les points sécurité et conformité sont non négociables ; les points sociaux conditionnent la réussite opérationnelle."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application dans votre organisation</h2>
+          <p>
+            Cinq questions à poser dans votre contexte. Pas de bonne ou mauvaise réponse universelle —
+            ce qui compte, c'est de pouvoir y répondre <em>spécifiquement</em> pour votre organisation.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Identifiez 1 ou 2 <strong>postes candidats</strong> à la robotisation dans votre
+              organisation. Pour chacun, quelle est la motivation principale (productivité, qualité,
+              ergonomie, sécurité) ?
+            </li>
+            <li>
+              Pour le candidat le plus prometteur, quelle <strong>famille robotique</strong>
+              (industriel, cobot, AMR) est la plus adaptée ? Pourquoi ?
+            </li>
+            <li>
+              Quel est le <strong>cadre normatif applicable</strong> et avez-vous identifié les
+              exigences de sécurité (analyse de risque, formation, procédures d'urgence) ?
+            </li>
+            <li>
+              Avez-vous un <strong>budget découpé en au moins 8 lignes</strong> ? Le robot
+              représente-t-il moins de 50 % du total ? Le payback est-il dans la fourchette
+              défendable (18-36 mois cible) ?
+            </li>
+            <li>
+              Comment la <strong>dimension RH</strong> est-elle traitée (information-consultation
+              CSE, plan de formation, accompagnement des salariés concernés) ?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>Pour les consultants</h3>
+            <p>
+              En mission de cadrage robotique, ces cinq questions structurent un atelier de 3 heures
+              avec une équipe métier élargie (DSI / Direction Industrielle / DRH / SST / IRP).
+              La présence de la DRH et des représentants du personnel dès le cadrage initial est
+              une bonne pratique — elle évite les blocages tardifs et améliore la qualité du dossier.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — À RETENIR === */}
+        <section id="a-retenir">
+          <h2>À retenir</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — POUR ALLER PLUS LOIN === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Pour aller plus loin</h2>
+          <p>
+            Six ressources pour approfondir, classées par type. La hiérarchie des sources est indiquée
+            sur chacune (cf. <a href={methodeUrl}>méthode</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Termes techniques rencontrés ? Consultez le <a href={glossaireUrl}>glossaire</a> (Phase 4.9).
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module3Url,
+            label: 'IA générative en entreprise',
+            context: 'Module 3',
+          }}
+          next={{
+            href: module5Url,
+            label: "IA dans l'entreprise et la société",
+            context: 'Module 5',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
