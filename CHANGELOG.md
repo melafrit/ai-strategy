@@ -77,7 +77,42 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 6 — Podcasts NotebookLM série narrative 10 épisodes~~ **→ EN COURS : sub-1 publié (architecture + 10 briefs + index + page épisode dynamique)**, sub-2 (briefs détaillés production) et sub-3 (transcripts + audio stubs) restants.
+- ~~Phase 6 — Podcasts NotebookLM série narrative 10 épisodes~~ **→ EN COURS : sub-1 (architecture + 10 briefs structurés) et sub-2 (documentation production + 10 fiches détaillées + page transparence) publiés**, sub-3 (audio stubs + transcripts + workflow) restant.
+
+- Phase 6 sub-2 — Documentation de production NotebookLM :
+  - **NEW DOC — `docs/podcasts/production-workflow.md`** (~430 lignes) — Guide complet pour générer la série dans Google NotebookLM. Couvre :
+    - Vue d'ensemble du dispositif (5 étapes, ~1h-1h30 par épisode, total ~10-12h pour les 10)
+    - Préparation des sources (limite 5-8 sources max, méthode d'ingestion via PDF du print stylesheet)
+    - Configuration NotebookLM (langue, format Deep Dive, longueur Default ou Longer)
+    - **Template universel de Custom Instructions** (langue, public, structure narrative, contraintes, durée cible) à adapter par épisode
+    - Écoute critique avec **grille à 8 critères de qualité** + 3 erreurs typiques observées
+    - Génération transcript via OpenAI Whisper local (modèle large-v3) + format Markdown structuré
+    - Workflow de publication (5 étapes : copier MP3, copier transcript, mettre à jour `podcasts.ts`, ajuster chapters, build local, commit)
+    - Limites assumées (variabilité du résultat, voix synthétiques, mises à jour Google)
+    - Calendrier de production en 6 sessions
+  - **NEW BRIEFS — `docs/podcasts/briefs/ep-NN-{slug}.md`** (10 fichiers, ~7-8 KB chacun, ~75 KB total) — Une fiche par épisode, générée par script TypeScript à partir de `podcasts.ts` enrichi de spécificités par épisode. Chaque brief contient :
+    1. Synopsis éditorial complet
+    2. Takeaways (5-7 points)
+    3. Chapitres prévisionnels avec timestamps
+    4. Sources principales NotebookLM (du brief technique)
+    5. Sources complémentaires recommandées (1-2 par épisode, externes vérifiables)
+    6. **Custom instructions à coller dans NotebookLM** (template universel personnalisé pour l'épisode)
+    7. **Points de vigilance spécifiques** (3-4 risques connus à surveiller à la génération — ex: hallucinations de chiffres, confusion ML/GenAI, dérive politique sur emploi)
+    8. Plan B en cas de résultat insatisfaisant
+    9. Références croisées du parcours (modules, cas, glossaire)
+    10. Checklist de publication en 13 points
+  - **NEW PUBLIC PAGE — `src/pages/fr/podcasts/production.astro`** (~310 lignes) — Page de transparence éditoriale destinée aux auditeurs (et non aux contributeurs). Contient :
+    - Pourquoi cette page existe (transparence sur le caractère synthétique des voix et la nature générative du dialogue)
+    - **6 points de transparence** (KeyTakeaways) sur le rôle de l'humain vs la machine dans la production
+    - **Workflow en 5 étapes** détaillé pour le grand public
+    - **Grille de qualité 8 critères** exposée publiquement
+    - **Procédure de signalement d'erreur** via GitHub issues
+    - **Limites assumées du dispositif** (voix synthétiques, stabilité éditoriale, mises à jour Google, pas un cours alternatif, pas de conseil professionnel)
+    - PrintButton + IndependenceNotice
+  - **NEW STUBS** : EN + AR pour la page production avec TranslationPending.
+  - **MINOR UPDATE** : `src/pages/fr/podcasts/index.astro` enrichi d'un lien vers la page production dans l'intro.
+  - Build validé : 98 pages générées (95 → 98, +3 production FR/EN/AR), 0 erreur / 0 warning / 0 hint Astro check sur 141 fichiers. 10 briefs Markdown produits dans `docs/podcasts/briefs/`.
+  - Pattern : 0 nouveau composant. Documentation contributeur + page publique de transparence. Approche zéro-secret : tout ce qui se passe en coulisses est documenté publiquement.
 
 - Phase 6 sub-1 — Architecture podcasts + 10 briefs structurés :
   - **NEW DATA — `src/content/podcasts.ts`** (~610 lignes) — Catalogue de **10 épisodes** typés TypeScript, organisés en 4 thèmes (foundations, technology, governance, application). Chaque épisode comprend : slug + numéro + title + subtitle + theme + duration + audience + description (2-3 paragraphes) + takeaways (5-7 points) + chapters (timestamps prévisionnels) + sourceDocuments (pages-source pour NotebookLM) + focusNotes (instructions de production) + relatedModules + relatedCases + relatedGlossary + audioFile (path placeholder) + transcriptFile + status ('planned'/'in-production'/'published').

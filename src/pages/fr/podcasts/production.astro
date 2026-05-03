@@ -1,0 +1,341 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const transparencyPoints = [
+  "Les voix des animateurs sont synthétiques, générées par NotebookLM — ce ne sont pas des humains qui parlent",
+  "Le contenu vient à 100% des sources documentaires chargées dans NotebookLM — il n'y a pas de scénariste humain",
+  "L'opérateur humain (l'auteur du parcours) prépare les sources, écrit les notes de focus, valide la qualité, mais n'écrit pas le dialogue",
+  "Chaque épisode peut produire un résultat différent à chaque génération — la variabilité est inhérente au format",
+  "Les épisodes sont relus et validés avant publication selon une grille à 8 critères de qualité",
+  "Si une affirmation factuelle est imprécise dans un épisode publié, signalez-le via le repo GitHub : correction publique et traçable",
+];
+
+const workflowSteps = [
+  {
+    num: 1,
+    title: 'Préparation des sources',
+    duration: '15-20 min',
+    description:
+      "Pour chaque épisode, les pages-source du site listées dans le brief technique sont imprimées via le print stylesheet (Phase 5 sub-3) en PDF, puis chargées dans Google NotebookLM. Limite stricte : 5 à 8 sources maximum, sinon la qualité narrative diminue.",
+  },
+  {
+    num: 2,
+    title: "Custom instructions et lancement de la génération",
+    duration: '5-10 min',
+    description:
+      "Les notes de focus du brief technique sont injectées dans le champ « Custom instructions » de NotebookLM, augmentées d'un template universel qui précise la langue, le public, la structure narrative attendue, et les contraintes (ne pas inventer de chiffres, ne pas inventer d'études, citer chaque source par son nom complet).",
+  },
+  {
+    num: 3,
+    title: "Génération asynchrone",
+    duration: '5-15 min',
+    description:
+      "NotebookLM génère un Audio Overview en arrière-plan. Format « Deep Dive » (conversation à 2 hôtes), durée typique 12 à 18 minutes. Pendant la génération, les sources ne doivent pas être modifiées.",
+  },
+  {
+    num: 4,
+    title: "Écoute critique et validation qualité",
+    duration: '15-20 min',
+    description:
+      "Chaque épisode est écouté entièrement avec une grille à 8 critères : durée respectée, pas d'inventions factuelles, concepts correctement utilisés, cas concret incarné, aucune affirmation politiquement clivante non sourcée, conclusion actionnable, pas de répétitions excessives, anglicismes raisonnables. Si 3 critères ou plus ne sont pas atteints, l'épisode est régénéré (parfois jusqu'à 3 fois).",
+  },
+  {
+    num: 5,
+    title: 'Transcript et publication',
+    duration: '30 min',
+    description:
+      "Le MP3 validé est transcrit via OpenAI Whisper (large-v3) en local pour produire un transcript Markdown structuré par chapitres. Le MP3 et le transcript sont déposés dans le dépôt et le statut de l'épisode passe de `planned` à `published`. Un commit traçable est poussé.",
+  },
+];
+
+const qualityCriteria = [
+  "Durée respectée (entre 80% et 120% de la cible)",
+  "Pas d'inventions factuelles : tous les noms d'entreprises, personnes, chiffres sont dans les sources",
+  "Concepts du glossaire correctement utilisés (pas de confusion ML / GenAI / RAG / fine-tuning)",
+  "Cas concret présent et incarné — l'épisode ne reste pas sur des généralités",
+  "Aucune affirmation politiquement clivante non sourcée",
+  "Conclusion actionnable : l'auditeur ressort avec 2-3 prises concrètes",
+  "Pas de répétitions excessives — le format dialogue peut paraphraser, pas répéter",
+  "Anglicismes raisonnables — \"machine learning\" ok, \"delivery model leverage\" non",
+];
+
+const podcastsIndexUrl = getLocalizedUrl('/podcasts/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="Production des podcasts — comment sont-ils faits ?"
+  description="Page de transparence sur le workflow de production des 10 podcasts AI Strategy générés via Google NotebookLM. Préparation des sources, génération, validation qualité, publication. Comment l'auditeur peut signaler une erreur."
+>
+  <HeroSecondary
+    surtitle="Transparence éditoriale"
+    title="Comment ces podcasts sont produits"
+    lead="Une page de transparence pour les auditeurs : comment chaque épisode est généré, quelles sont les sources, comment la qualité est validée, comment signaler une erreur. Tout est public et traçable."
+  >
+    <span slot="stats">
+      Workflow en 5 étapes · grille qualité 8 critères · sources publiques systématiquement vérifiables
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-podcast-prod-page">
+    <article class="ai-podcast-prod-page__content ai-prose">
+      {/* === INTRO === */}
+      <section id="intro">
+        <h2>Pourquoi cette page existe</h2>
+        <p>
+          Les 10 épisodes de la <a href={podcastsIndexUrl}>série AI Strategy</a>
+          sont générés par Google NotebookLM. Les voix sont synthétiques, le
+          dialogue est généré automatiquement à partir de sources documentaires
+          chargées dans le notebook. Ce dispositif a un avantage majeur : il
+          permet de produire 10 épisodes pédagogiques en un temps court. Il a
+          aussi des limites — variabilité du résultat, voix non humaines,
+          potentielles imprécisions factuelles — qu'il serait malhonnête de ne
+          pas exposer.
+        </p>
+        <p>
+          Cette page documente publiquement le <strong>workflow de production</strong> :
+          comment les sources sont préparées, comment la génération est cadrée,
+          comment la qualité est validée, comment un auditeur peut signaler une
+          erreur. La même information existe en version technique détaillée
+          pour les contributeurs dans <code>docs/podcasts/production-workflow.md</code>
+          du dépôt GitHub, et chaque épisode dispose d'une fiche brief dans
+          <code>docs/podcasts/briefs/</code>.
+        </p>
+      </section>
+
+      {/* === À RETENIR === */}
+      <section id="a-retenir">
+        <h2>Six points de transparence</h2>
+        <KeyTakeaways items={transparencyPoints} />
+      </section>
+
+      {/* === WORKFLOW === */}
+      <section id="workflow">
+        <h2>Le workflow en 5 étapes</h2>
+        <p>
+          Chaque épisode suit le même processus, qui prend approximativement 1
+          heure à 1 heure 30 selon la qualité du premier rendu. Les épisodes
+          plus denses (épisode 7 capstone, épisode 10 synthèse) demandent
+          souvent une régénération supplémentaire.
+        </p>
+
+        <ol class="ai-podcast-prod-steps">
+          {workflowSteps.map((step) => (
+            <li class="ai-podcast-prod-step">
+              <header class="ai-podcast-prod-step__head">
+                <span class="ai-podcast-prod-step__num">Étape {step.num}</span>
+                <h3>{step.title}</h3>
+                <p class="ai-podcast-prod-step__duration">
+                  Durée typique : {step.duration}
+                </p>
+              </header>
+              <p class="ai-podcast-prod-step__body">{step.description}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* === QUALITÉ === */}
+      <section id="qualite">
+        <h2>La grille de qualité (8 critères)</h2>
+        <p>
+          Avant publication, chaque épisode est écouté intégralement et évalué
+          sur 8 critères. Si 3 critères ou plus ne sont pas atteints, l'épisode
+          est régénéré. Cette grille est elle-même le résultat d'observations
+          empiriques : ce sont les 8 erreurs les plus fréquentes dans les
+          générations NotebookLM.
+        </p>
+        <ol class="ai-podcast-prod-criteria">
+          {qualityCriteria.map((c) => (
+            <li>{c}</li>
+          ))}
+        </ol>
+        <p class="ai-podcast-prod-note">
+          <strong>Note importante</strong> — la qualité visée n'est pas
+          « production audio professionnelle ». Les voix synthétiques de
+          NotebookLM ont des défauts (intonation parfois mécanique, prononciation
+          imparfaite de certains termes techniques). Nous acceptons ces limites
+          en échange de la possibilité de produire 10 épisodes pédagogiques
+          accessibles gratuitement et en français. Si la qualité audio
+          professionnelle est essentielle pour votre usage, lisez plutôt les
+          modules écrits.
+        </p>
+      </section>
+
+      {/* === SIGNALEMENT === */}
+      <section id="signaler-erreur">
+        <h2>Comment signaler une erreur factuelle</h2>
+        <p>
+          Si vous identifiez une affirmation factuelle imprécise ou erronée dans
+          un épisode publié, signalez-la via le <a
+            href="https://github.com/melafrit/ai-strategy/issues"
+            target="_blank"
+            rel="noopener"
+          >dépôt GitHub du projet</a>.
+          Précisez :
+        </p>
+        <ul>
+          <li>Le numéro et le slug de l'épisode (visible dans l'URL)</li>
+          <li>Le timestamp approximatif où l'erreur est entendue</li>
+          <li>L'erreur elle-même, et si possible la formulation correcte avec sa source</li>
+        </ul>
+        <p>
+          Les corrections sont publiques et tracées dans le CHANGELOG. Selon la
+          gravité, l'épisode peut être régénéré et republié, ou un erratum peut
+          être ajouté à la fin du transcript.
+        </p>
+      </section>
+
+      {/* === LIMITES === */}
+      <section id="limites">
+        <h2>Limites assumées du dispositif</h2>
+        <p>
+          Quelques limites qu'il est honnête de reconnaître :
+        </p>
+        <ul>
+          <li>
+            <strong>Voix synthétiques</strong> — les deux animateurs IA ont des
+            voix neutres, reconnaissablement non humaines. Acceptable mais à
+            signaler.
+          </li>
+          <li>
+            <strong>Stabilité éditoriale</strong> — un même prompt peut produire
+            deux épisodes assez différents. La validation manuelle compense en
+            partie cette variabilité.
+          </li>
+          <li>
+            <strong>Mises à jour Google</strong> — NotebookLM évolue rapidement.
+            Le workflow détaillé ici est valable au moment de la rédaction. Si
+            Google modifie l'interface ou les capacités, le workflow sera mis
+            à jour, mais des épisodes plus anciens peuvent avoir été produits
+            avec des paramètres légèrement différents.
+          </li>
+          <li>
+            <strong>Pas un cours alternatif</strong> — les podcasts complètent
+            l'expérience de lecture du site. Pour aller au fond des concepts,
+            des cas et de la méthodologie, lisez les modules écrits. Tout
+            épisode qui contredirait significativement le contenu écrit du
+            site sera révisé.
+          </li>
+          <li>
+            <strong>Pas de conseil professionnel</strong> — les épisodes
+            informent mais ne se substituent pas à un avocat (pour l'AI Act),
+            un consultant en stratégie (pour la roadmap), ou un médecin (pour
+            les usages santé). Toujours vérifier auprès de professionnels
+            qualifiés avant toute décision opérationnelle critique.
+          </li>
+        </ul>
+      </section>
+
+      <section id="liens">
+        <h2>Pour aller plus loin</h2>
+        <ul>
+          <li><a href={podcastsIndexUrl}>Voir tous les épisodes</a> — l'index de la série complète</li>
+          <li><a href={methodeUrl}>Méthode et hiérarchie des sources</a> — comment le site distingue ses différents niveaux de confiance</li>
+          <li>
+            <a href="https://github.com/melafrit/ai-strategy" target="_blank" rel="noopener">
+              Dépôt GitHub
+            </a> — code source, documentation détaillée, signalement d'erreurs
+          </li>
+          <li>
+            <a href="https://notebooklm.google.com" target="_blank" rel="noopener">
+              Google NotebookLM
+            </a> — l'outil utilisé pour la génération
+          </li>
+        </ul>
+      </section>
+
+      <PrintButton />
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-podcast-prod-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+  .ai-podcast-prod-page__content > section {
+    margin-block: var(--ai-space-7);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  /* === STEPS === */
+  .ai-podcast-prod-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-4);
+  }
+  .ai-podcast-prod-step {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-podcast-prod-step__head {
+    margin-block-end: var(--ai-space-3);
+  }
+  .ai-podcast-prod-step__num {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-podcast-prod-step__head h3 {
+    margin: var(--ai-space-1) 0 var(--ai-space-1);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcast-prod-step__duration {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-podcast-prod-step__body {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === CRITERIA === */
+  .ai-podcast-prod-criteria {
+    margin: var(--ai-space-3) 0;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-podcast-prod-criteria li {
+    margin-block-end: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === NOTE === */
+  .ai-podcast-prod-note {
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    margin-block: var(--ai-space-4);
+  }
+  .ai-podcast-prod-note strong {
+    color: var(--ai-fg-primary);
+  }
+</style>
