@@ -1,0 +1,883 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Synthèse exécutive' },
+  { id: 'objectifs', label: "Objectifs d'apprentissage" },
+  { id: 'concepts', label: 'Concepts clés' },
+  { id: 'erreurs-frequentes', label: 'Erreurs fréquentes' },
+  { id: 'cas-reel', label: 'Cas réel' },
+  { id: 'activite', label: 'Activité pratique' },
+  { id: 'quiz', label: 'Quiz formatif' },
+  { id: 'checklist', label: 'Checklist manager' },
+  { id: 'application', label: 'Application dans votre organisation' },
+  { id: 'a-retenir', label: 'À retenir' },
+  { id: 'pour-aller-plus-loin', label: 'Pour aller plus loin' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  "Distinguer l'IA étroite (narrow AI) de l'IA générale (AGI), et situer où en est l'état de l'art aujourd'hui.",
+  "Retracer les trois grandes vagues de l'histoire de l'IA et expliquer ce qui a déclenché la vague actuelle.",
+  "Définir l'intelligence collective et expliquer comment personnes et machines se combinent pour produire des organisations plus intelligentes.",
+  "Identifier les composantes d'un système socio-technique et raisonner sur l'IA comme un système, pas comme un outil isolé.",
+  "Utiliser un cadre de cadrage stratégique simple pour analyser un usage potentiel de l'IA dans son organisation.",
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Confondre la performance d'un modèle et la valeur business d'un projet",
+    error:
+      "Un modèle qui atteint 95 % de précision en laboratoire est jugé prêt à déployer, alors qu'il n'a jamais été testé sur des données métier réelles, ni dans le workflow opérationnel existant.",
+    mechanism:
+      "Les démonstrations techniques produisent des chiffres impressionnants en environnement contrôlé, mais la valeur business dépend de l'intégration au processus, de l'adoption par les utilisateurs, et de la qualité des données réelles — qui sont presque toujours différentes des données d'entraînement.",
+    mitigation:
+      "Avant tout pilote, exiger une métrique business (temps gagné, taux d'erreur réduit, satisfaction client) en plus de la métrique technique. Tester sur un échantillon de données opérationnelles authentiques. Mesurer l'effet sur l'utilisateur final, pas seulement sur le modèle.",
+  },
+  {
+    title: "Penser l'IA comme un produit prêt à l'emploi plutôt qu'un système à construire",
+    error:
+      "Achat d'une solution IA externe en supposant qu'elle fonctionnera 'out of the box' dans le contexte de l'organisation, sans investissement dans les données, le workflow, ou la formation des équipes.",
+    mechanism:
+      "Les vendeurs présentent leurs solutions comme universelles. La réalité est que tout déploiement IA est un système qui combine modèle + données spécifiques + interface utilisateur + processus métier + gouvernance. Aucune de ces couches n'est universelle.",
+    mitigation:
+      "Cadrer chaque projet IA comme un projet de transformation organisationnelle, pas comme un achat logiciel. Prévoir explicitement budget et calendrier pour les couches données, workflow, formation, et gouvernance. Estimer typiquement 20-40 % du budget total sur le modèle lui-même, le reste sur l'écosystème.",
+  },
+  {
+    title: "Sous-estimer le rôle de l'humain dans le système IA",
+    error:
+      "Conception d'un projet IA visant l'automatisation complète d'une tâche, alors que les utilisateurs métier ont besoin de garder la main sur les décisions sensibles ou exceptionnelles.",
+    mechanism:
+      "L'idée séduisante de 'remplacer' une tâche humaine occulte deux réalités : la majorité des tâches contiennent des cas limites où l'humain est indispensable, et la confiance des utilisateurs dépend de leur capacité à intervenir, surveiller et corriger.",
+    mitigation:
+      "Concevoir d'emblée des dispositifs human-in-the-loop : qui valide, qui supervise, qui corrige, et avec quels critères. Mesurer non seulement la performance du modèle, mais aussi l'efficacité de la collaboration humain-machine. Documenter les exceptions où l'humain reprend la main.",
+  },
+  {
+    title: "Cadrer l'IA hors stratégie d'entreprise",
+    error:
+      "Lancer des pilotes IA dispersés (chatbot RH, prédictions de ventes, détection de fraude) sans lien explicite avec la stratégie globale (différenciation, leadership de coût, ou focalisation).",
+    mechanism:
+      "Sans cadre stratégique, chaque projet IA se justifie par lui-même mais ne s'additionne pas. L'organisation se retrouve avec un patchwork de POC qui ne créent ni avantage concurrentiel durable, ni capability transverse.",
+    mitigation:
+      "Pour chaque projet IA candidate, formuler explicitement à quelle dimension stratégique il contribue (différenciation par expérience client, baisse de coût opérationnel, focalisation sur un segment). Si la réponse est ambiguë, le projet est probablement prématuré ou mal cadré.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: 'Cartographier votre organisation',
+    body: 'Listez 5 à 10 processus métier critiques de votre organisation. Pour chacun, notez : qui le réalise (rôle métier), avec quels outils, et quel volume / fréquence. L\'objectif est d\'avoir une vision globale avant de chercher des cas d\'usage IA.',
+  },
+  {
+    heading: 'Identifier les candidats IA',
+    body: "Pour chaque processus, posez 3 questions : (1) y a-t-il une décision répétitive qui pourrait être assistée ? (2) y a-t-il une grande quantité de données sous-exploitées ? (3) y a-t-il un goulot d'étranglement dont la résolution créerait beaucoup de valeur ? Marquez chaque processus en 'candidat IA fort', 'moyen', ou 'faible'.",
+  },
+  {
+    heading: "Cadrer stratégiquement",
+    body: "Pour les 3 candidats les plus prometteurs, formulez en une phrase à quelle dimension stratégique l'IA contribuerait : différenciation produit, baisse de coût, focalisation sur un segment, ou amélioration interne (compétences, gouvernance). Éliminez ceux dont le lien stratégique est faible.",
+  },
+  {
+    heading: "Évaluer le ratio valeur / risque",
+    body: "Pour les candidats restants, évaluez sur une échelle de 1 à 5 : (a) la valeur business attendue si le projet réussit, (b) la difficulté de mise en œuvre (données, intégration, conduite du changement), (c) le risque éthique ou réglementaire. Le candidat à privilégier en pilote est celui qui combine forte valeur et difficulté maîtrisable.",
+  },
+];
+
+const activityCriteria = [
+  "Les processus listés couvrent au moins deux fonctions différentes (ex. ventes et opérations).",
+  "Chaque candidat IA est rattaché explicitement à une dimension stratégique.",
+  "L'évaluation valeur/risque est explicite et défendable devant un COMEX.",
+  "Le candidat retenu pour le pilote est défendu en moins de 90 secondes oralement.",
+];
+
+// === QUIZ (PLACEHOLDER — content rédigé en sous-tour 3) ===
+const quizQuestions = [
+  {
+    kind: 'comprehension' as const,
+    question: 'Quelle est la différence essentielle entre l\'IA étroite (narrow AI) et l\'IA générale (AGI) ?',
+    options: [
+      "L'IA étroite est moins performante que l'IA générale sur toutes les tâches.",
+      "L'IA étroite est conçue pour une tâche spécifique ; l'IA générale aurait des capacités cognitives comparables à celles d'un humain sur une large gamme de problèmes.",
+      "L'IA étroite ne fonctionne qu'avec des données structurées, alors que l'IA générale fonctionne avec n'importe quelles données.",
+      "L'IA étroite est utilisée en entreprise, l'IA générale en recherche académique seulement.",
+    ],
+    correctIndex: 1,
+    explanation: "L'IA étroite (narrow AI) excelle sur une tâche définie (recommandation de produits, traduction, détection de fraude), mais ne transpose pas ses capacités à d'autres problèmes. L'AGI, qui reste hypothétique en 2026, désignerait un système capable de raisonnement et d'apprentissage généralisé comparable à l'humain. Tous les systèmes d'IA déployés en entreprise aujourd'hui sont des IA étroites.",
+  },
+  {
+    kind: 'comprehension' as const,
+    question: "Qu'est-ce qui a principalement déclenché la vague actuelle de progrès en IA (depuis ~2012) ?",
+    options: [
+      "L'invention de nouveaux algorithmes radicalement différents des précédents.",
+      "Une combinaison de trois facteurs : disponibilité massive de données, puissance de calcul (notamment GPU), et progrès du deep learning.",
+      "Une percée mathématique unique en théorie de l'apprentissage.",
+      "Le passage à l'open source de toutes les solutions IA.",
+    ],
+    correctIndex: 1,
+    explanation: "La vague actuelle, parfois datée du succès d'AlexNet sur ImageNet en 2012, résulte de la convergence de trois conditions devenues simultanément matures : volumes de données numériques accessibles (web, capteurs), puissance de calcul abordable via les GPU, et redécouverte des réseaux de neurones profonds. Aucun de ces facteurs n'aurait suffi seul.",
+  },
+  {
+    kind: 'comprehension' as const,
+    question: "Selon la conception d'intelligence collective développée par Thomas Malone et le MIT Center for Collective Intelligence, quel rôle joue l'IA dans une organisation ?",
+    options: [
+      "L'IA remplace progressivement l'intelligence humaine dans la prise de décision.",
+      "L'IA est un acteur parmi d'autres dans un système où humains et machines combinent leurs forces — la performance vient du système, pas d'une seule composante.",
+      "L'IA est principalement un outil d'aide à la décision, jamais un acteur autonome.",
+      "L'IA n'a de sens qu'à l'échelle individuelle, pas organisationnelle.",
+    ],
+    correctIndex: 1,
+    explanation: "La perspective d'intelligence collective considère que les meilleures organisations combinent humains et machines comme un seul système intelligent — un 'supermind'. Ni l'humain seul ni la machine seule ne suffit ; c'est l'orchestration de leurs complémentarités (jugement humain, calcul machine, mémoire collective) qui produit la performance.",
+  },
+  {
+    kind: 'application' as const,
+    question: "Une banque envisage d'automatiser entièrement le traitement des demandes de prêt par un modèle ML. Quel argument est le plus solide pour conserver une intervention humaine dans le processus ?",
+    options: [
+      "Les modèles ML sont moins performants que les analystes humains sur les demandes simples.",
+      "Les cas atypiques, les biais du modèle, et la conformité réglementaire (notamment l'explicabilité des décisions) demandent un jugement humain qui fait partie intégrante du système.",
+      "L'automatisation totale est techniquement impossible.",
+      "Les clients préfèrent toujours parler à un humain pour ce type de décision.",
+      ],
+    correctIndex: 1,
+    explanation: "Le human-in-the-loop n'est pas une concession à l'imperfection technique — c'est une composante essentielle pour les décisions à fort enjeu. Trois raisons : les cas limites (où le modèle échoue), la lutte contre les biais (qui demande supervision active), et la conformité (l'AI Act et le droit français exigent l'explicabilité des décisions automatisées sensibles).",
+  },
+  {
+    kind: 'application' as const,
+    question: "Vous êtes consultant pour une PME industrielle de 200 salariés. Le DG vous demande : 'on aimerait faire de l'IA, par où commencer ?' Quelle est la meilleure première étape ?",
+    options: [
+      "Lancer immédiatement un pilote de chatbot pour le service client.",
+      "Embaucher un data scientist senior pour construire l'équipe IA.",
+      "Cartographier les processus métier critiques et identifier où l'IA pourrait contribuer à la stratégie globale, avant de choisir un pilote.",
+      "Acheter une solution IA générative auprès d'un éditeur reconnu.",
+    ],
+    correctIndex: 2,
+    explanation: "Avant tout investissement, le cadrage stratégique est non négociable. Il s'agit de relier les candidats IA à la stratégie de l'entreprise (différenciation, coût, focalisation), d'évaluer la maturité données et organisation, et de prioriser sur le ratio valeur/faisabilité. Lancer un pilote sans cadrage produit typiquement un POC isolé qui ne s'inscrit dans aucune capability transverse.",
+  },
+  {
+    kind: 'application' as const,
+    question: "Une équipe RH propose un projet d'IA pour 'analyser automatiquement les CV et présélectionner les candidats'. Quelles sont les deux dimensions les plus critiques à évaluer dès le cadrage ?",
+    options: [
+      "Le coût du modèle et le temps de développement.",
+      "Le risque de biais discriminatoire (équité, conformité) et la qualité des données historiques de recrutement.",
+      "La performance technique du modèle et sa rapidité d'inférence.",
+      "L'adoption par les recruteurs et la satisfaction des candidats.",
+    ],
+    correctIndex: 1,
+    explanation: "Les outils de présélection RH sont à très haut risque éthique et juridique : un modèle entraîné sur l'historique de l'entreprise reproduit ses biais (de genre, d'origine, d'âge). L'AI Act EU classe ces usages en 'à haut risque' avec des obligations spécifiques. Avant toute discussion technique, l'audit des biais et la qualité des données historiques doivent être traités. Les autres dimensions sont importantes mais secondaires.",
+  },
+  {
+    kind: 'judgment' as const,
+    question: "Un éditeur SaaS vous propose une 'plateforme IA tout-en-un' qui 'transforme votre business en 30 jours, sans expertise technique requise'. Quel est le bon réflexe managérial ?",
+    options: [
+      "Signer rapidement pour ne pas se laisser distancer par les concurrents qui adopteraient la même solution.",
+      "Demander une démo et signer si elle est convaincante.",
+      "Demander un POC sur un cas d'usage métier spécifique avec des données réelles, et évaluer la valeur business mesurée et la difficulté d'intégration au workflow existant — la promesse 'sans expertise requise' étant un signal d'alerte sur le manque de réalisme.",
+      "Refuser systématiquement toutes les solutions IA externes et tout développer en interne.",
+    ],
+    correctIndex: 2,
+    explanation: "La promesse 'sans expertise requise / 30 jours / tout-en-un' est typiquement un signal d'alerte : tout déploiement IA réel demande adaptation aux données, intégration au workflow, conduite du changement. Le bon réflexe est ni l'adoption rapide ni le refus, mais la mise à l'épreuve sur un cas réel. Si la solution tient, tant mieux. Si elle ne tient pas, vous l'aurez su avec un investissement limité.",
+  },
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: 'Cadrage stratégique',
+    items: [
+      "L'usage IA envisagé est rattaché explicitement à une dimension stratégique (différenciation / coût / focalisation).",
+      "La cartographie des processus métier critiques de mon organisation est à jour.",
+      "Au moins 3 candidats IA ont été identifiés et comparés sur valeur et faisabilité.",
+      "Le candidat de pilote retenu est défendable devant un COMEX en moins de 2 minutes.",
+    ],
+  },
+  {
+    title: 'Évaluation système',
+    items: [
+      "Le projet est cadré comme un système (modèle + données + workflow + utilisateurs + gouvernance), pas comme un outil isolé.",
+      "Le rôle de l'humain dans la boucle est explicite : qui valide, qui supervise, qui corrige.",
+      "Les métriques de succès incluent une métrique business, pas seulement une métrique technique.",
+      "Les risques éthiques et réglementaires (biais, vie privée, AI Act) sont identifiés et adressés.",
+    ],
+  },
+  {
+    title: 'Préparation de la décision',
+    items: [
+      "Les données nécessaires existent ou sont accessibles à coût raisonnable.",
+      "Le budget couvre l'écosystème (données, intégration, formation), pas uniquement le modèle.",
+      "Le calendrier inclut une phase de pilote avant déploiement à l'échelle.",
+      "Un comité de gouvernance IA est désigné ou prévu, avec rôles et cadence définis.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "Le concept clé : toute IA est aujourd'hui une IA étroite, performante sur une tâche spécifique mais sans transposition automatique à d'autres problèmes — pas d'IA générale en production.",
+  "Le cas exemplaire : Takeda × MIT CCI montre que la valeur business vient de l'orchestration humain-machine (intelligence collective), pas du remplacement humain.",
+  "Le piège majeur : confondre performance technique du modèle et valeur business du projet — la précision du modèle ne suffit jamais comme métrique de succès.",
+  "L'outil opérationnel : le cadrage stratégique en 4 étapes (cartographier / identifier / cadrer / évaluer) avant tout pilote.",
+  "La suite : le Module 2 entre dans le détail du machine learning et apprend à juger la pertinence d'un cas d'usage ML spécifique.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: "What business leaders need to know about artificial intelligence",
+    author: 'MIT Sloan Ideas Made to Matter',
+    description:
+      "Synthèse managériale très accessible : définitions, cadrages business, écueils typiques. Bon point d'entrée non technique.",
+    href: 'https://mitsloan.mit.edu/ideas-made-to-matter/what-business-leaders-need-to-know-about-artificial-intelligence',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'AI 101',
+    author: 'MIT OpenCourseWare',
+    description:
+      "Cours d'introduction MIT non technique, pensé pour les non-spécialistes. Six vidéos courtes couvrant définitions, histoire, et applications.",
+    href: 'https://ocw.mit.edu/courses/res-6-013-ai-101-fall-2021/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Superminds — How to think and work better with people and machines',
+    author: 'Thomas Malone (MIT)',
+    description:
+      "Livre de référence pour la perspective d'intelligence collective adoptée dans le programme MIT Sloan. Pose le cadre humain × machine.",
+    href: 'https://cci.mit.edu/publications/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'standard' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "Cadre opérationnel américain pour la gestion des risques IA. Référence indispensable pour les responsables gouvernance et conformité.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Principes de l'OCDE sur l'intelligence artificielle",
+    author: 'OCDE',
+    description:
+      "Cinq principes pour un déploiement responsable de l'IA. Adoptés par 47 pays, base de l'AI Act européen. Disponible en français.",
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Does technology help or hurt employment?',
+    author: 'MIT News — David Autor',
+    description:
+      "Analyse économique fine de l'impact technologique sur l'emploi. Indispensable pour cadrer la conversation sur l'IA et le travail (préparation Module 5).",
+    href: 'https://news.mit.edu/2024/does-technology-help-or-hurt-employment-0401',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+// === URLs ===
+const module2Url = getLocalizedUrl('/modules/02-machine-learning/', locale);
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+---
+
+<BaseLayout
+  title="Module 1 — Introduction à l'IA"
+  description="Définir l'IA, retracer son histoire, comprendre l'intelligence collective et raisonner sur l'IA comme un système socio-technique. Premier module pédagogique avec cas Takeda × MIT CCI, quiz formatif et checklist manager."
+>
+  <HeroSecondary
+    surtitle="Module 1 · Introduction à l'IA"
+    title="Cadrer l'IA et l'intelligence collective"
+    lead="Premier module du parcours. On y pose les définitions essentielles, on retrace les trois vagues de l'histoire de l'IA, on introduit la notion d'intelligence collective qui structure l'ensemble du programme, et on apprend à utiliser un cadre stratégique simple pour analyser un usage IA dans son organisation."
+  >
+    <span slot="stats">
+      Durée recommandée : 6-8 h · Niveau : Découverte · Pattern-setter pour M2-M6
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — SYNTHÈSE EXÉCUTIVE === */}
+        <ExecutiveSummary>
+          <p>
+            L'<strong>intelligence artificielle</strong> est aujourd'hui partout dans le discours
+            mais reste mal cadrée dans la décision. Toute IA déployée en production en 2026 est une
+            <strong>IA étroite</strong> — performante sur une tâche spécifique, sans capacité à
+            transposer ses compétences à d'autres problèmes. L'IA générale (AGI), qui aurait des
+            capacités cognitives comparables à celles d'un humain, reste un horizon de recherche, pas
+            une réalité opérationnelle.
+          </p>
+          <p>
+            La vague actuelle, déclenchée vers 2012 par la convergence de trois facteurs (données
+            massives, GPU, deep learning), a produit des résultats spectaculaires en vision par
+            ordinateur, traduction, et plus récemment en IA générative. Mais ces résultats n'ont de
+            valeur business qu'à condition d'être insérés dans un <strong>système socio-technique</strong> :
+            modèle + données + workflow + utilisateurs + gouvernance. Aucune de ces couches n'est
+            optionnelle.
+          </p>
+          <p>
+            Pour un dirigeant, la question n'est donc pas « faut-il faire de l'IA » mais « comment
+            cadrer l'IA dans la stratégie ». Le cadre que nous adoptons est issu des travaux de
+            <strong>Thomas Malone et du MIT Center for Collective Intelligence</strong> : pensez l'IA
+            non comme un remplacement de l'humain mais comme une composante d'un système d'intelligence
+            collective. Les organisations qui réussissent leurs projets IA sont celles qui orchestrent
+            humains et machines plutôt que de chercher à substituer les uns aux autres.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIFS === */}
+        <section id="objectifs">
+          <h2>Objectifs d'apprentissage</h2>
+          <p>
+            À l'issue de ce module, vous saurez :
+          </p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Concepts clés</h2>
+          <p>
+            Cinq concepts structurent ce module. Chacun est sourcé. La hiérarchie des sources est
+            <a href={methodeUrl}>expliquée dans la méthode</a>.
+          </p>
+
+          <ConceptCard
+            id="ia-etroite-vs-generale"
+            title="IA étroite vs IA générale"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              L'<strong>IA étroite</strong> (narrow AI, ANI) est conçue et entraînée pour une tâche
+              spécifique : reconnaître des images de chats, traduire du français vers l'anglais,
+              détecter des transactions frauduleuses, recommander des films. Elle peut atteindre voire
+              dépasser la performance humaine sur cette tâche, mais ne transpose pas ses compétences à
+              un autre problème — le système qui joue à AlphaGo ne saurait pas conduire une voiture.
+            </p>
+            <p>
+              L'<strong>IA générale</strong> (AGI) désignerait un système doté de capacités cognitives
+              comparables à un humain sur une large gamme de problèmes : raisonner, apprendre, planifier,
+              s'adapter à des situations nouvelles. À ce jour, l'AGI <strong>n'existe pas</strong> en
+              production, et fait l'objet de débats vifs dans la recherche sur sa faisabilité, son
+              calendrier (de 5 à 50 ans selon les chercheurs), et même sa désirabilité.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Exemple business.</strong> Un système comme GPT-4, déployé chez Morgan Stanley
+                pour assister les analystes financiers, est une IA étroite : elle excelle sur une
+                tâche définie (synthèse de documents financiers), mais reste sous supervision humaine
+                pour la décision finale. Présenter un tel système comme « une IA capable de tout faire »
+                serait une erreur de cadrage qui mène à de mauvaises décisions d'investissement.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="histoire-vagues"
+            title="L'histoire de l'IA en trois vagues"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              L'IA n'est pas un sujet récent. Dès <strong>1956</strong>, la conférence de Dartmouth
+              fonde le champ avec l'ambition de créer des machines intelligentes. Trois grandes
+              vagues structurent ensuite l'histoire :
+            </p>
+            <p>
+              <strong>Première vague (~1956-1980) : l'IA symbolique.</strong> Les chercheurs codent
+              à la main des règles logiques (« si fièvre alors infection probable »). Approche
+              rigoureuse, mais qui s'effondre face à la complexité réelle. Les systèmes experts des
+              années 70-80 atteignent leurs limites.
+            </p>
+            <p>
+              <strong>Deuxième vague (~1980-2010) : l'apprentissage statistique.</strong> Plutôt que
+              coder les règles, on laisse les algorithmes les apprendre à partir des données. C'est la
+              naissance du machine learning au sens moderne. Les progrès sont réels mais limités par
+              la puissance de calcul et le volume de données disponibles.
+            </p>
+            <p>
+              <strong>Troisième vague (~2010-aujourd'hui) : le deep learning.</strong> Trois facteurs
+              convergent simultanément : explosion des données numériques (web, smartphones, IoT),
+              accès massif au calcul GPU à coût raisonnable, et redécouverte des réseaux de neurones
+              profonds. Le moment fondateur est souvent daté de 2012 (AlexNet sur ImageNet). La vague
+              actuelle de l'IA générative (depuis ~2022 avec ChatGPT) est une évolution de cette
+              troisième vague, pas une rupture.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Pourquoi ça compte pour le manager.</strong> Comprendre l'histoire évite deux
+                erreurs symétriques. La première : penser que l'IA est nouvelle (elle a 70 ans).
+                La seconde : penser que la vague actuelle va s'éteindre comme les précédentes (la
+                conjonction données × calcul × algorithmes est durable). La bonne lecture est : la
+                vague actuelle est massive, durable, et s'inscrit dans une histoire longue.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="intelligence-collective"
+            title="Intelligence collective et superminds"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              <strong>Thomas Malone</strong>, fondateur du <strong>MIT Center for Collective Intelligence</strong>,
+              propose un cadre puissant pour penser l'IA en organisation : ne pas voir l'IA comme un
+              remplacement de l'humain, mais comme une composante d'un système plus large où humains et
+              machines combinent leurs forces.
+            </p>
+            <p>
+              Malone parle de <strong>« superminds »</strong> : des systèmes où l'intelligence émerge
+              de la combinaison de plusieurs intelligences (humaines, organisationnelles, machine).
+              Une équipe est un supermind. Une entreprise est un supermind. Le marché est un supermind.
+              L'IA est un nouveau type d'acteur dans ces systèmes — pas leur centre, pas leur
+              substitut.
+            </p>
+            <p>
+              Cette perspective a des conséquences pratiques. Les organisations qui réussissent leurs
+              projets IA ne cherchent pas à automatiser intégralement, mais à <strong>orchestrer</strong> :
+              quelles tâches confier à la machine (calcul rapide, mémoire infinie, pas de fatigue),
+              lesquelles garder humaines (jugement contextuel, créativité, responsabilité), et comment
+              les coordonner.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Exemple business.</strong> Le programme Superminds mené par Takeda Pharmaceuticals
+                avec le MIT CCI est une mise en pratique directe de cette approche : Takeda a structuré
+                un dispositif où des équipes mixtes (chercheurs, médecins, data scientists, IA) collaborent
+                sur des problèmes complexes du développement médicament. La question posée au système
+                n'est pas « comment l'IA peut remplacer X ? » mais « comment combiner intelligences pour
+                progresser plus vite ? ».
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="systeme-socio-technique"
+            title="L'IA comme système socio-technique"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Un projet IA réussi n'est jamais un modèle isolé. C'est un <strong>système</strong> qui
+              combine au minimum cinq couches :
+            </p>
+            <ul>
+              <li><strong>Le modèle</strong> — l'algorithme entraîné à faire la prédiction ou la décision.</li>
+              <li><strong>Les données</strong> — d'entraînement (historique) et opérationnelles (en production).</li>
+              <li><strong>Le workflow</strong> — comment la sortie du modèle s'insère dans le processus métier existant.</li>
+              <li><strong>Les utilisateurs</strong> — qui consomme le résultat, comment, avec quel niveau de confiance et de contrôle.</li>
+              <li><strong>La gouvernance</strong> — qui supervise, qui contrôle les biais, qui répond en cas d'erreur.</li>
+            </ul>
+            <p>
+              Aucune de ces couches n'est universelle. Une solution IA achetée sur étagère ne fournit
+              que la première (et parfois partiellement les couches 2 et 3). Le reste doit être construit
+              dans le contexte de l'organisation — et c'est typiquement là que se concentre le coût
+              total réel d'un projet IA.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Conséquence pour le budget.</strong> Une règle de bonne pratique observée dans
+                de nombreux retours d'expérience industriels est que le modèle représente entre 20 et
+                40 % du budget total d'un projet IA. Le reste se répartit sur la qualité des données,
+                l'intégration au workflow, la formation des utilisateurs, et la mise en place de la
+                gouvernance. Sous-estimer ces couches est le mode de défaillance le plus fréquent.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cadrage-strategique"
+            title="Le cadrage stratégique des usages IA"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Pour décider d'investir dans un projet IA, le cadrage stratégique pose trois questions
+              en miroir des trois grandes stratégies génériques de Porter :
+            </p>
+            <ul>
+              <li>
+                <strong>Différenciation</strong> — l'IA va-t-elle créer une valeur perçue par le client
+                que les concurrents ne sauront pas reproduire (expérience produit augmentée, personnalisation
+                fine, qualité de service supérieure) ?
+              </li>
+              <li>
+                <strong>Leadership de coût</strong> — l'IA va-t-elle réduire structurellement le coût
+                d'opérations clés (automatisation de tâches répétitives, optimisation logistique,
+                prédictions de demande qui réduisent les stocks) ?
+              </li>
+              <li>
+                <strong>Focalisation</strong> — l'IA va-t-elle permettre de servir un segment spécifique
+                avec une précision impossible aujourd'hui (médecine de précision, financement de niche,
+                B2B très technique) ?
+              </li>
+            </ul>
+            <p>
+              Si un projet IA candidat ne répond clairement à aucune de ces trois dimensions, il est
+              probablement prématuré ou mal cadré. À l'inverse, un projet bien aligné gagne en
+              défendabilité interne (COMEX) et externe (clients, marché).
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test rapide.</strong> Pour chaque idée de projet IA dans votre organisation,
+                exigez de pouvoir formuler en moins de 30 secondes : « ce projet contribue à la
+                stratégie X par tel mécanisme ». Si l'argument est confus ou interchangeable d'un
+                projet à l'autre, le cadrage stratégique est manquant.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — ERREURS FRÉQUENTES === */}
+        <section id="erreurs-frequentes">
+          <h2>Erreurs fréquentes</h2>
+          <p>
+            Quatre pièges récurrents à reconnaître et à mitiger dès le cadrage initial d'un projet IA.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — CAS RÉEL === */}
+        <section id="cas-reel">
+          <h2>Cas réel — Takeda × MIT Center for Collective Intelligence</h2>
+          <p>
+            Pour illustrer la perspective d'intelligence collective de ce module, le cas du programme
+            <strong> Takeda Superminds</strong>, mené par le MIT Center for Collective Intelligence,
+            est particulièrement pédagogique. Takeda Pharmaceuticals s'est associé au CCI pour structurer
+            un dispositif d'innovation où des équipes mixtes (chercheurs, médecins, data scientists,
+            outils IA) collaborent sur des problèmes complexes du développement de médicaments.
+          </p>
+          <CaseCardCompact
+            organization="Takeda × MIT CCI — Programme Superminds"
+            sector="Santé"
+            technology="Intelligence collective"
+            tagline="Plutôt que d'automatiser des étapes du développement médicament, Takeda structure des équipes humain-machine qui collaborent sur les phases les plus créatives de la R&D. Une mise en pratique directe du cadre de Thomas Malone."
+            href={getLocalizedUrl('/cas/takeda-superminds/', locale)}
+            available={false}
+          />
+
+          <h3>Mini-cas additionnel — Morgan Stanley AI @ Morgan Stanley</h3>
+          <p>
+            Morgan Stanley a déployé un assistant IA (basé sur GPT-4 d'OpenAI) à destination de ses
+            ~16 000 conseillers financiers, leur permettant de trouver instantanément l'information
+            pertinente dans la documentation interne (notes de recherche, rapports sectoriels,
+            historique client). Le déploiement illustre plusieurs points du module :
+          </p>
+          <ul>
+            <li>
+              <strong>IA étroite, pas générale</strong> — le système excelle sur la recherche dans le
+              corpus interne, pas sur la décision d'investissement.
+            </li>
+            <li>
+              <strong>Système, pas modèle isolé</strong> — l'investissement majeur a porté sur la
+              qualité et la curation du corpus interne, pas sur le modèle lui-même.
+            </li>
+            <li>
+              <strong>Human-in-the-loop</strong> — la décision finale reste celle du conseiller,
+              l'IA produit des éléments de réponse traçables et vérifiables.
+            </li>
+            <li>
+              <strong>Cadrage stratégique clair</strong> — focalisation : permettre aux conseillers de
+              servir mieux et plus rapidement un segment haut de gamme exigeant.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>Source : <a href="https://www.morganstanley.com/about-us/technology/ai" rel="noopener noreferrer" target="_blank">communications publiques Morgan Stanley</a> sur le déploiement AI @ Morgan Stanley.</em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITÉ === */}
+        <section id="activite">
+          <h2>Activité pratique — Cadrer un usage IA pour votre organisation</h2>
+          <p>
+            Cette activité vous fait dérouler concrètement le cadrage stratégique vu en concept §3.5.
+            À réaliser seul ou en petit groupe, en 30 à 60 minutes.
+          </p>
+          <Activity
+            id="activite-cadrage"
+            title="Cadrer un usage IA pour votre organisation"
+            duration="30-60 min"
+            level="Découverte / Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Canvas de cadrage IA (Phase 5)"
+            downloadHref="#"
+          />
+          <p class="ai-text-muted">
+            <em>Le canvas téléchargeable PDF arrive en Phase 5 du projet. En attendant, vous pouvez
+            structurer votre travail avec un simple tableau Excel ou un mur de post-its.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Quiz formatif</h2>
+          <p>
+            Sept questions pour vérifier votre compréhension. Trois questions de compréhension, trois
+            d'application, une de jugement. Les réponses se déplient à votre rythme.
+          </p>
+          <QuizPlaceholder
+            id="quiz-module-1"
+            title="Quiz — Module 1 : Introduction à l'IA"
+            questions={quizQuestions}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Checklist manager — Cadrage IA</h2>
+          <p>
+            Douze points de contrôle avant de présenter un projet IA en COMEX. Trois groupes :
+            cadrage stratégique, évaluation système, préparation de la décision.
+          </p>
+          <Checklist
+            id="checklist-module-1"
+            title="Cadrage IA — 12 points de contrôle"
+            intro="Avant de défendre un projet IA en comité de direction, parcourez ces douze points. Chaque case cochée renforce la défendabilité de votre dossier."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application dans votre organisation</h2>
+          <p>
+            Cinq questions à poser dans votre contexte. Pas de bonne ou mauvaise réponse universelle —
+            ce qui compte, c'est de pouvoir y répondre <em>spécifiquement</em> pour votre organisation.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Quelle est la <strong>stratégie générique</strong> de votre organisation aujourd'hui
+              (différenciation / coût / focalisation), et où l'IA peut-elle la renforcer ?
+            </li>
+            <li>
+              Parmi vos <strong>processus métier critiques</strong>, lesquels génèrent ou consomment
+              de grandes quantités de données ? Ces données sont-elles structurées et accessibles ?
+            </li>
+            <li>
+              Avez-vous identifié un <strong>candidat IA défendable en COMEX</strong> en moins de
+              90 secondes ? Si non, le cadrage stratégique est probablement à reprendre.
+            </li>
+            <li>
+              Pour ce candidat, quelle est la <strong>place de l'humain</strong> dans le système
+              cible ? Qui valide, qui supervise, qui peut reprendre la main ?
+            </li>
+            <li>
+              Quel <strong>budget est prévu pour l'écosystème</strong> (données, intégration,
+              formation, gouvernance), au-delà du modèle lui-même ?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>Pour les consultants</h3>
+            <p>
+              En mission de cadrage IA, ces cinq questions structurent un atelier de 90 minutes en
+              comité de direction client. Préparer une matrice 5 × N (questions × business units) à
+              remplir collectivement permet de visualiser rapidement les zones de maturité de
+              l'organisation.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — À RETENIR === */}
+        <section id="a-retenir">
+          <h2>À retenir</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — POUR ALLER PLUS LOIN === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Pour aller plus loin</h2>
+          <p>
+            Six ressources pour approfondir, classées par type. La hiérarchie des sources est indiquée
+            sur chacune (cf. <a href={methodeUrl}>méthode</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Termes techniques rencontrés ? Consultez le
+            <a href={glossaireUrl}>glossaire</a> (Phase 4.9).
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: programmeUrl,
+            label: "Vue d'ensemble du programme",
+            context: 'Programme',
+          }}
+          next={{
+            href: module2Url,
+            label: 'Machine Learning en entreprise',
+            context: 'Module 2',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>

@@ -81,13 +81,13 @@ const methodeUrl = getLocalizedUrl('/methode/', locale);
       <h2 class="ai-section__title">{t('modules.preview.title', locale)}</h2>
       <p class="ai-section__lead">{t('modules.preview.lead', locale)}</p>
       <div class="ai-modules-grid">
-        {modules.map((m) => (
+        {modules.map((m, i) => (
           <ModuleCard
             number={m.number}
             title={t(m.titleKey, locale)}
             summary={t(m.summaryKey, locale)}
             href={getLocalizedUrl(`/modules/${m.slug}/`, locale)}
-            available={false}
+            available={i === 0}
           />
         ))}
       </div>
