@@ -1,0 +1,500 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème métier' },
+  { id: 'solution', label: 'Solution IA' },
+  { id: 'benefices', label: 'Bénéfices observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: 'Risques identifiés' },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+const takeaways = [
+  "Amazon Robotics illustre la robotique mobile autonome (AMR) à très grande échelle — un million de robots déployés mondialement, démontrant qu'une logistique pilotée par robotique + IA est désormais possible à l'échelle d'un acteur global.",
+  "DeepFleet, le foundation model d'IA pour orchestrer la flotte (annoncé 2025), montre que la rupture n'est pas dans le robot individuel mais dans l'orchestration globale d'une flotte hétérogène — analogie directe avec les LLMs comme foundation models pour le langage.",
+  "Amazon insiste publiquement sur la dimension augmentation des humains plutôt que remplacement — création de nouveaux rôles techniques (technicien robotique, opérateur de flotte), redéploiement vers des tâches à plus forte valeur. Cadrage défendable et reproductible.",
+  "Le cas démontre que l'avantage concurrentiel dans la robotique logistique ne vient pas du robot lui-même (technologie disponible sur le marché) mais de l'intégration : data au sol, foundation model d'orchestration, infrastructure logicielle, conduite du changement.",
+  "La transposition à des organisations plus petites est partielle : peu d'entreprises ont 1 million d'unités à orchestrer, mais les principes — robots intégrés au workflow, IA d'orchestration, augmentation humaine — restent applicables à des flottes plus modestes (cobots PME, AGV en entrepôts régionaux).",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Amazon now has 1 million robots and a new AI foundation model',
+    author: 'About Amazon — Operations',
+    description:
+      "Communication officielle Amazon annonçant le seuil du million de robots déployés et le lancement de DeepFleet — foundation model d'IA pour l'orchestration de la flotte. Source primaire pour ce cas.",
+    href: 'https://www.aboutamazon.com/news/operations/amazon-million-robots-ai-foundation-model',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Amazon Robotics — site officiel',
+    author: 'Amazon Robotics',
+    description:
+      "Site officiel de la division Amazon Robotics, présentant les différentes générations de robots déployés dans le réseau logistique (Hercules, Pegasus, Sequoia, etc.). Source primaire complémentaire.",
+    href: 'https://www.aboutamazon.com/what-we-do/amazon-robotics',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Introduction to Robotics (cours complet)',
+    author: 'MIT OpenCourseWare — 2.12',
+    description:
+      "Cours d'introduction MIT à la robotique. Pour solidifier les bases conceptuelles — perception, cinématique, contrôle, planification — qui structurent les systèmes robotiques modernes y compris les AMR comme ceux d'Amazon.",
+    href: 'https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module4Url = getLocalizedUrl('/modules/04-robotique/', locale);
+const morganStanleyUrl = getLocalizedUrl('/cas/morgan-stanley/', locale);
+const githubAccentureUrl = getLocalizedUrl('/cas/github-copilot-accenture/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="Amazon Robotics et DeepFleet — Étude de cas"
+  description="Comment Amazon a atteint le seuil d'un million de robots déployés et a lancé DeepFleet, un foundation model d'IA pour orchestrer sa flotte logistique mondiale. Cas exemplaire pour le Module 4."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 4"
+    title="Amazon Robotics — Un million de robots et DeepFleet"
+    lead="Comment Amazon a atteint le seuil symbolique d'un million de robots déployés dans son réseau logistique mondial, et a lancé en 2025 DeepFleet — un foundation model d'IA dédié à l'orchestration de la flotte. Cas emblématique du Module 4."
+  >
+    <span slot="stats">
+      Logistique / E-commerce · AMR + IA d'orchestration · 1 million de robots
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organisation</dt>
+              <dd>Amazon — opérateur logistique et e-commerce mondial. Sa division Amazon Robotics est issue de l'acquisition de Kiva Systems en 2012</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Secteur</dt>
+              <dd>Logistique / E-commerce — entrepôts d'exécution (fulfillment centers) à l'échelle mondiale</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technologie</dt>
+              <dd>Robots mobiles autonomes (AMR — Autonomous Mobile Robots) + foundation model d'IA pour l'orchestration de flotte (DeepFleet, annoncé 2025) + infrastructure logicielle d'exploitation</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Échelle</dt>
+              <dd>Plus d'un million de robots déployés dans le réseau Amazon mondial selon la communication officielle 2025 — plusieurs générations cohabitant (Hercules, Pegasus, Sequoia, etc.)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Communications officielles Amazon (About Amazon Operations) sur le seuil du million de robots et le lancement de DeepFleet <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Amazon Robotics</strong> est l'une des plus grandes flottes de robots
+            industriels jamais déployées. Selon la communication officielle d'Amazon en 2025, la
+            firme a atteint le seuil symbolique d'<strong>un million de robots</strong> en
+            opération dans son réseau logistique mondial — réseau d'entrepôts d'exécution
+            (fulfillment centers) qui traite quotidiennement des millions de colis. Plusieurs
+            générations de robots cohabitent, du transport de palettes (Hercules) à la manipulation
+            d'objets variés (Sparrow, Sequoia).
+          </p>
+          <p>
+            En 2025, Amazon a annoncé <strong>DeepFleet</strong>, un foundation model d'IA conçu
+            pour <strong>orchestrer cette flotte hétérogène</strong> — un analogue logistique de
+            ce que sont GPT-4 ou Claude pour le langage. La rupture n'est plus dans le robot
+            individuel (technologie largement disponible) mais dans l'<strong>orchestration globale</strong>
+            : comment décider en temps réel quel robot fait quoi, où, quand, en optimisant à la
+            fois la productivité, l'usure, l'énergie, la sécurité, et l'interaction avec les
+            opérateurs humains.
+          </p>
+          <p>
+            Pour un dirigeant, le cas Amazon illustre directement le Module 4 : <strong>les trois
+            piliers de la robotique en entreprise</strong> (intégration au workflow, sécurité
+            humain-machine, capacité d'orchestration), la <strong>place de l'humain</strong>
+            (Amazon insiste publiquement sur la création de nouveaux rôles techniques plutôt que
+            sur le remplacement), et l'<strong>avantage concurrentiel structurel</strong> qui ne
+            vient pas du robot lui-même mais de l'écosystème logiciel et data autour.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'organisation</h2>
+          <p>
+            <strong>Amazon</strong> est l'un des plus grands opérateurs logistiques au monde. Son
+            réseau de <em>fulfillment centers</em> (entrepôts d'exécution) traite quotidiennement
+            des millions de commandes en provenance de centaines de pays. La logistique d'entrepôt
+            est un terrain particulier pour la robotique :
+          </p>
+          <ul>
+            <li>
+              Les <strong>volumes</strong> rendent l'investissement robotique amortissable —
+              chaque robot effectue des milliers de mouvements par jour, sur des durées
+              opérationnelles de plusieurs années.
+            </li>
+            <li>
+              L'<strong>environnement est partiellement structuré</strong> — sols plats, allées
+              définies, marquage au sol — ce qui simplifie la perception et la navigation par
+              rapport à un environnement totalement non structuré (rue, terrain naturel).
+            </li>
+            <li>
+              Les <strong>tâches sont répétitives</strong> mais variées dans la cible (objets de
+              tailles, poids et fragilités différentes) — ce qui exige des robots polyvalents et
+              capables d'apprentissage par démonstration ou par essai.
+            </li>
+            <li>
+              La <strong>sécurité humain-machine</strong> est un enjeu central : opérateurs humains
+              et robots cohabitent sur les mêmes surfaces — ce qui impose des normes strictes
+              (notamment normes ISO 10218 et ISO/TS 15066 pour les cobots).
+            </li>
+          </ul>
+          <p>
+            Amazon a investi massivement dans cette direction depuis l'acquisition de Kiva Systems
+            en 2012, qui est devenue Amazon Robotics. Plusieurs générations de robots se sont
+            succédé : transport de palettes (Hercules, Pegasus), tri (Robin), manipulation
+            d'objets (Sparrow), nouveaux entrepôts conçus en intégrant nativement la robotique
+            (Sequoia). La communication 2025 sur le seuil du million de robots et sur DeepFleet
+            marque une nouvelle étape.
+          </p>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème métier</h2>
+          <p>
+            Le problème métier d'Amazon évolue avec l'échelle. À l'échelle d'un entrepôt, les
+            problèmes ressemblent à ceux de toute logistique automatisée. À l'échelle d'un million
+            de robots dans un réseau mondial, des problèmes nouveaux émergent :
+          </p>
+          <ul>
+            <li>
+              <strong>Comment orchestrer une flotte hétérogène</strong> ? Plusieurs générations de
+              robots cohabitent, avec des capacités, contraintes et coûts différents. Décider quel
+              robot fait quoi devient un problème d'optimisation globale en temps réel.
+            </li>
+            <li>
+              <strong>Comment partager les apprentissages à l'échelle du réseau</strong> ?
+              Quand un robot apprend à manipuler un nouveau type d'objet, comment ce savoir
+              bénéficie-t-il aux autres robots — y compris ceux dans d'autres entrepôts, voire
+              d'autres pays ?
+            </li>
+            <li>
+              <strong>Comment optimiser plusieurs objectifs simultanément</strong> ? Productivité,
+              usure des équipements, consommation énergétique, sécurité humain-machine, fluidité
+              opérationnelle — ces objectifs entrent parfois en tension. L'arbitrage local n'est
+              pas optimal globalement.
+            </li>
+            <li>
+              <strong>Comment intégrer les humains</strong> ? Les opérateurs humains restent
+              centraux — pour les tâches de jugement, la maintenance, la gestion d'exceptions,
+              la supervision générale. Comment composer une organisation où humains et robots
+              collaborent au lieu de se substituer ?
+            </li>
+          </ul>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>Solution IA mise en place</h2>
+
+          <h3>1. Une flotte multi-générations spécialisées</h3>
+          <p>
+            Amazon Robotics a conçu plusieurs générations de robots pour des tâches
+            complémentaires : <strong>Hercules et Pegasus</strong> pour le transport de palettes
+            et de containers, <strong>Robin</strong> pour le tri, <strong>Sparrow</strong> pour
+            la préhension d'objets variés, <strong>Sequoia</strong> comme système intégré nouvelle
+            génération. Plutôt que de remplacer toutes les générations à chaque évolution, Amazon
+            les fait cohabiter — ce qui suppose une orchestration capable de gérer cette
+            hétérogénéité.
+          </p>
+
+          <h3>2. DeepFleet — foundation model d'orchestration de flotte</h3>
+          <p>
+            Annoncé en 2025, <strong>DeepFleet</strong> est positionné comme un foundation model
+            d'IA dédié à l'orchestration de la flotte robotique. L'analogie avec GPT-4 ou Claude
+            pour le langage est explicitement faite : un modèle pré-entraîné sur des volumes
+            massifs de données opérationnelles, capable d'orchestrer une flotte hétérogène en
+            temps réel et d'apprendre de ses propres décisions. Selon la communication Amazon,
+            DeepFleet améliore l'efficacité globale de la flotte (réduction des temps de transit,
+            optimisation des trajectoires, équilibrage de charge entre zones).
+          </p>
+
+          <h3>3. Apprentissage partagé à l'échelle du réseau</h3>
+          <p>
+            Un avantage structurel d'opérer un million de robots est la capacité de
+            <strong> partager l'apprentissage</strong> : un nouveau type d'objet rencontré dans un
+            entrepôt américain peut bénéficier aux opérations dans un entrepôt européen. Ce
+            partage suppose une infrastructure logicielle dédiée — pipeline data, validation,
+            propagation contrôlée — qui est elle-même un investissement majeur.
+          </p>
+
+          <h3>4. Augmentation des humains plutôt que remplacement</h3>
+          <p>
+            Amazon insiste publiquement, dans sa communication 2025, sur la création de nouveaux
+            rôles techniques (technicien robotique, opérateur de flotte, ingénieur process) qui
+            n'existaient pas avant le déploiement massif. Cette logique d'augmentation est
+            défendable — à la fois en interne (acceptabilité sociale du déploiement) et en externe
+            (régulateurs, public, candidats potentiels). Le cadrage public est cohérent avec les
+            recommandations de David Autor (MIT) sur l'impact des technologies sur l'emploi.
+          </p>
+
+          <h3>5. Sécurité humain-machine</h3>
+          <p>
+            La cohabitation humains-robots dans les mêmes surfaces impose des normes strictes
+            (ISO 10218 robots industriels, ISO/TS 15066 cobots quand applicable, réglementations
+            locales). Amazon a intégré ces exigences dans la conception de ses entrepôts et dans
+            l'orchestration — par exemple, les zones partagées humains-robots fonctionnent avec
+            des règles d'évitement et des limites de vitesse adaptées.
+          </p>
+        </section>
+
+        {/* === BENEFICES === */}
+        <section id="benefices">
+          <h2>Bénéfices observés</h2>
+          <p>
+            Selon les communications publiques d'Amazon, plusieurs ordres de grandeur sont
+            documentés :
+          </p>
+          <ul>
+            <li>
+              <strong>Capacité de traitement</strong> — un fulfillment center robotisé moderne
+              traite plusieurs fois plus de commandes par jour qu'un entrepôt non robotisé de
+              taille équivalente.
+            </li>
+            <li>
+              <strong>Précision opérationnelle</strong> — les taux d'erreur sur le tri et la
+              préparation de commandes sont structurellement plus bas avec les systèmes robotisés
+              et orchestrés que dans un environnement purement manuel.
+            </li>
+            <li>
+              <strong>Création de nouveaux rôles</strong> — Amazon communique sur des dizaines de
+              milliers d'emplois techniques créés autour de la robotique (techniciens, ingénieurs,
+              opérateurs de flotte, formateurs).
+            </li>
+            <li>
+              <strong>Avantage concurrentiel structurel</strong> — l'effet d'échelle (un million
+              de robots, données massives, apprentissage partagé) crée un avantage difficile à
+              reproduire pour des concurrents plus petits ou plus jeunes.
+            </li>
+            <li>
+              <strong>Plateforme technologique réutilisable</strong> — DeepFleet et l'infrastructure
+              autour peuvent en principe servir bien au-delà du seul périmètre Amazon (exposition
+              externe potentielle de capacités, comme déjà fait avec AWS).
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Amazon publie des éléments qualitatifs et certains ordres de grandeur, mais
+            les KPIs précis restent souvent confidentiels (concurrence). La valeur du cas tient à
+            l'architecture publique documentée et à la trajectoire de déploiement.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <ul>
+            <li>
+              <strong>L'investissement est massif</strong>. Acquérir, déployer, maintenir et
+              orchestrer un million de robots représente un investissement de plusieurs milliards
+              de dollars sur la durée — hors d'atteinte pour la grande majorité des acteurs. Le cas
+              n'est pas trivialement transposable, sauf à des principes architecturaux applicables
+              à plus petite échelle.
+            </li>
+            <li>
+              <strong>L'effet de verrou est réel</strong>. Une fois engagé sur une voie technologique
+              et organisationnelle, il devient coûteux de pivoter. Les concurrents partis plus tard
+              partent de plus loin, mais peuvent en principe sauter une génération technologique.
+            </li>
+            <li>
+              <strong>Les conditions de travail des opérateurs humains</strong> restent un sujet
+              social et politique sensible — couverture média régulière sur les cadences, les
+              indicateurs, le management. Le récit officiel de l'augmentation par robotique est
+              parfois contesté par des syndicats ou des journalistes — ce qui pèse sur la marque
+              employeur et sur la perception publique.
+            </li>
+            <li>
+              <strong>La dépendance aux infrastructures logicielles</strong> est totale. Une
+              indisponibilité de DeepFleet ou de l'infrastructure d'orchestration aurait des
+              conséquences directes sur la capacité opérationnelle. L'investissement en
+              redondance, sécurité et résilience est commensuré.
+            </li>
+            <li>
+              <strong>L'AI Act EU et autres réglementations</strong> imposent des analyses de
+              conformité spécifiques pour des systèmes de cette nature, en particulier sur les
+              dimensions impact sur le travail, sécurité, et — en cas d'évolution vers des
+              décisions plus autonomes — sur les obligations potentielles haut risque.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES === */}
+        <section id="risques">
+          <h2>Risques identifiés et garde-fous</h2>
+          <ul>
+            <li>
+              <strong>Risque de sécurité physique humain-machine</strong>. La cohabitation directe
+              expose les opérateurs aux risques de collision, écrasement, projection d'objets.
+              Garde-fous : conception des espaces partagés, normes ISO 10218 et ISO/TS 15066,
+              capteurs de proximité, limites de vitesse, formations dédiées, audits réguliers.
+            </li>
+            <li>
+              <strong>Risque social et de conduite du changement</strong>. Le déploiement modifie
+              les conditions de travail et la nature des emplois. Garde-fous : dialogue social,
+              création explicite de nouveaux rôles, formation, articulation avec les politiques
+              RH (mobilité, accompagnement).
+            </li>
+            <li>
+              <strong>Risque cyber</strong>. Une flotte d'un million de robots orchestrée par IA
+              est une surface d'attaque importante. Garde-fous : segmentation réseau, durcissement
+              des firmware, monitoring, plans de continuité.
+            </li>
+            <li>
+              <strong>Risque de dérive vers l'autonomie excessive</strong>. La tentation d'étendre
+              l'autonomie des robots ou des décisions IA au-delà de zones bien cadrées peut
+              produire des incidents. Garde-fous : périmètres explicites, supervision humaine sur
+              les décisions à fort enjeu, audit régulier des décisions automatisées.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Le cas Amazon montre que <strong>l'avantage concurrentiel ne vient pas du robot</strong>
+              mais de l'orchestration et de l'écosystème data/logiciel. Comment cette logique
+              s'applique-t-elle dans votre secteur ? Quels sont les actifs structurels qui produisent
+              un avantage durable ?
+            </li>
+            <li>
+              DeepFleet est positionné comme un <strong>foundation model d'orchestration</strong>,
+              analogue à GPT-4 pour le langage. Cette analogie vous semble-t-elle pertinente ?
+              Quelles différences importantes entre orchestration robotique et génération de texte ?
+            </li>
+            <li>
+              Amazon insiste publiquement sur la <strong>création de nouveaux rôles techniques</strong>
+              plutôt que sur le remplacement. Ce cadrage est-il défendable au regard de l'évolution
+              réelle de l'emploi dans les entrepôts robotisés ? Quels mécanismes de mesure
+              permettraient d'objectiver le débat ?
+            </li>
+            <li>
+              Pour transposer la logique Amazon à une organisation plus petite (entreprise
+              régionale, PME industrielle), <strong>quels seraient les principes à conserver</strong>
+              et lesquels ne sont pas réplicables tels quels ?
+            </li>
+            <li>
+              Au regard de l'AI Act EU et des normes sectorielles (ISO 10218, ISO/TS 15066),
+              <strong> quelles obligations spécifiques</strong> s'appliqueraient à un déploiement
+              de cette nature en Europe aujourd'hui ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module4Url}><strong>Module 4 — Robotique
+            en entreprise</strong></a>. Il est aussi un point d'appui pour le Module 5
+            (gouvernance, dialogue social, conformité) et le Module 6 (déploiement à grande
+            échelle, scenario planning sur l'évolution de l'orchestration robotique avec foundation
+            models comme DeepFleet).
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: morganStanleyUrl,
+            label: "Morgan Stanley",
+            context: 'Cas précédent',
+          }}
+          next={{
+            href: githubAccentureUrl,
+            label: "GitHub Copilot × Accenture",
+            context: 'Cas suivant',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

@@ -1,0 +1,508 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème métier' },
+  { id: 'solution', label: 'Solution IA' },
+  { id: 'benefices', label: 'Bénéfices observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: 'Risques identifiés' },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+const takeaways = [
+  "Les travaux de Regina Barzilay (MIT CSAIL) illustrent un cas exemplaire de ML supervisé en santé : étiquetage par experts médicaux (coûteux), validation indépendante avant tout déploiement clinique, supervision humaine non négociable — pas de raccourci possible quand la décision affecte la santé d'un patient.",
+  "Le modèle Mirai prédit le risque de cancer du sein à 1 à 5 ans à partir d'une mammographie — c'est une rupture vis-à-vis des modèles classiques de score de risque qui s'appuient sur peu de variables démographiques. La performance documentée dans des publications académiques est supérieure aux scores traditionnels sur des cohortes diverses.",
+  "Le cas illustre la généralisation comme défi central : un modèle entraîné sur une population peut sous-performer sur d'autres populations (origine ethnique, équipement d'imagerie, protocole). La validation multi-sites est non négociable avant tout déploiement clinique réel.",
+  "Le cas confirme que l'IA en santé augmente le radiologue plutôt qu'elle ne le remplace — le modèle produit un score, le radiologue intègre ce score à son jugement et à l'ensemble du dossier patient. Cette articulation est exigée par la déontologie médicale et par les régulateurs.",
+  "La transposition à des organisations non académiques est partielle mais réelle : tout cas d'IA appliquée à des décisions à fort enjeu (santé, justice, éducation, services publics) peut s'inspirer du standard de validation Barzilay — étiquetage rigoureux, validation multi-sites, supervision humaine, transparence des limites.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Regina Barzilay — page CSAIL officielle',
+    author: 'MIT CSAIL',
+    description:
+      "Page institutionnelle de Regina Barzilay au sein du Computer Science and Artificial Intelligence Laboratory du MIT. Présente ses travaux sur l'IA en santé, en particulier le dépistage précoce du cancer du sein. Source primaire pour ce cas.",
+    href: 'https://www.csail.mit.edu/person/regina-barzilay',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'A new model for breast cancer prediction',
+    author: 'MIT News',
+    description:
+      "Article MIT News présentant le modèle Mirai (prédiction de risque de cancer du sein à 5 ans à partir d'une mammographie). Donne les éléments de contexte, méthodologie, et performance documentés dans la publication scientifique.",
+    href: 'https://news.mit.edu/2021/robust-artificial-intelligence-tools-predict-future-cancer-0128',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Introduction to Machine Learning (cours complet)',
+    author: 'MIT OpenCourseWare — 6.036',
+    description:
+      "Cours d'introduction MIT au ML. Pour solidifier les bases conceptuelles — supervisé, validation, généralisation — qui structurent les travaux de Barzilay et plus généralement le ML appliqué à la santé.",
+    href: 'https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module2Url = getLocalizedUrl('/modules/02-machine-learning/', locale);
+const githubAccentureUrl = getLocalizedUrl('/cas/github-copilot-accenture/', locale);
+const casIndexUrl = getLocalizedUrl('/cas/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="Recherche MIT — Regina Barzilay (dépistage du cancer) — Étude de cas"
+  description="Travaux de Regina Barzilay (MIT CSAIL) sur le dépistage précoce du cancer du sein par ML — modèle Mirai. Cas exemplaire d'IA en santé : étiquetage rigoureux, validation indépendante, supervision humaine non négociable."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 2 (mini-cas)"
+    title="Regina Barzilay (MIT CSAIL) — Dépistage du cancer par ML"
+    lead="Travaux du MIT CSAIL sur le dépistage précoce du cancer du sein par apprentissage profond. Cas exemplaire pour comprendre les exigences spécifiques du ML en santé : étiquetage par experts, validation indépendante avant déploiement clinique, supervision humaine non négociable."
+  >
+    <span slot="stats">
+      Santé / Imagerie médicale · Apprentissage supervisé · MIT CSAIL
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organisation</dt>
+              <dd>MIT CSAIL — Computer Science and Artificial Intelligence Laboratory du Massachusetts Institute of Technology, l'un des plus grands laboratoires au monde de recherche en informatique et IA</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Chercheuse principale</dt>
+              <dd>Regina Barzilay — professeure au MIT CSAIL, AI Faculty Lead à la Jameel Clinic for AI and Health du MIT, l'une des chercheuses les plus reconnues sur l'application du ML à la santé</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Secteur</dt>
+              <dd>Santé / Imagerie médicale — dépistage précoce du cancer (cancer du sein en particulier, avec extensions à d'autres cancers)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technologie</dt>
+              <dd>Apprentissage profond supervisé sur images médicales — modèle Mirai pour la prédiction du risque de cancer du sein à 1 à 5 ans à partir d'une mammographie</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Page officielle CSAIL de Regina Barzilay, articles MIT News, publications scientifiques associées <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            Les travaux de <strong>Regina Barzilay</strong> et de son équipe au MIT CSAIL sur le
+            dépistage précoce du cancer du sein constituent l'un des cas les plus connus
+            d'application du Machine Learning en santé. Le modèle <strong>Mirai</strong>, publié
+            en 2021 dans des revues scientifiques de référence, prédit le <strong>risque de cancer
+            du sein à 1 à 5 ans</strong> à partir d'une mammographie — c'est une rupture vis-à-vis
+            des scores classiques qui s'appuient sur peu de variables démographiques (âge, antécédents
+            familiaux).
+          </p>
+          <p>
+            Au-delà de la performance brute, le cas est exemplaire pour le Module 2 (Machine
+            Learning en entreprise) parce qu'il illustre les <strong>exigences spécifiques du ML
+            en santé</strong> : étiquetage par experts médicaux (lent et coûteux), <strong>validation
+            indépendante</strong> sur des cohortes diverses avant tout déploiement clinique,
+            <strong> supervision humaine non négociable</strong> (le radiologue garde la décision),
+            transparence sur les limites et les contextes où le modèle peut sous-performer.
+          </p>
+          <p>
+            Pour un dirigeant, la leçon centrale dépasse la santé : <strong>tout déploiement d'IA
+            sur des décisions à fort enjeu</strong> (santé, justice, éducation, services publics,
+            crédit) doit s'inspirer du standard que Barzilay et son équipe ont mis en place —
+            étiquetage rigoureux, validation multi-sites, supervision humaine, transparence des
+            limites. Pas de raccourci possible quand l'erreur a un coût direct sur une personne.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'organisation</h2>
+          <p>
+            Le <strong>MIT CSAIL</strong> est l'un des plus grands laboratoires au monde de
+            recherche en informatique et intelligence artificielle. Sa division santé — incarnée
+            notamment par la <strong>Jameel Clinic for AI and Health</strong> dont Regina Barzilay
+            est l'AI Faculty Lead — combine recherche académique fondamentale et collaboration
+            avec des centres médicaux de référence (notamment le Massachusetts General Hospital).
+          </p>
+          <p>
+            Plusieurs caractéristiques structurelles expliquent pourquoi cette équipe est devenue
+            référence sur le sujet :
+          </p>
+          <ul>
+            <li>
+              L'<strong>accès aux données médicales étiquetées</strong> grâce aux partenariats
+              avec des centres médicaux — donnée critique car le ML supervisé en santé suppose
+              des annotations par experts qualifiés (radiologues, oncologues), qui sont rares et
+              coûteuses.
+            </li>
+            <li>
+              La <strong>rigueur méthodologique académique</strong> du MIT — publications dans des
+              revues à comité de lecture, validation indépendante, transparence sur les limites,
+              critique entre pairs.
+            </li>
+            <li>
+              La <strong>collaboration interdisciplinaire</strong> — informaticiens, radiologues,
+              oncologues, statisticiens travaillent ensemble. Ce n'est pas une équipe ML qui
+              applique ses techniques à des données médicales en aveugle.
+            </li>
+            <li>
+              L'<strong>engagement personnel de Regina Barzilay</strong> sur ce sujet — chercheuse
+              elle-même touchée par un cancer du sein, elle a orienté une partie de sa recherche
+              vers le dépistage précoce. Cet engagement personnel se traduit en exigence
+              opérationnelle élevée.
+            </li>
+          </ul>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème métier</h2>
+          <p>
+            Le cancer du sein est l'un des cancers les plus fréquents chez la femme. Le dépistage
+            précoce améliore significativement les chances de guérison. Mais les méthodes
+            classiques de scoring de risque ont des limites :
+          </p>
+          <ul>
+            <li>
+              Les <strong>scores traditionnels</strong> (Tyrer-Cuzick, BRCAPRO, Gail) s'appuient
+              sur peu de variables démographiques — âge, antécédents familiaux, densité mammaire,
+              parité, etc. Ils sont utiles mais imprécis individuellement.
+            </li>
+            <li>
+              Une <strong>mammographie contient bien plus d'information</strong> que ce qu'un
+              score classique exploite — texture du tissu mammaire, asymétries subtiles, marqueurs
+              difficiles à détecter visuellement par un humain. Le ML peut potentiellement
+              exploiter ces signaux.
+            </li>
+            <li>
+              La <strong>diversité des populations</strong> est un enjeu : un modèle entraîné sur
+              une population (par exemple : femmes blanches américaines) peut sous-performer sur
+              d'autres populations (différentes origines ethniques, équipements d'imagerie
+              différents, protocoles cliniques différents). La généralisation est un défi central.
+            </li>
+            <li>
+              Les <strong>conséquences de l'erreur</strong> sont fortes — un faux négatif peut
+              retarder un diagnostic et un traitement (impact direct sur la santé) ; un faux
+              positif peut générer anxiété, examens invasifs inutiles, coûts. L'arbitrage est
+              non trivial.
+            </li>
+          </ul>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>Solution IA mise en place</h2>
+
+          <h3>1. Apprentissage profond supervisé sur images</h3>
+          <p>
+            Le modèle Mirai utilise un <strong>réseau de neurones profond</strong> entraîné sur
+            des dizaines de milliers de mammographies étiquetées avec leur résultat à 1 à 5 ans
+            (cancer diagnostiqué ou pas). C'est un cas canonique de ML supervisé en imagerie
+            médicale — la combinaison d'apprentissage profond + grandes bases d'images étiquetées +
+            puissance de calcul moderne rend possible ce qui ne l'était pas il y a 10 ans.
+          </p>
+
+          <h3>2. Étiquetage par experts qualifiés</h3>
+          <p>
+            La <strong>qualité de l'étiquetage</strong> est non négociable. Les annotations sont
+            faites ou validées par des radiologues qualifiés — pas par crowdsourcing ou par
+            étudiants. Cet étiquetage est le facteur limitant du projet : il est lent et coûteux.
+            Mais sans ce niveau de qualité, les performances du modèle ne seraient pas défendables
+            cliniquement.
+          </p>
+
+          <h3>3. Validation indépendante multi-sites</h3>
+          <p>
+            Avant toute publication ou tout déploiement clinique, le modèle est validé sur des
+            <strong> cohortes indépendantes</strong> — patientes différentes de celles utilisées à
+            l'entraînement, idéalement de plusieurs centres médicaux et plusieurs pays. Cette
+            validation multi-sites est cruciale pour démontrer que le modèle généralise et n'est
+            pas surajusté à une population particulière. Les publications de Barzilay et de son
+            équipe documentent ce point explicitement.
+          </p>
+
+          <h3>4. Supervision humaine non négociable</h3>
+          <p>
+            Le modèle Mirai produit un <strong>score de risque</strong>, pas un diagnostic. Le
+            radiologue intègre ce score à son jugement et à l'ensemble du dossier patient. Cette
+            articulation IA/humain est exigée par la déontologie médicale et par les régulateurs
+            (la FDA aux États-Unis a des cadres spécifiques pour les outils d'aide à la décision
+            médicale). Pas d'automatisation totale envisagée — le radiologue garde la responsabilité
+            clinique.
+          </p>
+
+          <h3>5. Transparence sur les limites</h3>
+          <p>
+            Les publications associées au modèle <strong>documentent les limites</strong> — sous-
+            performances éventuelles selon la population, dépendance à la qualité de l'imagerie,
+            risque de dégradation si l'équipement ou le protocole d'acquisition change. Cette
+            transparence est elle-même un acte de gouvernance — elle distingue un travail
+            scientifique d'une communication marketing.
+          </p>
+        </section>
+
+        {/* === BENEFICES === */}
+        <section id="benefices">
+          <h2>Bénéfices observés</h2>
+          <p>
+            Selon les publications scientifiques associées et la communication MIT News :
+          </p>
+          <ul>
+            <li>
+              <strong>Performance prédictive supérieure</strong> aux scores traditionnels sur des
+              cohortes diverses — le modèle Mirai, dans les publications, démontre une capacité
+              de discrimination du risque significativement plus élevée que les scores de risque
+              classiques (Tyrer-Cuzick et autres).
+            </li>
+            <li>
+              <strong>Robustesse à la diversité des populations</strong> documentée par la
+              validation multi-sites — les performances se maintiennent (avec des nuances
+              quantifiées) sur des populations différentes du jeu d'entraînement initial. C'est
+              une dimension exigeante que peu de modèles ML en santé démontrent rigoureusement.
+            </li>
+            <li>
+              <strong>Apport potentiel pour le dépistage personnalisé</strong> — un score de risque
+              individualisé pourrait permettre d'adapter la fréquence de dépistage (plus rapproché
+              pour les femmes à haut risque, plus espacé pour celles à très bas risque). Cet apport
+              clinique est en cours d'évaluation dans plusieurs études.
+            </li>
+            <li>
+              <strong>Crédibilité méthodologique</strong> — les travaux de Barzilay sont une
+              référence internationale citée dans les revues scientifiques et la formation médicale.
+              Ils créent un standard transposable pour d'autres équipes travaillant sur du ML en
+              santé.
+            </li>
+            <li>
+              <strong>Effet pédagogique structurant</strong> — le cas est utilisé dans la formation
+              de futurs praticiens IA santé (à MIT et ailleurs) parce qu'il illustre proprement
+              les exigences spécifiques du domaine.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Les chiffres précis de performance varient selon les publications et les
+            cohortes. Le déploiement clinique réel à grande échelle reste un processus long
+            (validation, certification réglementaire, intégration aux systèmes hospitaliers).
+            Le cas pose le standard méthodologique plutôt qu'il ne décrit un déploiement
+            opérationnel généralisé.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <ul>
+            <li>
+              <strong>L'étiquetage est le facteur limitant</strong>. Avoir des dizaines de milliers
+              de mammographies étiquetées par des radiologues qualifiés représente un investissement
+              substantiel — hors d'atteinte pour beaucoup d'équipes. Ce facteur limite la
+              transposition à d'autres pathologies ou à d'autres équipes.
+            </li>
+            <li>
+              <strong>La généralisation reste à confirmer dans la durée</strong>. Un modèle peut
+              sous-performer si les équipements d'imagerie évoluent, si les protocoles cliniques
+              changent, ou si on l'applique à des populations sous-représentées dans les données
+              d'entraînement. Le monitoring après déploiement est essentiel.
+            </li>
+            <li>
+              <strong>La cinétique d'adoption clinique est lente</strong>. Entre une publication
+              scientifique et un usage clinique généralisé, il y a typiquement plusieurs années :
+              certifications réglementaires (FDA, marquage CE en Europe), intégration aux systèmes
+              d'information hospitalier, formation des radiologues, conditions de remboursement.
+            </li>
+            <li>
+              <strong>Les enjeux RGPD et AI Act EU</strong> sont substantiels en Europe pour ce
+              type d'usage — données de santé en catégorie sensible, classification potentiellement
+              haut risque selon l'AI Act. Le déploiement européen demande des analyses de conformité
+              spécifiques.
+            </li>
+            <li>
+              <strong>L'effet sur le métier de radiologue</strong> est un sujet en construction.
+              Si le modèle aide réellement, comment évolue le métier ? Augmentation des capacités,
+              redéploiement vers les cas difficiles, ou évolution plus profonde ? La réponse n'est
+              pas tranchée et demande des études complémentaires.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES === */}
+        <section id="risques">
+          <h2>Risques identifiés et garde-fous</h2>
+          <ul>
+            <li>
+              <strong>Risque de biais ethnique ou démographique</strong>. Un modèle entraîné sur
+              une population peut sous-performer sur d'autres. Garde-fous : validation multi-
+              sites multi-populations systématique, audit régulier des performances par
+              sous-groupes, ajustements ou réentraînements ciblés si écarts détectés.
+            </li>
+            <li>
+              <strong>Risque de dégradation après déploiement</strong>. L'évolution des équipements
+              d'imagerie ou des protocoles peut faire dériver les performances. Garde-fous :
+              monitoring continu, capacité de réentraînement, suspension du modèle si dégradation
+              avérée.
+            </li>
+            <li>
+              <strong>Risque déontologique</strong> en cas d'usage du modèle au-delà de son
+              périmètre prévu. Le modèle fournit un score de risque — il ne pose pas un diagnostic.
+              Garde-fous : périmètre clinique explicite, intégration dans les protocoles avec
+              radiologue dans la boucle, formation des praticiens à l'usage approprié.
+            </li>
+            <li>
+              <strong>Risque de fausse confiance</strong> dans le score (par les patientes ou les
+              praticiens). Un score de risque faible n'élimine pas le risque ; un score élevé ne
+              prédit pas un cancer certain. Garde-fou : communication soigneuse au patient,
+              formation des médecins à l'interprétation probabiliste.
+            </li>
+            <li>
+              <strong>Risque réglementaire AI Act EU et RGPD</strong>. Les usages cliniques
+              tombent typiquement en haut risque AI Act et impliquent données de santé RGPD.
+              Garde-fous : analyse de conformité dès la conception, AIPD préalable, certification
+              CE comme dispositif médical, traçabilité documentaire.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Le cas Barzilay illustre que <strong>l'étiquetage de qualité par experts</strong>
+              est le facteur limitant principal. Dans votre secteur, qui pourrait jouer le rôle
+              équivalent ? Quel serait le coût d'un étiquetage rigoureux et défendable ?
+            </li>
+            <li>
+              La <strong>validation multi-sites multi-populations</strong> est exigée pour démontrer
+              la généralisation. Comment cette exigence se transposerait-elle à un cas d'IA dans
+              votre secteur (par exemple : scoring de crédit, sélection de candidats, allocation
+              de ressources) ?
+            </li>
+            <li>
+              L'IA est positionnée comme <strong>aide à la décision</strong>, pas comme décideur.
+              Cette articulation IA/humain est exigée par la déontologie médicale. Existe-t-il
+              une exigence équivalente dans votre secteur ? Si oui, comment se traduit-elle ? Si
+              non, pourquoi ?
+            </li>
+            <li>
+              Au regard de l'<strong>AI Act EU</strong>, ce type de modèle tomberait en haut
+              risque (santé). Quelles obligations spécifiques seraient à anticiper pour un
+              déploiement européen ? Comment articuler avec le règlement sur les dispositifs
+              médicaux (MDR) ?
+            </li>
+            <li>
+              Le cas confirme qu'un <strong>modèle utile ne se déploie pas du jour au lendemain</strong>
+              — entre publication et usage clinique généralisé, plusieurs années passent. Ce délai
+              est-il défendable face à l'urgence sanitaire ? Comment accélérer sans dégrader la
+              rigueur ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module2Url}><strong>Module 2 — Machine
+            Learning en entreprise</strong></a> (mini-cas) — exigences spécifiques du ML en santé,
+            étiquetage par experts, validation multi-sites, généralisation, supervision humaine
+            non négociable. Il est aussi un point d'appui central pour le Module 5 (gouvernance,
+            AI Act EU haut risque, RGPD données de santé, conformité MDR) et pour le Module 1
+            (perspective d'intelligence collective humain × machine en médecine).
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: githubAccentureUrl,
+            label: "GitHub Copilot × Accenture",
+            context: 'Cas précédent',
+          }}
+          next={{
+            href: casIndexUrl,
+            label: "Toutes les études de cas",
+            context: 'Index',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

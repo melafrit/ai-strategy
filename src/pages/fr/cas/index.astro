@@ -51,7 +51,7 @@ const cases = [
     technology: 'Apprentissage supervisé sur images',
     tagline:
       "Travaux du MIT CSAIL (Regina Barzilay) sur le dépistage précoce du cancer du sein par ML. Cas exemplaire d'IA en santé : étiquetage coûteux, supervision humaine non négociable, validation indépendante avant tout déploiement clinique.",
-    available: false,
+    available: true,
   },
   {
     slug: 'github-copilot-accenture',
@@ -62,7 +62,7 @@ const cases = [
     technology: 'GenAI assistance au code',
     tagline:
       "Étude conjointe GitHub × Accenture mesurant l'impact réel de Copilot dans une grande entreprise. Méthodologie publique : groupe traitement vs contrôle, productivité, qualité du code, satisfaction. Transposable à d'autres pilotes GenAI.",
-    available: false,
+    available: true,
   },
   {
     slug: 'amazon-robotics',
@@ -73,7 +73,7 @@ const cases = [
     technology: 'Robots mobiles autonomes (AMR) + IA d\'orchestration',
     tagline:
       "Amazon a atteint le seuil symbolique d'un million de robots déployés dans son réseau logistique mondial, et lancé en 2025 DeepFleet — un foundation model d'IA dédié à l'orchestration de la flotte. Humains restent centraux pour le jugement.",
-    available: false,
+    available: true,
   },
   {
     slug: 'universal-robots',
@@ -158,8 +158,9 @@ const availableCases = cases.filter((c) => c.available).length;
           sur chaque page.
         </p>
         <p class="ai-cases-intro__note">
-          <em>Phase 4.7-4.8 en cours : 2 des 10 cas sont publiés dans cette première vague. Les 8
-          autres suivent dans les sous-tours suivants. Les cas non encore publiés sont signalés en
+          <em>Phase 4.7-4.8 : 6 des 10 cas sont publiés. Les 4 derniers (Universal Robots,
+          NIST AI RMF, AI Act EU classification haut risque, MIT IDE) suivent dans le sous-tour
+          final. Les cas non encore publiés sont signalés en
           <strong> grisé</strong> ci-dessous.</em>
         </p>
       </div>

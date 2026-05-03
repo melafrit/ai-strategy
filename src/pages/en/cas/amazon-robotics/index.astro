@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import TranslationPending from '@/components/TranslationPending.astro';
+import { t } from '@/i18n/translations';
+
+const locale = 'en';
+---
+
+<BaseLayout
+  title={t('translation-pending.title', locale)}
+  description="The English translation of this case study is scheduled for Phase 7. The French version is available now."
+>
+  <TranslationPending frenchPagePath="/cas/amazon-robotics/" />
+</BaseLayout>
