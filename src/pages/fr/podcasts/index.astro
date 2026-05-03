@@ -1,0 +1,339 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import PodcastCard from '@/components/PodcastCard.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import {
+  podcastsByTheme,
+  podcastsByNumber,
+  podcastThemeLabels,
+  podcastThemeDescriptions,
+  countByTheme,
+  TOTAL_PODCASTS,
+  type PodcastTheme,
+} from '@/content/podcasts';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const themesOrdered: PodcastTheme[] = [
+  'foundations',
+  'technology',
+  'governance',
+  'application',
+];
+
+const counts = countByTheme();
+
+// Liens dérivés
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+---
+
+<BaseLayout
+  title={`Podcasts — ${TOTAL_PODCASTS} épisodes narratifs autour du parcours`}
+  description={`Série narrative en ${TOTAL_PODCASTS} épisodes sur l'IA en entreprise. Foundations, technologies, gouvernance, cas. Format conversationnel généré via Google NotebookLM à partir des contenus du parcours AI Strategy.`}
+>
+  <HeroSecondary
+    surtitle="Série narrative"
+    title={`${TOTAL_PODCASTS} épisodes pour explorer l'IA en entreprise`}
+    lead="Une série de podcasts conversationnels qui reprennent les thèmes du parcours AI Strategy en format audio. Quatre familles thématiques — fondamentaux, technologies, gouvernance, cas et applications — pour écouter dans les transports, à la salle de sport, ou en complément de votre lecture."
+  >
+    <span slot="stats">
+      {TOTAL_PODCASTS} épisodes · 4 thèmes · 12-18 min par épisode · génération NotebookLM
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-podcasts-page">
+    {/* === INTRO === */}
+    <section class="ai-podcasts-intro" aria-labelledby="intro-title">
+      <h2 id="intro-title">Format et production</h2>
+      <p>
+        Chaque épisode est un <strong>« Audio Overview » conversationnel</strong>
+        généré par <a href="https://notebooklm.google.com" target="_blank" rel="noopener">Google NotebookLM</a>
+        à partir des pages du site et de sources documentaires complémentaires.
+        Deux animateurs IA explorent le sujet dans un format dialogue, naturel et
+        accessible — durée typique 12 à 18 minutes par épisode.
+      </p>
+      <p>
+        Cette série n'est <strong>pas un cours alternatif</strong> mais un
+        complément à l'écoute. Pour aller au fond des concepts, des cas et de la
+        méthodologie, lisez les <a href={programmeUrl}>modules</a> et étudiez les
+        <a href={getLocalizedUrl('/cas/', locale)}>études de cas</a>. Pour
+        survoler ou réviser, écoutez les podcasts.
+      </p>
+      <p class="ai-podcasts-intro__source-note">
+        Voir la <a href={methodeUrl}>page Méthode</a> pour comprendre comment
+        ces podcasts sont produits et la hiérarchie des sources utilisées dans
+        leur cadrage éditorial.
+      </p>
+    </section>
+
+    {/* === THEMES OVERVIEW === */}
+    <section class="ai-podcasts-themes-overview" aria-labelledby="themes-title">
+      <h2 id="themes-title">Quatre thèmes</h2>
+      <div class="ai-podcasts-themes-grid">
+        {themesOrdered.map((theme) => (
+          <a class="ai-podcasts-theme-card" href={`#theme-${theme}`}>
+            <header class="ai-podcasts-theme-card__head">
+              <h3>{podcastThemeLabels[theme]}</h3>
+              <span class="ai-podcasts-theme-card__count">
+                {counts[theme]} {counts[theme] > 1 ? 'épisodes' : 'épisode'}
+              </span>
+            </header>
+            <p>{podcastThemeDescriptions[theme]}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* === ÉPISODES PAR THÈME === */}
+    {themesOrdered.map((theme) => {
+      const list = podcastsByTheme(theme);
+      if (list.length === 0) return null;
+      return (
+        <section
+          id={`theme-${theme}`}
+          class="ai-podcasts-section"
+          aria-labelledby={`theme-${theme}-title`}
+        >
+          <header class="ai-podcasts-section__head">
+            <h2 id={`theme-${theme}-title`}>{podcastThemeLabels[theme]}</h2>
+            <p>{podcastThemeDescriptions[theme]}</p>
+          </header>
+
+          <div class="ai-podcasts-grid">
+            {list.map((episode) => (
+              <PodcastCard episode={episode} />
+            ))}
+          </div>
+        </section>
+      );
+    })}
+
+    {/* === SÉRIE COMPLÈTE PAR ORDRE === */}
+    <section class="ai-podcasts-series" aria-labelledby="series-title">
+      <header class="ai-podcasts-section__head">
+        <h2 id="series-title">Série complète dans l'ordre recommandé</h2>
+        <p>
+          Si vous découvrez le parcours, l'ordre des épisodes 1 à 10 propose une
+          progression naturelle : du cadrage stratégique aux implications RH, en
+          passant par les technologies, la gouvernance, la méthodologie capstone
+          et un bilan synthétique.
+        </p>
+      </header>
+      <ol class="ai-podcasts-series-list">
+        {podcastsByNumber().map((episode) => (
+          <li>
+            <span class="ai-podcasts-series-num">
+              {episode.number.toString().padStart(2, '0')}
+            </span>
+            <a
+              href={getLocalizedUrl(`/podcasts/${episode.slug}/`, locale)}
+              class="ai-podcasts-series-link"
+            >
+              <strong>{episode.title}</strong>
+              <span class="ai-podcasts-series-subtitle">{episode.subtitle}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <div class="ai-podcasts-independence">
+      <IndependenceNotice variant="block" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-podcasts-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  /* === INTRO === */
+  .ai-podcasts-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-podcasts-intro h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcasts-intro p {
+    margin-block: 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-podcasts-intro p:last-child {
+    margin-block-end: 0;
+  }
+  .ai-podcasts-intro__source-note {
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-podcasts-intro a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-podcasts-intro a:hover {
+    text-decoration: underline;
+  }
+
+  /* === THEMES OVERVIEW === */
+  .ai-podcasts-themes-overview {
+    margin-block: var(--ai-space-7);
+  }
+  .ai-podcasts-themes-overview h2 {
+    margin: 0 0 var(--ai-space-4);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcasts-themes-grid {
+    display: grid;
+    gap: var(--ai-space-3);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50em) {
+    .ai-podcasts-themes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 80em) {
+    .ai-podcasts-themes-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .ai-podcasts-theme-card {
+    display: block;
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .ai-podcasts-theme-card:hover {
+    border-color: var(--ai-accent-primary);
+    transform: translateY(-1px);
+  }
+  .ai-podcasts-theme-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-podcasts-theme-card h3 {
+    margin: 0;
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+  }
+  .ai-podcasts-theme-card__count {
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ai-podcasts-theme-card p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+
+  /* === SECTION === */
+  .ai-podcasts-section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-podcasts-section__head {
+    border-block-end: 2px solid var(--ai-accent-primary);
+    padding-block-end: var(--ai-space-3);
+    margin-block-end: var(--ai-space-5);
+  }
+  .ai-podcasts-section__head h2 {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-2xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcasts-section__head p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === GRID === */
+  .ai-podcasts-grid {
+    display: grid;
+    gap: var(--ai-space-4);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50em) {
+    .ai-podcasts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* === SÉRIE COMPLÈTE === */
+  .ai-podcasts-series-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-podcasts-series-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    padding-block: var(--ai-space-2);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-podcasts-series-list li:last-child {
+    border-block-end: none;
+  }
+  .ai-podcasts-series-num {
+    font-variant-numeric: tabular-nums;
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-size: var(--ai-text-base);
+    flex-shrink: 0;
+    width: 2.5rem;
+  }
+  .ai-podcasts-series-link {
+    flex: 1;
+    color: inherit;
+    text-decoration: none;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-podcasts-series-link strong {
+    display: block;
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-podcasts-series-link:hover strong {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+  .ai-podcasts-series-subtitle {
+    display: block;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    margin-block-start: 0.15rem;
+  }
+
+  .ai-podcasts-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>

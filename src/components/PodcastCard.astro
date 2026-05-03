@@ -1,0 +1,134 @@
+---
+/**
+ * PodcastCard.astro — carte d'épisode pour la page d'index podcasts.
+ *
+ * Affiche le numéro, le titre, le sous-titre, la durée, le thème,
+ * le statut de production. Cliquable vers la page épisode.
+ */
+
+import type { PodcastEpisode } from '@/content/podcasts';
+import { podcastThemeLabels } from '@/content/podcasts';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+interface Props {
+  episode: PodcastEpisode;
+}
+
+const { episode } = Astro.props;
+const href = getLocalizedUrl(`/podcasts/${episode.slug}/`, 'fr');
+
+const statusLabels: Record<typeof episode.status, string> = {
+  planned: 'Planifié',
+  'in-production': 'En production',
+  published: 'Disponible',
+};
+const statusModifier = `ai-podcast-card__status--${episode.status}`;
+---
+
+<a class="ai-podcast-card" href={href}>
+  <header class="ai-podcast-card__head">
+    <span class="ai-podcast-card__number">Épisode {episode.number.toString().padStart(2, '0')}</span>
+    <span class={`ai-podcast-card__status ${statusModifier}`}>
+      {statusLabels[episode.status]}
+    </span>
+  </header>
+
+  <h3 class="ai-podcast-card__title">{episode.title}</h3>
+  <p class="ai-podcast-card__subtitle">{episode.subtitle}</p>
+
+  <footer class="ai-podcast-card__footer">
+    <span class="ai-podcast-card__theme">{podcastThemeLabels[episode.theme]}</span>
+    <span class="ai-podcast-card__separator" aria-hidden="true">·</span>
+    <span class="ai-podcast-card__duration">{episode.duration}</span>
+  </footer>
+</a>
+
+<style>
+  .ai-podcast-card {
+    display: block;
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  }
+  .ai-podcast-card:hover {
+    border-color: var(--ai-accent-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 30, 46, 0.08);
+  }
+
+  .ai-podcast-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-3);
+  }
+  .ai-podcast-card__number {
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-podcast-card__status {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-medium);
+  }
+  .ai-podcast-card__status--planned {
+    background: var(--ai-bg-subtle);
+    color: var(--ai-fg-muted);
+  }
+  .ai-podcast-card__status--in-production {
+    background: color-mix(in srgb, #d4904a 18%, var(--ai-bg-base));
+    color: #8b5a1f;
+  }
+  .ai-podcast-card__status--published {
+    background: color-mix(in srgb, #5a8c63 18%, var(--ai-bg-base));
+    color: #2f5234;
+  }
+
+  .ai-podcast-card__title {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-snug);
+  }
+  .ai-podcast-card:hover .ai-podcast-card__title {
+    color: var(--ai-accent-primary);
+  }
+  .ai-podcast-card__subtitle {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-podcast-card__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    margin-block-start: var(--ai-space-4);
+    padding-block-start: var(--ai-space-3);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-xs);
+  }
+  .ai-podcast-card__theme {
+    font-weight: var(--ai-weight-medium);
+  }
+  .ai-podcast-card__separator {
+    color: var(--ai-border-subtle);
+  }
+  .ai-podcast-card__duration {
+    font-variant-numeric: tabular-nums;
+  }
+</style>

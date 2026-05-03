@@ -77,7 +77,35 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 5 — Composants interactifs et fiches PDF~~ **→ ✅ COMPLÈTE : sub-1 (QuizInteractive Module 1) + sub-2 (Modules 2-6 + UX polish) + sub-3 (PDFs stylisés via print stylesheet) publiés**
+- ~~Phase 6 — Podcasts NotebookLM série narrative 10 épisodes~~ **→ EN COURS : sub-1 publié (architecture + 10 briefs + index + page épisode dynamique)**, sub-2 (briefs détaillés production) et sub-3 (transcripts + audio stubs) restants.
+
+- Phase 6 sub-1 — Architecture podcasts + 10 briefs structurés :
+  - **NEW DATA — `src/content/podcasts.ts`** (~610 lignes) — Catalogue de **10 épisodes** typés TypeScript, organisés en 4 thèmes (foundations, technology, governance, application). Chaque épisode comprend : slug + numéro + title + subtitle + theme + duration + audience + description (2-3 paragraphes) + takeaways (5-7 points) + chapters (timestamps prévisionnels) + sourceDocuments (pages-source pour NotebookLM) + focusNotes (instructions de production) + relatedModules + relatedCases + relatedGlossary + audioFile (path placeholder) + transcriptFile + status ('planned'/'in-production'/'published').
+  - **Les 10 épisodes** :
+    - **EP01 Foundations** — Pourquoi l'IA pour les dirigeants — au-delà du buzz (Module 1)
+    - **EP02 Technology** — Machine Learning au quotidien — Stripe Radar et le dépistage MIT (Module 2)
+    - **EP03 Technology** — GenAI en entreprise — comment Morgan Stanley a fait (Module 3)
+    - **EP04 Technology** — Robotique et cobots — Amazon, Universal Robots et la PME française (Module 4)
+    - **EP05 Governance** — AI Act EU — qui est concerné, comment se préparer (Module 5)
+    - **EP06 Governance** — NIST AI RMF — gouverner sans bureaucratiser (Module 5)
+    - **EP07 Foundations** — Construire votre roadmap IA — la méthode du capstone (Module 6 + Capstone)
+    - **EP08 Application** — Intelligence collective humain × machine — l'approche Takeda (Module 1+6 + Takeda + MIT IDE)
+    - **EP09 Application** — IA et travail — augmenter ou remplacer ? Les travaux de David Autor (Module 5+6 + MIT IDE)
+    - **EP10 Foundations** — Les pièges de la stratégie IA — ce qu'il ne faut pas faire (transverse synthèse)
+  - Helpers : `getPodcast(slug)`, `podcastsByTheme(theme)`, `podcastsForModule(num)`, `podcastsForCase(slug)`, `podcastsByNumber()`, `countByTheme()`, `formatTime(seconds)`, constante `TOTAL_PODCASTS`.
+  - **NEW COMPONENTS** :
+    - **`src/components/PodcastCard.astro`** (~115 lignes) — carte d'épisode pour l'index avec numéro + statut coloré (planned/in-production/published) + titre + sous-titre + footer thème·durée
+    - **`src/components/PodcastPlayer.astro`** (~210 lignes) — lecteur audio HTML5 `<audio controls>` quand `status='published'`, sinon placeholder « épisode en production » avec sources + chapitres prévisionnels exposés. Chapitres cliquables (script inline `audio.currentTime = N + audio.play()`) quand l'audio est disponible.
+  - **NEW PAGE — `src/pages/fr/podcasts/index.astro`** (~370 lignes) — index avec hero stats, intro pédagogique sur le format NotebookLM, 4 cards thématiques cliquables, 4 sections par thème avec PodcastCards, série complète dans l'ordre recommandé, IndependenceNotice.
+  - **NEW DYNAMIC PAGE — `src/pages/fr/podcasts/[slug].astro`** (~330 lignes) — `getStaticPaths()` qui génère les **10 pages épisode** automatiquement à partir de `podcasts.ts`. Chaque page : hero + lecteur (PodcastPlayer) + description multi-paragraphes + 5-7 takeaways (KeyTakeaways) + sources documentaires + notes de focus + cross-refs (modules/cas/glossaire) + navigation prev/index/next + PrintButton + IndependenceNotice.
+  - **NAVIGATION ACTIVÉE** :
+    - `src/i18n/translations.ts` : ajout de `nav.podcasts` ('Podcasts' / 'Podcasts' / 'بودكاست') dans les 3 locales
+    - `src/components/Header.astro` : entrée `nav.podcasts` ajoutée à la liste des items, lien vers `/podcasts/`
+  - **NEW STUBS** : EN + AR avec TranslationPending pour la page index.
+  - Build validé : **95 pages générées** (82 → 95, +13 : 1 index FR + 2 stubs + **10 épisodes dynamiques**), 0 erreur / 0 warning / 0 hint Astro check sur 138 fichiers. Liens nav.podcasts présents dans toutes les pages.
+  - Pattern : 2 nouveaux composants Astro (27 → 29). Approche statique-first : pas de React pour les podcasts (le player audio HTML5 natif est suffisant + un script inline minuscule pour les chapitres cliquables).
+
+
 
 ## 🎯 PHASE 5 COMPLÈTE — Tout l'interactif et l'export PDF en place
 

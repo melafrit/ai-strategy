@@ -1,0 +1,364 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import PodcastPlayer from '@/components/PodcastPlayer.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import {
+  podcasts,
+  podcastsByNumber,
+  podcastThemeLabels,
+  type PodcastEpisode,
+} from '@/content/podcasts';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+export function getStaticPaths() {
+  return podcasts.map((episode) => ({
+    params: { slug: episode.slug },
+    props: { episode },
+  }));
+}
+
+interface Props {
+  episode: PodcastEpisode;
+}
+
+const { episode } = Astro.props;
+
+// Précédent / suivant dans la série
+const ordered = podcastsByNumber();
+const idx = ordered.findIndex((e) => e.slug === episode.slug);
+const prev = idx > 0 ? ordered[idx - 1] : null;
+const next = idx < ordered.length - 1 ? ordered[idx + 1] : null;
+
+const podcastsIndexUrl = getLocalizedUrl('/podcasts/', locale);
+
+// Mapping cas slug → titre court
+const caseTitles: Record<string, string> = {
+  'takeda-superminds': 'Takeda × MIT CCI',
+  'morgan-stanley': 'Morgan Stanley',
+  'stripe-radar': 'Stripe Radar',
+  'mit-barzilay-cancer': 'MIT — Regina Barzilay',
+  'github-copilot-accenture': 'GitHub × Accenture',
+  'amazon-robotics': 'Amazon Robotics',
+  'universal-robots': 'Universal Robots',
+  'nist-ai-rmf': 'NIST AI RMF',
+  'ai-act-eu-haut-risque': 'AI Act EU haut risque',
+  'mit-ide': 'MIT IDE',
+};
+
+function moduleHref(num: number): string {
+  const slugs: Record<number, string> = {
+    1: '/modules/01-introduction-ia/',
+    2: '/modules/02-machine-learning/',
+    3: '/modules/03-ia-generative/',
+    4: '/modules/04-robotique/',
+    5: '/modules/05-ia-societe/',
+    6: '/modules/06-futur-ia/',
+  };
+  return getLocalizedUrl(slugs[num] ?? '/modules/', locale);
+}
+function caseHref(slug: string): string {
+  return getLocalizedUrl(`/cas/${slug}/`, locale);
+}
+function glossaryHref(slug: string): string {
+  return `${getLocalizedUrl('/glossaire/', locale)}#${slug}`;
+}
+---
+
+<BaseLayout
+  title={`Épisode ${episode.number.toString().padStart(2, '0')} — ${episode.title}`}
+  description={episode.subtitle}
+>
+  <HeroSecondary
+    surtitle={`Épisode ${episode.number.toString().padStart(2, '0')} · ${podcastThemeLabels[episode.theme]}`}
+    title={episode.title}
+    lead={episode.subtitle}
+  >
+    <span slot="stats">
+      Durée cible : {episode.duration} · Public : {episode.audience}
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-podcast-page">
+    <article class="ai-podcast-page__content ai-prose">
+      {/* === LECTEUR === */}
+      <section id="ecouter">
+        <h2>Écouter cet épisode</h2>
+        <PodcastPlayer episode={episode} />
+      </section>
+
+      {/* === DESCRIPTION === */}
+      <section id="description">
+        <h2>De quoi parle cet épisode</h2>
+        {episode.description.split('\n\n').map((para) => (
+          <p>{para}</p>
+        ))}
+      </section>
+
+      {/* === À RETENIR === */}
+      <section id="a-retenir">
+        <h2>À retenir</h2>
+        <KeyTakeaways items={episode.takeaways} />
+      </section>
+
+      {/* === SOURCES === */}
+      <section id="sources">
+        <h2>Sources documentaires</h2>
+        <p>
+          Cet épisode est cadré à partir des pages-source suivantes du parcours
+          AI Strategy. Lors de la production audio, ces documents sont fournis à
+          Google NotebookLM avec les notes de focus précisées plus bas.
+        </p>
+        <ul class="ai-podcast-page__sources">
+          {episode.sourceDocuments.map((doc) => (
+            <li>
+              <a href={doc.path}>{doc.label}</a>
+            </li>
+          ))}
+        </ul>
+
+        <div class="ai-podcast-page__focus">
+          <h3>Notes de focus pour la production</h3>
+          <p>{episode.focusNotes}</p>
+        </div>
+      </section>
+
+      {/* === CROSS-REFS === */}
+      {(episode.relatedModules || episode.relatedCases || episode.relatedGlossary) && (
+        <section id="cross-refs">
+          <h2>Pour aller plus loin dans le parcours</h2>
+          <div class="ai-podcast-page__refs">
+            {episode.relatedModules && episode.relatedModules.length > 0 && (
+              <div class="ai-podcast-page__ref-group">
+                <h3>Modules associés</h3>
+                <ul>
+                  {episode.relatedModules.map((num) => (
+                    <li>
+                      <a href={moduleHref(num)}>Module {num}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {episode.relatedCases && episode.relatedCases.length > 0 && (
+              <div class="ai-podcast-page__ref-group">
+                <h3>Études de cas</h3>
+                <ul>
+                  {episode.relatedCases.map((slug) => (
+                    <li>
+                      <a href={caseHref(slug)}>{caseTitles[slug] ?? slug}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {episode.relatedGlossary && episode.relatedGlossary.length > 0 && (
+              <div class="ai-podcast-page__ref-group">
+                <h3>Glossaire</h3>
+                <ul>
+                  {episode.relatedGlossary.map((slug) => (
+                    <li>
+                      <a href={glossaryHref(slug)}>{slug}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* === NAVIGATION SÉRIE === */}
+      <nav class="ai-podcast-page__nav" aria-label="Navigation entre épisodes">
+        {prev ? (
+          <a href={getLocalizedUrl(`/podcasts/${prev.slug}/`, locale)} class="ai-podcast-page__nav-link ai-podcast-page__nav-link--prev">
+            <span class="ai-podcast-page__nav-label">← Épisode précédent</span>
+            <span class="ai-podcast-page__nav-title">
+              {prev.number.toString().padStart(2, '0')}. {prev.title}
+            </span>
+          </a>
+        ) : (
+          <span class="ai-podcast-page__nav-link ai-podcast-page__nav-link--disabled">
+            <span class="ai-podcast-page__nav-label">Premier épisode</span>
+          </span>
+        )}
+
+        <a href={podcastsIndexUrl} class="ai-podcast-page__nav-link ai-podcast-page__nav-link--center">
+          <span class="ai-podcast-page__nav-label">Index de la série</span>
+          <span class="ai-podcast-page__nav-title">Tous les épisodes</span>
+        </a>
+
+        {next ? (
+          <a href={getLocalizedUrl(`/podcasts/${next.slug}/`, locale)} class="ai-podcast-page__nav-link ai-podcast-page__nav-link--next">
+            <span class="ai-podcast-page__nav-label">Épisode suivant →</span>
+            <span class="ai-podcast-page__nav-title">
+              {next.number.toString().padStart(2, '0')}. {next.title}
+            </span>
+          </a>
+        ) : (
+          <span class="ai-podcast-page__nav-link ai-podcast-page__nav-link--disabled">
+            <span class="ai-podcast-page__nav-label">Dernier épisode</span>
+          </span>
+        )}
+      </nav>
+
+      <PrintButton />
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-podcast-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+  .ai-podcast-page__content > section {
+    margin-block: var(--ai-space-7);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-podcast-page__sources {
+    list-style: disc;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-podcast-page__sources li {
+    margin-block-end: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-podcast-page__sources a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-podcast-page__sources a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-podcast-page__focus {
+    margin-block-start: var(--ai-space-4);
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+  }
+  .ai-podcast-page__focus h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcast-page__focus p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-style: italic;
+  }
+
+  /* === Cross-refs === */
+  .ai-podcast-page__refs {
+    display: grid;
+    gap: var(--ai-space-4);
+    grid-template-columns: 1fr;
+    margin-block-start: var(--ai-space-3);
+  }
+  @media (min-width: 50em) {
+    .ai-podcast-page__refs {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .ai-podcast-page__ref-group {
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-podcast-page__ref-group h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ai-podcast-page__ref-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ai-podcast-page__ref-group li {
+    margin-block-end: var(--ai-space-1);
+  }
+  .ai-podcast-page__ref-group a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-medium);
+  }
+  .ai-podcast-page__ref-group a:hover {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+
+  /* === Navigation entre épisodes === */
+  .ai-podcast-page__nav {
+    display: grid;
+    gap: var(--ai-space-3);
+    grid-template-columns: 1fr;
+    margin-block: var(--ai-space-6);
+    padding-block: var(--ai-space-4);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  @media (min-width: 50em) {
+    .ai-podcast-page__nav {
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+  }
+  .ai-podcast-page__nav-link {
+    display: block;
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease;
+  }
+  .ai-podcast-page__nav-link:hover:not(.ai-podcast-page__nav-link--disabled) {
+    border-color: var(--ai-accent-primary);
+  }
+  .ai-podcast-page__nav-link--center {
+    text-align: center;
+  }
+  .ai-podcast-page__nav-link--next {
+    text-align: end;
+  }
+  .ai-podcast-page__nav-link--disabled {
+    background: var(--ai-bg-subtle);
+    color: var(--ai-fg-muted);
+    cursor: default;
+  }
+  .ai-podcast-page__nav-label {
+    display: block;
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block-end: 0.15rem;
+  }
+  .ai-podcast-page__nav-link--disabled .ai-podcast-page__nav-label {
+    color: var(--ai-fg-muted);
+  }
+  .ai-podcast-page__nav-title {
+    display: block;
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-medium);
+    font-size: var(--ai-text-sm);
+    line-height: var(--ai-leading-snug);
+  }
+</style>

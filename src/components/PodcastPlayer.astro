@@ -1,0 +1,243 @@
+---
+/**
+ * PodcastPlayer.astro — lecteur audio + chapitres + lien transcript.
+ *
+ * Modes :
+ *   1. Audio disponible (status='published' + audioFile renseigné) :
+ *      affiche le player <audio controls> + chapitres cliquables qui
+ *      sautent au timestamp + lien transcript.
+ *   2. Audio en production (status='in-production' ou 'planned') :
+ *      affiche un message « épisode en production » et expose les
+ *      sources prévues + chapitres prévisionnels pour transparence.
+ *
+ * Implémentation chapter-clic : un petit script inline lit le data-time
+ * et fait audio.currentTime = N + audio.play(). Pas de dépendance React.
+ */
+
+import type { PodcastEpisode } from '@/content/podcasts';
+import { formatTime } from '@/content/podcasts';
+
+interface Props {
+  episode: PodcastEpisode;
+}
+
+const { episode } = Astro.props;
+const playerId = `podcast-${episode.slug}`;
+const isAvailable = episode.status === 'published' && !!episode.audioFile;
+---
+
+<div class="ai-podcast-player" id={playerId}>
+  {isAvailable && episode.audioFile ? (
+    <>
+      <audio
+        controls
+        preload="metadata"
+        class="ai-podcast-player__audio"
+        aria-label={`Lecteur audio — ${episode.title}`}
+      >
+        <source src={episode.audioFile} type="audio/mpeg" />
+        Votre navigateur ne supporte pas la lecture audio HTML5.
+        <a href={episode.audioFile} download>Télécharger l'épisode (MP3)</a>.
+      </audio>
+
+      {episode.transcriptFile && (
+        <p class="ai-podcast-player__transcript">
+          <a href={episode.transcriptFile} target="_blank" rel="noopener">
+            <span aria-hidden="true">📝</span> Transcript complet de l'épisode
+          </a>
+        </p>
+      )}
+    </>
+  ) : (
+    <div class="ai-podcast-player__placeholder">
+      <p class="ai-podcast-player__placeholder-status">
+        <strong>Épisode en production</strong>
+      </p>
+      <p class="ai-podcast-player__placeholder-text">
+        Cet épisode est planifié dans la série narrative AI Strategy. Le brief
+        éditorial ci-dessous (sources, points clés, chapitres prévisionnels)
+        sert de cadrage pour la production via Google NotebookLM.
+        Le fichier audio sera disponible ici une fois la génération réalisée.
+      </p>
+      <p class="ai-podcast-player__placeholder-help">
+        En attendant, vous pouvez lire les pages-source listées plus bas,
+        qui couvrent l'intégralité du contenu prévu pour cet épisode.
+      </p>
+    </div>
+  )}
+
+  {episode.chapters.length > 0 && (
+    <section class="ai-podcast-player__chapters" aria-labelledby={`${playerId}-chapters-title`}>
+      <h3 class="ai-podcast-player__chapters-title" id={`${playerId}-chapters-title`}>
+        Chapitres {isAvailable ? '' : 'prévisionnels'}
+      </h3>
+      <ol class="ai-podcast-player__chapters-list">
+        {episode.chapters.map((chapter) => (
+          <li class="ai-podcast-player__chapter">
+            {isAvailable ? (
+              <button
+                type="button"
+                class="ai-podcast-player__chapter-button"
+                data-time={chapter.time}
+                data-target={playerId}
+              >
+                <span class="ai-podcast-player__chapter-time">
+                  {formatTime(chapter.time)}
+                </span>
+                <span class="ai-podcast-player__chapter-title">
+                  {chapter.title}
+                </span>
+              </button>
+            ) : (
+              <div class="ai-podcast-player__chapter-static">
+                <span class="ai-podcast-player__chapter-time">
+                  ~{formatTime(chapter.time)}
+                </span>
+                <span class="ai-podcast-player__chapter-title">
+                  {chapter.title}
+                </span>
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+</div>
+
+{isAvailable && (
+  <script is:inline define:vars={{ playerId }}>
+    // Wire chapter buttons to seek audio.
+    (() => {
+      const root = document.getElementById(playerId);
+      if (!root) return;
+      const audio = root.querySelector('audio');
+      if (!audio) return;
+      root.querySelectorAll('button[data-time]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const t = parseFloat(btn.getAttribute('data-time') || '0');
+          if (!Number.isNaN(t)) {
+            audio.currentTime = t;
+            audio.play().catch(() => {
+              /* user gesture may be required on some browsers */
+            });
+          }
+        });
+      });
+    })();
+  </script>
+)}
+
+<style>
+  .ai-podcast-player {
+    margin-block: var(--ai-space-5);
+  }
+
+  .ai-podcast-player__audio {
+    width: 100%;
+    margin-block-end: var(--ai-space-3);
+  }
+
+  .ai-podcast-player__transcript {
+    margin: 0 0 var(--ai-space-4);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-podcast-player__transcript a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-podcast-player__transcript a:hover {
+    text-decoration: underline;
+  }
+
+  /* === Placeholder === */
+  .ai-podcast-player__placeholder {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-4);
+  }
+  .ai-podcast-player__placeholder-status {
+    margin: 0 0 var(--ai-space-2);
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-base);
+  }
+  .ai-podcast-player__placeholder-status strong {
+    color: var(--ai-accent-primary);
+  }
+  .ai-podcast-player__placeholder-text,
+  .ai-podcast-player__placeholder-help {
+    margin: 0 0 var(--ai-space-2);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-podcast-player__placeholder-help {
+    margin-block-end: 0;
+  }
+
+  /* === Chapters === */
+  .ai-podcast-player__chapters {
+    margin-block: var(--ai-space-5);
+  }
+  .ai-podcast-player__chapters-title {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcast-player__chapters-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-1);
+  }
+  .ai-podcast-player__chapter {
+    border-radius: var(--ai-radius-sm);
+    overflow: hidden;
+  }
+  .ai-podcast-player__chapter-button,
+  .ai-podcast-player__chapter-static {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-2) var(--ai-space-3);
+    width: 100%;
+    text-align: start;
+    background: transparent;
+    border: 0;
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font: inherit;
+  }
+  .ai-podcast-player__chapter-button {
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+  }
+  .ai-podcast-player__chapter-button:hover,
+  .ai-podcast-player__chapter-button:focus-visible {
+    background: var(--ai-accent-subtle);
+    color: var(--ai-accent-primary);
+    outline: none;
+  }
+  .ai-podcast-player__chapter-time {
+    font-variant-numeric: tabular-nums;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    flex-shrink: 0;
+    width: 4ch;
+  }
+  .ai-podcast-player__chapter-title {
+    flex: 1;
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-podcast-player__chapter-button:hover .ai-podcast-player__chapter-title,
+  .ai-podcast-player__chapter-button:focus-visible .ai-podcast-player__chapter-title {
+    color: var(--ai-accent-primary);
+  }
+</style>
