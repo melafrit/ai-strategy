@@ -1,0 +1,195 @@
+---
+/**
+ * SourceTag.astro
+ *
+ * Signature component: signals the level of evidence behind a factual claim.
+ * Used pervasively in module pages, case studies, glossary and capstone
+ * (cf. docs/design-system/components.md §3, docs/cadrage/charte-de-cadrage.md §6).
+ *
+ * Five levels (technical key → label key in translations.ts):
+ *  - "official-mit"             → t('source.official-mit')
+ *  - "recommended-complement"   → t('source.recommended-complement')
+ *  - "pedagogical-reconstruction" → t('source.pedagogical-reconstruction')
+ *  - "external-verifiable"      → t('source.external-verifiable')
+ *  - "to-verify"                → t('source.to-verify')
+ *
+ * Two display modes:
+ *  - inline=false (default) → block with optional source URL + access date
+ *  - inline=true            → compact pill, can be embedded in flowing text
+ */
+
+import { getLocaleFromPath } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+
+type Level =
+  | 'official-mit'
+  | 'recommended-complement'
+  | 'pedagogical-reconstruction'
+  | 'external-verifiable'
+  | 'to-verify';
+
+interface Props {
+  level: Level;
+  /** Source title (organization, paper, page name). */
+  sourceTitle?: string;
+  /** Source URL. Treated as external — opened safely. */
+  sourceUrl?: string;
+  /** ISO date string (YYYY-MM-DD) for when the source was accessed. */
+  accessedAt?: string;
+  /** Compact pill mode for inline use. */
+  inline?: boolean;
+  className?: string;
+}
+
+const {
+  level,
+  sourceTitle,
+  sourceUrl,
+  accessedAt,
+  inline = false,
+  className,
+} = Astro.props;
+
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+
+const labelKey = `source.${level}` as const;
+const label = t(labelKey, locale);
+
+const accessedAtFormatted = accessedAt
+  ? new Intl.DateTimeFormat(locale === 'fr' ? 'fr-FR' : locale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(accessedAt))
+  : null;
+---
+
+{
+  inline ? (
+    <span
+      class:list={['ai-sourcetag ai-sourcetag--inline', `ai-sourcetag--${level}`, className]}
+      role="note"
+    >
+      <span class="ai-sourcetag__dot" aria-hidden="true" />
+      <span class="ai-sourcetag__label">{label}</span>
+    </span>
+  ) : (
+    <aside
+      class:list={['ai-sourcetag ai-sourcetag--block', `ai-sourcetag--${level}`, className]}
+      role="note"
+    >
+      <p class="ai-sourcetag__head">
+        <span class="ai-sourcetag__dot" aria-hidden="true" />
+        <span class="ai-sourcetag__label">{label}</span>
+      </p>
+      {sourceTitle && (
+        <p class="ai-sourcetag__source">
+          {sourceUrl ? (
+            <a href={sourceUrl} rel="noopener noreferrer" target="_blank">
+              {sourceTitle}
+              <span class="sr-only"> {t('a11y.external-link', locale)}</span>
+            </a>
+          ) : (
+            sourceTitle
+          )}
+        </p>
+      )}
+      {accessedAtFormatted && (
+        <p class="ai-sourcetag__accessed">
+          {t('source.accessed-on', locale)}{' '}
+          <time datetime={accessedAt}>{accessedAtFormatted}</time>
+        </p>
+      )}
+    </aside>
+  )
+}
+
+<style>
+  .ai-sourcetag {
+    --tag-fg: var(--ai-fg-primary);
+    --tag-bg: var(--ai-bg-muted);
+  }
+
+  /* === Levels === */
+  .ai-sourcetag--official-mit {
+    --tag-fg: var(--ai-source-official);
+    --tag-bg: var(--ai-source-official-bg);
+  }
+  .ai-sourcetag--recommended-complement {
+    --tag-fg: var(--ai-source-complement);
+    --tag-bg: var(--ai-source-complement-bg);
+  }
+  .ai-sourcetag--pedagogical-reconstruction {
+    --tag-fg: var(--ai-source-pedagogical);
+    --tag-bg: var(--ai-source-pedagogical-bg);
+  }
+  .ai-sourcetag--external-verifiable {
+    --tag-fg: var(--ai-source-external);
+    --tag-bg: var(--ai-source-external-bg);
+  }
+  .ai-sourcetag--to-verify {
+    --tag-fg: var(--ai-source-toverify);
+    --tag-bg: var(--ai-source-toverify-bg);
+  }
+
+  /* === Inline pill === */
+  .ai-sourcetag--inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-1);
+    padding: 0.15em 0.6em;
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+    border-radius: var(--ai-radius-pill);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    line-height: var(--ai-leading-tight);
+  }
+
+  /* === Block callout === */
+  .ai-sourcetag--block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ai-space-1);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+    border-inline-start: 3px solid var(--tag-fg);
+    border-radius: var(--ai-radius-md);
+    margin-block: var(--ai-space-3);
+  }
+
+  .ai-sourcetag__head {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    font-weight: var(--ai-weight-semibold);
+    margin: 0;
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-sourcetag__dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--ai-radius-pill);
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .ai-sourcetag__source {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-primary);
+  }
+  .ai-sourcetag__source a {
+    color: inherit;
+  }
+
+  .ai-sourcetag__accessed {
+    margin: 0;
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-secondary);
+  }
+</style>

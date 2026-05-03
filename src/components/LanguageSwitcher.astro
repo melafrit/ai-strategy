@@ -1,0 +1,92 @@
+---
+/**
+ * LanguageSwitcher.astro
+ *
+ * Drops the visitor onto the same content in another locale.
+ * Uses native <a> tags so the switcher works without JavaScript.
+ *
+ * Behaviour:
+ *  - Preserves the path beyond the locale prefix (`/fr/cas/X/` → `/ar/cas/X/`).
+ *  - Marks the active locale with aria-current="true".
+ *  - Renders native names (Français, English, العربية).
+ */
+
+import { getLocaleFromPath, getAllLocalizedUrls } from '@/i18n/helpers';
+import { LOCALES, LOCALE_METADATA } from '@/i18n/locales';
+import { t } from '@/i18n/translations';
+
+const pathname = Astro.url.pathname;
+const currentLocale = getLocaleFromPath(pathname);
+const localizedUrls = getAllLocalizedUrls(pathname);
+---
+
+<nav class="ai-langswitcher" aria-label={t('a11y.lang-switcher.label', currentLocale)}>
+  <ul class="ai-langswitcher__list">
+    {
+      LOCALES.map((loc) => {
+        const meta = LOCALE_METADATA[loc];
+        const isActive = loc === currentLocale;
+        return (
+          <li>
+            <a
+              href={localizedUrls[loc]}
+              hreflang={meta.htmlLang}
+              lang={meta.htmlLang}
+              aria-current={isActive ? 'true' : undefined}
+              class:list={['ai-langswitcher__link', { 'is-active': isActive }]}
+            >
+              <span aria-hidden="true">{meta.code.toUpperCase()}</span>
+              <span class="sr-only">{meta.nativeName}</span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<style>
+  .ai-langswitcher {
+    flex-shrink: 0;
+  }
+
+  .ai-langswitcher__list {
+    display: flex;
+    gap: var(--ai-space-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-langswitcher__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2rem;
+    padding-inline: var(--ai-space-2);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    letter-spacing: var(--ai-tracking-wide);
+    text-decoration: none;
+    transition:
+      background var(--ai-duration-fast) var(--ai-easing-default),
+      color var(--ai-duration-fast) var(--ai-easing-default),
+      border-color var(--ai-duration-fast) var(--ai-easing-default);
+  }
+
+  .ai-langswitcher__link:hover,
+  .ai-langswitcher__link:focus-visible {
+    color: var(--ai-fg-primary);
+    background: var(--ai-bg-muted);
+  }
+
+  .ai-langswitcher__link.is-active {
+    background: var(--ai-fg-primary);
+    color: var(--ai-bg-primary);
+    border-color: var(--ai-fg-primary);
+  }
+</style>

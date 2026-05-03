@@ -1,0 +1,148 @@
+---
+/**
+ * IndependenceNotice.astro
+ *
+ * Site-wide notice clarifying that AI Strategy is NOT affiliated with MIT,
+ * MIT Sloan or MIT CSAIL. This is a signature element of the site
+ * (cf. principes éditoriaux 6.3 et ADR-005).
+ *
+ * Three variants:
+ *  - "block"  — full callout, used on Programme, Méthode pages
+ *  - "inline" — short single-line callout, used in the home trust bar
+ *  - "footer" — minimal text used at the bottom of the footer
+ */
+
+import { getLocaleFromPath, getLocalizedUrl } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+
+interface Props {
+  variant?: 'block' | 'inline' | 'footer';
+  className?: string;
+}
+
+const { variant = 'block', className } = Astro.props;
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+
+const methodUrl = getLocalizedUrl('/methode/', locale);
+
+const message = variant === 'inline' || variant === 'footer'
+  ? t('independence.short', locale)
+  : t('independence.full', locale);
+---
+
+{
+  variant === 'block' && (
+    <aside class:list={['ai-indep ai-indep--block', className]} role="note">
+      <p class="ai-indep__heading">
+        <span class="ai-indep__icon" aria-hidden="true">
+          {/* Lucide ShieldOff inline (1.5px stroke, currentColor) */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19.7 14a6.9 6.9 0 0 0 .3-2V5l-8-3-3.2 1.2" />
+            <path d="M4.7 6.7 4 5v7c0 6 8 10 8 10a20.3 20.3 0 0 0 5.6-4.4" />
+            <line x1="2" y1="2" x2="22" y2="22" />
+          </svg>
+        </span>
+        <span>{message}</span>
+      </p>
+      <p class="ai-indep__action">
+        <a href={methodUrl}>{t('independence.learn-more', locale)} →</a>
+      </p>
+    </aside>
+  )
+}
+
+{
+  variant === 'inline' && (
+    <p class:list={['ai-indep ai-indep--inline', className]} role="note">
+      <span class="ai-indep__icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M19.7 14a6.9 6.9 0 0 0 .3-2V5l-8-3-3.2 1.2" />
+          <path d="M4.7 6.7 4 5v7c0 6 8 10 8 10a20.3 20.3 0 0 0 5.6-4.4" />
+          <line x1="2" y1="2" x2="22" y2="22" />
+        </svg>
+      </span>
+      {message}
+    </p>
+  )
+}
+
+{
+  variant === 'footer' && (
+    <p class:list={['ai-indep ai-indep--footer', className]}>
+      {message}
+    </p>
+  )
+}
+
+<style>
+  .ai-indep {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ai-space-2);
+    margin: 0;
+  }
+
+  .ai-indep__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: currentColor;
+  }
+
+  /* === Block variant === */
+  .ai-indep--block {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-warning-subtle);
+    border-inline-start: 4px solid var(--ai-warning);
+    border-radius: var(--ai-radius-md);
+    color: var(--ai-fg-primary);
+  }
+  .ai-indep--block .ai-indep__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    font-weight: var(--ai-weight-semibold);
+    margin: 0;
+  }
+  .ai-indep--block .ai-indep__action {
+    margin: var(--ai-space-2) 0 0;
+    font-size: var(--ai-text-sm);
+  }
+
+  /* === Inline variant === */
+  .ai-indep--inline {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+
+  /* === Footer variant === */
+  .ai-indep--footer {
+    color: var(--ai-fg-inverse);
+    opacity: 0.75;
+    font-size: var(--ai-text-xs);
+    margin-block-start: var(--ai-space-2);
+  }
+</style>

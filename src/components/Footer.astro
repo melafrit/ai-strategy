@@ -1,0 +1,202 @@
+---
+/**
+ * Footer.astro — global site footer.
+ *
+ * Renders:
+ *  - License block (MIT for code, CC BY-NC-SA 4.0 for content)
+ *  - Legal links (Méthode, Mentions, Changelog, GitHub)
+ *  - Footer-variant of <IndependenceNotice />
+ *  - Copyright with current year
+ *  - Last-updated marker (resolved from BUILD_TIME at build time)
+ */
+
+import IndependenceNotice from './IndependenceNotice.astro';
+import { getLocaleFromPath, getLocalizedUrl } from '@/i18n/helpers';
+import { t, tFormat } from '@/i18n/translations';
+
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+
+const currentYear = new Date().getFullYear();
+const lastUpdated = new Date(); // resolved at build time — replaced by CI in Phase 7
+
+const lastUpdatedFormatted = new Intl.DateTimeFormat(locale === 'fr' ? 'fr-FR' : locale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(lastUpdated);
+
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
+const repoBlobBase = `${githubUrl}/blob/main`;
+
+const legalLinks = [
+  {
+    label: t('footer.legal.method', locale),
+    href: getLocalizedUrl('/methode/', locale),
+    external: false,
+  },
+  {
+    label: t('footer.legal.legal', locale),
+    href: getLocalizedUrl('/mentions-legales/', locale),
+    external: false,
+  },
+  {
+    label: t('footer.legal.changelog', locale),
+    href: `${repoBlobBase}/CHANGELOG.md`,
+    external: true,
+  },
+  {
+    label: t('footer.legal.github', locale),
+    href: githubUrl,
+    external: true,
+  },
+] as const;
+---
+
+<footer class="ai-footer">
+  <div class="ai-container ai-footer__inner">
+    <div class="ai-footer__column ai-footer__column--brand">
+      <p class="ai-footer__brand">{t('site.name', locale)}</p>
+      <p class="ai-footer__tagline">{t('site.tagline', locale)}</p>
+      <IndependenceNotice variant="footer" />
+    </div>
+
+    <div class="ai-footer__column">
+      <h2 class="ai-footer__title">{t('footer.licenses.title', locale)}</h2>
+      <ul class="ai-footer__list">
+        <li>
+          <a href={`${repoBlobBase}/LICENSE-CODE`} rel="noopener noreferrer">
+            {t('footer.licenses.code', locale)}
+          </a>
+        </li>
+        <li>
+          <a href={`${repoBlobBase}/LICENSE-CONTENT`} rel="noopener noreferrer">
+            {t('footer.licenses.content', locale)}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="ai-footer__column">
+      <h2 class="ai-footer__title">{t('footer.legal.title', locale)}</h2>
+      <ul class="ai-footer__list">
+        {
+          legalLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+                target={link.external ? '_blank' : undefined}
+              >
+                {link.label}
+                {link.external && (
+                  <span class="sr-only"> {t('a11y.external-link', locale)}</span>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="ai-footer__bottom">
+    <div class="ai-container ai-footer__bottom-inner">
+      <p>{tFormat(t('footer.copyright', locale), { year: currentYear })}</p>
+      <p>
+        {t('footer.last-updated', locale)} :
+        <time datetime={lastUpdated.toISOString()}>{lastUpdatedFormatted}</time>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ai-footer {
+    margin-block-start: var(--ai-space-9);
+    background: var(--ai-bg-inverse);
+    color: var(--ai-fg-inverse);
+  }
+
+  .ai-footer__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--ai-space-6);
+    padding-block: var(--ai-space-7);
+  }
+
+  @media (min-width: 48em) {
+    .ai-footer__inner {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+
+  .ai-footer__brand {
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-bold);
+    margin-block-end: var(--ai-space-2);
+  }
+
+  .ai-footer__tagline {
+    color: var(--ai-fg-inverse);
+    opacity: 0.85;
+    margin-block-end: var(--ai-space-4);
+    max-width: 38ch;
+  }
+
+  .ai-footer__title {
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-inverse);
+    opacity: 0.7;
+    margin-block-end: var(--ai-space-3);
+  }
+
+  /* Don't apply uppercase + tracking to RTL — see rtl-rules.md §4.3 */
+  :global([dir='rtl']) .ai-footer__title {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ai-space-2);
+  }
+
+  .ai-footer__list a {
+    color: var(--ai-fg-inverse);
+    text-decoration: none;
+    opacity: 0.85;
+    font-size: var(--ai-text-sm);
+  }
+  .ai-footer__list a:hover,
+  .ai-footer__list a:focus-visible {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .ai-footer__bottom {
+    border-block-start: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: var(--ai-space-4);
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-inverse);
+    opacity: 0.7;
+  }
+  .ai-footer__bottom-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3) var(--ai-space-5);
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ai-footer__bottom p {
+    margin: 0;
+  }
+</style>

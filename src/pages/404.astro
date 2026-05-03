@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getLocaleFromPath, getLocalizedUrl } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+
+const homeHref = getLocalizedUrl('/', locale);
+---
+
+<BaseLayout title={t('404.title', locale)} description={t('404.lead', locale)}>
+  <section class="ai-container ai-404">
+    <p class="ai-404__code" aria-hidden="true">404</p>
+    <h1 class="ai-404__title">{t('404.title', locale)}</h1>
+    <p class="ai-404__lead">{t('404.lead', locale)}</p>
+    <p>
+      <a class="ai-404__cta" href={homeHref}>{t('404.cta-home', locale)} →</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .ai-404 {
+    padding-block: var(--ai-space-9);
+    text-align: center;
+  }
+  .ai-404__code {
+    font-size: var(--ai-text-6xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    margin: 0 0 var(--ai-space-4);
+    letter-spacing: var(--ai-tracking-tight);
+  }
+  .ai-404__title {
+    font-size: var(--ai-text-3xl);
+    margin: 0 0 var(--ai-space-3);
+  }
+  .ai-404__lead {
+    color: var(--ai-fg-secondary);
+    margin: 0 auto var(--ai-space-5);
+    max-width: 50ch;
+  }
+  .ai-404__cta {
+    display: inline-block;
+    padding: var(--ai-space-3) var(--ai-space-5);
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-primary);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-404__cta:hover,
+  .ai-404__cta:focus-visible {
+    background: var(--ai-accent-hover);
+    color: var(--ai-bg-primary);
+  }
+</style>

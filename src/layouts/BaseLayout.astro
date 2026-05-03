@@ -1,0 +1,116 @@
+---
+/**
+ * BaseLayout.astro
+ *
+ * Root layout wrapping every page on the site.
+ * Responsibilities:
+ *  - HTML <html lang> + <html dir> from the route locale
+ *  - Charset, viewport, theme-color
+ *  - <title> + <meta description>
+ *  - Canonical + hreflang alternates (cf. docs/architecture/sitemap.md §2)
+ *  - Skip link (cf. docs/design-system/accessibility.md §4)
+ *  - Header / Footer
+ *  - <main id="main"> wrapper for skip-link target
+ */
+
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import {
+  getLocaleFromPath,
+  getDirection,
+  getHtmlLang,
+  getAllLocalizedUrls,
+} from '@/i18n/helpers';
+import { LOCALES } from '@/i18n/locales';
+import { t } from '@/i18n/translations';
+
+interface Props {
+  /** Page <title>. The site name is appended automatically. */
+  title: string;
+  /** Page <meta description>. */
+  description: string;
+  /**
+   * Optional canonical URL. If omitted, the current Astro.url is used.
+   * Provide an explicit value when paginated or filtered routes need to
+   * canonicalize to a base URL.
+   */
+  canonical?: string;
+  /**
+   * Optional Open Graph image URL (absolute or root-relative).
+   * Falls back to a default in Phase 7 when illustrations are produced.
+   */
+  ogImage?: string;
+}
+
+const { title, description, canonical, ogImage } = Astro.props;
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+const direction = getDirection(locale);
+const htmlLang = getHtmlLang(locale);
+
+// hreflang alternates — one per locale plus x-default → French.
+const localizedUrls = getAllLocalizedUrls(pathname);
+const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonicalUrl = canonical ?? `${siteOrigin}${pathname}`;
+
+const siteName = t('site.name', locale);
+const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+---
+
+<!doctype html>
+<html lang={htmlLang} dir={direction}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0F1E2E" />
+    <meta name="color-scheme" content="light" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    {/* hreflang — one tag per locale + x-default */}
+    {
+      LOCALES.map((alt) => (
+        <link
+          rel="alternate"
+          hreflang={alt}
+          href={`${siteOrigin}${localizedUrls[alt]}`}
+        />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={`${siteOrigin}${localizedUrls.fr}`} />
+
+    {/* Open Graph */}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={htmlLang.replace('-', '_')} />
+    <meta property="og:site_name" content={siteName} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    {/* Twitter card */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    {/* Favicon — placeholder until Phase 7 produces final assets. */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">{t('a11y.skip-to-main', locale)}</a>
+
+    <Header />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

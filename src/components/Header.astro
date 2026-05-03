@@ -1,0 +1,127 @@
+---
+/**
+ * Header.astro — global site header.
+ *
+ * Phase 3 scope: bare-minimum top navigation. The full navigation (with
+ * burger menu, sticky behaviour, mobile drawer) lands in Phase 4 once the
+ * actual content pages exist to link to.
+ *
+ * Structure:
+ *   [Logo]                        [Nav primary] [LanguageSwitcher]
+ *
+ * In RTL the order inverts automatically thanks to flex container behaviour.
+ */
+
+import { getLocaleFromPath, getLocalizedUrl } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+
+const navItems = [
+  { key: 'nav.program', href: getLocalizedUrl('/programme/', locale) },
+  { key: 'nav.modules', href: getLocalizedUrl('/modules/', locale) },
+  { key: 'nav.cases', href: getLocalizedUrl('/cas/', locale) },
+  { key: 'nav.resources', href: getLocalizedUrl('/ressources/', locale) },
+  { key: 'nav.capstone', href: getLocalizedUrl('/capstone/', locale) },
+  { key: 'nav.glossary', href: getLocalizedUrl('/glossaire/', locale) },
+  { key: 'nav.faq', href: getLocalizedUrl('/faq/', locale) },
+] as const;
+
+const homeHref = getLocalizedUrl('/', locale);
+---
+
+<header class="ai-header">
+  <div class="ai-container ai-header__inner">
+    <a class="ai-header__brand" href={homeHref} aria-label={t('site.name', locale)}>
+      <span class="ai-header__brand-mark" aria-hidden="true">AI</span>
+      <span class="ai-header__brand-text">Strategy</span>
+    </a>
+
+    <nav class="ai-header__nav" aria-label={t('nav.menu.open', locale)}>
+      <ul class="ai-header__nav-list">
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={item.href}>{t(item.key, locale)}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <LanguageSwitcher />
+  </div>
+</header>
+
+<style>
+  .ai-header {
+    background: var(--ai-bg-primary);
+    border-block-end: 1px solid var(--ai-border-subtle);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--ai-z-elevated);
+  }
+
+  .ai-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-5);
+    padding-block: var(--ai-space-3);
+  }
+
+  .ai-header__brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--ai-space-1);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+    font-size: var(--ai-text-lg);
+    flex-shrink: 0;
+  }
+  .ai-header__brand:hover {
+    color: var(--ai-accent-primary);
+  }
+
+  .ai-header__brand-mark {
+    background: var(--ai-fg-primary);
+    color: var(--ai-bg-primary);
+    padding: var(--ai-space-1) var(--ai-space-2);
+    border-radius: var(--ai-radius-sm);
+    letter-spacing: var(--ai-tracking-wide);
+  }
+
+  .ai-header__nav {
+    flex: 1;
+    /* Hide the desktop nav on small viewports — Phase 4 will replace this
+       with a proper burger drawer. */
+    display: none;
+  }
+
+  @media (min-width: 64em) {
+    .ai-header__nav {
+      display: block;
+    }
+  }
+
+  .ai-header__nav-list {
+    display: flex;
+    gap: var(--ai-space-5);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-header__nav-list a {
+    color: var(--ai-fg-secondary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-medium);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-header__nav-list a:hover,
+  .ai-header__nav-list a:focus-visible {
+    color: var(--ai-accent-primary);
+  }
+</style>

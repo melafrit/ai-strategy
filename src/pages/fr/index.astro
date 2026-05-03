@@ -1,0 +1,157 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import { t } from '@/i18n/translations';
+
+const locale = 'fr';
+const title = t('site.tagline', locale);
+const description =
+  "Site pédagogique trilingue inspiré du programme MIT Sloan Artificial Intelligence: Implications for Business Strategy. Stratégie IA, machine learning, IA générative, robotique, gouvernance.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="ai-container ai-hero">
+    <p class="ai-hero__surtitle">{t('site.surtitle', locale)}</p>
+    <h1 class="ai-hero__title">{t('site.tagline', locale)}</h1>
+    <p class="ai-hero__lead">{t('home.placeholder.lead', locale)}</p>
+
+    <div class="ai-hero__actions">
+      <a class="ai-cta ai-cta--primary" href="https://github.com/melafrit/ai-strategy" rel="noopener noreferrer" target="_blank">
+        {t('home.placeholder.cta-github', locale)} →
+      </a>
+      <a
+        class="ai-cta ai-cta--secondary"
+        href="https://github.com/melafrit/ai-strategy/tree/main/docs"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        {t('home.placeholder.cta-docs', locale)}
+      </a>
+    </div>
+
+    <div class="ai-hero__notice">
+      <IndependenceNotice variant="block" />
+    </div>
+
+    <div class="ai-hero__sample">
+      <h2 class="ai-hero__sample-title">Aperçu — Hiérarchie des sources</h2>
+      <p class="ai-hero__sample-lead">
+        Tous les contenus du site afficheront leur niveau de preuve via le composant
+        <code>&lt;SourceTag /&gt;</code>. Cinq niveaux sont prévus :
+      </p>
+      <div class="ai-hero__sample-row">
+        <SourceTag level="official-mit" inline />
+        <SourceTag level="recommended-complement" inline />
+        <SourceTag level="pedagogical-reconstruction" inline />
+        <SourceTag level="external-verifiable" inline />
+        <SourceTag level="to-verify" inline />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ai-hero {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-hero__surtitle {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    margin: 0 0 var(--ai-space-3);
+  }
+  :global([dir='rtl']) .ai-hero__surtitle {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-hero__title {
+    max-width: 22ch;
+    line-height: var(--ai-leading-tight);
+    letter-spacing: var(--ai-tracking-tight);
+    margin: 0 0 var(--ai-space-4);
+  }
+  @media (min-width: 48em) {
+    .ai-hero__title {
+      font-size: var(--ai-text-5xl);
+    }
+  }
+
+  .ai-hero__lead {
+    max-width: 60ch;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-lg);
+    line-height: var(--ai-leading-relaxed);
+    margin: 0 0 var(--ai-space-6);
+  }
+
+  .ai-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-7);
+  }
+
+  .ai-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-3) var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+    transition:
+      background var(--ai-duration-fast) var(--ai-easing-default),
+      color var(--ai-duration-fast) var(--ai-easing-default);
+  }
+
+  .ai-cta--primary {
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-primary);
+  }
+  .ai-cta--primary:hover,
+  .ai-cta--primary:focus-visible {
+    background: var(--ai-accent-hover);
+    color: var(--ai-bg-primary);
+  }
+
+  .ai-cta--secondary {
+    background: transparent;
+    color: var(--ai-fg-primary);
+    border: 1px solid var(--ai-border-default);
+  }
+  .ai-cta--secondary:hover,
+  .ai-cta--secondary:focus-visible {
+    background: var(--ai-bg-muted);
+  }
+
+  .ai-hero__notice {
+    margin-block-end: var(--ai-space-7);
+    max-width: var(--ai-container-md);
+  }
+
+  .ai-hero__sample {
+    border-block-start: 1px solid var(--ai-border-subtle);
+    padding-block-start: var(--ai-space-6);
+  }
+
+  .ai-hero__sample-title {
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    margin: 0 0 var(--ai-space-2);
+  }
+  .ai-hero__sample-lead {
+    color: var(--ai-fg-secondary);
+    margin: 0 0 var(--ai-space-4);
+    max-width: 60ch;
+  }
+  .ai-hero__sample-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-2);
+  }
+</style>
