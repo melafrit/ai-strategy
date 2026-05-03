@@ -77,7 +77,28 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- Phase 4.10 : FAQ + Capstone + Resources hub. **→ EN COURS : Resources hub publié (sub-1)**, Capstone (sub-2) et FAQ (sub-3) restants.
+- Phase 4.10 : FAQ + Capstone + Resources hub. **→ EN COURS : Resources hub (sub-1) et Capstone (sub-2) publiés**, FAQ (sub-3) restante.
+
+- Phase 4.10 sub-2 — Page Capstone (projet final intégrateur) :
+  - **NEW PAGE — `src/pages/fr/capstone/index.astro`** (1086 lignes) — page la plus pédagogiquement structurante du site, traduit le canvas-roadmap-ia-module-6.md en page web complète enrichie d'une grille d'évaluation détaillée et d'un exemple annoté.
+  - Structure en 8 sections sticky-TOC :
+    1. **Aperçu** — ExecutiveSummary + tableau d'identité (public, prérequis, livrable, modalité d'évaluation)
+    2. **Objectifs d'apprentissage** — 7 outcomes via KeyTakeaways
+    3. **Méthodologie en 4 étapes** — chaque étape dans une carte dédiée avec numéro coloré, durée estimée (25-45 min), corps détaillé et livrable explicite. Mapping direct sur le canvas Module 6 :
+       - Étape 1 : Vision et diagnostic de maturité 8 dimensions (25-30 min)
+       - Étape 2 : 3 scénarios contrastés et actions robustes (25-30 min)
+       - Étape 3 : Use cases prioritaires Valeur × Faisabilité × Risque (25-30 min)
+       - Étape 4 : Plan d'action 12-24 mois en 5 dimensions (30-45 min)
+    4. **Grille d'évaluation** — 7 dimensions × 4 niveaux (Insuffisant / Émergent / Solide / Excellent) = 28 descripteurs détaillés. Couleur dégradée rouge → orange → vert → accent pour les niveaux. Note agrégée pour passage en COMEX. Dimensions évaluées : vision stratégique / diagnostic de maturité / sélection-priorisation use cases / gouvernance et conformité / compétences et conduite du changement / plan opérationnel-budget-KPI / robustesse aux incertitudes.
+    5. **Exemple annoté fictif** — Métallurgie de Précision SAS (PME française, ~150 salariés, aéronautique et médical) — explicitement signalé `<SourceTag level="pedagogical-reconstruction" />`. Couvre les 4 étapes avec annotations explicites du niveau de qualité atteint et du raisonnement.
+    6. **Checklist exécutive** — 18 points groupés en 7 phases via le composant Checklist existant (avant de commencer / Étape 1 / Étapes 2-3 / Étape 4 / conformité-changement / synthèse-validation / soutenance-suite).
+    7. **Téléchargement** — bouton accent vers le canvas Markdown CC BY-NC-SA 4.0 existant.
+    8. **Pour aller plus loin** — ResourceList vers Module 6, NIST AI RMF, AI Act EU + liens internes vers programme/ressources/glossaire.
+  - **NEW STUBS** : EN + AR avec TranslationPending.
+  - **Activation navigation** : le lien `/capstone/` était déjà câblé dans `Header.astro` — fonctionne désormais.
+  - Build validé : 79 pages générées (1 root + 26 FR + 26 EN + 26 AR), 0 erreur / 0 warning / 0 hint Astro check sur 125 fichiers.
+  - Pattern : 0 nouveau composant. Réutilisation de `HeroSecondary`, `TableOfContents`, `ExecutiveSummary`, `KeyTakeaways`, `Checklist`, `ResourceList`, `SourceTag`, `IndependenceNotice`. Styling self-contained cohérent avec design tokens.
+  - Vérifications HTML buildé : 7 dimensions de rubric rendues, 4 étapes de méthodologie, 18 items de checklist en 7 phases.
 
 - Phase 4.10 sub-1 — Resources hub :
   - **NEW DATA — `src/content/resources.ts`** (610 lignes) — Catalogue de 31 ressources externes typées TypeScript, structurées en 8 familles thématiques :

@@ -1,0 +1,1086 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import Checklist from '@/components/Checklist.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+const tocItems = [
+  { id: 'apercu', label: 'Aperçu du capstone' },
+  { id: 'objectifs', label: "Objectifs d'apprentissage" },
+  { id: 'methode', label: 'Méthodologie en 4 étapes' },
+  { id: 'rubrics', label: "Grille d'évaluation" },
+  { id: 'exemple', label: 'Exemple annoté (fictif)' },
+  { id: 'checklist', label: 'Checklist exécutive' },
+  { id: 'telecharger', label: 'Télécharger le canvas' },
+  { id: 'liens', label: 'Pour aller plus loin' },
+];
+
+// === Objectifs d'apprentissage ===
+const learningOutcomes = [
+  "Articuler une vision IA cohérente avec la stratégie d'entreprise et les enjeux des parties prenantes — pas une déclaration interchangeable mais une vision spécifique au contexte de votre organisation.",
+  "Évaluer honnêtement la maturité IA actuelle de l'organisation sur 8 dimensions — données, compétences, gouvernance, projets en production, conformité, conduite du changement, infrastructure, dialogue social.",
+  "Construire des scénarios prospectifs contrastés et identifier des actions robustes — c'est-à-dire utiles dans plusieurs futurs possibles, plutôt que pariées sur un scénario unique.",
+  "Identifier et prioriser des cas d'usage IA selon une grille Valeur × Faisabilité × Risque — en justifiant la priorisation par des critères défendables en COMEX.",
+  "Construire un plan opérationnel 12-24 mois articulant 5 dimensions cohérentes — vision séquencée, gouvernance, compétences, infrastructure et données, métriques et KPI.",
+  "Anticiper les risques majeurs (techniques, réglementaires, sociaux) et formuler des mesures de mitigation crédibles — pas des principes mais des actions vérifiables.",
+  "Défendre les choix devant un public exigeant (COMEX, conseil d'administration, audit) avec des arguments fondés sur des sources publiques vérifiables et une logique d'arbitrage explicite.",
+];
+
+// === Checklist exécutive (groupée par phase) ===
+const executiveChecklist = [
+  {
+    title: 'Avant de commencer',
+    items: [
+      "Diagnostic personnel : ai-je une vision claire de l'ambition IA de mon organisation à 3-5 ans ?",
+      "Préparer 3 sources : stratégie d'entreprise existante, état des lieux IA actuels, contraintes réglementaires applicables",
+    ],
+  },
+  {
+    title: 'Étape 1 — Vision et maturité',
+    items: [
+      "Vision rédigée en 3-5 lignes, spécifique à mon organisation (pas interchangeable avec un concurrent)",
+      "Diagnostic de maturité honnête sur les 8 dimensions, score total /40 et 3 priorités d'action identifiées",
+    ],
+  },
+  {
+    title: 'Étapes 2-3 — Scénarios et use cases',
+    items: [
+      "3 scénarios contrastés rédigés, avec hypothèses explicites pour chacun",
+      "Actions robustes identifiées (utiles dans plusieurs scénarios) — au moins 3 actions priorisées",
+      "5 à 8 use cases candidats listés avec scoring Valeur × Faisabilité × Risque",
+      "Top 3 use cases priorisés justifiés explicitement (pourquoi ceux-ci et pas d'autres)",
+    ],
+  },
+  {
+    title: 'Étape 4 — Plan d\'action',
+    items: [
+      "Vision séquencée par horizon (T0+6 / T0+12 / T0+18-24)",
+      "Plan détaillé sur les 5 dimensions (gouvernance, compétences, infrastructure, métriques, conduite du changement)",
+      "Budget global estimatif réaliste avec décomposition (technique, RH, accompagnement, gouvernance)",
+      "5 risques majeurs identifiés avec mesures de mitigation chiffrables",
+    ],
+  },
+  {
+    title: 'Conformité et conduite du changement',
+    items: [
+      "Articulation explicite avec AI Act EU et NIST RMF (ou autre cadre selon contexte)",
+      "Plan RH spécifique et calendrier de communication interne",
+    ],
+  },
+  {
+    title: 'Synthèse et validation',
+    items: [
+      "Roadmap rédigée en une page (pas plus) lisible par un membre de COMEX en 5 minutes",
+      "Au moins 7 des 10 critères de qualité atteints avant soutenance ou présentation",
+    ],
+  },
+  {
+    title: 'Soutenance et suite',
+    items: [
+      "Exemples concrets prêts pour 3 questions probables (ROI, risques, calendrier réaliste)",
+      "Décisions concrètes formalisées dans une note de cadrage à 30 jours après le capstone",
+    ],
+  },
+];
+
+// === Ressources liées ===
+const linkedResources = [
+  {
+    type: 'reading' as const,
+    title: 'Module 6 — Futur de l\'IA',
+    author: 'AI Strategy',
+    description:
+      "Module qui prépare directement au capstone. Présente le cadre méthodologique d'anticipation stratégique, l'analyse de scénarios, et la décomposition en use cases prioritaires.",
+    href: getLocalizedUrl('/modules/06-futur-ia/', locale),
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'NIST AI Risk Management Framework',
+    author: 'NIST',
+    description:
+      "Cadre opérationnel de référence pour la dimension gouvernance et risques de votre roadmap. Quatre fonctions interreliées : Govern / Map / Measure / Manage.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Règlement (UE) 2024/1689 — AI Act',
+    author: "Journal officiel de l'Union européenne",
+    description:
+      "Pour toute organisation européenne, l'AI Act conditionne directement la classification des cas d'usage. À intégrer dans la dimension gouvernance et conformité.",
+    href: 'https://eur-lex.europa.eu/legal-content/FR/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+];
+
+// Liens dérivés
+const module6Url = getLocalizedUrl('/modules/06-futur-ia/', locale);
+const ressourcesUrl = getLocalizedUrl('/ressources/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const canvasDownload = '/downloads/canvas-roadmap-ia-module-6.md';
+---
+
+<BaseLayout
+  title="Capstone — Construire votre roadmap IA stratégique"
+  description="Le projet final intégrateur du parcours AI Strategy. Méthodologie en 4 étapes, grille d'évaluation détaillée, exemple annoté et checklist exécutive pour construire une roadmap IA défendable en COMEX."
+>
+  <HeroSecondary
+    surtitle="Projet final intégrateur"
+    title="Capstone — Construire votre roadmap IA stratégique"
+    lead="Le sommet du parcours pédagogique. Mobilisez l'ensemble des modules et des cas pour construire une roadmap IA 12-24 mois pour votre organisation : vision, diagnostic de maturité, scénarios contrastés, use cases priorisés, plan opérationnel, gouvernance, budget, risques."
+  >
+    <span slot="stats">
+      4 étapes méthodologiques · grille d'évaluation 7 dimensions · canvas téléchargeable
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-capstone-page">
+    <div class="ai-capstone-page__layout">
+      <aside class="ai-capstone-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-capstone-page__content ai-prose">
+        {/* === APERÇU === */}
+        <section id="apercu">
+          <h2>Aperçu du capstone</h2>
+          <ExecutiveSummary>
+            <p>
+              Le <strong>capstone</strong> est le projet final intégrateur du parcours
+              AI Strategy. Il consiste à construire une <strong>roadmap IA 12-24 mois</strong>
+              pour votre organisation (réelle ou choisie), mobilisant l'ensemble des notions
+              étudiées : cadrage stratégique du Module 1, évaluation de cas d'usage ML du
+              Module 2, brief de pilote GenAI du Module 3, opportunités robotique du Module 4
+              quand applicables, gouvernance et conformité du Module 5, anticipation
+              stratégique structurée du Module 6.
+            </p>
+            <p>
+              Un bon capstone <strong>n'est pas un livrable scolaire</strong>. C'est un
+              document utilisable en interne, défendable en COMEX, qui structure réellement
+              la décision stratégique IA de votre organisation. Le format attendu combine
+              vision, diagnostic, cas d'usage prioritaires, séquencement, gouvernance,
+              budget, compétences, KPI, risques, conformité, et planning sur 12-24 mois.
+            </p>
+            <p>
+              <strong>Durée estimée</strong> : 90 à 120 minutes en autonomie pour la version
+              courte (canvas seul) ; 1 à 2 jours pour une version exploitable en COMEX avec
+              annexes ; 2 à 3 semaines en mode atelier en équipe pour une version complète
+              avec validation interne. La complexité dépend de la taille et de la maturité
+              de l'organisation.
+            </p>
+          </ExecutiveSummary>
+
+          <dl class="ai-capstone-meta">
+            <div class="ai-capstone-meta__row">
+              <dt>Public</dt>
+              <dd>Dirigeants, responsables de transformation, directeurs métiers, consultants, chefs de projet IA — toute personne qui doit décider d'une stratégie IA dans son organisation</dd>
+            </div>
+            <div class="ai-capstone-meta__row">
+              <dt>Prérequis</dt>
+              <dd>Avoir parcouru les six modules — au minimum les modules 1, 5 et 6 ; idéalement les six. Disposer d'au moins quelques informations sur le contexte stratégique de l'organisation (objectifs, contraintes, ressources)</dd>
+            </div>
+            <div class="ai-capstone-meta__row">
+              <dt>Livrable attendu</dt>
+              <dd>Roadmap IA <strong>12-24 mois</strong> au format synthèse une page + annexes méthodologiques + grille d'auto-évaluation. Le canvas téléchargeable structure le travail</dd>
+            </div>
+            <div class="ai-capstone-meta__row">
+              <dt>Modalité d'évaluation</dt>
+              <dd>Auto-évaluation guidée par la grille à 7 dimensions × 4 niveaux ci-dessous. Optionnel : revue par pair, soutenance en COMEX réelle ou simulée</dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === OBJECTIFS === */}
+        <section id="objectifs">
+          <h2>Objectifs d'apprentissage</h2>
+          <p>
+            En réalisant ce capstone, vous développerez les sept compétences suivantes —
+            elles sont la promesse pédagogique du parcours intégral, et chacune est
+            évaluable dans la grille de la section suivante.
+          </p>
+          <KeyTakeaways items={learningOutcomes} />
+        </section>
+
+        {/* === MÉTHODOLOGIE === */}
+        <section id="methode">
+          <h2>Méthodologie en 4 étapes</h2>
+          <p>
+            La méthodologie suit le canvas du Module 6 — quatre étapes successives, chacune
+            avec des livrables intermédiaires précis. L'enchaînement n'est pas strictement
+            linéaire : la dernière étape peut conduire à réviser les premières, ce qui est
+            sain. Comptez environ 90 à 120 minutes pour la version courte (canvas seul).
+          </p>
+
+          {/* Étape 1 */}
+          <article class="ai-capstone-step">
+            <header class="ai-capstone-step__head">
+              <span class="ai-capstone-step__number">Étape 1</span>
+              <h3>Vision et diagnostic de maturité</h3>
+              <p class="ai-capstone-step__duration">Durée estimée : 25-30 min</p>
+            </header>
+            <div class="ai-capstone-step__body">
+              <p>
+                Articulez d'abord une <strong>vision IA à 3-5 ans</strong> en 3-5 lignes.
+                Critère de qualité : la vision doit être <em>spécifique</em> à votre
+                organisation — pas interchangeable avec un concurrent. Elle doit articuler
+                trois éléments : (1) à quoi voulez-vous ressembler en matière d'IA dans 3-5 ans,
+                (2) quelle valeur cela créera-t-il pour vos parties prenantes, (3) en quoi cela
+                s'inscrit dans votre stratégie d'entreprise.
+              </p>
+              <p>
+                Évaluez ensuite <strong>la maturité actuelle de l'organisation sur 8 dimensions</strong>,
+                chacune notée de 1 (faible) à 5 (fort) :
+              </p>
+              <ul class="ai-capstone-step__list">
+                <li><strong>Données</strong> — qualité, gouvernance, accessibilité</li>
+                <li><strong>Compétences IA</strong> — en interne, par fonction, par niveau</li>
+                <li><strong>Gouvernance IA</strong> — comité, processus, charte interne</li>
+                <li><strong>Projets IA en production</strong> — nombre, ancienneté, impact</li>
+                <li><strong>Conformité</strong> — AI Act EU, RGPD, obligations sectorielles</li>
+                <li><strong>Conduite du changement et culture</strong> — acceptation, formation</li>
+                <li><strong>Infrastructure technique</strong> — cloud, MLOps, sécurité</li>
+                <li><strong>Dialogue social et acceptabilité interne</strong> — IRP, syndicats</li>
+              </ul>
+              <p>
+                Score total /40. <strong>Livrable étape 1</strong> : vision rédigée + tableau
+                des 8 dimensions notées et justifiées + 3 priorités d'action identifiées.
+              </p>
+            </div>
+          </article>
+
+          {/* Étape 2 */}
+          <article class="ai-capstone-step">
+            <header class="ai-capstone-step__head">
+              <span class="ai-capstone-step__number">Étape 2</span>
+              <h3>Trois scénarios contrastés et actions robustes</h3>
+              <p class="ai-capstone-step__duration">Durée estimée : 25-30 min</p>
+            </header>
+            <div class="ai-capstone-step__body">
+              <p>
+                Construisez <strong>trois scénarios prospectifs contrastés</strong> à 18-24 mois.
+                Le canvas suggère les trois suivants comme socle, à adapter à votre contexte :
+              </p>
+              <ul class="ai-capstone-step__list">
+                <li>
+                  <strong>Scénario A — « Continuité accélérée »</strong> — les tendances
+                  actuelles continuent : GenAI s'améliore régulièrement, l'AI Act EU s'applique
+                  comme prévu, l'adoption est diffuse mais progressive.
+                </li>
+                <li>
+                  <strong>Scénario B — « Rupture technologique »</strong> — une nouvelle
+                  génération de modèles transforme certains métiers en quelques mois. Les
+                  organisations non préparées prennent un retard structurel.
+                </li>
+                <li>
+                  <strong>Scénario C — « Resserrement réglementaire et social »</strong> —
+                  des obligations se durcissent (extension haut risque, contestations
+                  syndicales, contentieux) ; le coût de conformité explose ; certains projets
+                  doivent être réorientés.
+                </li>
+              </ul>
+              <p>
+                Pour chaque scénario, listez 3-5 hypothèses explicites et 2-3 implications
+                concrètes pour votre organisation. Identifiez ensuite les <strong>actions
+                robustes</strong> — celles qui sont utiles dans au moins deux scénarios. Ces
+                actions méritent d'être engagées maintenant, indépendamment du futur qui se
+                réalisera. <strong>Livrable étape 2</strong> : 3 scénarios rédigés + au moins
+                3 actions robustes priorisées.
+              </p>
+            </div>
+          </article>
+
+          {/* Étape 3 */}
+          <article class="ai-capstone-step">
+            <header class="ai-capstone-step__head">
+              <span class="ai-capstone-step__number">Étape 3</span>
+              <h3>Use cases prioritaires (Valeur × Faisabilité × Risque)</h3>
+              <p class="ai-capstone-step__duration">Durée estimée : 25-30 min</p>
+            </header>
+            <div class="ai-capstone-step__body">
+              <p>
+                Identifiez 5 à 8 <strong>use cases candidats</strong>. Chaque use case doit
+                préciser : nom court, processus métier impacté, technologie présumée (ML,
+                GenAI, robotique, etc.), bénéfice attendu en termes business, risques principaux,
+                statut réglementaire (AI Act haut risque ou non).
+              </p>
+              <p>
+                Scorez chaque use case sur trois axes :
+              </p>
+              <ul class="ai-capstone-step__list">
+                <li>
+                  <strong>Valeur</strong> (1-5) : impact business potentiel, alignement avec
+                  la vision, taille de l'audience interne ou externe.
+                </li>
+                <li>
+                  <strong>Faisabilité</strong> (1-5) : disponibilité des données, des compétences,
+                  de l'infrastructure ; absence de blocages techniques majeurs.
+                </li>
+                <li>
+                  <strong>Risque</strong> (1-5, 5 = risque le plus faible) : maîtrise des risques
+                  réglementaires, sociaux, opérationnels et réputationnels.
+                </li>
+              </ul>
+              <p>
+                Score combiné = Valeur + Faisabilité + Risque (max 15). Priorisez le top 3.
+                <strong>Livrable étape 3</strong> : tableau des use cases scorés + justification
+                explicite du top 3.
+              </p>
+            </div>
+          </article>
+
+          {/* Étape 4 */}
+          <article class="ai-capstone-step">
+            <header class="ai-capstone-step__head">
+              <span class="ai-capstone-step__number">Étape 4</span>
+              <h3>Plan d'action 12-24 mois — 5 dimensions</h3>
+              <p class="ai-capstone-step__duration">Durée estimée : 30-45 min</p>
+            </header>
+            <div class="ai-capstone-step__body">
+              <p>
+                Le plan d'action articule cinq dimensions cohérentes sur trois horizons —
+                T0+6 mois, T0+12 mois, T0+18-24 mois — en plus de la décomposition par
+                dimension :
+              </p>
+              <ul class="ai-capstone-step__list">
+                <li>
+                  <strong>Vision séquencée</strong> — quelles ambitions sur chaque horizon,
+                  jalons décisifs.
+                </li>
+                <li>
+                  <strong>Gouvernance et conformité</strong> — articulation NIST AI RMF,
+                  AI Act EU si applicable, obligations sectorielles, comité IA, processus de
+                  validation, gestion d'incidents.
+                </li>
+                <li>
+                  <strong>Compétences et conduite du changement</strong> — recrutement,
+                  formation interne, accompagnement managérial, dialogue social.
+                </li>
+                <li>
+                  <strong>Infrastructure et données</strong> — cloud, MLOps, qualité des
+                  données, sécurité, choix de modèles (propriétaires vs ouverts).
+                </li>
+                <li>
+                  <strong>Métriques et KPI</strong> — comment mesurer la valeur réelle (pas
+                  seulement les livrables), comment éviter les optimisations
+                  contre-productives.
+                </li>
+              </ul>
+              <p>
+                Ajoutez un <strong>budget global estimatif</strong> avec décomposition (technique,
+                RH, accompagnement, gouvernance), et une <strong>cartographie des 5 risques majeurs</strong>
+                avec mesures de mitigation. <strong>Livrable étape 4</strong> : plan détaillé
+                + budget + risques + synthèse roadmap en une page lisible en 5 minutes par un
+                membre de COMEX.
+              </p>
+            </div>
+          </article>
+        </section>
+
+        {/* === RUBRICS === */}
+        <section id="rubrics">
+          <h2>Grille d'évaluation — 7 dimensions × 4 niveaux</h2>
+          <p>
+            Cette grille sert à <strong>auto-évaluer la qualité de votre roadmap</strong>
+            avant soutenance ou présentation interne. Chaque dimension est notée sur quatre
+            niveaux : Insuffisant, Émergent, Solide, Excellent. Une roadmap défendable
+            atteint au moins le niveau « Solide » sur la majorité des dimensions et le
+            niveau « Excellent » sur au moins deux.
+          </p>
+
+          <div class="ai-capstone-rubrics">
+            {/* Dimension 1 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">1. Vision stratégique</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Vision absente, vague, ou interchangeable
+                  avec un concurrent. Pas de lien explicite avec la stratégie d'entreprise.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Vision rédigée mais générique. Lien à la
+                  stratégie suggéré mais pas démontré.
+                </li>
+                <li>
+                  <strong>Solide</strong> — Vision spécifique à l'organisation, articule
+                  ambition / valeur pour parties prenantes / lien stratégique. Défendable.
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Vision spécifique, ambitieuse mais réaliste,
+                  parfaitement articulée à la stratégie d'entreprise et aux objectifs
+                  COMEX. Mémorable.
+                </li>
+              </ul>
+            </article>
+
+            {/* Dimension 2 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">2. Diagnostic de maturité</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Diagnostic absent ou superficiel.
+                  Sous-estimation des faiblesses (auto-complaisance) ou inverse.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Les 8 dimensions évaluées mais justifications
+                  faibles ou non vérifiables.
+                </li>
+                <li>
+                  <strong>Solide</strong> — 8 dimensions notées avec justifications
+                  factuelles. Auto-évaluation honnête (équilibrée force/faiblesse).
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Diagnostic rigoureux, justifié, comparé à des
+                  références sectorielles si disponibles. Prio d'action claires.
+                </li>
+              </ul>
+            </article>
+
+            {/* Dimension 3 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">3. Sélection et priorisation des use cases</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Use cases listés sans priorisation. Aucun
+                  scoring. Choix non justifiés.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Priorisation présente mais sans grille
+                  défendable. Justification floue.
+                </li>
+                <li>
+                  <strong>Solide</strong> — Scoring V × F × R appliqué. Top 3 justifié
+                  explicitement. Articulation avec vision visible.
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Scoring rigoureux, priorisation défendable
+                  en COMEX, équilibre entre quick wins et investissements structurants.
+                  Articulation avec scénarios de l'étape 2.
+                </li>
+              </ul>
+            </article>
+
+            {/* Dimension 4 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">4. Gouvernance et conformité</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Gouvernance absente ou réduite à des
+                  principes. AI Act EU et autres obligations non traités.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Gouvernance évoquée mais sans articulation
+                  opérationnelle. Conformité partielle.
+                </li>
+                <li>
+                  <strong>Solide</strong> — Articulation explicite avec NIST AI RMF ou cadre
+                  équivalent. AI Act EU ou autre cadre applicable intégré. Comité IA et
+                  processus définis.
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Gouvernance opérationnelle complète. Rôles,
+                  processus, gestion d'incidents, audit interne planifiés. Articulation avec
+                  cadres existants (cybersécurité, conformité) explicite.
+                </li>
+              </ul>
+            </article>
+
+            {/* Dimension 5 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">5. Compétences et conduite du changement</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Aspect humain absent ou réduit à du
+                  recrutement. Pas de plan de formation. Pas de dialogue social anticipé.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Plan RH évoqué mais sans détail
+                  opérationnel. Conduite du changement vague.
+                </li>
+                <li>
+                  <strong>Solide</strong> — Plan RH chiffré (recrutement, formation,
+                  accompagnement). Communication interne planifiée. Dialogue social anticipé
+                  selon contexte légal.
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Plan complet : recrutement par fonction,
+                  parcours de formation par niveau, accompagnement managérial structuré,
+                  dialogue social proactif, mesure de l'acceptabilité dans la durée.
+                </li>
+              </ul>
+            </article>
+
+            {/* Dimension 6 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">6. Plan opérationnel, budget et KPI</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Plan absent ou irréaliste. Budget non
+                  documenté. KPI absents ou inadaptés.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Plan présent mais peu structuré. Budget
+                  approximatif. KPI partiels.
+                </li>
+                <li>
+                  <strong>Solide</strong> — Plan structuré sur 3 horizons (6/12/18-24).
+                  Budget par dimension. KPI multidimensionnels (productivité + qualité +
+                  satisfaction).
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Plan complet, ressources cohérentes, KPI
+                  alignés sur la vision et défendables face à un audit. Marges de manœuvre
+                  identifiées en cas de dérive.
+                </li>
+              </ul>
+            </article>
+
+            {/* Dimension 7 */}
+            <article class="ai-capstone-rubric">
+              <h3 class="ai-capstone-rubric__dim">7. Robustesse aux incertitudes</h3>
+              <ul class="ai-capstone-rubric__levels">
+                <li>
+                  <strong>Insuffisant</strong> — Une trajectoire unique pariée. Aucune
+                  prise en compte des incertitudes. Pas de plan B.
+                </li>
+                <li>
+                  <strong>Émergent</strong> — Quelques risques identifiés mais sans
+                  scénarios contrastés. Mitigation déclarative.
+                </li>
+                <li>
+                  <strong>Solide</strong> — 3 scénarios contrastés. Actions robustes
+                  identifiées. Risques majeurs avec mitigation chiffrée.
+                </li>
+                <li>
+                  <strong>Excellent</strong> — Scénarios bien construits avec hypothèses
+                  explicites. Actions robustes priorisées. Signaux faibles à surveiller
+                  identifiés. Plan de révision périodique de la roadmap.
+                </li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="ai-capstone-rubrics-note">
+            <p>
+              <strong>Critère agrégé pour passage en COMEX</strong> — votre roadmap est
+              défendable quand vous atteignez le niveau « Solide » sur au moins 5 des 7
+              dimensions et « Excellent » sur au moins 2. Une dimension à « Insuffisant »
+              est un signal d'alerte qui mérite révision avant présentation.
+            </p>
+          </div>
+        </section>
+
+        {/* === EXEMPLE FICTIF === */}
+        <section id="exemple">
+          <h2>Exemple annoté — PME industrielle (fictif)</h2>
+          <p>
+            <SourceTag level="pedagogical-reconstruction" inline />
+            L'exemple ci-dessous est un cas <strong>fictif construit à des fins
+            pédagogiques</strong>. Il illustre comment la méthodologie s'applique
+            concrètement à une organisation modeste. Ne reproduisez pas tel quel — votre
+            roadmap doit être spécifique à votre contexte. Chaque section est annotée pour
+            indiquer ce qui en fait une réponse défendable.
+          </p>
+
+          <article class="ai-capstone-example">
+            <header class="ai-capstone-example__head">
+              <h3>Métallurgie de Précision SAS — fictif</h3>
+              <p class="ai-capstone-example__profile">
+                PME française du secteur de la métallurgie de précision, ~150 salariés, 2 sites
+                (Auvergne et Alsace). Activité : usinage de précision pour aéronautique et
+                médical. Maturité IA initiale : <strong>faible</strong> — un outil de
+                planification ERP, des tableurs Excel pour la qualité, pas de projet IA
+                en production.
+              </p>
+            </header>
+
+            <div class="ai-capstone-example__body">
+              <h4>Étape 1 — Vision et maturité</h4>
+              <blockquote class="ai-capstone-example__quote">
+                <strong>Vision IA à 3 ans</strong> : « Devenir une PME exemplaire de l'usinage
+                de précision augmenté par l'IA dans nos secteurs aéronautique et médical, en
+                gagnant 20-30 % de productivité sur les phases répétitives, en améliorant
+                concrètement les conditions de travail par la robotisation collaborative des
+                postes les plus pénibles, et en consolidant notre conformité dispositifs
+                médicaux par une meilleure traçabilité documentaire. »
+              </blockquote>
+              <p class="ai-capstone-example__annotation">
+                <strong>Annotation</strong> : Vision spécifique (secteurs et chiffres précis),
+                articule trois dimensions (productivité / RH / qualité-conformité), réaliste
+                pour une PME, exécutable en 3 ans. Note : <em>Solide à Excellent</em>.
+              </p>
+
+              <p>
+                <strong>Maturité diagnostiquée /40</strong> : score 14/40 sur les 8 dimensions.
+                Faiblesses majeures : compétences IA (1/5, aucun profil interne), gouvernance
+                IA (1/5, à créer), projets en production (1/5, aucun). Forces relatives :
+                infrastructure (3/5, ERP en place et cloud privé), conformité (3/5, déjà
+                MDR pour le médical).
+              </p>
+              <p class="ai-capstone-example__annotation">
+                <strong>Annotation</strong> : Auto-évaluation honnête, ne sur-vend pas.
+                Identifier les faiblesses majeures permet de prioriser. Note :
+                <em>Solide</em>.
+              </p>
+
+              <h4>Étape 2 — Scénarios contrastés</h4>
+              <p>
+                Les trois scénarios retenus :
+              </p>
+              <ul>
+                <li>
+                  <strong>A — Continuité accélérée</strong> : la GenAI s'améliore régulièrement,
+                  les cobots deviennent plus accessibles, l'AI Act EU s'applique sans surprise.
+                </li>
+                <li>
+                  <strong>B — Rupture cobotique</strong> : nouvelle génération de cobots à
+                  prix divisé par 2 en 2 ans, transforme la rentabilité des projets PME.
+                </li>
+                <li>
+                  <strong>C — Resserrement médical</strong> : extension des obligations AI Act
+                  aux dispositifs médicaux haut risque dans toute la chaîne de production.
+                </li>
+              </ul>
+              <p>
+                <strong>Action robuste identifiée</strong> : démarrer dès maintenant le
+                pilote cobot palettisation (utile dans A et B, neutre dans C) et la
+                gouvernance documentaire numérisée (utile dans A et C).
+              </p>
+              <p class="ai-capstone-example__annotation">
+                <strong>Annotation</strong> : Identification d'au moins une action robuste à
+                haute valeur. Note : <em>Solide</em>.
+              </p>
+
+              <h4>Étape 3 — Use cases prioritaires</h4>
+              <p>
+                Top 3 use cases retenus après scoring sur 6 candidats initiaux :
+              </p>
+              <ol>
+                <li>
+                  <strong>Cobot sur poste de palettisation</strong> (Module 4) — V:5 / F:4 / R:4 = <strong>13/15</strong>.
+                  Productivité + amélioration ergonomique d'un poste pénible. Investissement
+                  ~80 k€ tout compris (cobot + intégration + formation).
+                </li>
+                <li>
+                  <strong>RAG sur documentation technique interne</strong> (Module 3) —
+                  V:4 / F:3 / R:4 = <strong>11/15</strong>. Recherche dans les ~50 000 documents
+                  techniques accumulés sur 20 ans. ChatGPT Enterprise ou équivalent + vector
+                  store. ~40 k€ pour le pilote.
+                </li>
+                <li>
+                  <strong>ML supervisé pour prédiction de pannes machines</strong> (Module 2) —
+                  V:4 / F:2 / R:4 = <strong>10/15</strong>. Données historiques de
+                  maintenance disponibles depuis 2020. Faisabilité moyenne car compétences
+                  internes faibles. ~60 k€ pour le pilote (incluant accompagnement externe).
+                </li>
+              </ol>
+              <p class="ai-capstone-example__annotation">
+                <strong>Annotation</strong> : Top 3 défendable, montants réalistes pour une
+                PME, équilibre entre cobot (rapidement visible côté RH) et IA logicielle
+                (impact diffus mais structurant). Note : <em>Solide</em>.
+              </p>
+
+              <h4>Étape 4 — Plan 18 mois et budget</h4>
+              <p>
+                <strong>T0+6 mois</strong> — Mise en place du comité IA (DG + DRH + DI + DSI +
+                un référent par site). Pilote cobot palettisation lancé. Charte interne IA
+                rédigée et validée. Formation initiale 3 jours pour 8 collaborateurs clés.
+              </p>
+              <p>
+                <strong>T0+12 mois</strong> — Cobot en production. Pilote RAG documentation
+                lancé. Audit AI Act EU classification de tous les cas d'usage projetés.
+                Recrutement d'un·e Data/IA Lead.
+              </p>
+              <p>
+                <strong>T0+18 mois</strong> — RAG en production. Décision GO/NO-GO sur le
+                ML maintenance prédictive. Première roadmap révisée avec retour
+                d'expérience.
+              </p>
+              <p>
+                <strong>Budget global estimatif</strong> : 280-350 k€ sur 18 mois. Décomposition :
+                technique 50 % / RH (recrutement + formation) 30 % / accompagnement externe 15 % /
+                gouvernance et conformité 5 %. Financement mixte capacité d'autofinancement +
+                aide BPI France IA en PME.
+              </p>
+              <p class="ai-capstone-example__annotation">
+                <strong>Annotation</strong> : Plan séquencé réaliste, budget cohérent pour
+                une PME, jalons clairs avec décisions GO/NO-GO. KPI multidimensionnels à
+                définir précisément. Note : <em>Solide à Excellent</em>.
+              </p>
+            </div>
+          </article>
+        </section>
+
+        {/* === CHECKLIST === */}
+        <section id="checklist">
+          <h2>Checklist exécutive</h2>
+          <p>
+            18 points à valider pour une roadmap défendable en COMEX. Cette checklist
+            structure votre auto-revue avant soutenance ou présentation. Imprimez-la,
+            cochez à mesure que vous avancez.
+          </p>
+          <Checklist
+            title="Auto-revue capstone — 18 points"
+            intro="Cette checklist structure votre auto-revue avant soutenance ou présentation. Elle est imprimable. Cochez à mesure que vous avancez ; n'engagez la soutenance que si la majorité des points est validée."
+            groups={executiveChecklist}
+          />
+        </section>
+
+        {/* === TÉLÉCHARGER === */}
+        <section id="telecharger">
+          <h2>Télécharger le canvas</h2>
+          <p>
+            Le canvas du Module 6 est conçu pour structurer votre travail. Il reprend la
+            méthodologie ci-dessus en format formulaire à remplir, imprimable au format A4
+            paysage si nécessaire. Licence CC BY-NC-SA 4.0 — réutilisable en formation,
+            consulting, enseignement supérieur, à condition de citer la source et de
+            redistribuer dans les mêmes conditions.
+          </p>
+          <a class="ai-capstone-download" href={canvasDownload} download>
+            <span class="ai-capstone-download__icon" aria-hidden="true">📥</span>
+            <span class="ai-capstone-download__body">
+              <strong>Canvas roadmap IA — Module 6</strong>
+              <em>Markdown · 263 lignes · CC BY-NC-SA 4.0</em>
+            </span>
+          </a>
+        </section>
+
+        {/* === LIENS === */}
+        <section id="liens">
+          <h2>Pour aller plus loin</h2>
+          <p>
+            Ressources complémentaires pour approfondir certaines dimensions de votre
+            roadmap, en particulier la gouvernance et la conformité.
+          </p>
+          <ResourceList items={linkedResources} />
+
+          <p class="ai-capstone-cta">
+            Voir aussi : <a href={module6Url}>Module 6 — Futur de l'IA</a> ·
+            <a href={ressourcesUrl}> Hub de ressources</a> ·
+            <a href={glossaireUrl}> Glossaire</a> ·
+            <a href={methodeUrl}> Méthode et hiérarchie des sources</a>.
+          </p>
+        </section>
+
+        <div class="ai-capstone-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-capstone-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+  .ai-capstone-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 80em) {
+    .ai-capstone-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+  .ai-capstone-page__toc {
+    position: relative;
+  }
+  @media (min-width: 80em) {
+    .ai-capstone-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+  .ai-capstone-page__content {
+    min-width: 0;
+  }
+  .ai-capstone-page__content > section {
+    margin-block: var(--ai-space-7);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  /* === META === */
+  .ai-capstone-meta {
+    display: grid;
+    gap: var(--ai-space-3);
+    margin: var(--ai-space-5) 0 0;
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-capstone-meta__row {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: var(--ai-space-3);
+    align-items: start;
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-capstone-meta__row:last-child {
+    border-block-end: none;
+    padding-block-end: 0;
+  }
+  .ai-capstone-meta dt {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-capstone-meta dd {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  @media (max-width: 50em) {
+    .ai-capstone-meta__row {
+      grid-template-columns: 1fr;
+      gap: var(--ai-space-1);
+    }
+  }
+
+  /* === STEPS === */
+  .ai-capstone-step {
+    margin-block: var(--ai-space-5);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-capstone-step__head {
+    margin-block-end: var(--ai-space-3);
+  }
+  .ai-capstone-step__number {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-capstone-step__head h3 {
+    margin: var(--ai-space-1) 0 var(--ai-space-1);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-capstone-step__duration {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-capstone-step__body {
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-capstone-step__body p {
+    margin-block: 0 var(--ai-space-3);
+  }
+  .ai-capstone-step__list {
+    margin: 0 0 var(--ai-space-3);
+    padding-inline-start: var(--ai-space-5);
+  }
+  .ai-capstone-step__list li {
+    margin-block-end: var(--ai-space-2);
+  }
+
+  /* === RUBRICS === */
+  .ai-capstone-rubrics {
+    display: grid;
+    gap: var(--ai-space-4);
+    margin-block: var(--ai-space-5);
+  }
+  .ai-capstone-rubric {
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-capstone-rubric__dim {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    border-block-end: 1px solid var(--ai-border-subtle);
+    padding-block-end: var(--ai-space-2);
+  }
+  .ai-capstone-rubric__levels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+  .ai-capstone-rubric__levels li {
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-bg-base);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+    border-inline-start: 3px solid transparent;
+  }
+  .ai-capstone-rubric__levels li:nth-child(1) {
+    border-inline-start-color: #c4514f;
+  }
+  .ai-capstone-rubric__levels li:nth-child(2) {
+    border-inline-start-color: #d4904a;
+  }
+  .ai-capstone-rubric__levels li:nth-child(3) {
+    border-inline-start-color: #5a8c63;
+  }
+  .ai-capstone-rubric__levels li:nth-child(4) {
+    border-inline-start-color: var(--ai-accent-primary);
+    background: var(--ai-accent-subtle);
+  }
+  .ai-capstone-rubric__levels strong {
+    color: var(--ai-fg-primary);
+    margin-inline-end: var(--ai-space-1);
+  }
+  .ai-capstone-rubrics-note {
+    padding: var(--ai-space-4);
+    background: var(--ai-accent-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-start: var(--ai-space-5);
+  }
+  .ai-capstone-rubrics-note p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === EXEMPLE === */
+  .ai-capstone-example {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    margin-block: var(--ai-space-5);
+  }
+  .ai-capstone-example__head {
+    margin-block-end: var(--ai-space-4);
+    padding-block-end: var(--ai-space-3);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-capstone-example__head h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-capstone-example__profile {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-style: italic;
+  }
+  .ai-capstone-example__body h4 {
+    margin: var(--ai-space-5) 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+  }
+  .ai-capstone-example__body p {
+    margin-block: 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-capstone-example__body ul,
+  .ai-capstone-example__body ol {
+    margin: 0 0 var(--ai-space-3);
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-capstone-example__body ul li,
+  .ai-capstone-example__body ol li {
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-capstone-example__quote {
+    margin: 0 0 var(--ai-space-2);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-base);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+    font-style: italic;
+  }
+  .ai-capstone-example__annotation {
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-accent-subtle);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    margin-block-end: var(--ai-space-3);
+  }
+
+  /* === DOWNLOAD === */
+  .ai-capstone-download {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    transition: transform 120ms ease;
+    margin-block-start: var(--ai-space-3);
+  }
+  .ai-capstone-download:hover {
+    transform: translateY(-1px);
+    color: var(--ai-bg-base);
+  }
+  .ai-capstone-download__icon {
+    font-size: 1.5rem;
+  }
+  .ai-capstone-download__body {
+    display: grid;
+    gap: var(--ai-space-1);
+  }
+  .ai-capstone-download__body strong {
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-capstone-download__body em {
+    font-size: var(--ai-text-sm);
+    font-style: normal;
+    opacity: 0.85;
+  }
+
+  /* === CTA === */
+  .ai-capstone-cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-capstone-cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-capstone-cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-capstone-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
