@@ -1,0 +1,151 @@
+---
+/**
+ * BloomMatrix.astro — competency matrix mapping skill → Bloom level →
+ * modules covered.
+ *
+ * Used on the Programme page to show how the 6 modules collectively
+ * develop a curriculum-grade set of competencies.
+ *
+ * The Bloom level uses a simplified 6-level taxonomy (Remember,
+ * Understand, Apply, Analyze, Evaluate, Create).
+ */
+
+interface BloomRow {
+  /** Competency description (translated). */
+  competency: string;
+  /** Bloom level label (translated). */
+  bloomLevel: string;
+  /** Module numbers (1-6) covering this competency. */
+  modules: (1 | 2 | 3 | 4 | 5 | 6)[];
+  /** Whether this competency is also touched by the capstone. */
+  capstone?: boolean;
+}
+
+interface Props {
+  rows: BloomRow[];
+  caption?: string;
+  className?: string;
+}
+
+const { rows, caption, className } = Astro.props;
+---
+
+<table class:list={['ai-bloom', className]}>
+  {caption && <caption class="ai-bloom__caption">{caption}</caption>}
+  <thead>
+    <tr>
+      <th scope="col" class="ai-bloom__col-skill">Compétence</th>
+      <th scope="col" class="ai-bloom__col-bloom">Niveau Bloom</th>
+      <th scope="col" class="ai-bloom__col-modules">Modules</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map((row) => (
+        <tr>
+          <td class="ai-bloom__skill">{row.competency}</td>
+          <td class="ai-bloom__bloom">
+            <span class="ai-bloom__pill">{row.bloomLevel}</span>
+          </td>
+          <td class="ai-bloom__modules">
+            <span class="ai-bloom__modules-list">
+              {row.modules.map((m) => (
+                <span class="ai-bloom__module-chip">M{m}</span>
+              ))}
+              {row.capstone && (
+                <span class="ai-bloom__module-chip ai-bloom__module-chip--capstone">
+                  Capstone
+                </span>
+              )}
+            </span>
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<style>
+  .ai-bloom {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    overflow: hidden;
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-bloom__caption {
+    text-align: start;
+    padding: var(--ai-space-2) var(--ai-space-3);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+    background: var(--ai-bg-subtle);
+  }
+
+  .ai-bloom thead th {
+    text-align: start;
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    border-block-end: 1px solid var(--ai-border-default);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    font-size: var(--ai-text-xs);
+  }
+  :global([dir='rtl']) .ai-bloom thead th {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-bloom tbody tr {
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-bloom tbody tr:last-child {
+    border-block-end: none;
+  }
+
+  .ai-bloom td {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    vertical-align: middle;
+    line-height: var(--ai-leading-snug);
+  }
+
+  .ai-bloom__skill {
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-medium);
+  }
+
+  .ai-bloom__pill {
+    display: inline-block;
+    padding: 0.15em 0.6em;
+    background: var(--ai-accent-subtle);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-semibold);
+    border-radius: var(--ai-radius-pill);
+    font-size: var(--ai-text-xs);
+    white-space: nowrap;
+  }
+
+  .ai-bloom__modules-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-1);
+  }
+
+  .ai-bloom__module-chip {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    background: var(--ai-bg-muted);
+    color: var(--ai-fg-secondary);
+    font-weight: var(--ai-weight-semibold);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    letter-spacing: var(--ai-tracking-wide);
+  }
+  .ai-bloom__module-chip--capstone {
+    background: var(--ai-fg-primary);
+    color: var(--ai-bg-primary);
+  }
+</style>

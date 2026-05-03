@@ -1,0 +1,94 @@
+---
+/**
+ * IdentityTable.astro — two-column identity table.
+ *
+ * Used on the Programme page to display the program's identity card
+ * (organism, format, duration, workload, audience, etc.) in a single
+ * compact, scan-friendly format.
+ *
+ * Each row has a label and a value; values can include inline links.
+ */
+
+interface IdentityRow {
+  /** Row label (translated). */
+  label: string;
+  /**
+   * Row value. Strings are rendered as plain text. For mixed content
+   * (links, emphasis), pass the slot name and use the named slot.
+   */
+  value: string;
+}
+
+interface Props {
+  rows: IdentityRow[];
+  caption?: string;
+  className?: string;
+}
+
+const { rows, caption, className } = Astro.props;
+---
+
+<table class:list={['ai-identity', className]}>
+  {caption && <caption class="ai-identity__caption">{caption}</caption>}
+  <tbody>
+    {
+      rows.map((row) => (
+        <tr>
+          <th scope="row" class="ai-identity__label">
+            {row.label}
+          </th>
+          <td class="ai-identity__value">{row.value}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<style>
+  .ai-identity {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    overflow: hidden;
+  }
+
+  .ai-identity__caption {
+    text-align: start;
+    padding: var(--ai-space-2) var(--ai-space-3);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+    background: var(--ai-bg-subtle);
+  }
+
+  .ai-identity tr {
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-identity tr:last-child {
+    border-block-end: none;
+  }
+
+  .ai-identity__label {
+    text-align: start;
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    width: 33%;
+    min-width: 12rem;
+    vertical-align: top;
+  }
+  @media (max-width: 48em) {
+    .ai-identity__label {
+      width: 40%;
+      min-width: auto;
+    }
+  }
+
+  .ai-identity__value {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    color: var(--ai-fg-primary);
+    background: var(--ai-bg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+</style>

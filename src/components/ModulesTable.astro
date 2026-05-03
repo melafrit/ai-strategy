@@ -1,0 +1,169 @@
+---
+/**
+ * ModulesTable.astro — recap table of the 6 modules.
+ *
+ * Used on the Programme page (and could be embedded elsewhere). Differs
+ * from <ModuleCard /> in that it's a horizontal compact table instead
+ * of a card grid — better for scanning, less attention-grabbing.
+ *
+ * Caller passes the rows; this keeps i18n logic at the page level
+ * rather than embedded here.
+ */
+
+interface ModuleRow {
+  number: 1 | 2 | 3 | 4 | 5 | 6;
+  title: string;
+  objective: string;
+  /** Slug-only — caller may compose href via getLocalizedUrl. */
+  href: string;
+  /** Whether the module page is published. Influences rendering. */
+  available: boolean;
+}
+
+interface Props {
+  rows: ModuleRow[];
+  caption?: string;
+  className?: string;
+}
+
+const { rows, caption, className } = Astro.props;
+---
+
+<table class:list={['ai-modules-table', className]}>
+  {caption && <caption class="ai-modules-table__caption">{caption}</caption>}
+  <thead>
+    <tr>
+      <th scope="col" class="ai-modules-table__col-num">#</th>
+      <th scope="col" class="ai-modules-table__col-title">Module</th>
+      <th scope="col" class="ai-modules-table__col-objective">Objectif</th>
+      <th scope="col" class="ai-modules-table__col-link"><span class="sr-only">Lien</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map((row) => (
+        <tr aria-disabled={!row.available}>
+          <td class="ai-modules-table__num">M{row.number}</td>
+          <td class="ai-modules-table__title">
+            {row.available ? <a href={row.href}>{row.title}</a> : <span>{row.title}</span>}
+          </td>
+          <td class="ai-modules-table__objective">{row.objective}</td>
+          <td class="ai-modules-table__link">
+            {row.available ? (
+              <a href={row.href} aria-label={`Voir le module ${row.number} : ${row.title}`}>
+                →
+              </a>
+            ) : (
+              <span class="ai-modules-table__pending" aria-label="Bientôt disponible">
+                ●
+              </span>
+            )}
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<style>
+  .ai-modules-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    overflow: hidden;
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-modules-table__caption {
+    text-align: start;
+    padding: var(--ai-space-2) var(--ai-space-3);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+    background: var(--ai-bg-subtle);
+  }
+
+  .ai-modules-table thead th {
+    text-align: start;
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    border-block-end: 1px solid var(--ai-border-default);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    font-size: var(--ai-text-xs);
+  }
+  :global([dir='rtl']) .ai-modules-table thead th {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-modules-table tbody tr {
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-modules-table tbody tr:last-child {
+    border-block-end: none;
+  }
+  .ai-modules-table tbody tr[aria-disabled='true'] {
+    opacity: 0.65;
+  }
+  .ai-modules-table tbody tr:not([aria-disabled='true']):hover {
+    background: var(--ai-bg-subtle);
+  }
+
+  .ai-modules-table td {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    vertical-align: middle;
+    line-height: var(--ai-leading-snug);
+  }
+
+  .ai-modules-table__col-num,
+  .ai-modules-table__num {
+    width: 4rem;
+    color: var(--ai-fg-muted);
+    font-weight: var(--ai-weight-semibold);
+  }
+
+  .ai-modules-table__title a {
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+  }
+  .ai-modules-table__title a:hover,
+  .ai-modules-table__title a:focus-visible {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .ai-modules-table__title span {
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-semibold);
+  }
+
+  .ai-modules-table__objective {
+    color: var(--ai-fg-secondary);
+  }
+
+  .ai-modules-table__col-link,
+  .ai-modules-table__link {
+    width: 4rem;
+    text-align: end;
+  }
+  .ai-modules-table__link a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-size: var(--ai-text-lg);
+  }
+  .ai-modules-table__pending {
+    color: var(--ai-fg-muted);
+  }
+
+  /* Mobile : empile la colonne objectif en dessous, masque l'en-tête */
+  @media (max-width: 48em) {
+    .ai-modules-table__col-objective,
+    .ai-modules-table__objective {
+      display: none;
+    }
+  }
+</style>

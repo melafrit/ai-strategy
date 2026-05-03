@@ -1,0 +1,78 @@
+---
+/**
+ * StatsBar.astro — bandeau de N chiffres clés.
+ *
+ * Used on the Programme page (4 stats: 6 modules / 6-8 h/sem / 6 sem /
+ * trilingue) and reusable for any landing-style hero where a quick
+ * "by the numbers" view of a page is helpful.
+ *
+ * Each stat is two lines:
+ *   - the figure (large, weight 700)
+ *   - the label (small, neutral colour)
+ */
+
+interface StatItem {
+  /** The figure or short token (e.g. "6", "6–8 h"). */
+  value: string;
+  /** Short descriptive label (e.g. "modules", "par semaine"). */
+  label: string;
+}
+
+interface Props {
+  stats: StatItem[];
+  className?: string;
+}
+
+const { stats, className } = Astro.props;
+---
+
+<dl class:list={['ai-statsbar', className]}>
+  {
+    stats.map((stat) => (
+      <div class="ai-statsbar__item">
+        <dt class="ai-statsbar__value">{stat.value}</dt>
+        <dd class="ai-statsbar__label">{stat.label}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .ai-statsbar {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--ai-space-4);
+  }
+  @media (min-width: 48em) {
+    .ai-statsbar {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .ai-statsbar__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ai-space-1);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+
+  .ai-statsbar__value {
+    margin: 0;
+    font-size: var(--ai-text-3xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-tight);
+    letter-spacing: var(--ai-tracking-tight);
+  }
+
+  .ai-statsbar__label {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+</style>

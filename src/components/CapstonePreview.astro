@@ -1,0 +1,136 @@
+---
+/**
+ * CapstonePreview.astro — visual highlight pointing the visitor to the
+ * Capstone page.
+ *
+ * Used at the bottom of the Programme page (and could appear at the
+ * end of module pages as a "next step" cue). Visually distinct from
+ * other cards: bigger padding, accent border, single dominant CTA.
+ */
+
+import { getLocaleFromPath, getLocalizedUrl } from '@/i18n/helpers';
+
+interface Props {
+  /** Title shown as h2/h3 inside the preview. */
+  title: string;
+  /** One-paragraph description. */
+  description: string;
+  /** CTA label (translated). */
+  ctaLabel: string;
+  className?: string;
+}
+
+const { title, description, ctaLabel, className } = Astro.props;
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+const capstoneHref = getLocalizedUrl('/capstone/', locale);
+---
+
+<aside class:list={['ai-capstone-preview', className]}>
+  <div class="ai-capstone-preview__inner">
+    <span class="ai-capstone-preview__icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+      </svg>
+    </span>
+    <div class="ai-capstone-preview__body">
+      <p class="ai-capstone-preview__surtitle">Projet final</p>
+      <h3 class="ai-capstone-preview__title">{title}</h3>
+      <p class="ai-capstone-preview__description">{description}</p>
+      <p class="ai-capstone-preview__cta">
+        <a href={capstoneHref}>{ctaLabel} →</a>
+      </p>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .ai-capstone-preview {
+    background: var(--ai-bg-inverse);
+    color: var(--ai-fg-inverse);
+    border-radius: var(--ai-radius-md);
+    padding: var(--ai-space-5);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+
+  .ai-capstone-preview__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-4);
+  }
+
+  .ai-capstone-preview__icon {
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--ai-radius-md);
+  }
+
+  .ai-capstone-preview__body {
+    flex: 1;
+  }
+
+  .ai-capstone-preview__surtitle {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-inverse);
+    opacity: 0.7;
+  }
+  :global([dir='rtl']) .ai-capstone-preview__surtitle {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-capstone-preview__title {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-inverse);
+  }
+
+  .ai-capstone-preview__description {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-inverse);
+    opacity: 0.85;
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-capstone-preview__cta {
+    margin: 0;
+  }
+  .ai-capstone-preview__cta a {
+    color: var(--ai-fg-inverse);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+    border-block-end: 1px solid currentColor;
+    padding-block-end: 2px;
+  }
+  .ai-capstone-preview__cta a:hover,
+  .ai-capstone-preview__cta a:focus-visible {
+    color: var(--ai-accent-primary);
+    border-color: var(--ai-accent-primary);
+  }
+</style>

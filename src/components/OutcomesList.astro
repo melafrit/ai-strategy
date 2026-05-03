@@ -1,0 +1,69 @@
+---
+/**
+ * OutcomesList.astro — list of learning outcomes.
+ *
+ * Each outcome is one bullet with a check icon. Used on the Programme
+ * page (7 transversal outcomes) and inside module pages (4-6 per module).
+ */
+
+interface Props {
+  /** Plain-text outcomes; rendered in order. */
+  outcomes: string[];
+  className?: string;
+}
+
+const { outcomes, className } = Astro.props;
+---
+
+<ul class:list={['ai-outcomes', className]}>
+  {
+    outcomes.map((outcome) => (
+      <li class="ai-outcomes__item">
+        <span class="ai-outcomes__icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <path d="m9 11 3 3L22 4" />
+          </svg>
+        </span>
+        <span class="ai-outcomes__text">{outcome}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .ai-outcomes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+
+  .ai-outcomes__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-outcomes__icon {
+    color: var(--ai-success);
+    flex-shrink: 0;
+    margin-block-start: 0.15em;
+  }
+
+  .ai-outcomes__text {
+    color: var(--ai-fg-primary);
+  }
+</style>
