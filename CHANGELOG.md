@@ -76,8 +76,26 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.1 : Page Programme/overview + Module 1 (Introduction à l'IA) comme pattern-setter.~~ **→ Subdivisé en 4.1a (Programme + index Modules) et 4.1b (Module 1 pattern-setter)**
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
-- Phase 4.9 : Glossaire (~30 termes).
+- ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
 - Phase 4.10 : FAQ + Capstone + Resources hub.
+
+- Phase 4.9 — Glossaire pédagogique structuré :
+  - **NEW DATA — `src/content/glossary.ts`** (586 lignes) — 31 entrées typées TypeScript en 6 catégories thématiques :
+    - **Fondamentaux** (5 termes) : IA, IA faible (étroite), IA générale (AGI), intelligence collective, automatisation
+    - **Machine Learning** (6 termes) : machine learning, deep learning, apprentissage supervisé, apprentissage non supervisé, apprentissage par renforcement, données d'entraînement
+    - **IA générative** (7 termes) : modèle génératif, LLM, foundation model, hallucination, RAG, prompt engineering, fine-tuning
+    - **Robotique** (3 termes) : robotique, cobot, AMR
+    - **Gouvernance et société** (7 termes) : biais algorithmique, gouvernance IA, AI risk management, AI Act, explicabilité, accountability, human-in-the-loop
+    - **Méthodologie projet** (3 termes) : roadmap IA, pilote IA, capstone
+  - Chaque entrée comporte : slug + term + aliases optionnels + category + shortDefinition (1 phrase) + longDefinition (2-4 paragraphes) + example métier + relatedModules + relatedCases + relatedTerms.
+  - Helpers exportés : `getEntry(slug)`, `entriesByCategory(cat)`, `entriesAlphabetical()`, `alphabeticalInitials()`, constante `TOTAL_TERMS`.
+  - Cross-referencing dense : 31 entrées × Modules (toutes), 31 × Voir aussi (toutes), 26 × Cas (les plus générales n'ayant pas de cas dédié).
+  - **NEW PAGE — `src/pages/fr/glossaire/index.astro`** (697 lignes) — page unique avec : intro pédagogique, 6 cards de catégories cliquables avec compteur de termes, navigation A→Z sticky, sections par catégorie avec entrées détaillées (term + aliases + short + long + example + footer 3 niveaux de refs), index alphabétique secondaire avec ancres permanentes, liens vers programme/cas/méthode.
+  - **NEW STUBS** : EN + AR avec `TranslationPending`.
+  - **Activation navigation** : le lien `/glossaire/` était déjà câblé dans `Header.astro` (donnait 404 avant) — fonctionne désormais sans modification additionnelle.
+  - Build validé : 73 pages générées (1 root + 24 FR + 24 EN + 24 AR), 0 erreur / 0 warning / 0 hint Astro check sur 118 fichiers.
+  - Pattern : 0 nouveau composant. La page glossaire est self-contained avec son propre styling (cohérent avec design tokens existants).
+  - Sources : reconstruction pédagogique à partir de MIT, NIST, OCDE, AI Act EU, corpus académique standard. Indiquée explicitement avec `<SourceTag level="pedagogical-reconstruction" inline />` dans l'intro.
 
 - Phase 4.7 sub-3 — 4 derniers cas + clôture Phase 4.7-4.8 :
   - **Cas 7 — Universal Robots (cobots PME)** `/fr/cas/universal-robots/` (499 lignes) — mini-cas Module 4 complémentaire au cas Amazon Robotics. Fabricant danois fondé en 2005, propriété de Teradyne depuis 2015. Cobots conformes ISO/TS 15066, gamme UR3e à UR30. Solution en 5 sous-sections (cobot léger 6 axes ISO/TS 15066 / programmation accessible PolyScope + démonstration / écosystème UR+ d'intégrateurs et outillages certifiés / conformité réglementaire et sécurité / reconfigurabilité comme proposition de valeur centrale). 5 bénéfices (accès PME à l'automatisation, polyvalence opérationnelle, cohabitation directe, amélioration conditions de travail, diffusion au-delà des grandes entreprises). 5 limites (intégration domine coût total, capacité utile limitée, évaluation de risque exigeante, concurrence intensifie, AI Act EU). 4 familles de risques (sécurité physique, sous-estimation coûts, social/acceptation, dépendance fournisseur). Sources primaires : universal-robots.com + ISO/TS 15066:2016.

@@ -1,0 +1,697 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import {
+  glossary,
+  glossaryCategoryLabels,
+  glossaryCategoryDescriptions,
+  entriesAlphabetical,
+  alphabeticalInitials,
+  getEntry,
+  TOTAL_TERMS,
+  type GlossaryCategory,
+  type GlossaryEntry,
+} from '@/content/glossary';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+// Liste alphabétique stable
+const allEntries = entriesAlphabetical();
+const initials = alphabeticalInitials();
+
+// Regroupement par initiale pour la navigation A-Z
+const byInitial = new Map<string, GlossaryEntry[]>();
+for (const entry of allEntries) {
+  const init = entry.term.charAt(0).toUpperCase();
+  if (!byInitial.has(init)) byInitial.set(init, []);
+  byInitial.get(init)!.push(entry);
+}
+
+// Catégories ordonnées
+const categoriesOrdered: GlossaryCategory[] = [
+  'fundamentals',
+  'ml',
+  'genai',
+  'robotics',
+  'governance',
+  'methodology',
+];
+
+// Comptage par catégorie
+const countByCategory: Record<GlossaryCategory, number> = {
+  fundamentals: 0,
+  ml: 0,
+  genai: 0,
+  robotics: 0,
+  governance: 0,
+  methodology: 0,
+};
+for (const entry of glossary) {
+  countByCategory[entry.category]++;
+}
+
+// Liens dérivés
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const casUrl = getLocalizedUrl('/cas/', locale);
+
+// Mapping cas slug → titre court pour les références croisées
+const caseTitles: Record<string, string> = {
+  'takeda-superminds': 'Takeda × MIT CCI',
+  'morgan-stanley': 'Morgan Stanley',
+  'stripe-radar': 'Stripe Radar',
+  'mit-barzilay-cancer': 'MIT — Regina Barzilay',
+  'github-copilot-accenture': 'GitHub × Accenture',
+  'amazon-robotics': 'Amazon Robotics',
+  'universal-robots': 'Universal Robots',
+  'nist-ai-rmf': 'NIST AI RMF',
+  'ai-act-eu-haut-risque': 'AI Act EU haut risque',
+  'mit-ide': 'MIT IDE',
+};
+
+function moduleLabel(num: number): string {
+  return `Module ${num}`;
+}
+
+function moduleHref(num: number): string {
+  const slugs: Record<number, string> = {
+    1: '/modules/01-introduction-ia/',
+    2: '/modules/02-machine-learning/',
+    3: '/modules/03-ia-generative/',
+    4: '/modules/04-robotique/',
+    5: '/modules/05-ia-societe/',
+    6: '/modules/06-futur-ia/',
+  };
+  return getLocalizedUrl(slugs[num] ?? '/modules/', locale);
+}
+
+function caseHref(slug: string): string {
+  return getLocalizedUrl(`/cas/${slug}/`, locale);
+}
+---
+
+<BaseLayout
+  title="Glossaire — IA, ML, GenAI, robotique, gouvernance"
+  description={`Glossaire pédagogique de ${TOTAL_TERMS} termes structurants pour comprendre l'IA en entreprise. Définitions claires, exemples métier, références croisées vers les modules et études de cas du parcours.`}
+>
+  <HeroSecondary
+    surtitle="Glossaire pédagogique"
+    title={`Glossaire — ${TOTAL_TERMS} termes pour comprendre l'IA en entreprise`}
+    lead="Définitions claires et structurées des concepts clés du parcours, organisées en six catégories thématiques. Chaque terme propose une définition courte, une définition longue, un exemple métier, et des références croisées vers les modules et études de cas concernés."
+  >
+    <span slot="stats">
+      {TOTAL_TERMS} termes · 6 catégories · références croisées modules + cas
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-glossary-page">
+    {/* === INTRO === */}
+    <section class="ai-glossary-intro" aria-labelledby="intro-title">
+      <h2 id="intro-title">Comment utiliser ce glossaire</h2>
+      <p>
+        Ce glossaire couvre les concepts structurants du parcours
+        <a href={programmeUrl}>AI Strategy</a>. Trois manières d'y naviguer :
+      </p>
+      <ul class="ai-glossary-intro__usage">
+        <li>
+          <strong>Par catégorie thématique</strong> — utile quand vous travaillez sur un sujet
+          précis (ML, GenAI, gouvernance, etc.). Les six catégories ci-dessous regroupent les
+          termes par champ.
+        </li>
+        <li>
+          <strong>Par ordre alphabétique</strong> — utile pour retrouver rapidement un terme dont
+          vous connaissez le nom. Naviguez par lettre via le menu A→Z.
+        </li>
+        <li>
+          <strong>Par références croisées</strong> — chaque terme indique les modules et études
+          de cas où il est mobilisé, et les autres termes du glossaire en lien direct.
+        </li>
+      </ul>
+      <p class="ai-glossary-intro__source-note">
+        <SourceTag level="pedagogical-reconstruction" inline />
+        Les définitions sont une reconstruction pédagogique à partir des sources officielles
+        (MIT, NIST, OCDE, AI Act EU, corpus académique standard) et des cas réels documentés
+        dans le parcours. Voir <a href={methodeUrl}>Méthode</a> pour la hiérarchie des sources.
+      </p>
+    </section>
+
+    {/* === CATEGORIES === */}
+    <section class="ai-glossary-categories" aria-labelledby="categories-title">
+      <h2 id="categories-title">Six catégories thématiques</h2>
+      <div class="ai-glossary-categories__grid">
+        {categoriesOrdered.map((cat) => (
+          <a class="ai-glossary-cat-card" href={`#cat-${cat}`}>
+            <header class="ai-glossary-cat-card__head">
+              <h3>{glossaryCategoryLabels[cat]}</h3>
+              <span class="ai-glossary-cat-card__count">
+                {countByCategory[cat]} termes
+              </span>
+            </header>
+            <p>{glossaryCategoryDescriptions[cat]}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* === A-Z NAVIGATION === */}
+    <nav class="ai-glossary-az" aria-label="Navigation alphabétique">
+      <span class="ai-glossary-az__label">Aller à :</span>
+      {initials.map((letter) => (
+        <a class="ai-glossary-az__link" href={`#letter-${letter}`}>
+          {letter}
+        </a>
+      ))}
+    </nav>
+
+    {/* === ENTRIES BY CATEGORY === */}
+    {categoriesOrdered.map((cat) => {
+      const catEntries = glossary
+        .filter((e) => e.category === cat)
+        .sort((a, b) => a.term.localeCompare(b.term, 'fr', { sensitivity: 'base' }));
+      return (
+        <section
+          id={`cat-${cat}`}
+          class="ai-glossary-section"
+          aria-labelledby={`cat-${cat}-title`}
+        >
+          <header class="ai-glossary-section__head">
+            <h2 id={`cat-${cat}-title`}>{glossaryCategoryLabels[cat]}</h2>
+            <p>{glossaryCategoryDescriptions[cat]}</p>
+          </header>
+
+          <div class="ai-glossary-entries">
+            {catEntries.map((entry) => (
+              <article id={entry.slug} class="ai-glossary-entry">
+                <header class="ai-glossary-entry__head">
+                  <h3 class="ai-glossary-entry__term">
+                    {entry.term}
+                    <a
+                      class="ai-glossary-entry__anchor"
+                      href={`#${entry.slug}`}
+                      aria-label={`Lien permanent vers ${entry.term}`}
+                    >
+                      §
+                    </a>
+                  </h3>
+                  {entry.aliases && entry.aliases.length > 0 && (
+                    <p class="ai-glossary-entry__aliases">
+                      Aussi connu sous : <em>{entry.aliases.join(', ')}</em>
+                    </p>
+                  )}
+                </header>
+
+                <p class="ai-glossary-entry__short">
+                  <strong>{entry.shortDefinition}</strong>
+                </p>
+
+                <div
+                  class="ai-glossary-entry__long"
+                  set:html={entry.longDefinition
+                    .split('\n\n')
+                    .map((p) => `<p>${p}</p>`)
+                    .join('')}
+                />
+
+                {entry.example && (
+                  <aside class="ai-glossary-entry__example">
+                    <strong>Exemple :</strong> {entry.example}
+                  </aside>
+                )}
+
+                <footer class="ai-glossary-entry__footer">
+                  {entry.relatedModules && entry.relatedModules.length > 0 && (
+                    <div class="ai-glossary-entry__refs">
+                      <span class="ai-glossary-entry__refs-label">Modules :</span>
+                      {entry.relatedModules.map((num, i) => (
+                        <>
+                          {i > 0 && ', '}
+                          <a href={moduleHref(num)} class="ai-glossary-entry__ref-link">
+                            {moduleLabel(num)}
+                          </a>
+                        </>
+                      ))}
+                    </div>
+                  )}
+                  {entry.relatedCases && entry.relatedCases.length > 0 && (
+                    <div class="ai-glossary-entry__refs">
+                      <span class="ai-glossary-entry__refs-label">Cas :</span>
+                      {entry.relatedCases.map((slug, i) => (
+                        <>
+                          {i > 0 && ', '}
+                          <a href={caseHref(slug)} class="ai-glossary-entry__ref-link">
+                            {caseTitles[slug] ?? slug}
+                          </a>
+                        </>
+                      ))}
+                    </div>
+                  )}
+                  {entry.relatedTerms && entry.relatedTerms.length > 0 && (
+                    <div class="ai-glossary-entry__refs">
+                      <span class="ai-glossary-entry__refs-label">Voir aussi :</span>
+                      {entry.relatedTerms.map((relSlug, i) => {
+                        const rel = getEntry(relSlug);
+                        if (!rel) return null;
+                        return (
+                          <>
+                            {i > 0 && ', '}
+                            <a href={`#${relSlug}`} class="ai-glossary-entry__ref-link">
+                              {rel.term}
+                            </a>
+                          </>
+                        );
+                      })}
+                    </div>
+                  )}
+                </footer>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+
+    {/* === ALPHABETICAL INDEX (anchors only) === */}
+    <section class="ai-glossary-index" aria-labelledby="alpha-title">
+      <h2 id="alpha-title">Index alphabétique complet</h2>
+      <p>
+        Les ancres ci-dessous renvoient à la définition complète de chaque terme dans la section
+        thématique correspondante.
+      </p>
+      <div class="ai-glossary-index__grid">
+        {initials.map((letter) => {
+          const entries = byInitial.get(letter) ?? [];
+          return (
+            <div id={`letter-${letter}`} class="ai-glossary-index__group">
+              <h3 class="ai-glossary-index__letter">{letter}</h3>
+              <ul class="ai-glossary-index__list">
+                {entries.map((entry) => (
+                  <li>
+                    <a href={`#${entry.slug}`}>{entry.term}</a>
+                    <span class="ai-glossary-index__cat">
+                      {' '}— {glossaryCategoryLabels[entry.category]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* === LIENS RAPIDES === */}
+    <section class="ai-glossary-links" aria-labelledby="links-title">
+      <h2 id="links-title">Pour aller plus loin</h2>
+      <ul>
+        <li>
+          <a href={programmeUrl}>Vue d'ensemble du programme</a> — six modules avec objectifs
+          d'apprentissage et compétences développées.
+        </li>
+        <li>
+          <a href={casUrl}>Études de cas</a> — dix cas réels d'organisations déployant l'IA,
+          avec sources publiques vérifiables.
+        </li>
+        <li>
+          <a href={methodeUrl}>Méthode et hiérarchie des sources</a> — comment ce site distingue
+          les sources officielles MIT, les compléments recommandés, et les reconstructions
+          pédagogiques.
+        </li>
+      </ul>
+    </section>
+
+    <div class="ai-glossary-independence">
+      <IndependenceNotice variant="block" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-glossary-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  /* === INTRO === */
+  .ai-glossary-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-glossary-intro h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-intro p {
+    margin-block: 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-intro__usage {
+    margin: var(--ai-space-3) 0;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-glossary-intro__usage li {
+    margin-block-end: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-intro__source-note {
+    margin-block-start: var(--ai-space-4);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-glossary-intro a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-glossary-intro a:hover {
+    text-decoration: underline;
+  }
+
+  /* === CATEGORIES === */
+  .ai-glossary-categories {
+    margin-block: var(--ai-space-7);
+  }
+  .ai-glossary-categories h2 {
+    margin: 0 0 var(--ai-space-4);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-categories__grid {
+    display: grid;
+    gap: var(--ai-space-3);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50em) {
+    .ai-glossary-categories__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 80em) {
+    .ai-glossary-categories__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .ai-glossary-cat-card {
+    display: block;
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .ai-glossary-cat-card:hover {
+    border-color: var(--ai-accent-primary);
+    transform: translateY(-1px);
+  }
+  .ai-glossary-cat-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-glossary-cat-card h3 {
+    margin: 0;
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+  }
+  .ai-glossary-cat-card__count {
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-glossary-cat-card p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+
+  /* === A-Z === */
+  .ai-glossary-az {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-2);
+    align-items: center;
+    padding: var(--ai-space-3);
+    background: var(--ai-accent-subtle);
+    border-radius: var(--ai-radius-sm);
+    margin-block: var(--ai-space-6);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 10;
+  }
+  .ai-glossary-az__label {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-sm);
+    margin-inline-end: var(--ai-space-2);
+  }
+  .ai-glossary-az__link {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: var(--ai-bg-base);
+    color: var(--ai-accent-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+    font-size: var(--ai-text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-glossary-az__link:hover {
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border-color: var(--ai-accent-primary);
+  }
+
+  /* === SECTIONS BY CATEGORY === */
+  .ai-glossary-section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-glossary-section__head {
+    border-block-end: 2px solid var(--ai-accent-primary);
+    padding-block-end: var(--ai-space-3);
+    margin-block-end: var(--ai-space-5);
+  }
+  .ai-glossary-section__head h2 {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-2xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-section__head p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === ENTRY === */
+  .ai-glossary-entries {
+    display: grid;
+    gap: var(--ai-space-5);
+  }
+  .ai-glossary-entry {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-glossary-entry__head {
+    margin-block-end: var(--ai-space-3);
+  }
+  .ai-glossary-entry__term {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    display: flex;
+    align-items: baseline;
+    gap: var(--ai-space-2);
+  }
+  .ai-glossary-entry__anchor {
+    color: var(--ai-fg-muted);
+    text-decoration: none;
+    font-weight: var(--ai-weight-regular);
+    font-size: var(--ai-text-sm);
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+  .ai-glossary-entry:hover .ai-glossary-entry__anchor,
+  .ai-glossary-entry:focus-within .ai-glossary-entry__anchor {
+    opacity: 1;
+  }
+  .ai-glossary-entry__anchor:hover {
+    color: var(--ai-accent-primary);
+  }
+  .ai-glossary-entry__aliases {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-glossary-entry__short {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+    padding-inline-start: var(--ai-space-3);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+  }
+  .ai-glossary-entry__long {
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    margin-block-end: var(--ai-space-3);
+  }
+  .ai-glossary-entry__long :global(p) {
+    margin-block: 0 var(--ai-space-2);
+  }
+  .ai-glossary-entry__long :global(p:last-child) {
+    margin-block-end: 0;
+  }
+  .ai-glossary-entry__example {
+    margin-block-end: var(--ai-space-3);
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-glossary-entry__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    padding-block-start: var(--ai-space-3);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-glossary-entry__refs {
+    color: var(--ai-fg-muted);
+  }
+  .ai-glossary-entry__refs-label {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+    margin-inline-end: var(--ai-space-1);
+  }
+  .ai-glossary-entry__ref-link {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+  }
+  .ai-glossary-entry__ref-link:hover {
+    text-decoration: underline;
+  }
+
+  /* === INDEX A-Z === */
+  .ai-glossary-index {
+    margin-block: var(--ai-space-8);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-glossary-index h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-index p {
+    margin-block: 0 var(--ai-space-4);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-index__grid {
+    display: grid;
+    gap: var(--ai-space-4);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50em) {
+    .ai-glossary-index__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 80em) {
+    .ai-glossary-index__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .ai-glossary-index__group {
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-glossary-index__letter {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    border-block-end: 1px solid var(--ai-border-subtle);
+    padding-block-end: var(--ai-space-1);
+  }
+  .ai-glossary-index__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-1);
+  }
+  .ai-glossary-index__list li {
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-index__list a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-glossary-index__list a:hover {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+  .ai-glossary-index__cat {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-regular);
+  }
+
+  /* === LIENS === */
+  .ai-glossary-links {
+    margin-block: var(--ai-space-8);
+  }
+  .ai-glossary-links h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-links ul {
+    margin: 0;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-glossary-links li {
+    margin-block-end: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-links a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-glossary-links a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-glossary-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
