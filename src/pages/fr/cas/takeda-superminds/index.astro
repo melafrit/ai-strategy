@@ -1,0 +1,611 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'meta', label: 'Identité du cas' },
+  { id: 'synthese', label: 'Synthèse' },
+  { id: 'contexte', label: 'Contexte' },
+  { id: 'probleme', label: 'Problème métier' },
+  { id: 'solution', label: 'Solution IA' },
+  { id: 'benefices', label: 'Bénéfices observés' },
+  { id: 'limites', label: 'Limites et défis' },
+  { id: 'risques', label: 'Risques identifiés' },
+  { id: 'enseignements', label: 'Enseignements managériaux' },
+  { id: 'discussion', label: 'Questions de discussion' },
+  { id: 'modules-sources', label: 'Modules et sources' },
+];
+
+// === KEY TAKEAWAYS (5) ===
+const takeaways = [
+  "Le cas Takeda Superminds n'est pas un projet d'automatisation, c'est un dispositif d'intelligence collective humain × machine — la performance vient du système, pas d'une seule composante.",
+  "L'orchestration explicite des rôles (qui fait quoi, qui valide, qui apprend) est ce qui distingue un supermind d'un simple usage d'IA — Thomas Malone et le MIT CCI fournissent le cadre conceptuel.",
+  "La R&D pharmaceutique est un terrain particulièrement fertile pour l'intelligence collective : forte expertise humaine, données complexes hétérogènes, décisions à fort enjeu et longues chaînes de validation.",
+  "Le piège majeur est de transformer le programme en simple POC d'IA — la valeur attendue est dans la transformation organisationnelle (équipes mixtes, processus de collaboration, capacité d'apprendre collectivement), pas dans l'algorithme seul.",
+  "Le cas est transposable au-delà de la pharma : finance, juridique, ingénierie, tout secteur combinant expertise humaine forte, données complexes et décisions à fort enjeu.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Takeda Superminds Program',
+    author: 'MIT Center for Collective Intelligence',
+    description:
+      "Page officielle du programme conjoint Takeda × MIT CCI sur le site du Center for Collective Intelligence. Source primaire pour ce cas.",
+    href: 'https://cci.mit.edu/takeda-superminds-program/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Superminds — How to think and work better with people and machines',
+    author: 'Thomas Malone (MIT)',
+    description:
+      "Livre de référence pour la perspective d'intelligence collective adoptée par le programme. Pose le cadre humain × machine — supermind comme système où l'intelligence émerge de la combinaison.",
+    href: 'https://cci.mit.edu/publications/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI and Collective Intelligence',
+    author: 'MIT Center for Collective Intelligence',
+    description:
+      "Ressource MIT CCI articulant explicitement IA générative et intelligence collective. Pertinente pour comprendre comment les outils GenAI s'intègrent dans une démarche supermind.",
+    href: 'https://cci.mit.edu/generative-ai-and-collective-intelligence/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+// === URLs ===
+const casIndexUrl = getLocalizedUrl('/cas/', locale);
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+const morganStanleyUrl = getLocalizedUrl('/cas/morgan-stanley/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+---
+
+<BaseLayout
+  title="Takeda × MIT CCI Superminds — Étude de cas"
+  description="Programme Takeda Superminds avec le MIT Center for Collective Intelligence : structurer des équipes humain-machine pour la R&D pharmaceutique. Mise en pratique directe du cadre Thomas Malone."
+>
+  <HeroSecondary
+    surtitle="Étude de cas · Module 1"
+    title="Takeda × MIT CCI — Programme Superminds"
+    lead="Comment Takeda Pharmaceuticals s'est associé au MIT Center for Collective Intelligence pour structurer un dispositif d'intelligence collective humain × machine en R&D médicament. Cas exemplaire pour le Module 1 et la perspective de Thomas Malone."
+  >
+    <span slot="stats">
+      Santé / Pharmaceutique · Intelligence collective · MIT CCI
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Identité du cas</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organisation</dt>
+              <dd>Takeda Pharmaceuticals (Japon — un des leaders pharmaceutiques mondiaux) en partenariat avec le MIT Center for Collective Intelligence (CCI)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Secteur</dt>
+              <dd>Santé / Pharmaceutique — R&D médicament</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technologie</dt>
+              <dd>Intelligence collective — orchestration explicite humain × machine, intégrant outils analytiques et plus récemment IA générative</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Cadre conceptuel</dt>
+              <dd>Travaux de Thomas Malone (MIT) sur les superminds — systèmes où l'intelligence émerge de la combinaison de plusieurs intelligences (humaines, organisationnelles, machine)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sources principales</dt>
+              <dd>Page officielle du programme sur le site MIT CCI <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SYNTHESE === */}
+        <ExecutiveSummary>
+          <p>
+            Le programme <strong>Takeda Superminds</strong> est un partenariat entre le groupe
+            pharmaceutique japonais Takeda et le MIT Center for Collective Intelligence dirigé par
+            <strong> Thomas Malone</strong>. Son objectif n'est pas d'automatiser la R&D — il est de
+            <strong> structurer des équipes mixtes humain × machine</strong> capables d'aborder des
+            problèmes complexes du développement médicament que ni les humains seuls ni les machines
+            seules ne peuvent résoudre efficacement.
+          </p>
+          <p>
+            Le cas illustre directement le concept central du Module 1 : l'<strong>intelligence
+            collective</strong> comme cadre pour penser l'IA en organisation. Plutôt que de chercher
+            à remplacer des chercheurs ou des médecins par des modèles, le programme conçoit
+            l'organisation comme un <em>supermind</em> où humains, processus et outils combinent
+            leurs forces — chacun jouant le rôle qu'il fait le mieux.
+          </p>
+          <p>
+            Pour un dirigeant, le cas est important parce qu'il déplace la question stratégique :
+            <strong> non pas « comment l'IA peut-elle remplacer X ? », mais « comment combiner
+            intelligences humaines et machines pour progresser plus vite sur des problèmes que nous
+            n'arrivons pas à résoudre seuls ? »</strong> — question plus défendable, plus durable,
+            et plus créative de valeur que la première.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXTE === */}
+        <section id="contexte">
+          <h2>Contexte de l'organisation</h2>
+          <p>
+            <strong>Takeda Pharmaceutical Company</strong> est l'un des plus grands groupes
+            pharmaceutiques mondiaux, dont le siège est à Osaka au Japon. Ses domaines thérapeutiques
+            principaux incluent l'oncologie, les maladies rares, les neurosciences et la
+            gastro-entérologie. Comme l'ensemble du secteur pharmaceutique, Takeda fait face à des
+            défis structurels :
+          </p>
+          <ul>
+            <li>
+              Le développement d'un nouveau médicament prend typiquement <strong>10 à 15 ans</strong>
+              et coûte plusieurs milliards de dollars, avec des taux d'attrition élevés à chaque
+              phase clinique.
+            </li>
+            <li>
+              Les chercheurs, médecins et data scientists travaillent souvent en <strong>silos
+              fonctionnels</strong>, avec des outils, des langages et des cadences différents.
+            </li>
+            <li>
+              Les <strong>volumes de données</strong> à exploiter (essais cliniques historiques,
+              littérature scientifique, données patients, données moléculaires) dépassent ce que des
+              humains seuls peuvent intégrer dans une décision.
+            </li>
+            <li>
+              Les <strong>décisions sont à fort enjeu</strong> — choix d'investir des centaines de
+              millions sur une cible thérapeutique, choix de design d'essai clinique — et nécessitent
+              expertise humaine, données solides, et capacité d'analyse des deux.
+            </li>
+          </ul>
+          <p>
+            Le <strong>MIT Center for Collective Intelligence</strong> (MIT CCI), dirigé par Thomas
+            Malone, est l'un des centres de recherche les plus reconnus au niveau international
+            sur la question de comment les humains et les machines peuvent combiner leurs forces
+            pour produire de l'intelligence à l'échelle d'un groupe ou d'une organisation. Ses
+            travaux ont nourri le concept de <em>supermind</em> popularisé par le livre de Malone.
+          </p>
+          <p>
+            Le partenariat entre Takeda et le MIT CCI s'inscrit dans cette perspective : appliquer
+            les principes de l'intelligence collective à des problèmes concrets de R&D pharmaceutique.
+          </p>
+        </section>
+
+        {/* === PROBLEME === */}
+        <section id="probleme">
+          <h2>Problème métier</h2>
+          <p>
+            Le problème métier que Takeda cherche à adresser via Superminds n'est pas l'automatisation
+            de tâches — la R&D pharmaceutique en compte évidemment beaucoup qui pourraient être
+            automatisées de manière plus classique. Le problème est plus structurant :
+          </p>
+          <ul>
+            <li>
+              <strong>Comment accélérer les phases créatives</strong> du développement médicament
+              (sélection de cibles thérapeutiques, design d'essais, hypothèses de mécanisme)
+              <strong> sans perdre la profondeur d'expertise</strong> qui distingue les meilleurs
+              chercheurs ?
+            </li>
+            <li>
+              <strong>Comment intégrer dans une seule décision</strong> des données hétérogènes
+              (cliniques, moléculaires, littérature, retours patients) que ni les humains seuls ni
+              les machines seules n'arrivent à synthétiser de manière fiable ?
+            </li>
+            <li>
+              <strong>Comment faire collaborer</strong> dans la durée des chercheurs (pensée critique,
+              jugement contextuel), des data scientists (modèles statistiques et IA), et des outils
+              (analyse à grande échelle, mémoire de l'historique) ?
+            </li>
+          </ul>
+          <p>
+            La formulation du problème distingue le cas Takeda d'autres usages d'IA en pharma. Les
+            cas classiques cherchent à <strong>automatiser des tâches identifiables</strong>
+            (criblage moléculaire automatique, lecture d'images médicales, prédiction de toxicité).
+            Le cas Superminds cherche à <strong>transformer la manière dont les équipes travaillent</strong>
+            sur les phases les plus complexes — qui sont aussi celles où la valeur stratégique est
+            la plus forte.
+          </p>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>Solution IA mise en place</h2>
+          <p>
+            La solution n'est pas un produit IA mais un <strong>dispositif organisationnel</strong>
+            structuré autour de plusieurs principes du cadre supermind :
+          </p>
+
+          <h3>1. Équipes mixtes par construction</h3>
+          <p>
+            Plutôt que des équipes mono-fonctionnelles (chercheurs entre eux, data scientists entre
+            eux, médecins entre eux) coopérant au coup par coup, le programme structure des
+            <strong> équipes durablement mixtes</strong> où expertise médicale, expertise
+            scientifique, expertise data, et capacités de modélisation IA sont en permanence
+            représentées et orchestrées. La diversité fonctionnelle est traitée comme un actif
+            structurel, pas comme une contrainte ponctuelle.
+          </p>
+
+          <h3>2. Orchestration explicite des rôles</h3>
+          <p>
+            Chaque acteur du système (humain ou machine) a un <strong>rôle clarifié</strong> :
+            qui formule les hypothèses, qui les teste, qui les valide, qui apprend des résultats.
+            Cette explicitation est le cœur de la méthode supermind — elle distingue un dispositif
+            d'intelligence collective d'une simple addition de compétences.
+          </p>
+
+          <h3>3. Outils analytiques et IA en support</h3>
+          <p>
+            Les outils déployés (modèles statistiques, IA générative pour l'exploration de
+            littérature, plateformes d'analyse de données) sont conçus comme des <strong>collaborateurs</strong>
+            des équipes — pas comme des produits à utiliser. L'évolution du programme intègre
+            progressivement les capacités de l'IA générative, mais toujours dans la même logique :
+            comme acteur d'un système plus large, pas comme remplacement.
+          </p>
+
+          <h3>4. Apprentissage collectif structuré</h3>
+          <p>
+            Les enseignements tirés des projets sont capitalisés <strong>au niveau de
+            l'organisation</strong>, pas seulement au niveau de l'équipe — pour que la connaissance
+            ne s'évapore pas avec le départ d'individus. C'est une dimension souvent négligée des
+            projets IA classiques, traitée centralement dans Superminds.
+          </p>
+        </section>
+
+        {/* === BENEFICES === */}
+        <section id="benefices">
+          <h2>Bénéfices observés</h2>
+          <p>
+            Les bénéfices documentés publiquement par le MIT CCI portent principalement sur des
+            dimensions <strong>organisationnelles et stratégiques</strong> plutôt que sur des
+            chiffres de productivité brute :
+          </p>
+          <ul>
+            <li>
+              <strong>Capacité à traiter des problèmes plus complexes</strong> — l'orchestration
+              explicite humain × machine permet d'aborder des questions que les seuls chercheurs ou
+              les seules machines abandonneraient comme trop complexes.
+            </li>
+            <li>
+              <strong>Vitesse de l'apprentissage organisationnel</strong> — la capitalisation
+              structurée des enseignements accélère la montée en compétence des équipes successives
+              sur des problèmes apparentés.
+            </li>
+            <li>
+              <strong>Diversité des hypothèses explorées</strong> — la combinaison expertise humaine +
+              outils analytiques fait émerger plus d'hypothèses que chaque acteur seul, ce qui
+              améliore les chances de découverte.
+            </li>
+            <li>
+              <strong>Crédibilité et transférabilité</strong> — la méthode supermind, validée
+              académiquement par le MIT CCI, est défendable en interne (chercheurs, médecins,
+              direction) et transposable à d'autres domaines (finance, juridique, ingénierie).
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note : Takeda et le MIT CCI publient les principes du programme et certains
+            résultats qualitatifs. Comme dans la plupart des cas R&D pharmaceutique, les chiffres
+            précis (réduction de durée de phase, taux de succès) ne sont pas tous publics. La
+            valeur du cas tient à la structure du dispositif, pas seulement à des KPIs ponctuels.</em>
+          </p>
+        </section>
+
+        {/* === LIMITES === */}
+        <section id="limites">
+          <h2>Limites et défis</h2>
+          <p>
+            Plusieurs défis et limites doivent être anticipés pour qui voudrait s'inspirer de ce
+            cas :
+          </p>
+          <ul>
+            <li>
+              <strong>Le dispositif est exigeant en compétences</strong>. Constituer des équipes
+              durablement mixtes (chercheurs + médecins + data scientists + experts IA) suppose
+              que ces profils existent en interne ou peuvent être recrutés — ce n'est pas évident
+              pour des organisations plus petites que Takeda.
+            </li>
+            <li>
+              <strong>La culture de collaboration est un prérequis</strong>. Si l'organisation
+              fonctionne en silos rigides, le programme demande d'abord un travail culturel et
+              organisationnel — qui peut prendre des années avant de produire des résultats
+              tangibles.
+            </li>
+            <li>
+              <strong>Les bénéfices sont indirects et difficilement chiffrables</strong>. Ce n'est
+              pas un projet à payback simple (« nous économisons X € par an grâce à l'IA »). La
+              valeur est dans la capacité accrue à résoudre des problèmes complexes — moins
+              défendable en COMEX si la culture interne demande des chiffres précis.
+            </li>
+            <li>
+              <strong>Le risque d'effet de mode</strong>. Le mot supermind peut être adopté
+              superficiellement (« on fait du supermind » sans changer les pratiques réelles) — l'effet
+              est alors nul. Le cadre n'a de valeur que s'il est appliqué avec rigueur méthodologique.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISQUES === */}
+        <section id="risques">
+          <h2>Risques identifiés et garde-fous</h2>
+          <p>
+            Trois familles de risques structurent la mise en œuvre :
+          </p>
+          <ul>
+            <li>
+              <strong>Risque de dérive vers l'automatisation simple.</strong> Le programme peut
+              dériver vers un usage classique d'outils IA si la dimension orchestration humain ×
+              machine n'est pas activement entretenue. Garde-fou : revue régulière de la composition
+              et des rôles dans les équipes mixtes.
+            </li>
+            <li>
+              <strong>Risque scientifique.</strong> Les outils IA peuvent introduire des biais ou
+              des erreurs dans les hypothèses scientifiques explorées (par exemple : sur-pondérer
+              certaines littératures, manquer des cas atypiques). Garde-fous : validation humaine
+              systématique des hypothèses avant investissement, audit régulier des sorties IA.
+            </li>
+            <li>
+              <strong>Risque organisationnel et social.</strong> Comme tout projet impactant
+              l'organisation du travail, le programme demande accompagnement RH et dialogue
+              social — particulièrement dans des contextes où la perception « IA = remplacement »
+              est forte. Garde-fou : communication interne claire sur le caractère augmentatif (et
+              non substitutif) de la démarche, formation des équipes, accompagnement explicite.
+            </li>
+          </ul>
+        </section>
+
+        {/* === ENSEIGNEMENTS === */}
+        <section id="enseignements">
+          <h2>Enseignements managériaux</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Questions de discussion pédagogique</h2>
+          <p>
+            Cinq questions à utiliser en formation, en atelier ou en cours pour approfondir le cas :
+          </p>
+          <ol class="ai-discussion-questions">
+            <li>
+              Le cas Takeda Superminds présente l'IA non comme un outil mais comme un acteur d'un
+              système plus large. <strong>Comment cette perspective change-t-elle la manière de
+              cadrer un projet IA</strong> dans votre organisation ?
+            </li>
+            <li>
+              Pour appliquer la logique supermind dans votre contexte, quelles seraient les
+              <strong> 3 ou 4 fonctions à associer durablement</strong> dans une équipe mixte ?
+              Pourquoi ces fonctions et pas d'autres ?
+            </li>
+            <li>
+              Le cas insiste sur la <strong>capitalisation collective des enseignements</strong>.
+              Quels mécanismes votre organisation a-t-elle pour cela ? Quels sont les manques ?
+            </li>
+            <li>
+              Si vous deviez défendre une démarche supermind en COMEX, comment justifieriez-vous
+              <strong> l'investissement face à des projets d'automatisation classiques</strong>
+              dont le ROI est plus directement chiffrable ?
+            </li>
+            <li>
+              <strong>Quels secteurs autres que la pharma</strong> vous semblent particulièrement
+              fertiles pour cette approche, et pourquoi ? À l'inverse, quels secteurs vous semblent
+              mal adaptés ?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules et sources</h2>
+
+          <h3>Modules associés</h3>
+          <p>
+            Ce cas illustre principalement le <a href={module1Url}><strong>Module 1 — Introduction
+            à l'IA</strong></a>, en particulier la perspective d'<strong>intelligence collective</strong>
+            (Thomas Malone, MIT CCI) qui structure tout le programme. Il est aussi un point d'appui
+            pour discuter de la dimension RH et organisationnelle des projets IA, traitée plus en
+            détail au Module 5.
+          </p>
+
+          <h3>Sources publiques utilisées</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>Toutes les sources sont publiques et vérifiables. Aucune information factuelle de
+            ce cas ne provient de communications internes de Takeda. Voir la
+            <a href={methodeUrl}> méthode</a> pour la hiérarchie des sources.</em>
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-case-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: casIndexUrl,
+            label: "Toutes les études de cas",
+            context: 'Index',
+          }}
+          next={{
+            href: morganStanleyUrl,
+            label: "Morgan Stanley AskResearchGPT",
+            context: 'Cas suivant',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-case-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-case-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-case-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-case-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-case-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-case-page__content {
+    min-width: 0;
+  }
+
+  .ai-case-page__content > section {
+    margin-block: var(--ai-space-7);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-case-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-case-page__content > section h3 {
+    margin-block-start: var(--ai-space-5);
+    margin-block-end: var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+
+  /* Meta box */
+  .ai-case-meta-section {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-case-meta-section__title {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-case-meta {
+    display: grid;
+    gap: var(--ai-space-3);
+    margin: 0;
+  }
+  .ai-case-meta__row {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: var(--ai-space-3);
+    align-items: start;
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-case-meta__row:last-child {
+    border-block-end: none;
+    padding-block-end: 0;
+  }
+  .ai-case-meta dt {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-case-meta dd {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  @media (max-width: 50em) {
+    .ai-case-meta__row {
+      grid-template-columns: 1fr;
+      gap: var(--ai-space-1);
+    }
+  }
+
+  /* Discussion questions */
+  .ai-discussion-questions {
+    list-style: none;
+    counter-reset: discuss;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-discussion-questions li {
+    counter-increment: discuss;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-discussion-questions li::before {
+    content: 'Q' counter(discuss);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-case-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>

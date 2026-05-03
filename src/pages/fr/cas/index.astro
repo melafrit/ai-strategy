@@ -1,0 +1,334 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+// === 10 CASES, grouped by associated module ===
+const cases = [
+  {
+    slug: 'takeda-superminds',
+    moduleNumber: 1,
+    moduleName: 'Module 1',
+    organization: 'Takeda × MIT CCI — Programme Superminds',
+    sector: 'Santé / Pharmaceutique',
+    technology: 'Intelligence collective',
+    tagline:
+      "Le programme Superminds mené par Takeda Pharmaceuticals avec le MIT Center for Collective Intelligence structure des équipes mixtes humain-machine sur des problèmes complexes du développement médicament. Mise en pratique directe du cadre de Thomas Malone.",
+    available: true,
+  },
+  {
+    slug: 'morgan-stanley',
+    moduleNumber: 1,
+    moduleName: 'Module 1 (mini-cas) + Module 3 (cas principal)',
+    organization: 'Morgan Stanley — AskResearchGPT et Debrief',
+    sector: 'Finance / Banque privée',
+    technology: 'LLM + RAG sur corpus interne',
+    tagline:
+      "Morgan Stanley a déployé deux assistants GenAI à destination de ~16 000 conseillers financiers. La valeur ne vient pas du modèle (GPT-4 d'OpenAI) mais de l'orchestration : RAG sur corpus interne curé + escalade humaine + gouvernance.",
+    available: true,
+  },
+  {
+    slug: 'stripe-radar',
+    moduleNumber: 2,
+    moduleName: 'Module 2',
+    organization: 'Stripe Radar',
+    sector: 'Finance / Paiements en ligne',
+    technology: 'Apprentissage supervisé à grande échelle',
+    tagline:
+      "Stripe utilise un modèle ML supervisé entraîné sur des centaines de millions de transactions étiquetées (légitimes / frauduleuses) pour scorer chaque transaction en temps réel. Combinaison signaux paiement + historique commerçant + retours utilisateurs + règles métier.",
+    available: true,
+  },
+  {
+    slug: 'mit-barzilay-cancer',
+    moduleNumber: 2,
+    moduleName: 'Module 2 (mini-cas)',
+    organization: 'Recherche MIT — Regina Barzilay (CSAIL)',
+    sector: 'Santé / Imagerie médicale',
+    technology: 'Apprentissage supervisé sur images',
+    tagline:
+      "Travaux du MIT CSAIL (Regina Barzilay) sur le dépistage précoce du cancer du sein par ML. Cas exemplaire d'IA en santé : étiquetage coûteux, supervision humaine non négociable, validation indépendante avant tout déploiement clinique.",
+    available: false,
+  },
+  {
+    slug: 'github-copilot-accenture',
+    moduleNumber: 3,
+    moduleName: 'Module 3 (mini-cas)',
+    organization: 'GitHub Copilot × Accenture',
+    sector: 'IT / Développement logiciel',
+    technology: 'GenAI assistance au code',
+    tagline:
+      "Étude conjointe GitHub × Accenture mesurant l'impact réel de Copilot dans une grande entreprise. Méthodologie publique : groupe traitement vs contrôle, productivité, qualité du code, satisfaction. Transposable à d'autres pilotes GenAI.",
+    available: false,
+  },
+  {
+    slug: 'amazon-robotics',
+    moduleNumber: 4,
+    moduleName: 'Module 4',
+    organization: 'Amazon Robotics — DeepFleet',
+    sector: 'Logistique / E-commerce',
+    technology: 'Robots mobiles autonomes (AMR) + IA d\'orchestration',
+    tagline:
+      "Amazon a atteint le seuil symbolique d'un million de robots déployés dans son réseau logistique mondial, et lancé en 2025 DeepFleet — un foundation model d'IA dédié à l'orchestration de la flotte. Humains restent centraux pour le jugement.",
+    available: false,
+  },
+  {
+    slug: 'universal-robots',
+    moduleNumber: 4,
+    moduleName: 'Module 4 (mini-cas)',
+    organization: 'Universal Robots — Cobots pour PME',
+    sector: 'Industrie manufacturière (PME)',
+    technology: 'Cobots ISO/TS 15066',
+    tagline:
+      "Fabricant danois de cobots illustrant comment rendre la robotique collaborative accessible aux PME industrielles. Reconfigurabilité, certification ISO/TS 15066, prix d'achat inférieur — mais l'intégration reste majoritaire dans le coût total.",
+    available: false,
+  },
+  {
+    slug: 'nist-ai-rmf',
+    moduleNumber: 5,
+    moduleName: 'Module 5',
+    organization: 'NIST AI Risk Management Framework',
+    sector: 'Standards et bonnes pratiques (États-Unis et international)',
+    technology: 'Cadre opérationnel de gouvernance',
+    tagline:
+      "Cadre américain de référence pour la gouvernance et la gestion des risques IA. Quatre fonctions interreliées : Govern, Map, Measure, Manage. Référence pour structurer une charte interne ou évaluer la maturité de gouvernance d'une organisation.",
+    available: false,
+  },
+  {
+    slug: 'ai-act-eu-haut-risque',
+    moduleNumber: 5,
+    moduleName: 'Module 5 (mini-cas)',
+    organization: 'AI Act EU — Classification haut risque',
+    sector: 'Réglementation européenne',
+    technology: 'Cadre légal',
+    tagline:
+      "Le Règlement UE 2024/1689 adopte une approche basée sur le risque (interdit / haut risque / risque limité / risque minimal). De nombreux usages business « ordinaires » (RH, crédit, justice) tombent en haut risque avec obligations strictes.",
+    available: false,
+  },
+  {
+    slug: 'mit-ide',
+    moduleNumber: 6,
+    moduleName: 'Module 6',
+    organization: 'MIT Initiative on the Digital Economy (MIT IDE)',
+    sector: 'Recherche académique appliquée',
+    technology: 'Anticipation stratégique structurée',
+    tagline:
+      "Initiative de recherche du MIT Sloan sur l'avenir du travail et de l'économie numérique. Modèle d'anticipation stratégique structurée : combinaison de recherche académique rigoureuse, données empiriques, et traduction en implications pour les décideurs.",
+    available: false,
+  },
+];
+
+const totalCases = cases.length;
+const availableCases = cases.filter((c) => c.available).length;
+---
+
+<BaseLayout
+  title="Études de cas — IA dans l'entreprise"
+  description="Dix études de cas réelles d'organisations déployant l'IA, du cobot industriel à l'IA générative, de la gouvernance NIST aux foundation models. Chaque cas est sourcé publiquement et relié à un module du parcours pédagogique."
+>
+  <HeroSecondary
+    surtitle="Études de cas"
+    title="Dix cas réels d'IA en entreprise"
+    lead="Dix études de cas réelles, sourcées publiquement, illustrant les concepts des six modules du parcours. Chaque cas suit le même gabarit (contexte, problème métier, solution IA, bénéfices, limites, risques, enseignements managériaux, questions de discussion, sources)."
+  >
+    <span slot="stats">
+      {totalCases} cas — {availableCases} disponible{availableCases > 1 ? 's' : ''} ·
+      Sources publiques vérifiables · Liés aux modules
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-cases-page">
+    {/* === Intro === */}
+    <section class="ai-section">
+      <div class="ai-cases-intro">
+        <p>
+          Chaque étude de cas adopte la même structure : <strong>contexte de l'organisation</strong>,
+          <strong> problème métier</strong>, <strong>solution IA</strong>, <strong>bénéfices observés</strong>,
+          <strong> limites et défis</strong>, <strong>risques identifiés</strong>, <strong>enseignements managériaux</strong>,
+          <strong> questions de discussion pédagogique</strong>, <strong>liens avec les modules</strong>,
+          et <strong>sources publiques vérifiables</strong>.
+        </p>
+        <p>
+          Les cas sont regroupés par module associé. Aucun cas n'est inventé. Toutes les
+          informations factuelles s'appuient sur des communications publiques de l'organisation
+          concernée, des publications académiques, ou des standards officiels — sourcés inline
+          sur chaque page.
+        </p>
+        <p class="ai-cases-intro__note">
+          <em>Phase 4.7-4.8 en cours : 2 des 10 cas sont publiés dans cette première vague. Les 8
+          autres suivent dans les sous-tours suivants. Les cas non encore publiés sont signalés en
+          <strong> grisé</strong> ci-dessous.</em>
+        </p>
+      </div>
+    </section>
+
+    {/* === Module 1 === */}
+    <section class="ai-section">
+      <h2 class="ai-section__title">Module 1 — Introduction à l'IA</h2>
+      <div class="ai-cases-grid">
+        {cases
+          .filter((c) => c.moduleNumber === 1)
+          .map((c) => (
+            <CaseCardCompact
+              organization={c.organization}
+              sector={c.sector}
+              technology={c.technology}
+              tagline={c.tagline}
+              href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+              available={c.available}
+            />
+          ))}
+      </div>
+    </section>
+
+    {/* === Module 2 === */}
+    <section class="ai-section">
+      <h2 class="ai-section__title">Module 2 — Machine Learning en entreprise</h2>
+      <div class="ai-cases-grid">
+        {cases
+          .filter((c) => c.moduleNumber === 2)
+          .map((c) => (
+            <CaseCardCompact
+              organization={c.organization}
+              sector={c.sector}
+              technology={c.technology}
+              tagline={c.tagline}
+              href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+              available={c.available}
+            />
+          ))}
+      </div>
+    </section>
+
+    {/* === Module 3 === */}
+    <section class="ai-section">
+      <h2 class="ai-section__title">Module 3 — IA générative en entreprise</h2>
+      <div class="ai-cases-grid">
+        {cases
+          .filter((c) => c.moduleNumber === 3)
+          .map((c) => (
+            <CaseCardCompact
+              organization={c.organization}
+              sector={c.sector}
+              technology={c.technology}
+              tagline={c.tagline}
+              href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+              available={c.available}
+            />
+          ))}
+      </div>
+    </section>
+
+    {/* === Module 4 === */}
+    <section class="ai-section">
+      <h2 class="ai-section__title">Module 4 — Robotique en entreprise</h2>
+      <div class="ai-cases-grid">
+        {cases
+          .filter((c) => c.moduleNumber === 4)
+          .map((c) => (
+            <CaseCardCompact
+              organization={c.organization}
+              sector={c.sector}
+              technology={c.technology}
+              tagline={c.tagline}
+              href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+              available={c.available}
+            />
+          ))}
+      </div>
+    </section>
+
+    {/* === Module 5 === */}
+    <section class="ai-section">
+      <h2 class="ai-section__title">Module 5 — IA dans l'entreprise et la société</h2>
+      <div class="ai-cases-grid">
+        {cases
+          .filter((c) => c.moduleNumber === 5)
+          .map((c) => (
+            <CaseCardCompact
+              organization={c.organization}
+              sector={c.sector}
+              technology={c.technology}
+              tagline={c.tagline}
+              href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+              available={c.available}
+            />
+          ))}
+      </div>
+    </section>
+
+    {/* === Module 6 === */}
+    <section class="ai-section">
+      <h2 class="ai-section__title">Module 6 — Futur de l'IA</h2>
+      <div class="ai-cases-grid">
+        {cases
+          .filter((c) => c.moduleNumber === 6)
+          .map((c) => (
+            <CaseCardCompact
+              organization={c.organization}
+              sector={c.sector}
+              technology={c.technology}
+              tagline={c.tagline}
+              href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+              available={c.available}
+            />
+          ))}
+      </div>
+    </section>
+
+    {/* === Indépendance === */}
+    <section class="ai-section">
+      <IndependenceNotice variant="block" />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-cases-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-section {
+    margin-block: var(--ai-space-7);
+  }
+
+  .ai-section__title {
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+    margin: 0 0 var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+
+  .ai-cases-intro {
+    max-width: 64rem;
+  }
+  .ai-cases-intro p {
+    margin: 0 0 var(--ai-space-3);
+    line-height: var(--ai-leading-relaxed);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-cases-intro__note {
+    margin-block-start: var(--ai-space-4);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-cases-grid {
+    display: grid;
+    gap: var(--ai-space-4);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 60em) {
+    .ai-cases-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
