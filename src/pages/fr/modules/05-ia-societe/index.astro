@@ -1,0 +1,872 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule5 from '@/content/quizzes/module-5';
+
+const locale = 'fr';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Synthèse exécutive' },
+  { id: 'objectifs', label: "Objectifs d'apprentissage" },
+  { id: 'concepts', label: 'Concepts clés' },
+  { id: 'erreurs-frequentes', label: 'Erreurs fréquentes' },
+  { id: 'cas-reel', label: 'Cas réel' },
+  { id: 'activite', label: 'Activité pratique' },
+  { id: 'quiz', label: 'Quiz formatif' },
+  { id: 'checklist', label: 'Checklist manager' },
+  { id: 'application', label: 'Application dans votre organisation' },
+  { id: 'a-retenir', label: 'À retenir' },
+  { id: 'pour-aller-plus-loin', label: 'Pour aller plus loin' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  "Distinguer éthique et conformité dans les décisions IA — savoir où s'arrête la loi et où commence le choix éthique.",
+  "Identifier la classification AI Act EU d'un usage IA candidat (interdit / haut risque / risque limité / risque minimal).",
+  "Structurer une gouvernance IA opérationnelle : comité avec pouvoir de décision, processus de revue, articulation avec les fonctions transverses (DSI, DRH, conformité, sécurité).",
+  "Comprendre les principaux travaux sur l'impact de l'IA sur le travail — augmentation vs remplacement — et leurs implications managériales.",
+  "Articuler la gouvernance IA avec le dialogue social (CSE, IRP) et les obligations RGPD, sectorielles, et de transparence vis-à-vis des parties prenantes.",
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Confondre éthique et conformité",
+    error:
+      "Réduire l'éthique IA à un check-list de conformité légale (« nous respectons l'AI Act et le RGPD, donc nous sommes éthiques ») et négliger les questions qui ne sont pas explicitement couvertes par la loi (équité entre groupes, transparence vis-à-vis des parties prenantes, choix de société).",
+    mechanism:
+      "La conformité est un cadre minimum imposé. L'éthique est plus large : elle interroge ce qui est juste, équitable et désirable, même quand la loi n'oblige pas. Une organisation peut être parfaitement conforme et pourtant agir de manière contestable. La confusion mène à une fausse sécurité — et à des incidents qui révèlent l'écart entre conformité formelle et acceptabilité réelle.",
+    mitigation:
+      "Distinguer explicitement les deux niveaux dans la gouvernance IA. La conformité protège juridiquement ; l'éthique protège la confiance des parties prenantes. Les deux sont nécessaires, ne se substituent pas. Inscrire dans la charte des principes éthiques qui dépassent la conformité minimale (par exemple : transparence vis-à-vis des salariés sur les usages IA qui les concernent, même quand la loi ne l'exige pas).",
+  },
+  {
+    title: "Lancer un comité d'éthique sans pouvoir de décision",
+    error:
+      "Constituer un comité d'éthique IA composé de personnalités reconnues, avec une charte ambitieuse, mais sans pouvoir de décision opérationnel — un rôle purement consultatif que les opérationnels peuvent ignorer ou contourner.",
+    mechanism:
+      "Un comité ornemental documente des intentions sans les faire respecter. Sans mandat clair (Go/No-Go sur les projets, capacité à suspendre, pouvoir de définir des standards internes), le comité produit des recommandations qui se diluent dans la pratique. Les utilisateurs externes (régulateurs, journalistes, clients) le voient rapidement et la communication d'entreprise perd en crédibilité.",
+    mitigation:
+      "Doter le comité IA d'un mandat explicite : Go/No-Go pour les déploiements en production, conditions imposées, capacité à suspendre en cas d'incident. Composer le comité de profils opérationnels (DSI, métier, conformité, RH) en plus de dirigeants. Articuler avec les processus existants (passage en COMEX, validation budgétaire) pour que la gouvernance IA soit effective.",
+  },
+  {
+    title: "Sous-estimer l'AI Act EU et les obligations RGPD",
+    error:
+      "Démarrer un projet IA sans identifier explicitement sa classification AI Act EU (interdit, haut risque, risque limité, risque minimal), sans réaliser d'analyse RGPD préalable, et découvrir tardivement des obligations qui retardent voire bloquent le déploiement (registre AI Act, analyse de conformité, supervision humaine, documentation, AIPD pour les données personnelles).",
+    mechanism:
+      "L'AI Act EU est entré en vigueur en 2024 avec un calendrier d'application progressif. Beaucoup d'organisations sous-estiment les usages qui tombent en « haut risque » (recrutement et gestion RH, scoring de crédit, justice, santé, éducation, services publics, infrastructures critiques) — ces obligations sont substantielles. Le RGPD ajoute des exigences sur les données personnelles. Ces obligations ne sont pas optionnelles ; les ignorer expose juridiquement et opérationnellement.",
+    mitigation:
+      "Intégrer la classification AI Act dès la phase de cadrage de chaque projet IA. Réaliser une AIPD (Analyse d'Impact relative à la Protection des Données) si données personnelles. Désigner un responsable conformité IA (peut être le DPO étendu). Construire un registre des systèmes d'IA en service. Articuler avec les obligations sectorielles spécifiques (santé, finance, etc.).",
+  },
+  {
+    title: "Communiquer en « AI washing » sans mécanismes réels",
+    error:
+      "Publier une charte éthique IA ambitieuse, communiquer publiquement sur l'engagement de l'organisation, mais ne pas mettre en place les mécanismes opérationnels qui rendent ces engagements crédibles (gouvernance avec pouvoir de décision, processus de revue, indicateurs de suivi, transparence sur les incidents). Le décalage entre communication et pratique est tôt ou tard détecté.",
+    mechanism:
+      "L'« AI washing » fonctionne à court terme — il rassure les parties prenantes, satisfait les demandes de communication. Mais les mécanismes d'audit (régulateurs, journalistes, ONG, salariés via signalements) finissent par révéler le décalage entre l'engagement déclaré et la pratique réelle. Le coût réputationnel d'une telle révélation est très supérieur au coût d'une communication plus modeste mais alignée avec la pratique.",
+    mitigation:
+      "Aligner systématiquement la communication externe avec les mécanismes opérationnels effectivement en place. Préférer une communication progressive (« nous avons constitué un comité avec ces pouvoirs ; nous publions notre premier rapport annuel ») plutôt que des promesses ambitieuses non encore opérationnelles. Inscrire dans la charte des engagements vérifiables : indicateurs publiés, rapports périodiques, mécanismes de signalement externes.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Définir la portée et les principes",
+    body: "Délimitez explicitement le périmètre de la charte (quels systèmes IA, quels fournisseurs, quels sites). Formulez 5 principes directeurs adaptés au contexte de votre organisation, en s'inspirant des Principes OCDE et des exigences AI Act. Critère de qualité : si les principes sont génériques au point d'être interchangeables avec n'importe quelle organisation, ajoutez une déclinaison concrète liée à votre activité.",
+  },
+  {
+    heading: "Structurer la gouvernance opérationnelle",
+    body: "Composez un comité IA mixte (dirigeants + opérationnels DSI/métier/conformité/DRH/sécurité, plus représentants du personnel selon contexte) avec un mandat explicite : Go/No-Go sur les projets, capacité à suspendre, définition de standards internes. Définissez le processus de revue d'un projet IA (cadrage / conception / pilote / pré-déploiement / production / revue annuelle) avec livrables et validateurs.",
+  },
+  {
+    heading: "Cartographier les obligations légales",
+    body: "Pour chaque cas d'usage IA candidat ou déployé, identifiez la classification AI Act (interdit / haut risque / risque limité / risque minimal). Cartographiez les obligations élargies : RGPD pour les données personnelles, droit du travail (CSE), réglementations sectorielles (santé, finance, services publics), standards internes (NIST AI RMF, ISO 23894).",
+  },
+  {
+    heading: "Définir transparence, explicabilité et redressement",
+    body: "Définissez l'information des parties prenantes (salariés, clients/usagers, société civile/régulateurs). Établissez un processus de redressement quantifié (signalement, analyse, décision, communication, retour d'expérience) avec délais cibles précis. Critère de qualité : un processus de redressement sans délais définis est inopérant.",
+  },
+];
+
+const activityCriteria = [
+  "Le périmètre de la charte est défini (systèmes, fournisseurs, sites).",
+  "Les 5 principes sont déclinés en actions concrètes pour l'organisation.",
+  "Le comité IA a un pouvoir de décision réel (Go/No-Go).",
+  "Chaque cas d'usage IA candidat est classifié AI Act EU.",
+  "Les mécanismes de transparence et de redressement ont des délais quantifiés.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Gouvernance et comité IA",
+    items: [
+      "Le comité IA existe et est composé de profils opérationnels en plus des dirigeants (DSI, métier, conformité, DRH, sécurité).",
+      "Le comité IA a un mandat de Go/No-Go sur les déploiements en production, pas seulement consultatif.",
+      "Le processus de revue d'un projet IA est explicite (cadrage / conception / pilote / pré-déploiement / production / revue annuelle) avec livrables et validateurs.",
+      "Le comité a la capacité de suspendre un système en cas d'incident, avec procédure définie.",
+    ],
+  },
+  {
+    title: "Éthique, biais et impact",
+    items: [
+      "L'organisation distingue explicitement éthique et conformité dans sa charte (l'une ne se substitue pas à l'autre).",
+      "Les biais possibles des systèmes IA déployés (par sous-groupes : genre, origine, âge, géographie) sont audités régulièrement.",
+      "L'impact des systèmes IA sur le travail (postes concernés, redéploiement, formation) est analysé en amont.",
+      "Le dialogue social (information-consultation CSE en France ou équivalent) est conduit en amont, pas après le déploiement.",
+    ],
+  },
+  {
+    title: "Conformité et transparence",
+    items: [
+      "Chaque système IA en service est classifié AI Act EU et le registre est tenu à jour.",
+      "Les obligations RGPD (base légale, minimisation, droits des personnes, AIPD) sont appliquées aux systèmes traitant des données personnelles.",
+      "Les parties prenantes (salariés, clients, usagers) sont informées des usages IA qui les concernent et des voies de recours.",
+      "Les mécanismes de signalement et de redressement sont quantifiés (délais cibles) et opérationnels.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "Le concept clé : éthique et conformité ne se confondent pas — la conformité est un seuil minimum imposé, l'éthique pose les questions de justice et d'équité que la loi ne couvre pas toujours.",
+  "Le cas exemplaire : le NIST AI RMF illustre ce qu'est un cadre opérationnel de gouvernance IA — pas une liste de principes, mais un système de gouvernance, mesure, gestion des risques.",
+  "Le piège majeur : lancer un comité d'éthique IA sans pouvoir de décision réel — la gouvernance ornementale est rapidement détectée par les parties prenantes.",
+  "L'outil opérationnel : la charte de gouvernance IA en 4 étapes (portée et principes / gouvernance opérationnelle / cartographie des obligations / transparence et redressement).",
+  "La suite : le Module 6 (Futur de l'IA) prend de la hauteur sur les évolutions à 3-10 ans et vous prépare à construire une roadmap stratégique IA pour votre organisation.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "Cadre opérationnel américain de référence pour la gouvernance et la gestion des risques IA. Structure en quatre fonctions (Govern, Map, Measure, Manage) directement utilisable comme socle d'une charte interne.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Règlement (UE) 2024/1689 — AI Act',
+    author: "Journal officiel de l'Union européenne",
+    description:
+      "Texte intégral du règlement européen sur l'IA, en français. Classification des systèmes par niveau de risque (interdit / haut risque / risque limité / risque minimal) et obligations associées. Référence légale incontournable pour toute organisation déployant de l'IA dans l'UE.",
+    href: 'https://eur-lex.europa.eu/legal-content/FR/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Principes de l'OCDE sur l'intelligence artificielle",
+    author: 'OCDE',
+    description:
+      "Cinq principes pour un déploiement responsable de l'IA, adoptés par 47 pays. Base de l'AI Act européen. Disponible en français. Utile pour structurer les principes d'une charte interne.",
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Does technology help or hurt employment?",
+    author: 'MIT News — David Autor',
+    description:
+      "Analyse économique fine de l'impact technologique sur l'emploi par David Autor (MIT). Référence académique majeure pour cadrer la conversation IA et travail — l'effet net dépend des choix collectifs (politiques publiques, pratiques d'entreprise, formation).",
+    href: 'https://news.mit.edu/2024/does-technology-help-or-hurt-employment-0401',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI at Work',
+    author: 'Brynjolfsson, Li, Raymond — NBER Working Paper w31161',
+    description:
+      "Étude empirique sur l'impact de la GenAI sur la productivité et l'apprentissage au travail. Référence académique majeure pour le cadrage RH des projets IA — données réelles sur des milliers d'agents de service client.",
+    href: 'https://www.nber.org/papers/w31161',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: 'Canvas charte de gouvernance IA',
+    author: 'AI Strategy — Module 5',
+    description:
+      "Canvas Markdown imprimable pour structurer une charte de gouvernance IA en 4 étapes (portée et principes / gouvernance opérationnelle / cartographie des obligations / transparence et redressement).",
+    href: '/downloads/canvas-charte-gouvernance-ia-module-5.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module4Url = getLocalizedUrl('/modules/04-robotique/', locale);
+const module6Url = getLocalizedUrl('/modules/06-futur-ia/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+---
+
+<BaseLayout
+  title="Module 5 — IA dans l'entreprise et la société"
+  description="Gouvernance IA, éthique, biais, AI Act EU classification, RGPD, impact sur le travail (David Autor MIT), dialogue social, conformité élargie. Cadres NIST AI RMF, Principes OCDE."
+>
+  <HeroSecondary
+    surtitle="Module 5 · IA dans l'entreprise et la société"
+    title="Gouvernance, éthique, conformité et impact sur le travail"
+    lead="Cinquième module du parcours. On y prend de la hauteur sur les enjeux qui dépassent une famille technologique particulière : gouvernance IA opérationnelle, distinction éthique/conformité, classification AI Act EU, impact sur le travail (perspective David Autor MIT), dialogue social, conformité RGPD élargie. Cadre exemplaire : le NIST AI RMF."
+  >
+    <span slot="stats">
+      Durée recommandée : 6-8 h · Niveau : Découverte / Applicable · Prérequis : Modules 1 à 4
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — SYNTHÈSE EXÉCUTIVE === */}
+        <ExecutiveSummary>
+          <p>
+            La <strong>gouvernance IA</strong> est devenue structurante — pas optionnelle. Le
+            <strong> Règlement européen sur l'IA</strong> (AI Act, UE 2024/1689) classe les usages
+            par niveau de risque (interdit / haut risque / risque limité / risque minimal) et impose
+            des obligations spécifiques pour chaque catégorie. Le <strong>RGPD</strong> ajoute des
+            exigences fortes sur les données personnelles. Le droit du travail français impose
+            l'<strong>information-consultation des instances représentatives du personnel (CSE)</strong>
+            pour les projets impactant l'organisation du travail. Ces cadres ne sont pas optionnels :
+            les ignorer expose juridiquement, opérationnellement et réputationnellement.
+          </p>
+          <p>
+            Mais la conformité légale n'est qu'un <strong>seuil minimum</strong>. L'<strong>éthique
+            IA</strong> est plus exigeante : elle interroge l'équité entre groupes, la transparence
+            vis-à-vis des parties prenantes, le choix de société sous-jacent à chaque déploiement.
+            Une organisation peut être parfaitement conforme et pourtant agir de manière contestable.
+            Distinguer les deux niveaux dans la gouvernance interne est la condition de la confiance
+            durable des salariés, des clients et de la société civile.
+          </p>
+          <p>
+            Pour un dirigeant, la question centrale du Module 5 est : « comment construire une
+            gouvernance IA <strong>opérationnelle</strong> (et pas ornementale) qui protège l'organisation
+            juridiquement, qui crédibilise sa communication externe, et qui articule correctement les
+            décisions IA avec le dialogue social et le pipeline de formation interne ? » Les travaux
+            de David Autor (MIT) sur l'impact des technologies sur l'emploi rappellent que l'effet
+            net de l'IA dépend des choix collectifs — l'IA n'a pas d'effet mécanique sur l'emploi,
+            elle a les effets que nos pratiques et politiques produisent.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIFS === */}
+        <section id="objectifs">
+          <h2>Objectifs d'apprentissage</h2>
+          <p>À l'issue de ce module, vous saurez :</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Concepts clés</h2>
+          <p>
+            Cinq concepts structurent ce module. Chacun est sourcé. La hiérarchie des sources est
+            <a href={methodeUrl}> expliquée dans la méthode</a>.
+          </p>
+
+          <ConceptCard
+            id="ethique-vs-conformite"
+            title="Éthique et conformité — deux niveaux distincts"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              <strong>La conformité</strong> couvre les obligations imposées par la loi :
+              AI Act EU, RGPD, droit du travail, réglementations sectorielles. C'est un seuil
+              minimum à respecter — son non-respect expose juridiquement l'organisation et ses
+              dirigeants. La conformité se traduit par des processus, des registres, des analyses
+              d'impact, des documentations.
+            </p>
+            <p>
+              <strong>L'éthique</strong> est plus large. Elle interroge ce qui est juste, équitable
+              et désirable, même quand la loi ne l'exige pas. Est-il acceptable de profiler des
+              candidats même sans que ce soit illégal ? Est-il acceptable d'utiliser GenAI pour
+              prendre des décisions à fort enjeu sans en informer les personnes concernées ? Ces
+              questions ne sont pas tranchées par la loi seule.
+            </p>
+            <p>
+              La <strong>confusion entre les deux niveaux</strong> est dangereuse. Réduire l'éthique
+              à un check-list de conformité produit une fausse sécurité : on est « conforme »
+              juridiquement, mais des incidents révèlent l'écart entre conformité formelle et
+              acceptabilité réelle. Inversement, ignorer la conformité au profit de principes
+              éthiques généraux expose juridiquement.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Bonne pratique.</strong> Inscrire dans la charte de gouvernance IA des
+                principes éthiques qui dépassent la conformité minimale. Par exemple : transparence
+                vis-à-vis des salariés sur les usages IA qui les concernent (même quand la loi ne
+                l'exige pas), audit régulier des biais entre sous-groupes (au-delà des seuils
+                réglementaires), participation des salariés à la définition des cas d'usage.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="gouvernance-operationnelle"
+            title="Gouvernance IA opérationnelle"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Une gouvernance IA <strong>opérationnelle</strong> (et non ornementale) repose sur trois
+              composantes minimales :
+            </p>
+            <ul>
+              <li>
+                <strong>Un comité IA avec pouvoir de décision réel</strong>. Pas un comité consultatif
+                que les opérationnels peuvent ignorer, mais une instance avec mandat explicite :
+                Go/No-Go sur les déploiements en production, capacité à suspendre en cas d'incident,
+                définition des standards techniques et éthiques internes. La composition mixte
+                (dirigeants + opérationnels DSI/métier/conformité/DRH + parfois représentants du
+                personnel) garantit que les décisions tiennent compte du terrain.
+              </li>
+              <li>
+                <strong>Un processus de revue structuré</strong>. Cadrage initial → conception →
+                pilote → pré-déploiement → production → revue annuelle. Chaque phase a un livrable
+                attendu et un validateur identifié. Le passage de phase n'est pas automatique —
+                il est validé par le comité IA ou par les fonctions transverses (conformité, DRH).
+              </li>
+              <li>
+                <strong>Une articulation avec les fonctions transverses</strong>. La gouvernance IA
+                ne fonctionne pas en silo : elle s'articule avec le DPO (RGPD), la DRH (impact sur
+                le travail, formation, dialogue social), le RSSI (sécurité), la conformité (AI Act
+                et obligations sectorielles). Cette articulation doit être documentée, pas
+                improvisée.
+              </li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test rapide.</strong> Posez la question à votre comité IA : « si je présente
+                un projet et que la décision de déploiement vous appartient, que se passe-t-il
+                exactement si vous dites Non ? ». Si la réponse est floue, le comité est probablement
+                ornemental — il faut clarifier le mandat avant tout autre travail.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="ai-act-classification"
+            title="L'AI Act EU et la classification des usages"
+            sourceLevel="external-verifiable"
+          >
+            <p>
+              Le Règlement européen sur l'IA (UE 2024/1689) adopte une approche basée sur le risque.
+              Quatre catégories structurent les obligations :
+            </p>
+            <ul>
+              <li>
+                <strong>Pratiques interdites.</strong> Notation sociale par les autorités publiques,
+                manipulation cognitive, identification biométrique massive en temps réel dans les
+                espaces publics (sauf exceptions strictes). Ces pratiques ne peuvent pas être
+                déployées dans l'UE.
+              </li>
+              <li>
+                <strong>Haut risque.</strong> Recrutement et gestion RH, scoring de crédit, évaluation
+                éducative, applications médicales critiques, justice, services publics, infrastructures
+                critiques. Obligations strictes : analyse de conformité, registre, supervision humaine
+                effective, qualité et traçabilité des données, documentation, tests robustesse,
+                cybersécurité.
+              </li>
+              <li>
+                <strong>Risque limité.</strong> Chatbots, deepfakes, systèmes interagissant avec
+                des humains. Obligations principalement de transparence : informer les utilisateurs
+                qu'ils interagissent avec une IA, marquer les contenus générés.
+              </li>
+              <li>
+                <strong>Risque minimal.</strong> Tout le reste — la grande majorité des systèmes
+                d'IA en entreprise. Pas d'obligations spécifiques au-delà du droit commun.
+              </li>
+            </ul>
+            <p>
+              Pour un dirigeant, la <strong>classification de chaque cas d'usage</strong> est la
+              première étape de conformité — pas la dernière. Beaucoup d'usages d'apparence anodine
+              tombent en « haut risque » (un système de tri de CV est en haut risque), avec des
+              obligations substantielles. Identifier la classification dès le cadrage évite les
+              mauvaises surprises tardives.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Calendrier d'application.</strong> L'AI Act est entré en vigueur en août 2024,
+                avec une application progressive. Les pratiques interdites s'appliquent depuis
+                février 2025 ; les obligations sur les modèles à usage général depuis août 2025 ;
+                les obligations sur les systèmes à haut risque sont en cours de déploiement progressif
+                jusqu'en 2027. Vérifier le calendrier exact pour chaque obligation applicable à
+                votre organisation.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="impact-travail"
+            title="Impact de l'IA sur le travail — la perspective Autor"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Les travaux de <strong>David Autor</strong> (professeur d'économie au MIT, l'un des
+              chercheurs les plus reconnus sur l'impact des technologies sur l'emploi) défendent une
+              perspective nuancée : l'effet net des technologies — y compris l'IA — sur l'emploi
+              global n'est pas mécanique. Il dépend des choix faits collectivement.
+            </p>
+            <p>
+              Trois constats structurent cette perspective :
+            </p>
+            <ul>
+              <li>
+                <strong>Historiquement</strong>, les technologies ont à la fois détruit certains
+                emplois et créé d'autres tâches, sans réduction structurelle de l'emploi global.
+                Mais les transitions ont été parfois douloureuses pour les travailleurs concernés.
+              </li>
+              <li>
+                <strong>L'effet net positif n'est pas garanti</strong>. Il résulte d'investissements
+                en formation, d'institutions du marché du travail (filets de sécurité, négociation
+                collective), et de pratiques d'entreprise qui choisissent l'augmentation plutôt que
+                le remplacement pur.
+              </li>
+              <li>
+                <strong>L'IA augmente plus qu'elle ne remplace</strong>, à condition que les
+                politiques publiques et les pratiques d'entreprise accompagnent la transition.
+                Sans cet accompagnement, l'IA peut produire des effets concentrés et négatifs sur
+                certains groupes (travailleurs peu qualifiés, secteurs particuliers).
+              </li>
+            </ul>
+            <p>
+              Pour le manager, cette perspective a une conséquence directe : <strong>les choix
+              d'organisation</strong> faits autour des projets IA (augmenter les humains existants
+              ou les remplacer, investir dans la formation ou non, partager les gains de productivité
+              ou les concentrer) sont des choix politiques au sens large — pas des conséquences
+              mécaniques de la technologie.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Conséquence pratique.</strong> Présenter un projet IA en COMEX en mettant en
+                avant une logique d'augmentation des humains (productivité + qualité + ergonomie)
+                est plus défendable — socialement, juridiquement, opérationnellement — qu'une logique
+                de pure réduction d'effectifs. Cela ne veut pas dire qu'il n'y a jamais de
+                suppressions de postes, mais que ces décisions doivent être traitées explicitement
+                et accompagnées (redéploiement, formation, mobilité, mesures pour ceux qui partent).
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="dialogue-social-rgpd"
+            title="Dialogue social, RGPD et conformité élargie"
+            sourceLevel="external-verifiable"
+          >
+            <p>
+              Au-delà de l'AI Act, plusieurs cadres réglementaires structurent les déploiements IA
+              en entreprise :
+            </p>
+            <ul>
+              <li>
+                <strong>RGPD</strong> (UE 2016/679). Tout système traitant des données personnelles
+                doit respecter les principes du RGPD : base légale, minimisation, droits des
+                personnes (information, accès, rectification, effacement, opposition, portabilité),
+                AIPD (Analyse d'Impact relative à la Protection des Données) pour les traitements
+                à risque, désignation d'un DPO si requis.
+              </li>
+              <li>
+                <strong>Droit du travail français</strong>. Tout projet impactant l'organisation
+                du travail relève de l'<strong>information-consultation des instances représentatives
+                du personnel (CSE)</strong>, en amont du projet — pas après. Cette obligation est à
+                la fois légale et opérationnelle (un projet contesté est mal adopté).
+              </li>
+              <li>
+                <strong>Réglementations sectorielles</strong>. Selon le secteur, des obligations
+                spécifiques s'ajoutent : DSP2 et MiFID dans le financier, RGCM et HDS dans la santé,
+                DSAA dans la justice, etc. Ces obligations interagissent avec l'AI Act et le RGPD.
+              </li>
+              <li>
+                <strong>Standards et cadres de référence</strong>. Le NIST AI RMF (Risk Management
+                Framework) et l'ISO 23894 fournissent des cadres opérationnels reconnus, qui aident
+                à structurer une gouvernance interne robuste — sans être juridiquement obligatoires
+                en tant que tels.
+              </li>
+            </ul>
+            <p>
+              Pour le manager, l'enjeu est de <strong>cartographier explicitement</strong> ces
+              obligations pour chaque projet IA, dès la phase de cadrage — pas en aval. Une
+              organisation qui découvre tardivement une obligation AIPD ou une obligation
+              d'information-consultation CSE retarde de plusieurs mois son déploiement, parfois
+              le bloque entièrement.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Bonne pratique.</strong> Constituer dès la phase de cadrage de tout projet IA
+                une « fiche de conformité » récapitulant : classification AI Act, AIPD si
+                applicable, obligations de consultation IRP, obligations sectorielles, standards
+                internes appliqués. Cette fiche devient un livrable du processus de revue et
+                facilite les arbitrages du comité IA.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — ERREURS FRÉQUENTES === */}
+        <section id="erreurs-frequentes">
+          <h2>Erreurs fréquentes</h2>
+          <p>
+            Quatre pièges récurrents en gouvernance IA à reconnaître et à mitiger dès le cadrage.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — CAS RÉEL === */}
+        <section id="cas-reel">
+          <h2>Cas réel — Le NIST AI Risk Management Framework</h2>
+          <p>
+            Le <strong>NIST AI Risk Management Framework</strong> (AI RMF 1.0) publié en janvier
+            2023 par le National Institute of Standards and Technology est l'un des cadres
+            opérationnels de gouvernance IA les plus reconnus internationalement. Il illustre ce
+            qu'est une gouvernance IA structurée — pas une liste de principes, mais un système
+            articulant gouvernance, identification des risques, mesure et gestion.
+          </p>
+          <CaseCardCompact
+            organization="NIST AI RMF — Cadre opérationnel de gouvernance IA"
+            sector="Standards et bonnes pratiques (États-Unis et international)"
+            technology="Cadre de gestion des risques IA"
+            tagline="Le cadre est structuré en quatre fonctions interreliées : Govern (gouvernance organisationnelle), Map (identifier le contexte et les risques), Measure (analyser et mesurer), Manage (prioriser et traiter). Chacune se décline en sous-catégories opérationnelles. Référence pour structurer une charte interne ou pour évaluer la maturité de gouvernance d'une organisation. Adopté ou pris pour référence par de nombreuses grandes organisations."
+            href={getLocalizedUrl('/cas/nist-ai-rmf/', locale)}
+            available={false}
+          />
+
+          <h3>Mini-cas additionnel — L'AI Act EU et la classification haut risque</h3>
+          <p>
+            L'<strong>AI Act EU</strong> (Règlement UE 2024/1689) est devenu en 2024-2025 la
+            référence réglementaire principale pour les organisations opérant dans l'UE. Plusieurs
+            leçons transposables :
+          </p>
+          <ul>
+            <li>
+              <strong>L'approche par le risque</strong> est une innovation réglementaire majeure :
+              plutôt que d'imposer les mêmes obligations à tous les systèmes IA, l'AI Act calibre
+              les exigences selon l'impact potentiel. C'est plus pragmatique pour les organisations
+              et plus protecteur pour les personnes concernées.
+            </li>
+            <li>
+              <strong>De nombreux usages « ordinaires » tombent en haut risque</strong>. Un système
+              de tri automatique de CV pour le recrutement est en haut risque, avec obligation
+              d'analyse de conformité, registre, supervision humaine effective, qualité des données.
+              Beaucoup d'organisations sous-estiment cette qualification.
+            </li>
+            <li>
+              <strong>L'application est progressive</strong>. Les obligations sur les pratiques
+              interdites sont entrées en vigueur dès février 2025 ; celles sur les modèles à usage
+              général en août 2025 ; celles sur les systèmes à haut risque s'appliquent
+              progressivement jusqu'en 2027. Les organisations ont le temps de se préparer — mais
+              ne peuvent pas l'ignorer.
+            </li>
+            <li>
+              <strong>Les sanctions sont substantielles</strong>. Les amendes peuvent atteindre
+              35 millions d'euros ou 7 % du chiffre d'affaires mondial (selon le montant le plus
+              élevé) pour les pratiques interdites — ordres de grandeur comparables au RGPD. La
+              dimension financière du non-respect est directe.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source :
+              <a
+                href="https://eur-lex.europa.eu/legal-content/FR/TXT/PDF/?uri=OJ%3AL_202401689"
+                rel="noopener noreferrer"
+                target="_blank">texte intégral du Règlement UE 2024/1689 publié au Journal officiel de l'Union européenne</a>.
+            </em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITÉ === */}
+        <section id="activite">
+          <h2>Activité pratique — Construire une charte de gouvernance IA</h2>
+          <p>
+            Cette activité vous fait dérouler concrètement la construction d'une charte de
+            gouvernance IA pour votre organisation. À réaliser seul ou en petit groupe, en 60 à
+            90 minutes. Le canvas téléchargeable structure les 4 étapes.
+          </p>
+          <Activity
+            id="activite-charte-gouvernance"
+            title="Construire une charte de gouvernance IA"
+            duration="60-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Canvas charte de gouvernance IA (Markdown imprimable)"
+            downloadHref="/downloads/canvas-charte-gouvernance-ia-module-5.md"
+          />
+          <p class="ai-text-muted">
+            <em>Le canvas est fourni en format Markdown imprimable. La version PDF stylisée arrive
+            en Phase 5 du projet.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Quiz formatif</h2>
+          <p>
+            Sept questions pour vérifier votre compréhension. Trois questions de compréhension, trois
+            d'application, une de jugement. Chaque réponse incorrecte déplie une explication
+            pédagogique qui pointe vers la section à revoir.
+          </p>
+          <QuizPlaceholder
+            id="quiz-module-5"
+            title={quizModule5.title}
+            intro={quizModule5.intro}
+            questions={quizModule5.questions}
+            scoringBands={quizModule5.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Checklist manager — Gouvernance IA</h2>
+          <p>
+            Douze points de contrôle pour évaluer la maturité de gouvernance IA de votre organisation.
+            Trois groupes : gouvernance et comité IA, éthique-biais-impact, conformité-transparence.
+          </p>
+          <Checklist
+            id="checklist-module-5"
+            title="Gouvernance IA — 12 points de contrôle"
+            intro="Avant de présenter un projet IA en COMEX ou de publier une charte externe, parcourez ces douze points. Les points conformité (AI Act, RGPD, droit du travail) sont non négociables ; les points éthique conditionnent la confiance durable des parties prenantes."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application dans votre organisation</h2>
+          <p>
+            Cinq questions à poser dans votre contexte. Pas de bonne ou mauvaise réponse universelle —
+            ce qui compte, c'est de pouvoir y répondre <em>spécifiquement</em> pour votre organisation.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Existe-t-il un <strong>comité de gouvernance IA</strong> dans votre organisation ? A-t-il
+              un mandat de Go/No-Go opérationnel, ou est-il purement consultatif ?
+            </li>
+            <li>
+              Pour les <strong>3 cas d'usage IA</strong> les plus importants de votre organisation,
+              avez-vous identifié leur classification AI Act EU ? Quelles obligations en découlent ?
+            </li>
+            <li>
+              Comment l'<strong>articulation gouvernance IA / DPO / DRH / IRP</strong> est-elle
+              structurée ? Y a-t-il des sujets « entre les chaises » que personne ne pilote ?
+            </li>
+            <li>
+              Quels <strong>indicateurs de gouvernance IA</strong> suivez-vous (signalements traités,
+              audits de biais réalisés, incidents recensés) ? Sont-ils publiés en interne, en externe,
+              ou pas du tout ?
+            </li>
+            <li>
+              Y a-t-il un <strong>écart entre la communication externe</strong> de votre organisation
+              sur l'IA éthique et les mécanismes opérationnels effectivement en place ? Comment
+              cet écart est-il managé ?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>Pour les consultants</h3>
+            <p>
+              En mission de cadrage gouvernance IA, ces cinq questions structurent un atelier de
+              3 heures avec une équipe transverse (DG / DSI / DPO / DRH / Conformité / RSSI /
+              parfois IRP). La présence du DPO et du DRH est non négociable — la gouvernance IA
+              opérationnelle est par construction transverse, et l'absence de l'une de ces fonctions
+              au cadrage produit ensuite des angles morts coûteux.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — À RETENIR === */}
+        <section id="a-retenir">
+          <h2>À retenir</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — POUR ALLER PLUS LOIN === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Pour aller plus loin</h2>
+          <p>
+            Six ressources pour approfondir, classées par type. La hiérarchie des sources est indiquée
+            sur chacune (cf. <a href={methodeUrl}>méthode</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Termes techniques rencontrés ? Consultez le <a href={glossaireUrl}>glossaire</a> (Phase 4.9).
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module4Url,
+            label: 'Robotique en entreprise',
+            context: 'Module 4',
+          }}
+          next={{
+            href: module6Url,
+            label: "Futur de l'IA",
+            context: 'Module 6',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
