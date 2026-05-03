@@ -1,0 +1,592 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import {
+  faq,
+  faqByTheme,
+  faqThemeLabels,
+  faqThemeDescriptions,
+  TOTAL_FAQ,
+  type FaqTheme,
+  type FaqEntry,
+} from '@/content/faq';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+// Ordre d'affichage des thèmes
+const themesOrdered: FaqTheme[] = [
+  'program-and-audience',
+  'method-and-sources',
+  'use-cases-and-companies',
+  'governance-and-compliance',
+  'capstone-and-roadmap',
+  'practical-course',
+];
+
+// Comptages par thème
+const countByTheme: Record<FaqTheme, number> = {
+  'program-and-audience': 0,
+  'method-and-sources': 0,
+  'use-cases-and-companies': 0,
+  'governance-and-compliance': 0,
+  'capstone-and-roadmap': 0,
+  'practical-course': 0,
+};
+for (const e of faq) countByTheme[e.theme]++;
+
+// Liens dérivés
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const casUrl = getLocalizedUrl('/cas/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+const ressourcesUrl = getLocalizedUrl('/ressources/', locale);
+const capstoneUrl = getLocalizedUrl('/capstone/', locale);
+
+// Mapping cas slug → titre court
+const caseTitles: Record<string, string> = {
+  'takeda-superminds': 'Takeda × MIT CCI',
+  'morgan-stanley': 'Morgan Stanley',
+  'stripe-radar': 'Stripe Radar',
+  'mit-barzilay-cancer': 'MIT — Regina Barzilay',
+  'github-copilot-accenture': 'GitHub × Accenture',
+  'amazon-robotics': 'Amazon Robotics',
+  'universal-robots': 'Universal Robots',
+  'nist-ai-rmf': 'NIST AI RMF',
+  'ai-act-eu-haut-risque': 'AI Act EU haut risque',
+  'mit-ide': 'MIT IDE',
+};
+
+function moduleHref(num: number): string {
+  const slugs: Record<number, string> = {
+    1: '/modules/01-introduction-ia/',
+    2: '/modules/02-machine-learning/',
+    3: '/modules/03-ia-generative/',
+    4: '/modules/04-robotique/',
+    5: '/modules/05-ia-societe/',
+    6: '/modules/06-futur-ia/',
+  };
+  return getLocalizedUrl(slugs[num] ?? '/modules/', locale);
+}
+
+function caseHref(slug: string): string {
+  return getLocalizedUrl(`/cas/${slug}/`, locale);
+}
+
+function glossaryHref(slug: string): string {
+  return `${getLocalizedUrl('/glossaire/', locale)}#${slug}`;
+}
+
+function pageHref(path: string): string {
+  return getLocalizedUrl(path, locale);
+}
+
+/**
+ * Convertit le HTML brut de la réponse en texte simple pour Schema.org.
+ * Le balisage HTML enrichi reste dans le rendu visuel via set:html.
+ */
+function answerToPlainText(html: string): string {
+  return html
+    .replace(/<\/?(strong|em|code|p|br)\s*\/?\s*>/gi, '')
+    .replace(/<\/?[^>]+>/g, '')
+    .replace(/\n\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Construction du JSON-LD Schema.org FAQPage
+const faqPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((entry: FaqEntry) => ({
+    '@type': 'Question',
+    name: entry.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answerToPlainText(entry.answer),
+    },
+  })),
+};
+const jsonLdString = JSON.stringify(faqPageJsonLd);
+---
+
+<BaseLayout
+  title={`FAQ — ${TOTAL_FAQ} questions structurées sur l'IA en entreprise`}
+  description={`${TOTAL_FAQ} questions fréquentes sur le parcours AI Strategy : programme, méthode et sources, cas d'usage, gouvernance et AI Act EU, capstone, pratique du parcours. Réponses précises avec références croisées.`}
+>
+  {/* === Schema.org FAQPage JSON-LD pour SEO === */}
+  <script is:inline type="application/ld+json" slot="head" set:html={jsonLdString} />
+
+  <HeroSecondary
+    surtitle="Questions fréquentes"
+    title={`FAQ — ${TOTAL_FAQ} questions sur l'IA en entreprise`}
+    lead="Réponses précises et sourcées aux questions les plus fréquentes sur le parcours AI Strategy. Six thèmes couvrent le programme, la méthode, les cas d'usage, la gouvernance et l'AI Act, le capstone, et la pratique quotidienne du parcours."
+  >
+    <span slot="stats">
+      {TOTAL_FAQ} questions · 6 thèmes · références croisées modules + cas + glossaire
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-faq-page">
+    {/* === INTRO === */}
+    <section class="ai-faq-intro" aria-labelledby="intro-title">
+      <h2 id="intro-title">Comment utiliser cette FAQ</h2>
+      <p>
+        Les questions sont organisées en six thèmes. Cliquez sur une question pour
+        déplier sa réponse. Chaque réponse renvoie aux modules, études de cas, termes
+        du glossaire ou pages internes pertinents pour aller plus loin.
+      </p>
+      <p>
+        Cette FAQ est balisée selon le standard <strong>Schema.org FAQPage</strong> —
+        les réponses peuvent apparaître directement dans les résultats de recherche
+        Google sous forme de questions dépliables. Une question manque ? Signalez-la
+        via le repo GitHub, elle sera ajoutée si elle est suffisamment générale.
+      </p>
+    </section>
+
+    {/* === THEMES OVERVIEW === */}
+    <section class="ai-faq-themes-overview" aria-labelledby="themes-title">
+      <h2 id="themes-title">Six thèmes</h2>
+      <div class="ai-faq-themes-grid">
+        {themesOrdered.map((theme) => (
+          <a class="ai-faq-theme-card" href={`#theme-${theme}`}>
+            <header class="ai-faq-theme-card__head">
+              <h3>{faqThemeLabels[theme]}</h3>
+              <span class="ai-faq-theme-card__count">
+                {countByTheme[theme]} {countByTheme[theme] > 1 ? 'questions' : 'question'}
+              </span>
+            </header>
+            <p>{faqThemeDescriptions[theme]}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* === ALL Q/R ALPHABETICAL TOC === */}
+    <nav class="ai-faq-toc" aria-label="Table des questions">
+      <h2 class="ai-faq-toc__title">Toutes les questions</h2>
+      {themesOrdered.map((theme) => {
+        const list = faqByTheme(theme);
+        return (
+          <section class="ai-faq-toc__group">
+            <h3 class="ai-faq-toc__theme">{faqThemeLabels[theme]}</h3>
+            <ol class="ai-faq-toc__list">
+              {list.map((entry) => (
+                <li>
+                  <a href={`#${entry.slug}`}>{entry.question}</a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        );
+      })}
+    </nav>
+
+    {/* === FAQ BY THEME === */}
+    {themesOrdered.map((theme) => {
+      const list = faqByTheme(theme);
+      if (list.length === 0) return null;
+      return (
+        <section
+          id={`theme-${theme}`}
+          class="ai-faq-section"
+          aria-labelledby={`theme-${theme}-title`}
+        >
+          <header class="ai-faq-section__head">
+            <h2 id={`theme-${theme}-title`}>{faqThemeLabels[theme]}</h2>
+            <p>{faqThemeDescriptions[theme]}</p>
+          </header>
+
+          <div class="ai-faq-list">
+            {list.map((entry) => (
+              <details id={entry.slug} class="ai-faq-item">
+                <summary class="ai-faq-item__question">
+                  {entry.question}
+                  <span class="ai-faq-item__chevron" aria-hidden="true">▸</span>
+                </summary>
+                <div
+                  class="ai-faq-item__answer"
+                  set:html={entry.answer
+                    .split('\n\n')
+                    .map((p) => `<p>${p}</p>`)
+                    .join('')}
+                />
+                {(entry.relatedModules || entry.relatedCases || entry.relatedGlossary || entry.relatedPages) && (
+                  <footer class="ai-faq-item__footer">
+                    {entry.relatedModules && entry.relatedModules.length > 0 && (
+                      <div class="ai-faq-item__refs">
+                        <span class="ai-faq-item__refs-label">Modules :</span>
+                        {entry.relatedModules.map((num, i) => (
+                          <>
+                            {i > 0 && ', '}
+                            <a href={moduleHref(num)} class="ai-faq-item__ref-link">M{num}</a>
+                          </>
+                        ))}
+                      </div>
+                    )}
+                    {entry.relatedCases && entry.relatedCases.length > 0 && (
+                      <div class="ai-faq-item__refs">
+                        <span class="ai-faq-item__refs-label">Cas :</span>
+                        {entry.relatedCases.map((slug, i) => (
+                          <>
+                            {i > 0 && ', '}
+                            <a href={caseHref(slug)} class="ai-faq-item__ref-link">
+                              {caseTitles[slug] ?? slug}
+                            </a>
+                          </>
+                        ))}
+                      </div>
+                    )}
+                    {entry.relatedGlossary && entry.relatedGlossary.length > 0 && (
+                      <div class="ai-faq-item__refs">
+                        <span class="ai-faq-item__refs-label">Glossaire :</span>
+                        {entry.relatedGlossary.map((slug, i) => (
+                          <>
+                            {i > 0 && ', '}
+                            <a href={glossaryHref(slug)} class="ai-faq-item__ref-link">
+                              {slug}
+                            </a>
+                          </>
+                        ))}
+                      </div>
+                    )}
+                    {entry.relatedPages && entry.relatedPages.length > 0 && (
+                      <div class="ai-faq-item__refs">
+                        <span class="ai-faq-item__refs-label">Pages :</span>
+                        {entry.relatedPages.map((path, i) => (
+                          <>
+                            {i > 0 && ', '}
+                            <a href={pageHref(path)} class="ai-faq-item__ref-link">
+                              {path}
+                            </a>
+                          </>
+                        ))}
+                      </div>
+                    )}
+                  </footer>
+                )}
+              </details>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+
+    {/* === LIENS RAPIDES === */}
+    <section class="ai-faq-links" aria-labelledby="links-title">
+      <h2 id="links-title">Pages connexes</h2>
+      <ul>
+        <li>
+          <a href={programmeUrl}>Vue d'ensemble du programme</a> — six modules avec
+          objectifs d'apprentissage et compétences développées.
+        </li>
+        <li>
+          <a href={casUrl}>Études de cas</a> — dix cas réels d'organisations déployant
+          l'IA, chacun citant ses sources publiques.
+        </li>
+        <li>
+          <a href={glossaireUrl}>Glossaire</a> — 31 termes avec définitions,
+          exemples et références croisées.
+        </li>
+        <li>
+          <a href={ressourcesUrl}>Hub de ressources</a> — toutes les sources externes
+          centralisées.
+        </li>
+        <li>
+          <a href={capstoneUrl}>Capstone</a> — projet final intégrateur avec
+          méthodologie, grille d'évaluation et exemple annoté.
+        </li>
+        <li>
+          <a href={methodeUrl}>Méthode</a> — comment ce site distingue les
+          sources officielles, les compléments recommandés, et les reconstructions
+          pédagogiques.
+        </li>
+      </ul>
+    </section>
+
+    <div class="ai-faq-independence">
+      <IndependenceNotice variant="block" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-faq-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  /* === INTRO === */
+  .ai-faq-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-faq-intro h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-intro p {
+    margin-block: 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-intro p:last-child {
+    margin-block-end: 0;
+  }
+
+  /* === THEMES === */
+  .ai-faq-themes-overview {
+    margin-block: var(--ai-space-7);
+  }
+  .ai-faq-themes-overview h2 {
+    margin: 0 0 var(--ai-space-4);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-themes-grid {
+    display: grid;
+    gap: var(--ai-space-3);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50em) {
+    .ai-faq-themes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 80em) {
+    .ai-faq-themes-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .ai-faq-theme-card {
+    display: block;
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .ai-faq-theme-card:hover {
+    border-color: var(--ai-accent-primary);
+    transform: translateY(-1px);
+  }
+  .ai-faq-theme-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-faq-theme-card h3 {
+    margin: 0;
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+  }
+  .ai-faq-theme-card__count {
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ai-faq-theme-card p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+
+  /* === TOC === */
+  .ai-faq-toc {
+    margin-block: var(--ai-space-7);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-faq-toc__title {
+    margin: 0 0 var(--ai-space-4);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-toc__group {
+    margin-block-end: var(--ai-space-4);
+  }
+  .ai-faq-toc__group:last-child {
+    margin-block-end: 0;
+  }
+  .ai-faq-toc__theme {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+  }
+  .ai-faq-toc__list {
+    margin: 0;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-faq-toc__list li {
+    margin-block-end: var(--ai-space-1);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-toc__list a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+  }
+  .ai-faq-toc__list a:hover {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+
+  /* === SECTION === */
+  .ai-faq-section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-faq-section__head {
+    border-block-end: 2px solid var(--ai-accent-primary);
+    padding-block-end: var(--ai-space-3);
+    margin-block-end: var(--ai-space-4);
+  }
+  .ai-faq-section__head h2 {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-2xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-section__head p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === ITEM === */
+  .ai-faq-list {
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-faq-item {
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    transition: border-color 120ms ease;
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-faq-item:hover,
+  .ai-faq-item[open] {
+    border-color: var(--ai-accent-primary);
+  }
+  .ai-faq-item__question {
+    cursor: pointer;
+    padding: var(--ai-space-4);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-3);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-item__question::-webkit-details-marker {
+    display: none;
+  }
+  .ai-faq-item__chevron {
+    color: var(--ai-accent-primary);
+    transition: transform 200ms ease;
+    flex-shrink: 0;
+  }
+  .ai-faq-item[open] .ai-faq-item__chevron {
+    transform: rotate(90deg);
+  }
+  .ai-faq-item__answer {
+    padding: 0 var(--ai-space-4) var(--ai-space-4);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-item__answer :global(p) {
+    margin-block: 0 var(--ai-space-3);
+  }
+  .ai-faq-item__answer :global(p:last-child) {
+    margin-block-end: 0;
+  }
+  .ai-faq-item__answer :global(strong) {
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-item__answer :global(code) {
+    font-size: 0.92em;
+    background: var(--ai-bg-subtle);
+    padding: 0.05rem 0.3rem;
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-primary);
+  }
+
+  /* === FOOTER REFS === */
+  .ai-faq-item__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    background: var(--ai-bg-subtle);
+    font-size: var(--ai-text-sm);
+    border-end-start-radius: var(--ai-radius-md);
+    border-end-end-radius: var(--ai-radius-md);
+  }
+  .ai-faq-item__refs {
+    color: var(--ai-fg-muted);
+  }
+  .ai-faq-item__refs-label {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+    margin-inline-end: var(--ai-space-1);
+  }
+  .ai-faq-item__ref-link {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+  }
+  .ai-faq-item__ref-link:hover {
+    text-decoration: underline;
+  }
+
+  /* === LIENS === */
+  .ai-faq-links {
+    margin-block: var(--ai-space-8);
+  }
+  .ai-faq-links h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-links ul {
+    margin: 0;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-faq-links li {
+    margin-block-end: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-links a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-faq-links a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-faq-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>

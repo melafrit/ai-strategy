@@ -77,7 +77,45 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- Phase 4.10 : FAQ + Capstone + Resources hub. **→ EN COURS : Resources hub (sub-1) et Capstone (sub-2) publiés**, FAQ (sub-3) restante.
+- ~~Phase 4.10 : FAQ + Capstone + Resources hub.~~ **→ ✅ COMPLÈTE : Resources hub (sub-1) + Capstone (sub-2) + FAQ (sub-3) publiés**
+
+## 🎯 PHASE 4 COMPLÈTE — Tous les contenus FR publiés
+
+Phase 4 est désormais terminée dans son intégralité (4.0 → 4.10). Récapitulatif :
+- **6 modules** publiés en français (M1 à M6) avec quiz schémas, canvases téléchargeables et ressources
+- **10 études de cas** publiées (gabarit en 11 sections, sources publiques systématiquement vérifiables)
+- **Glossaire 31 termes** en 6 catégories avec cross-referencing dense
+- **Resources hub 31 sources** organisées en 8 familles
+- **Capstone** avec méthodologie 4 étapes, grille 7 dimensions × 4 niveaux, exemple annoté fictif PME, checklist 18 points
+- **FAQ 20 questions** en 6 thèmes avec balisage Schema.org FAQPage pour SEO
+- 82 pages buildées au total (1 root + 27 FR + 27 EN + 27 AR), 26 composants Astro stables, ~16 100 lignes de contenu rédigé FR
+- Sources publiques systématiquement vérifiables, hiérarchie 5 niveaux signalée explicitement
+- Stubs EN/AR pour chaque page (Phase 7 — traductions complètes)
+
+- Phase 4.10 sub-3 — Page FAQ avec balisage Schema.org :
+  - **NEW DATA — `src/content/faq.ts`** (~480 lignes) — 20 questions structurées en 6 thèmes :
+    - **Programme et public** (4 Q) : site officiel MIT, public ciblé, certification, durée du parcours
+    - **Méthode et sources** (3 Q) : hiérarchie des sources, reconstruction pédagogique, fiabilité
+    - **Cas d'usage et organisations** (3 Q) : choisir un premier cas, GenAI vs ML, taille d'organisation
+    - **Gouvernance, AI Act EU et conformité** (4 Q) : concerné par l'AI Act, articulation NIST RMF, comité éthique, biais algorithmique
+    - **Capstone et roadmap IA** (3 Q) : durée du capstone, taille d'organisation, prérequis
+    - **Pratique du parcours** (3 Q) : ordre des modules, traductions EN/AR, mises à jour et réutilisation
+  - Chaque entrée : slug + theme + question + answer (HTML enrichi avec `\n\n` pour paragraphes) + relatedModules + relatedCases + relatedGlossary + relatedPages.
+  - Helpers : `getFaq(slug)`, `faqByTheme(theme)`, constante `TOTAL_FAQ`, labels et descriptions des thèmes.
+  - **NEW PAGE — `src/pages/fr/faq/index.astro`** (~600 lignes) — page complète avec :
+    - **Balisage Schema.org FAQPage JSON-LD** injecté via slot `head` du BaseLayout (+ helper `answerToPlainText` pour stripper le HTML enrichi pour le balisage)
+    - Hero + intro pédagogique
+    - 6 cards de thèmes cliquables avec compteur de questions
+    - TOC organisée par thème (toutes les questions listées avec ancres permanentes)
+    - 6 sections par thème avec entrées en `<details>` dépliables (chevron rotatif), réponses formatées multi-paragraphes, footer 4 niveaux de refs (Modules, Cas, Glossaire, Pages)
+    - Liens vers programme/cas/glossaire/ressources/capstone/méthode
+    - IndependenceNotice
+  - **MINOR UPDATE — `src/layouts/BaseLayout.astro`** : ajout d'un `<slot name="head" />` après le favicon pour permettre l'injection de JSON-LD ou d'autres méta personnalisées par page. Modification additive, rétrocompatible (toutes les pages existantes continuent à fonctionner inchangées).
+  - **NEW STUBS** : EN + AR avec TranslationPending.
+  - **Activation navigation** : le lien `/faq/` était déjà câblé dans `Header.astro` — fonctionne désormais.
+  - Build validé : 82 pages générées (1 root + 27 FR + 27 EN + 27 AR), 0 erreur / 0 warning / 0 hint Astro check sur 129 fichiers.
+  - Vérifications HTML : 20 entrées rendues, JSON-LD Schema.org FAQPage présent.
+  - Pattern : 0 nouveau composant. Ajout minimal au BaseLayout (slot `head`).
 
 - Phase 4.10 sub-2 — Page Capstone (projet final intégrateur) :
   - **NEW PAGE — `src/pages/fr/capstone/index.astro`** (1086 lignes) — page la plus pédagogiquement structurante du site, traduit le canvas-roadmap-ia-module-6.md en page web complète enrichie d'une grille d'évaluation détaillée et d'un exemple annoté.
