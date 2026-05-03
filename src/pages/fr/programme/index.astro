@@ -1,0 +1,407 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import StatsBar from '@/components/StatsBar.astro';
+import IdentityTable from '@/components/IdentityTable.astro';
+import ModulesTable from '@/components/ModulesTable.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import BloomMatrix from '@/components/BloomMatrix.astro';
+import CapstonePreview from '@/components/CapstonePreview.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+
+const locale = 'fr';
+
+const stats = [
+  { value: '6', label: 'modules' },
+  { value: '6–8 h', label: 'par semaine' },
+  { value: '6', label: 'semaines' },
+  { value: 'FR · EN · AR', label: 'trilingue' },
+];
+
+const identityRows = [
+  { label: 'Organisme de référence', value: 'MIT Sloan School of Management + MIT CSAIL' },
+  { label: 'Format originel', value: '100 % en ligne, auto-rythmé' },
+  { label: 'Durée de référence', value: '6 semaines hors orientation' },
+  { label: 'Charge de travail', value: '6 à 8 heures par semaine' },
+  { label: 'Positionnement', value: 'Managérial et stratégique — non technique' },
+  { label: 'Projet de référence', value: "Plan d'usage de l'IA pour son organisation" },
+  { label: 'Audience', value: 'Managers, dirigeants, consultants, profils data, marketing, ventes' },
+  { label: 'Prérequis techniques', value: 'Aucun — bagage technique non supposé' },
+];
+
+const moduleRows = [
+  { number: 1 as const, title: t('modules.module-1.title', locale), objective: 'Cadrer l\'IA et l\'intelligence collective.', href: getLocalizedUrl('/modules/01-introduction-ia/', locale), available: false },
+  { number: 2 as const, title: t('modules.module-2.title', locale), objective: 'Décider quand le ML est pertinent.', href: getLocalizedUrl('/modules/02-machine-learning/', locale), available: false },
+  { number: 3 as const, title: t('modules.module-3.title', locale), objective: 'Décomposer les workflows et lancer des pilotes.', href: getLocalizedUrl('/modules/03-ia-generative/', locale), available: false },
+  { number: 4 as const, title: t('modules.module-4.title', locale), objective: 'Évaluer la pertinence de l\'automatisation physique.', href: getLocalizedUrl('/modules/04-robotique/', locale), available: false },
+  { number: 5 as const, title: t('modules.module-5.title', locale), objective: 'Gouvernance, éthique, conformité, travail.', href: getLocalizedUrl('/modules/05-ia-societe/', locale), available: false },
+  { number: 6 as const, title: t('modules.module-6.title', locale), objective: 'Construire une roadmap IA crédible.', href: getLocalizedUrl('/modules/06-futur-ia/', locale), available: false },
+];
+
+const outcomes = [
+  "Expliquer les grandes familles d'IA (machine learning, IA générative, robotique) et leurs implications business.",
+  "Juger la pertinence d'un cas d'usage de Machine Learning pour une stratégie de coût, de différenciation ou de focalisation.",
+  "Identifier et prioriser des cas d'usage d'IA générative dans une organisation, et concevoir un pilote.",
+  "Évaluer quand la robotique crée de la valeur — et quand elle n'en crée pas.",
+  "Comprendre l'impact de l'IA sur le travail, les compétences et la société, et anticiper la conduite du changement.",
+  "Construire une roadmap d'intégration de l'IA pour une organisation : diagnostic, priorisation, gouvernance, KPI.",
+  "Dialoguer avec des experts techniques sans être technicien soi-même : poser les bonnes questions, lire un cahier des charges, interpréter un résultat.",
+];
+
+const bloomRows = [
+  { competency: "Comprendre les concepts fondamentaux de l'IA", bloomLevel: 'Comprendre', modules: [1, 2, 3, 4] as (1|2|3|4|5|6)[] },
+  { competency: "Identifier des cas d'usage IA pertinents", bloomLevel: 'Appliquer', modules: [2, 3, 4] as (1|2|3|4|5|6)[] },
+  { competency: 'Comparer des options stratégiques entre familles d\'IA', bloomLevel: 'Analyser', modules: [2, 3, 4, 5] as (1|2|3|4|5|6)[] },
+  { competency: 'Évaluer la pertinence et le ROI d\'un projet IA', bloomLevel: 'Évaluer', modules: [2, 3, 4, 5] as (1|2|3|4|5|6)[] },
+  { competency: 'Concevoir une roadmap IA pour une organisation', bloomLevel: 'Créer', modules: [6] as (1|2|3|4|5|6)[], capstone: true },
+  { competency: 'Anticiper les impacts éthiques et organisationnels', bloomLevel: 'Évaluer', modules: [5, 6] as (1|2|3|4|5|6)[] },
+];
+
+const homeUrl = getLocalizedUrl('/', locale);
+const modulesUrl = getLocalizedUrl('/modules/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+---
+
+<BaseLayout
+  title="Le programme en un coup d'œil"
+  description="6 modules, 6 semaines, en français : machine learning, IA générative, robotique, gouvernance, roadmap. Inspiré du programme MIT Sloan, indépendant, sourcé."
+>
+  <HeroSecondary
+    surtitle={t('site.surtitle', locale)}
+    title="Le programme en un coup d'œil"
+    lead="Six modules pour décider, déployer et gouverner l'IA dans votre organisation. Une approche business-first, des sources hiérarchisées, et une indépendance assumée vis-à-vis du programme original."
+  />
+
+  {/* === STATS BAR === */}
+  <section class="ai-container ai-section">
+    <StatsBar stats={stats} />
+  </section>
+
+  {/* === FICHE D'IDENTITÉ === */}
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">Fiche d'identité du programme</h2>
+    <p class="ai-section__lead">
+      Le programme original <em>Artificial Intelligence: Implications for Business Strategy</em>
+      est porté par MIT Sloan School of Management et MIT Computer Science and Artificial
+      Intelligence Laboratory. Ce site s'en inspire — sans en être une reproduction.
+    </p>
+    <IdentityTable rows={identityRows} caption="Caractéristiques publiquement attestées du programme MIT Sloan de référence" />
+
+    <div class="ai-section__notice">
+      <IndependenceNotice variant="block" />
+    </div>
+  </section>
+
+  {/* === ARCHITECTURE PÉDAGOGIQUE === */}
+  <section class="ai-section--full">
+    <div class="ai-container ai-section">
+      <h2 class="ai-section__title">Les six modules</h2>
+      <p class="ai-section__lead">
+        Le parcours s'organise en six modules successifs, du cadrage initial à la construction
+        d'une roadmap. Le projet final (Capstone) traverse l'ensemble.
+      </p>
+      <ModulesTable rows={moduleRows} caption="Tous les modules — cliquables au fur et à mesure de leur publication" />
+    </div>
+  </section>
+
+  {/* === OBJECTIFS D'APPRENTISSAGE === */}
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">Sept résultats d'apprentissage transversaux</h2>
+    <p class="ai-section__lead">
+      À l'issue du parcours, le participant peut nommer, juger, prioriser et décider — pas seulement
+      reconnaître des concepts. Voici les sept résultats visés.
+    </p>
+    <OutcomesList outcomes={outcomes} />
+  </section>
+
+  {/* === COMPÉTENCES (BLOOM) === */}
+  <section class="ai-section--full">
+    <div class="ai-container ai-section">
+      <h2 class="ai-section__title">Compétences développées</h2>
+      <p class="ai-section__lead">
+        Une lecture par <strong>niveau de Bloom</strong> permet de voir comment les six modules
+        construisent une progression cognitive — du « comprendre » initial au « créer » du capstone.
+      </p>
+      <BloomMatrix rows={bloomRows} caption="Compétences cibles par niveau de Bloom et modules couvrants" />
+    </div>
+  </section>
+
+  {/* === APPROCHE PÉDAGOGIQUE === */}
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">Approche pédagogique</h2>
+    <div class="ai-pedagogy-grid">
+      <div class="ai-pedagogy-block">
+        <h3>Triple lecture</h3>
+        <p>
+          Chaque page module fonctionne sur trois niveaux : <strong>synthèse exécutive</strong> (3-5
+          minutes pour le dirigeant pressé), <strong>contenu pédagogique</strong> (25-45 minutes pour
+          qui veut comprendre), <strong>annexes opérationnelles</strong> téléchargeables (templates,
+          checklists, fiches PDF) pour qui veut agir.
+        </p>
+      </div>
+      <div class="ai-pedagogy-block">
+        <h3>Hiérarchie des sources visible</h3>
+        <p>
+          Chaque affirmation factuelle est étiquetée selon son niveau de preuve : source officielle MIT,
+          complément MIT-connexe, reconstruction pédagogique, source externe vérifiable, ou à vérifier.
+          Vous savez d'où vient chaque information.
+          <a href={methodeUrl}>En savoir plus sur la méthode →</a>
+        </p>
+      </div>
+      <div class="ai-pedagogy-block">
+        <h3>Médias multiformat</h3>
+        <p>
+          Pages web rédigées en prose dense, fiches PDF imprimables, podcasts narratifs (Saison 1 en
+          préparation), schémas Mermaid, quiz interactifs avec persistance locale, glossaire
+          trilingue. Vous choisissez le format adapté à votre situation.
+        </p>
+      </div>
+      <div class="ai-pedagogy-block">
+        <h3>Capstone fil rouge</h3>
+        <p>
+          Le projet final accompagne l'apprenant sur tout le parcours : à chaque module, des questions
+          de transposition à son organisation, et en fin de parcours, un livrable structuré — la
+          roadmap IA — utilisable en présentation COMEX ou en mission de conseil.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* === CAPSTONE PREVIEW === */}
+  <section class="ai-container ai-section ai-section--narrow">
+    <CapstonePreview
+      title="Construire la roadmap IA de votre organisation"
+      description="À l'issue des six modules, vous produisez une roadmap structurée en 12 sections : diagnostic de maturité, cas d'usage candidats, priorisation, gouvernance, budget, KPI, risques, planning 12-24 mois. Template inclus, exemple pédagogique, grille d'évaluation."
+      ctaLabel="Découvrir le capstone"
+    />
+  </section>
+
+  {/* === FAQ EXCERPT === */}
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">Questions fréquentes</h2>
+    <div class="ai-faq-excerpt">
+      <details class="ai-faq-item">
+        <summary>À qui s'adresse ce site ?</summary>
+        <p>
+          À trois publics simultanément : <strong>dirigeants et top management</strong> qui doivent
+          cadrer une stratégie IA en COMEX ; <strong>consultants et responsables transformation</strong>
+          qui préparent une mission ; <strong>enseignants et étudiants</strong> en management ou en
+          systèmes d'information. Chaque page est lisible par les trois.
+        </p>
+      </details>
+      <details class="ai-faq-item">
+        <summary>Faut-il un bagage technique en informatique ou data science ?</summary>
+        <p>
+          <strong>Non.</strong> Le programme MIT de référence n'en exige aucun, et ce site reprend cette
+          orientation. Les concepts techniques sont expliqués <em>quand ils sont nécessaires à la décision
+          managériale</em>, pas comme une fin en soi. Vous n'aurez pas à coder Python pour comprendre.
+        </p>
+      </details>
+      <details class="ai-faq-item">
+        <summary>Combien de temps prévoir ?</summary>
+        <p>
+          La référence MIT pose 6 à 8 heures par semaine pendant 6 semaines. C'est un repère, pas une
+          obligation. Beaucoup de visiteurs viennent ponctuellement pour un module ou un cas
+          spécifique. La synthèse exécutive d'une page module se lit en 3-5 minutes ; la page complète
+          en 25-45 minutes.
+        </p>
+      </details>
+      <details class="ai-faq-item">
+        <summary>Le site est-il certifié par MIT ?</summary>
+        <p>
+          <strong>Non, et c'est explicite.</strong> Ce site est inspiré par les thématiques publiques
+          du programme MIT Sloan, mais il n'est <strong>ni affilié, ni validé, ni certifié</strong>
+          par MIT, MIT Sloan ou MIT CSAIL. C'est une ressource pédagogique indépendante. Voir la
+          <a href={methodeUrl}>page Méthode</a> pour le détail.
+        </p>
+      </details>
+      <details class="ai-faq-item">
+        <summary>Puis-je télécharger les contenus ?</summary>
+        <p>
+          Oui. Les fiches PDF (à venir en Phase 5 du projet), templates et checklists sont téléchargeables
+          librement sous licence CC BY-NC-SA 4.0. Vous pouvez les utiliser, modifier et partager — à
+          condition de citer la source, de ne pas en faire un usage commercial direct, et de partager
+          dans les mêmes conditions. Voir la <a href={methodeUrl}>page Méthode</a> pour les cas
+          concrets (consultants, enseignants, formateurs).
+        </p>
+      </details>
+    </div>
+    <p class="ai-section__cta">
+      <a href={getLocalizedUrl('/faq/', locale)}>Voir la FAQ complète →</a>
+    </p>
+  </section>
+
+  {/* === CTA FINAL === */}
+  <section class="ai-container ai-section ai-section--cta">
+    <h2 class="ai-section__title">Par où commencer ?</h2>
+    <div class="ai-cta-pair">
+      <a class="ai-cta ai-cta--primary" href={module1Url} aria-disabled="true">
+        Commencer par le Module 1 →
+      </a>
+      <a class="ai-cta ai-cta--secondary" href={modulesUrl}>
+        Voir tous les modules
+      </a>
+    </div>
+    <p class="ai-cta-pair__note">
+      <em>Le module 1 sera publié dans la sous-phase suivante (Phase 4.1b). En attendant, vous pouvez
+      explorer la <a href={methodeUrl}>méthode</a>, la <a href={homeUrl}>vue d'ensemble</a>, ou
+      consulter la documentation sur GitHub.</em>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .ai-section {
+    padding-block: var(--ai-space-7);
+  }
+  .ai-section--full {
+    background: var(--ai-bg-subtle);
+  }
+  .ai-section--narrow {
+    max-width: var(--ai-container-md);
+  }
+  .ai-section--cta {
+    text-align: center;
+    padding-block-end: var(--ai-space-9);
+  }
+  .ai-section__title {
+    margin: 0 0 var(--ai-space-3);
+  }
+  .ai-section__lead {
+    margin: 0 0 var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-lg);
+    max-width: 65ch;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-section__notice {
+    margin-block-start: var(--ai-space-5);
+  }
+  .ai-section__cta {
+    margin: var(--ai-space-5) 0 0;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+  }
+  .ai-section__cta a:hover,
+  .ai-section__cta a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Pedagogy grid */
+  .ai-pedagogy-grid {
+    display: grid;
+    gap: var(--ai-space-5);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 48em) {
+    .ai-pedagogy-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .ai-pedagogy-block h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-lg);
+    color: var(--ai-fg-primary);
+  }
+  .ai-pedagogy-block p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* FAQ excerpt */
+  .ai-faq-excerpt {
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+  .ai-faq-item {
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    background: var(--ai-bg-primary);
+    overflow: hidden;
+  }
+  .ai-faq-item summary {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    font-weight: var(--ai-weight-semibold);
+    cursor: pointer;
+    list-style: none;
+    color: var(--ai-fg-primary);
+    transition: background var(--ai-duration-fast) var(--ai-easing-default);
+  }
+  .ai-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .ai-faq-item summary::before {
+    content: '+';
+    display: inline-block;
+    margin-inline-end: var(--ai-space-2);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    transition: transform var(--ai-duration-fast) var(--ai-easing-default);
+  }
+  .ai-faq-item[open] summary::before {
+    content: '−';
+  }
+  .ai-faq-item summary:hover,
+  .ai-faq-item summary:focus-visible {
+    background: var(--ai-bg-subtle);
+  }
+  .ai-faq-item p {
+    margin: 0;
+    padding: 0 var(--ai-space-4) var(--ai-space-4);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* CTA pair */
+  .ai-cta-pair {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    justify-content: center;
+    margin-block: var(--ai-space-4);
+  }
+  .ai-cta-pair__note {
+    margin: var(--ai-space-3) auto 0;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    max-width: 60ch;
+  }
+  .ai-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-3) var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+  }
+  .ai-cta--primary {
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-primary);
+  }
+  .ai-cta--primary:hover,
+  .ai-cta--primary:focus-visible {
+    background: var(--ai-accent-hover);
+  }
+  .ai-cta--primary[aria-disabled='true'] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .ai-cta--secondary {
+    background: transparent;
+    color: var(--ai-fg-primary);
+    border: 1px solid var(--ai-border-default);
+  }
+  .ai-cta--secondary:hover,
+  .ai-cta--secondary:focus-visible {
+    background: var(--ai-bg-muted);
+  }
+</style>

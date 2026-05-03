@@ -73,11 +73,18 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
   - Build validé : 13 pages générées (1 root + 4 FR + 4 EN + 4 AR), 0 erreur Astro check sur 33 fichiers.
 
 ### Planned (Phase 4.1+)
-- Phase 4.1 : Page Programme/overview + Module 1 (Introduction à l'IA) comme pattern-setter.
+- ~~Phase 4.1 : Page Programme/overview + Module 1 (Introduction à l'IA) comme pattern-setter.~~ **→ Subdivisé en 4.1a (Programme + index Modules) et 4.1b (Module 1 pattern-setter)**
 - Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).
 - Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).
 - Phase 4.9 : Glossaire (~30 termes).
 - Phase 4.10 : FAQ + Capstone + Resources hub.
+
+- Phase 4.1a — Vue d'ensemble Programme + Index Modules (FR + stubs EN/AR) :
+  - Page Programme FR (`/fr/programme/`) : hero secondaire, bandeau de 4 stats clés (6 modules, 6-8h/sem, 6 sem, trilingue), fiche d'identité du programme MIT en 8 lignes, IndependenceNotice block, tableau des 6 modules avec statut "Bientôt disponible", liste des 7 résultats d'apprentissage transversaux, matrice de Bloom des 6 compétences (compétence × niveau × modules + capstone), 4 piliers d'approche pédagogique (triple lecture, hiérarchie sources, médias multiformat, capstone fil rouge), CapstonePreview en encart sombre avec accent, FAQ excerpt en 5 questions/réponses (`<details>` natif accessible), CTA pair final pointant vers Module 1 (désactivé) et index modules. ~480 lignes.
+  - Page Index Modules FR (`/fr/modules/`) : hero secondaire, grille de 6 ModuleCard (toutes en état `available=false`), encart d'état de publication renvoyant au CHANGELOG.
+  - 6 nouveaux composants : `<StatsBar />` (grille de chiffres clés), `<IdentityTable />` (tableau 2 colonnes label/valeur), `<ModulesTable />` (tableau récapitulatif 4 colonnes avec liens conditionnels), `<OutcomesList />` (liste avec icône check Lucide), `<BloomMatrix />` (tableau compétence × Bloom × modules avec chips), `<CapstonePreview />` (encart sombre avec accent et CTA dominant).
+  - 4 stubs EN/AR (`/en/programme/`, `/en/modules/`, `/ar/programme/`, `/ar/modules/`) utilisant `<TranslationPending />`.
+  - Build validé : 19 pages générées (1 root + 6 FR + 6 EN + 6 AR), 0 erreur Astro check sur 45 fichiers.
 
 ### Deferred (open decisions)
 - Type d'hébergement OVH (mutualisé / VPS / Cloud) — bloque l'activation du workflow `deploy.yml`.

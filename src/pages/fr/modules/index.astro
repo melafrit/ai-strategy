@@ -1,0 +1,116 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import ModuleCard from '@/components/ModuleCard.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+
+const locale = 'fr';
+
+const modules = [
+  { number: 1 as const, titleKey: 'modules.module-1.title', summaryKey: 'modules.module-1.summary', slug: '01-introduction-ia', available: false },
+  { number: 2 as const, titleKey: 'modules.module-2.title', summaryKey: 'modules.module-2.summary', slug: '02-machine-learning', available: false },
+  { number: 3 as const, titleKey: 'modules.module-3.title', summaryKey: 'modules.module-3.summary', slug: '03-ia-generative', available: false },
+  { number: 4 as const, titleKey: 'modules.module-4.title', summaryKey: 'modules.module-4.summary', slug: '04-robotique', available: false },
+  { number: 5 as const, titleKey: 'modules.module-5.title', summaryKey: 'modules.module-5.summary', slug: '05-ia-societe', available: false },
+  { number: 6 as const, titleKey: 'modules.module-6.title', summaryKey: 'modules.module-6.summary', slug: '06-futur-ia', available: false },
+] as const;
+
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+---
+
+<BaseLayout
+  title={t('modules.preview.title', locale)}
+  description="Les six modules du programme : introduction à l'IA, machine learning, IA générative, robotique, IA et société, futur de l'IA. Une page par module, avec synthèse exécutive, cas, quiz, checklist et fiches PDF."
+>
+  <HeroSecondary
+    surtitle="Modules"
+    title={t('modules.preview.title', locale)}
+    lead="Six modules pour décider, déployer et gouverner l'intelligence artificielle dans votre organisation. Chaque module suit la même structure : synthèse exécutive, concepts clés, erreurs fréquentes, cas réel, activité, quiz, checklist."
+  >
+    <span slot="stats">
+      Six modules · 6–8 h par semaine · Triple lecture (exécutive / pédagogique / opérationnelle)
+    </span>
+  </HeroSecondary>
+
+  <section class="ai-container ai-section">
+    <div class="ai-modules-index-grid">
+      {modules.map((m) => (
+        <ModuleCard
+          number={m.number}
+          title={t(m.titleKey, locale)}
+          summary={t(m.summaryKey, locale)}
+          href={getLocalizedUrl(`/modules/${m.slug}/`, locale)}
+          available={m.available}
+        />
+      ))}
+    </div>
+
+    <aside class="ai-modules-index-status">
+      <h2>État de publication</h2>
+      <p>
+        Les six modules sont en cours de rédaction selon un plan séquencé (cf.
+        <a href="https://github.com/melafrit/ai-strategy/blob/main/CHANGELOG.md" rel="noopener noreferrer" target="_blank">CHANGELOG</a>) :
+      </p>
+      <ul>
+        <li><strong>Phase 4.1b</strong> — Module 1 (Introduction à l'IA), pattern-setter pour les autres modules.</li>
+        <li><strong>Phases 4.2 à 4.6</strong> — Modules 2 à 6, à raison d'un module par sous-phase.</li>
+      </ul>
+      <p>
+        En attendant, vous pouvez explorer la <a href={programmeUrl}>vue d'ensemble du programme</a>,
+        qui détaille les sept résultats d'apprentissage transversaux et la matrice de compétences.
+      </p>
+    </aside>
+  </section>
+</BaseLayout>
+
+<style>
+  .ai-section {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-modules-index-grid {
+    display: grid;
+    gap: var(--ai-space-4);
+    grid-template-columns: 1fr;
+    margin-block-end: var(--ai-space-7);
+  }
+  @media (min-width: 40em) {
+    .ai-modules-index-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64em) {
+    .ai-modules-index-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .ai-modules-index-status {
+    background: var(--ai-bg-subtle);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    padding: var(--ai-space-5);
+  }
+  .ai-modules-index-status h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+  }
+  .ai-modules-index-status p {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-modules-index-status p:last-child {
+    margin-block-end: 0;
+  }
+  .ai-modules-index-status ul {
+    margin: 0 0 var(--ai-space-3);
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-modules-index-status li {
+    margin-block: var(--ai-space-1);
+    line-height: var(--ai-leading-relaxed);
+  }
+</style>
