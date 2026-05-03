@@ -1,0 +1,17 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "wait": 1500,
+    "ignore": [],
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+    }
+  },
+  "urls": [
+    "http://localhost:4173/fr/",
+    "http://localhost:4173/en/",
+    "http://localhost:4173/ar/",
+    "http://localhost:4173/404.html"
+  ]
+}
