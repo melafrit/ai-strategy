@@ -1,0 +1,130 @@
+---
+/**
+ * TranslationPending.astro — placeholder shown on EN/AR routes whose
+ * French content is published but whose translation has not yet been
+ * produced.
+ *
+ * Per the planning, Phase 4 produces FR content first; EN/AR translations
+ * land in Phase 7. Until then, EN/AR routes that exist as stubs render
+ * this component so the language switcher works without 404-ing.
+ *
+ * The component:
+ *  - Uses the BaseLayout's body, not its own layout — caller wraps it.
+ *  - Shows a localized "translation pending" message.
+ *  - Offers a primary CTA to read the French version.
+ *  - Offers a secondary CTA back to the localized home.
+ */
+
+import { getLocaleFromPath, getLocalizedUrl } from '@/i18n/helpers';
+import { t } from '@/i18n/translations';
+
+interface Props {
+  /**
+   * Slug of the French page to read instead, e.g. "/methode/".
+   * The component prepends the FR locale prefix.
+   */
+  frenchPagePath: string;
+}
+
+const { frenchPagePath } = Astro.props;
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+
+const frUrl = getLocalizedUrl(frenchPagePath, 'fr');
+const homeUrl = getLocalizedUrl('/', locale);
+---
+
+<section class="ai-container ai-translation-pending">
+  <span class="ai-translation-pending__icon" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="m5 8 6 6" />
+      <path d="m4 14 6-6 2-3" />
+      <path d="M2 5h12" />
+      <path d="M7 2h1" />
+      <path d="m22 22-5-10-5 10" />
+      <path d="M14 18h6" />
+    </svg>
+  </span>
+  <h1 class="ai-translation-pending__title">{t('translation-pending.title', locale)}</h1>
+  <p class="ai-translation-pending__lead">{t('translation-pending.lead', locale)}</p>
+  <div class="ai-translation-pending__actions">
+    <a class="ai-cta ai-cta--primary" href={frUrl} hreflang="fr" lang="fr">
+      {t('translation-pending.cta-fr', locale)} →
+    </a>
+    <a class="ai-cta ai-cta--secondary" href={homeUrl}>
+      {t('translation-pending.cta-home', locale)}
+    </a>
+  </div>
+</section>
+
+<style>
+  .ai-translation-pending {
+    text-align: center;
+    padding-block: var(--ai-space-9);
+    max-width: var(--ai-container-md);
+  }
+
+  .ai-translation-pending__icon {
+    display: inline-flex;
+    color: var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-4);
+  }
+
+  .ai-translation-pending__title {
+    font-size: var(--ai-text-3xl);
+    margin: 0 0 var(--ai-space-3);
+  }
+
+  .ai-translation-pending__lead {
+    color: var(--ai-fg-secondary);
+    margin: 0 auto var(--ai-space-5);
+    max-width: 50ch;
+    font-size: var(--ai-text-lg);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-translation-pending__actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    justify-content: center;
+  }
+
+  .ai-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-3) var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+  }
+  .ai-cta--primary {
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-primary);
+  }
+  .ai-cta--primary:hover,
+  .ai-cta--primary:focus-visible {
+    background: var(--ai-accent-hover);
+    color: var(--ai-bg-primary);
+  }
+  .ai-cta--secondary {
+    background: transparent;
+    color: var(--ai-fg-primary);
+    border: 1px solid var(--ai-border-default);
+  }
+  .ai-cta--secondary:hover,
+  .ai-cta--secondary:focus-visible {
+    background: var(--ai-bg-muted);
+  }
+</style>

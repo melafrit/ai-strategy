@@ -1,0 +1,150 @@
+---
+/**
+ * AudienceCard.astro — one of the 3 audience-targeting cards on the home.
+ *
+ * Each card represents one of the 3 main audiences (cf. ADR-004):
+ *   - Executives ("dirigeants")
+ *   - Consultants ("consultants")
+ *   - Educators / students ("enseignants & étudiants")
+ *
+ * Props decouple the card from the audience strings, letting the home
+ * page assemble its 3 instances with the right translations.
+ */
+
+interface Props {
+  /** Lucide icon key — limited to the 3 audiences for now. */
+  icon: 'briefcase' | 'wrench' | 'graduation-cap';
+  /** Audience label (translated). */
+  label: string;
+  /** Short description (translated). */
+  description: string;
+  /** CTA label (translated). */
+  ctaLabel: string;
+  /** CTA destination. */
+  ctaHref: string;
+}
+
+const { icon, label, description, ctaLabel, ctaHref } = Astro.props;
+---
+
+<article class="ai-audience-card">
+  <span class="ai-audience-card__icon" aria-hidden="true">
+    {icon === 'briefcase' && (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+      </svg>
+    )}
+    {icon === 'wrench' && (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z" />
+      </svg>
+    )}
+    {icon === 'graduation-cap' && (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    )}
+  </span>
+  <h3 class="ai-audience-card__title">{label}</h3>
+  <p class="ai-audience-card__description">{description}</p>
+  <p class="ai-audience-card__cta">
+    <a href={ctaHref}>{ctaLabel} →</a>
+  </p>
+</article>
+
+<style>
+  .ai-audience-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    box-shadow: var(--ai-shadow-sm);
+    transition:
+      box-shadow var(--ai-duration-fast) var(--ai-easing-default),
+      border-color var(--ai-duration-fast) var(--ai-easing-default),
+      transform var(--ai-duration-fast) var(--ai-easing-default);
+  }
+
+  .ai-audience-card:hover,
+  .ai-audience-card:focus-within {
+    box-shadow: var(--ai-shadow-md);
+    border-color: var(--ai-accent-primary);
+    transform: translateY(-2px);
+  }
+
+  .ai-audience-card__icon {
+    color: var(--ai-accent-primary);
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ai-accent-subtle);
+    border-radius: var(--ai-radius-md);
+    flex-shrink: 0;
+  }
+
+  .ai-audience-card__title {
+    margin: 0;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+  }
+
+  .ai-audience-card__description {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    line-height: var(--ai-leading-relaxed);
+    flex: 1;
+  }
+
+  .ai-audience-card__cta {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-audience-card__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+  }
+  .ai-audience-card__cta a:hover,
+  .ai-audience-card__cta a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

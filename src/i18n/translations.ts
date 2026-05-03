@@ -86,6 +86,56 @@ export const translations = {
     '404.title': 'Page introuvable',
     '404.lead': "La page que vous cherchez n'existe pas ou a été déplacée.",
     '404.cta-home': "Revenir à l'accueil",
+
+    /* === Translation pending (for EN/AR stubs while content is FR-only) === */
+    'translation-pending.title': 'Traduction en cours',
+    'translation-pending.lead':
+      "Cette page est disponible en français pour l'instant. La traduction est planifiée pour la Phase 7.",
+    'translation-pending.cta-fr': 'Lire en français',
+    'translation-pending.cta-home': "Revenir à l'accueil",
+
+    /* === Audiences (home page) === */
+    'audiences.title': "À qui s'adresse ce site",
+    'audiences.executive.label': 'Dirigeants et top management',
+    'audiences.executive.description':
+      'Synthèses exécutives, board memos, gouvernance, capstone — pour cadrer une stratégie IA en COMEX.',
+    'audiences.executive.cta': 'Voir le capstone',
+    'audiences.consultant.label': 'Consultants et transformation',
+    'audiences.consultant.description':
+      'Templates, matrices, études de cas sectorielles, fiches PDF — pour préparer une mission client.',
+    'audiences.consultant.cta': 'Voir les ressources',
+    'audiences.educator.label': 'Enseignants et étudiants',
+    'audiences.educator.description':
+      'Quiz, glossaire, rubrics, références sourcées — pour bâtir un cours ou un mémoire.',
+    'audiences.educator.cta': 'Voir les modules',
+
+    /* === Module preview cards (home page) === */
+    'modules.preview.title': 'Aperçu des six modules',
+    'modules.preview.lead': 'Six modules pour décider, déployer et gouverner l\'IA.',
+    'modules.module-1.title': 'Introduction à l\'IA',
+    'modules.module-1.summary': 'Définir l\'IA, retracer son histoire, comprendre l\'intelligence collective.',
+    'modules.module-2.title': 'Machine Learning en entreprise',
+    'modules.module-2.summary': 'Décider quand le ML soutient une stratégie de coût, différenciation ou focalisation.',
+    'modules.module-3.title': 'IA Générative en entreprise',
+    'modules.module-3.summary': 'Identifier les cas d\'usage, décomposer les workflows, lancer des pilotes.',
+    'modules.module-4.title': 'Robotique en entreprise',
+    'modules.module-4.summary': 'Évaluer la pertinence stratégique de l\'automatisation physique.',
+    'modules.module-5.title': 'IA dans l\'entreprise et la société',
+    'modules.module-5.summary': 'Gouvernance, éthique, conformité, impact sur le travail et les compétences.',
+    'modules.module-6.title': 'Futur de l\'IA',
+    'modules.module-6.summary': 'Construire une roadmap IA crédible et anticiper les évolutions.',
+
+    /* === Trust bar (home page) === */
+    'trust.independence': 'Indépendance MIT',
+    'trust.sources': 'Sources hiérarchisées',
+    'trust.trilingual': 'Trilingue FR · EN · AR',
+    'trust.licence': 'Licence ouverte CC BY-NC-SA',
+
+    /* === Generic CTAs === */
+    'cta.discover-program': 'Découvrir le programme',
+    'cta.see-modules': 'Voir tous les modules',
+    'cta.read-method': 'Lire la méthode',
+    'cta.about-us': 'À propos',
   },
 
   en: {
@@ -148,6 +198,51 @@ export const translations = {
     '404.title': 'Page not found',
     '404.lead': 'The page you are looking for does not exist or has been moved.',
     '404.cta-home': 'Back to home',
+
+    'translation-pending.title': 'Translation pending',
+    'translation-pending.lead':
+      'This page is available in French at this stage. The English translation is scheduled for Phase 7 of the project.',
+    'translation-pending.cta-fr': 'Read in French',
+    'translation-pending.cta-home': 'Back to home',
+
+    'audiences.title': 'Who this site is for',
+    'audiences.executive.label': 'Executives and top management',
+    'audiences.executive.description':
+      'Executive summaries, board memos, governance, capstone — to frame an AI strategy at C-suite.',
+    'audiences.executive.cta': 'See the capstone',
+    'audiences.consultant.label': 'Consultants and transformation leaders',
+    'audiences.consultant.description':
+      'Templates, matrices, sectoral case studies, PDF handouts — to prepare a client engagement.',
+    'audiences.consultant.cta': 'See resources',
+    'audiences.educator.label': 'Educators and students',
+    'audiences.educator.description':
+      'Quizzes, glossary, rubrics, sourced references — to build a course or a thesis.',
+    'audiences.educator.cta': 'See modules',
+
+    'modules.preview.title': 'The six modules at a glance',
+    'modules.preview.lead': 'Six modules to decide, deploy and govern AI.',
+    'modules.module-1.title': 'Introduction to AI',
+    'modules.module-1.summary': 'Define AI, trace its history, understand collective intelligence.',
+    'modules.module-2.title': 'Machine Learning in Business',
+    'modules.module-2.summary': 'Decide when ML supports cost, differentiation or focus strategies.',
+    'modules.module-3.title': 'Generative AI in Business',
+    'modules.module-3.summary': 'Identify use cases, decompose workflows, launch pilots.',
+    'modules.module-4.title': 'Robotics in Business',
+    'modules.module-4.summary': 'Evaluate the strategic relevance of physical automation.',
+    'modules.module-5.title': 'AI in Business and Society',
+    'modules.module-5.summary': 'Governance, ethics, compliance, impact on work and skills.',
+    'modules.module-6.title': 'The Future of AI',
+    'modules.module-6.summary': 'Build a credible AI roadmap and anticipate developments.',
+
+    'trust.independence': 'MIT independence',
+    'trust.sources': 'Hierarchical sources',
+    'trust.trilingual': 'Trilingual FR · EN · AR',
+    'trust.licence': 'Open license CC BY-NC-SA',
+
+    'cta.discover-program': 'Discover the program',
+    'cta.see-modules': 'See all modules',
+    'cta.read-method': 'Read the method',
+    'cta.about-us': 'About',
   },
 
   ar: {
@@ -210,6 +305,51 @@ export const translations = {
     '404.title': 'الصفحة غير موجودة',
     '404.lead': 'الصفحة التي تبحث عنها غير موجودة أو تم نقلها.',
     '404.cta-home': 'العودة إلى الرئيسية',
+
+    'translation-pending.title': 'الترجمة قيد الإعداد',
+    'translation-pending.lead':
+      'هذه الصفحة متاحة بالفرنسية في هذه المرحلة. الترجمة العربية مخططة للمرحلة 7 من المشروع.',
+    'translation-pending.cta-fr': 'القراءة بالفرنسية',
+    'translation-pending.cta-home': 'العودة إلى الرئيسية',
+
+    'audiences.title': 'لمن هذا الموقع',
+    'audiences.executive.label': 'القيادات والإدارة العليا',
+    'audiences.executive.description':
+      'ملخصات تنفيذية، مذكرات مجلس الإدارة، حوكمة، مشروع ختامي — لتأطير استراتيجية ذكاء اصطناعي على مستوى تنفيذي.',
+    'audiences.executive.cta': 'مشاهدة المشروع الختامي',
+    'audiences.consultant.label': 'المستشارون وقادة التحوّل',
+    'audiences.consultant.description':
+      'قوالب، مصفوفات، دراسات حالة قطاعية، ملفات PDF — لإعداد مهمة استشارية.',
+    'audiences.consultant.cta': 'مشاهدة الموارد',
+    'audiences.educator.label': 'المعلّمون والطلاب',
+    'audiences.educator.description':
+      'اختبارات، قاموس، شبكات تقييم، مراجع موثّقة — لبناء مقرّر أو أطروحة.',
+    'audiences.educator.cta': 'مشاهدة الوحدات',
+
+    'modules.preview.title': 'نظرة على الوحدات الست',
+    'modules.preview.lead': 'ست وحدات لاتخاذ القرار، النشر، والحوكمة في الذكاء الاصطناعي.',
+    'modules.module-1.title': 'مقدمة في الذكاء الاصطناعي',
+    'modules.module-1.summary': 'تعريف الذكاء الاصطناعي، تتبّع تاريخه، فهم الذكاء الجماعي.',
+    'modules.module-2.title': 'تعلّم الآلة في الأعمال',
+    'modules.module-2.summary': 'تحديد متى يدعم تعلّم الآلة استراتيجيات التكلفة أو التمييز أو التركيز.',
+    'modules.module-3.title': 'الذكاء التوليدي في الأعمال',
+    'modules.module-3.summary': 'تحديد حالات الاستخدام، تفكيك سير العمل، إطلاق التجارب.',
+    'modules.module-4.title': 'الروبوتيات في الأعمال',
+    'modules.module-4.summary': 'تقييم الأهمية الاستراتيجية للأتمتة الفيزيائية.',
+    'modules.module-5.title': 'الذكاء الاصطناعي في الأعمال والمجتمع',
+    'modules.module-5.summary': 'الحوكمة، الأخلاقيات، الامتثال، التأثير على العمل والمهارات.',
+    'modules.module-6.title': 'مستقبل الذكاء الاصطناعي',
+    'modules.module-6.summary': 'بناء خارطة طريق ذكاء اصطناعي موثوقة وتوقّع التطوّرات.',
+
+    'trust.independence': 'استقلالية عن MIT',
+    'trust.sources': 'مصادر متدرّجة',
+    'trust.trilingual': 'ثلاثي اللغات FR · EN · AR',
+    'trust.licence': 'رخصة مفتوحة CC BY-NC-SA',
+
+    'cta.discover-program': 'اكتشف البرنامج',
+    'cta.see-modules': 'مشاهدة كل الوحدات',
+    'cta.read-method': 'اقرأ المنهجية',
+    'cta.about-us': 'حول',
   },
 } as const;
 

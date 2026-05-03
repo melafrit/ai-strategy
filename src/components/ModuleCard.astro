@@ -1,0 +1,223 @@
+---
+/**
+ * ModuleCard.astro — preview card for one module on the home page.
+ *
+ * Used in a 6-card grid to give a quick overview of the program. Phase 4
+ * shows the cards with summary text and links to the (yet-to-be-built)
+ * module pages — clicks land on placeholder pages until M1-M6 are
+ * authored in subsequent sub-phases.
+ */
+
+interface Props {
+  number: 1 | 2 | 3 | 4 | 5 | 6;
+  title: string;
+  summary: string;
+  href: string;
+  /** Whether the module page is published yet. Affects styling and aria. */
+  available?: boolean;
+}
+
+const { number, title, summary, href, available = false } = Astro.props;
+
+// Lucide icon keys per module — see docs/design-system/iconography.md §4.3
+const iconByModule = {
+  1: 'sparkles',
+  2: 'bar-chart-3',
+  3: 'wand-2',
+  4: 'bot',
+  5: 'scale',
+  6: 'compass',
+} as const;
+
+const icon = iconByModule[number];
+---
+
+<article class="ai-module-card" aria-disabled={!available}>
+  <div class="ai-module-card__head">
+    <span class="ai-module-card__number" aria-hidden="true">M{number}</span>
+    <span class="ai-module-card__icon" aria-hidden="true">
+      {icon === 'sparkles' && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
+          <path d="M5 3v4M3 5h4M19 17v4M17 19h4" />
+        </svg>
+      )}
+      {icon === 'bar-chart-3' && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 3v18h18" />
+          <path d="M7 16v-3M12 16V8M17 16v-5" />
+        </svg>
+      )}
+      {icon === 'wand-2' && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m21.6 5.6-3.5 3.5-3.4-3.4 3.5-3.5L21.6 5.6Z" />
+          <path d="m3 21 11-11M9 6l1 1M14 11l1 1" />
+        </svg>
+      )}
+      {icon === 'bot' && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 8V4M8 8h8a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4Z" />
+          <path d="M2 14h2M20 14h2M9 13v2M15 13v2" />
+        </svg>
+      )}
+      {icon === 'scale' && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m16 16 3-8 3 8c-2 1-4 1-6 0Z" />
+          <path d="m2 16 3-8 3 8c-2 1-4 1-6 0Z" />
+          <path d="M7 21h10M12 3v18M3 7h18" />
+        </svg>
+      )}
+      {icon === 'compass' && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+        </svg>
+      )}
+    </span>
+  </div>
+  <h3 class="ai-module-card__title">
+    {available ? <a href={href}>{title}</a> : <span>{title}</span>}
+  </h3>
+  <p class="ai-module-card__summary">{summary}</p>
+  {!available && (
+    <p class="ai-module-card__status" aria-live="polite">
+      <span aria-hidden="true">●</span> Bientôt disponible
+    </p>
+  )}
+</article>
+
+<style>
+  .ai-module-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    box-shadow: var(--ai-shadow-sm);
+    transition:
+      box-shadow var(--ai-duration-fast) var(--ai-easing-default),
+      border-color var(--ai-duration-fast) var(--ai-easing-default);
+  }
+  .ai-module-card[aria-disabled='true'] {
+    opacity: 0.7;
+  }
+  .ai-module-card:hover {
+    box-shadow: var(--ai-shadow-md);
+    border-color: var(--ai-accent-primary);
+  }
+
+  .ai-module-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-1);
+  }
+
+  .ai-module-card__number {
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-bold);
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-muted);
+    background: var(--ai-bg-muted);
+    padding: 0.15em 0.5em;
+    border-radius: var(--ai-radius-sm);
+  }
+
+  .ai-module-card__icon {
+    color: var(--ai-accent-primary);
+    margin-inline-start: auto;
+  }
+
+  .ai-module-card__title {
+    margin: 0;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    line-height: var(--ai-leading-snug);
+  }
+  .ai-module-card__title a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+  }
+  .ai-module-card__title a:hover,
+  .ai-module-card__title a:focus-visible {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .ai-module-card__summary {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-module-card__status {
+    margin: var(--ai-space-2) 0 0;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-medium);
+  }
+</style>

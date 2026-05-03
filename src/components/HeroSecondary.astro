@@ -1,0 +1,91 @@
+---
+/**
+ * HeroSecondary.astro — compact hero for internal pages.
+ *
+ * Used by Programme, Méthode, À propos, Mentions légales, Glossaire, FAQ,
+ * Ressources and Quiz pages. Less assertive than HeroPrimary (home), with
+ * fewer CTAs and no illustration.
+ *
+ * Usage:
+ *   <HeroSecondary
+ *     surtitle="Méthode"
+ *     title="Comment ce site est conçu"
+ *     lead="..."
+ *   />
+ *
+ * Or with metadata stats:
+ *   <HeroSecondary title="..." lead="...">
+ *     <span slot="stats">12 sections · ~25 min de lecture</span>
+ *   </HeroSecondary>
+ */
+
+interface Props {
+  /** Optional small uppercase line above the title (page category). */
+  surtitle?: string;
+  /** Page H1. */
+  title: string;
+  /** Single short paragraph under the title. */
+  lead?: string;
+  className?: string;
+}
+
+const { surtitle, title, lead, className } = Astro.props;
+---
+
+<header class:list={['ai-hero-secondary', className]}>
+  <div class="ai-container ai-hero-secondary__inner">
+    {surtitle && <p class="ai-hero-secondary__surtitle">{surtitle}</p>}
+    <h1 class="ai-hero-secondary__title">{title}</h1>
+    {lead && <p class="ai-hero-secondary__lead">{lead}</p>}
+    <div class="ai-hero-secondary__stats">
+      <slot name="stats" />
+    </div>
+  </div>
+</header>
+
+<style>
+  .ai-hero-secondary {
+    background: var(--ai-bg-subtle);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+
+  .ai-hero-secondary__inner {
+    padding-block: var(--ai-space-7);
+  }
+
+  .ai-hero-secondary__surtitle {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    margin: 0 0 var(--ai-space-3);
+  }
+  :global([dir='rtl']) .ai-hero-secondary__surtitle {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-hero-secondary__title {
+    margin: 0 0 var(--ai-space-3);
+    max-width: 30ch;
+    line-height: var(--ai-leading-tight);
+  }
+
+  .ai-hero-secondary__lead {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-lg);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-hero-secondary__stats {
+    margin-block-start: var(--ai-space-4);
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-hero-secondary__stats:empty {
+    display: none;
+  }
+</style>
