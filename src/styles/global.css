@@ -571,3 +571,224 @@
     outline: none;
   }
 }
+
+/* ============================================================================
+ * Print stylesheet — Phase 5 sub-3
+ *
+ * Règles déclenchées uniquement par window.print() (ou Ctrl/Cmd+P).
+ * Optimisations :
+ *   - chrome enlevé (header, footer, TOC sticky, quiz, boutons, etc.)
+ *   - typo en noir sur fond blanc pour économie d'encre
+ *   - tous les <details> ouverts pour ne rien cacher
+ *   - URLs des liens externes affichées entre parenthèses
+ *   - sauts de page maîtrisés sur les sections principales
+ *   - footer print avec mention site + licence
+ * ========================================================================== */
+@media print {
+  /* === Reset typographique === */
+  :root {
+    /* Forcer encre noire et fond blanc — économie d'encre */
+    --ai-fg-primary: #000;
+    --ai-fg-secondary: #1a1a1a;
+    --ai-fg-muted: #555;
+    --ai-bg-base: #fff;
+    --ai-bg-subtle: #fff;
+    --ai-accent-primary: #000;
+    --ai-accent-subtle: #f5f5f5;
+    --ai-border-subtle: #ccc;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* === Marges page === */
+  @page {
+    size: A4;
+    margin: 1.6cm 1.4cm 1.8cm;
+  }
+
+  /* === Éléments à masquer === */
+  .skip-link,
+  .ai-header,
+  .ai-footer,
+  .ai-print-action,             /* le bouton d'impression lui-même */
+  .ai-quiz,                     /* le quiz interactif n'est pas imprimable */
+  .ai-table-of-contents,        /* TOC sticky inutile à l'impression */
+  .ai-capstone-page__toc,
+  .ai-faq-page__toc,
+  .ai-resources-page__toc,
+  .ai-resources-types-grid,     /* cartes navigation décoratives */
+  .ai-faq-themes-grid,
+  .ai-resources-types-overview,
+  .ai-faq-themes-overview,
+  .ai-faq-toc,
+  .ai-glossary-categories,      /* index catégories du glossaire */
+  .independence-notice,
+  .ai-prev-next-nav,            /* navigation modules */
+  .ai-capstone-download,        /* boutons download remplacés par URL imprimée */
+  details > summary {
+    display: none !important;
+  }
+
+  /* === Garde le contenu des <details> visible (sans le chevron) === */
+  details {
+    display: block !important;
+  }
+  details > *:not(summary) {
+    display: block !important;
+  }
+
+  /* === Layout — supprimer le grid sticky TOC === */
+  .ai-capstone-page__layout,
+  .ai-faq-page__layout,
+  [class*="__layout"] {
+    display: block !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* === URLs des liens externes affichées en clair === */
+  a[href^="http://"]::after,
+  a[href^="https://"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #444;
+    word-break: break-all;
+  }
+  /* Mais pas pour les liens internes ou les ancres */
+  a[href^="#"]::after,
+  a[href^="/"]::after,
+  a[href^="mailto:"]::after,
+  a[href^="tel:"]::after {
+    content: "";
+  }
+
+  /* === Sauts de page maîtrisés === */
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  h2 {
+    page-break-before: auto;
+    margin-block: 1.5em 0.6em;
+  }
+  p, li, blockquote {
+    orphans: 3;
+    widows: 3;
+  }
+  table, figure, pre, blockquote, .ai-card,
+  .ai-concept-card, .ai-pitfall, .ai-activity,
+  .ai-key-takeaways, .ai-checklist, .ai-resource-list,
+  .ai-case-card, .ai-capstone-step, .ai-capstone-rubric,
+  .ai-capstone-example, .ai-faq-item, .ai-resources-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* === Couleurs des composants — version monochrome === */
+  /* Hero secondary — réduit à un titre simple */
+  .ai-hero-secondary {
+    background: none !important;
+    color: #000 !important;
+    padding: 0 !important;
+    margin-block-end: 1cm !important;
+  }
+  .ai-hero-secondary__surtitle {
+    color: #555 !important;
+  }
+  .ai-hero-secondary__lead {
+    color: #1a1a1a !important;
+  }
+
+  /* Composants pédagogiques — bordures noires fines au lieu de fonds colorés */
+  .ai-executive-summary,
+  .ai-concept-card,
+  .ai-pitfall,
+  .ai-activity,
+  .ai-key-takeaways,
+  .ai-checklist,
+  .ai-checklist__group,
+  .ai-resource-list,
+  .ai-prev-next-nav,
+  .ai-faq-item,
+  .ai-resources-item__inner,
+  .ai-capstone-step,
+  .ai-capstone-rubric,
+  .ai-capstone-example,
+  .ai-resources-section,
+  .ai-faq-section {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    border-inline-start: 3px solid #000 !important;
+    box-shadow: none !important;
+  }
+
+  /* Source tags affichés en clair */
+  .source-tag {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #999 !important;
+    padding: 0 0.3em !important;
+  }
+
+  /* Tableaux lisibles N&B */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+  th, td {
+    border: 1px solid #999 !important;
+    padding: 0.4em 0.6em !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  thead th {
+    background: #eee !important;
+    font-weight: 700 !important;
+  }
+
+  /* Code inline — fond gris très clair */
+  code {
+    background: #f5f5f5 !important;
+    color: #000 !important;
+    padding: 0 0.3em !important;
+    border: 1px solid #ddd !important;
+    border-radius: 2px !important;
+    font-size: 0.92em !important;
+  }
+
+  /* Images : éviter les gros blocs qui débordent */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* === Footer print — mention site + licence === */
+  /* Injecté via une règle ::after sur le main, pour signer la sortie PDF */
+  main::after {
+    content: "AI Strategy — ressource pédagogique indépendante · Licence CC BY-NC-SA 4.0 · https://github.com/melafrit/ai-strategy";
+    display: block;
+    margin-block-start: 1.5cm;
+    padding-block-start: 0.5cm;
+    border-block-start: 1px solid #999;
+    font-size: 0.75rem;
+    color: #555;
+    text-align: center;
+    page-break-before: avoid;
+  }
+
+  /* === Liens internes simplifiés (couleur noire) === */
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Quiz placeholder : si quiz statique encore présent (modules anciens), masquer aussi */
+  .ai-quiz-placeholder {
+    display: none !important;
+  }
+}

@@ -7,6 +7,7 @@ import KeyTakeaways from '@/components/KeyTakeaways.astro';
 import Checklist from '@/components/Checklist.astro';
 import ResourceList from '@/components/ResourceList.astro';
 import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
 import IndependenceNotice from '@/components/IndependenceNotice.astro';
 import { getLocalizedUrl } from '@/i18n/helpers';
 
@@ -772,6 +773,7 @@ const canvasDownload = '/downloads/canvas-roadmap-ia-module-6.md';
         </section>
 
         <div class="ai-capstone-independence">
+          <PrintButton />
           <IndependenceNotice variant="block" />
         </div>
       </article>

@@ -1,0 +1,117 @@
+---
+/**
+ * PrintButton.astro — bouton d'impression pour exporter une page en PDF.
+ *
+ * Le bouton déclenche `window.print()`. Couplé au print stylesheet
+ * (@media print dans global.css), il transforme la page en document
+ * imprimable / sauvegardable en PDF par le navigateur :
+ *  - chrome supprimé (Header, Footer, sticky TOC, QuizInteractive,
+ *    boutons interactifs, IndependenceNotice)
+ *  - typographie optimisée pour l'encre noire sur fond blanc
+ *  - tous les <details> ouverts pour révéler le contenu
+ *  - URLs des liens externes affichées en clair
+ *  - footer print avec mention site + licence CC BY-NC-SA 4.0
+ *
+ * Usage :
+ *   <PrintButton label="Imprimer ce module" />
+ *
+ * Le composant est purement présentationnel. Il n'a pas de dépendance
+ * React et ne ralentit pas l'hydratation.
+ */
+
+interface Props {
+  /** Libellé du bouton. Par défaut : "Imprimer ou enregistrer en PDF". */
+  label?: string;
+  /** Description courte au-dessus du bouton (optionnelle). */
+  hint?: string;
+  /** Variante visuelle. */
+  variant?: 'default' | 'compact';
+  /** Classe additionnelle. */
+  className?: string;
+}
+
+const {
+  label = 'Imprimer ou enregistrer en PDF',
+  hint = 'Génère une version épurée de cette page, sans les éléments interactifs ni le menu, prête à être imprimée ou sauvegardée en PDF par votre navigateur.',
+  variant = 'default',
+  className,
+} = Astro.props;
+---
+
+<aside
+  class:list={['ai-print-action', `ai-print-action--${variant}`, className]}
+  aria-label="Action d'impression"
+>
+  {hint && variant === 'default' && (
+    <p class="ai-print-action__hint">{hint}</p>
+  )}
+  <button
+    type="button"
+    class="ai-print-action__button"
+    onclick="window.print()"
+  >
+    <svg
+      class="ai-print-action__icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="6 9 6 2 18 2 18 9" />
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+      <rect x="6" y="14" width="12" height="8" />
+    </svg>
+    <span class="ai-print-action__label">{label}</span>
+  </button>
+</aside>
+
+<style>
+  .ai-print-action {
+    margin-block: var(--ai-space-6);
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-print-action--compact {
+    padding: var(--ai-space-2) var(--ai-space-3);
+    margin-block: var(--ai-space-3);
+    border-inline-start-width: 3px;
+  }
+  .ai-print-action__hint {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-print-action__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-2) var(--ai-space-4);
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border: 0;
+    border-radius: var(--ai-radius-sm);
+    cursor: pointer;
+    font-weight: var(--ai-weight-semibold);
+    font-size: var(--ai-text-sm);
+    text-decoration: none;
+    transition: transform 120ms ease;
+  }
+  .ai-print-action__button:hover {
+    transform: translateY(-1px);
+  }
+  .ai-print-action__icon {
+    flex-shrink: 0;
+  }
+  .ai-print-action__label {
+    line-height: 1;
+  }
+</style>

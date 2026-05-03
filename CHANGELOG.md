@@ -77,7 +77,38 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 5 — Composants interactifs et fiches PDF~~ **→ EN COURS : sub-1 (QuizInteractive Module 1) et sub-2 (Modules 2-6 + UX polish) publiés**, sub-3 (PDFs stylisés) restant.
+- ~~Phase 5 — Composants interactifs et fiches PDF~~ **→ ✅ COMPLÈTE : sub-1 (QuizInteractive Module 1) + sub-2 (Modules 2-6 + UX polish) + sub-3 (PDFs stylisés via print stylesheet) publiés**
+
+## 🎯 PHASE 5 COMPLÈTE — Tout l'interactif et l'export PDF en place
+
+Phase 5 est désormais terminée dans son intégralité. Récapitulatif :
+- **6 modules** équipés du quiz interactif React (sélection radio, validation, feedback immédiat, scoring, persistance localStorage)
+- **UX polish** : raccourcis clavier 1-4 + Entrée, focus + scroll automatique au feedback, auto-ouverture du scoring à la complétion
+- **17 pages** équipées du bouton « Imprimer ou enregistrer en PDF » (6 modules + 10 cas + capstone)
+- **Print stylesheet `@media print`** complet dans `global.css` : chrome supprimé, typographie noir/blanc optimisée encre, sauts de page maîtrisés, URLs externes affichées en clair, footer print signé, tous les `<details>` ouverts
+- 1 bundle React `QuizInteractive.{hash}.js` = ~7.4 kB code-split
+- 0 erreur / 0 warning / 0 hint Astro check sur 131 fichiers
+- 27 composants Astro stables (26 → 27 avec PrintButton) + 1 composant React
+
+- Phase 5 sub-3 — PDFs stylisés via print stylesheet :
+  - **NEW COMPONENT — `src/components/PrintButton.astro`** (~115 lignes) — bouton d'impression accent avec icône SVG d'imprimante, hint pédagogique optionnel, deux variantes (`default` avec hint, `compact` sans). Déclenche `window.print()` via attribut `onclick` natif (zéro dépendance React, zéro JS séparé). Le bouton lui-même est masqué à l'impression via la règle `.ai-print-action { display: none }` du print stylesheet.
+  - **NEW PRINT STYLESHEET** dans `src/styles/global.css` (~140 lignes ajoutées sous `@media print`) :
+    - **Reset des design tokens** : `--ai-fg-primary` forcé à `#000`, `--ai-bg-base` à `#fff`, accents en noir, économie d'encre maximale
+    - **`@page`** : format A4 avec marges 1.6cm × 1.4cm × 1.8cm
+    - **Éléments masqués** : `.ai-header`, `.ai-footer`, `.skip-link`, `.ai-print-action`, `.ai-quiz` (interactif non imprimable), `.ai-table-of-contents` et autres TOC sticky, `.ai-prev-next-nav`, `.ai-capstone-download`, et toutes les grilles de navigation décorative (themes overview, types overview, glossary categories)
+    - **`<details>` forcés ouverts** : `details > *:not(summary) { display: block !important }` + masquage des chevrons. Tout le contenu masqué par défaut devient visible à l'impression
+    - **Layouts grid démontés** : `.ai-capstone-page__layout` et autres `[class*="__layout"]` passent en `display: block` pour éviter les colonnes vides
+    - **URLs externes affichées** : `a[href^="http"]::after { content: " (" attr(href) ")" }` — les liens externes deviennent autodocumentés, sans le faire pour les ancres internes
+    - **Sauts de page maîtrisés** : `page-break-after: avoid` sur les H1-H4, `orphans: 3 / widows: 3` sur les paragraphes, `page-break-inside: avoid` sur les blocs pédagogiques (cards, encadrés, tableaux)
+    - **Composants pédagogiques en monochrome** : fonds colorés remplacés par bordures noires fines (`border-inline-start: 3px solid #000`), source-tags en noir/blanc
+    - **Tableaux N&B lisibles** : `border-collapse: collapse`, en-têtes gris clair, bordures grises
+    - **Footer print signé** : injection via `main::after` avec mention du site, licence CC BY-NC-SA 4.0 et URL GitHub — apparaît en bas de la dernière page de chaque export PDF
+  - **17 PAGES ÉQUIPÉES** : `<PrintButton />` inséré juste avant `<IndependenceNotice />` dans :
+    - 6 pages modules (M1 à M6)
+    - 10 pages études de cas (Takeda CCI, Morgan Stanley, Stripe Radar, MIT Barzilay, GitHub × Accenture, Amazon Robotics, Universal Robots, NIST AI RMF, AI Act EU haut risque, MIT IDE)
+    - 1 page capstone
+    - Index `cas/` exclu (page de navigation, non destinée à l'impression individuelle)
+  - Build validé : 82 pages, 0 erreur / 0 warning / 0 hint Astro check sur 131 fichiers. Print stylesheet présent dans le bundle CSS final, attribut `onclick="window.print()"` préservé dans le HTML SSR'd.
 
 - Phase 5 sub-2 — Déploiement aux Modules 2-6 + UX polish :
   - **DÉPLOIEMENT MASSE** : remplacement de `<QuizPlaceholder>` par `<QuizInteractive client:visible>` dans les pages des Modules 2 (Machine Learning), 3 (IA générative), 4 (Robotique), 5 (IA et société), 6 (Futur de l'IA). Pattern uniforme — 5 imports + 5 invocations changés en une seule passe sed. Module 1 conservait déjà QuizInteractive depuis sub-1.

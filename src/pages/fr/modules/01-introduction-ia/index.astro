@@ -14,6 +14,7 @@ import Checklist from '@/components/Checklist.astro';
 import KeyTakeaways from '@/components/KeyTakeaways.astro';
 import ResourceList from '@/components/ResourceList.astro';
 import PrevNextNav from '@/components/PrevNextNav.astro';
+import PrintButton from '@/components/PrintButton.astro';
 import IndependenceNotice from '@/components/IndependenceNotice.astro';
 import { getLocalizedUrl } from '@/i18n/helpers';
 import quizModule1 from '@/content/quizzes/module-1';
@@ -651,6 +652,7 @@ const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
 
         {/* === INDEPENDENCE === */}
         <div class="ai-module-independence">
+          <PrintButton />
           <IndependenceNotice variant="block" />
         </div>
 

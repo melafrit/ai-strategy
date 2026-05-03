@@ -6,6 +6,7 @@ import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
 import KeyTakeaways from '@/components/KeyTakeaways.astro';
 import ResourceList from '@/components/ResourceList.astro';
 import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
 import IndependenceNotice from '@/components/IndependenceNotice.astro';
 import PrevNextNav from '@/components/PrevNextNav.astro';
 import { getLocalizedUrl } from '@/i18n/helpers';
@@ -460,6 +461,7 @@ const methodeUrl = getLocalizedUrl('/methode/', locale);
         </section>
 
         <div class="ai-case-independence">
+          <PrintButton />
           <IndependenceNotice variant="block" />
         </div>
 
