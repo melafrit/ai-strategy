@@ -1,0 +1,819 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule3 from '@/content/quizzes/module-3';
+
+const locale = 'fr';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Synthèse exécutive' },
+  { id: 'objectifs', label: "Objectifs d'apprentissage" },
+  { id: 'concepts', label: 'Concepts clés' },
+  { id: 'erreurs-frequentes', label: 'Erreurs fréquentes' },
+  { id: 'cas-reel', label: 'Cas réel' },
+  { id: 'activite', label: 'Activité pratique' },
+  { id: 'quiz', label: 'Quiz formatif' },
+  { id: 'checklist', label: 'Checklist manager' },
+  { id: 'application', label: 'Application dans votre organisation' },
+  { id: 'a-retenir', label: 'À retenir' },
+  { id: 'pour-aller-plus-loin', label: 'Pour aller plus loin' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  "Comprendre ce qu'est un foundation model et pourquoi sa généricité change l'économie des projets IA en entreprise.",
+  "Distinguer prompting, fine-tuning et RAG — choisir la bonne approche selon le cas d'usage.",
+  "Reconnaître les hallucinations comme caractéristique structurelle des LLM et concevoir les garde-fous correspondants.",
+  "Décomposer un workflow métier en sous-tâches pour identifier les candidats GenAI à fort ROI.",
+  "Calculer le coût total d'automatisation d'un cas GenAI (modèle + RAG + intégration + supervision) et le rapporter à la valeur business attendue.",
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Prendre une réponse plausible pour une réponse vraie",
+    error:
+      "Déployer un assistant GenAI qui répond avec aplomb sur des sujets sensibles (juridique, médical, financier, technique), et constater plus tard que les réponses contenaient des informations inventées (faux articles de loi, fausses citations, faux noms de produits) — sans signal d'alerte pour l'utilisateur.",
+    mechanism:
+      "Les LLM sont entraînés à produire la suite de texte la plus probable, pas la plus vraie. Ils n'ont pas de mécanisme intrinsèque pour distinguer ce qu'ils savent de ce qu'ils inventent. Une réponse plausible est leur sortie naturelle, qu'elle soit factuelle ou hallucinée.",
+    mitigation:
+      "Aucun usage à fort enjeu ne peut reposer sur un LLM seul. Garde-fous obligatoires : RAG sur des sources vérifiables et tracées, citation systématique des sources, escalade humaine sur les cas sensibles, validation échantillonnée régulière. Communication claire aux utilisateurs : ce que l'IA peut faire, ce qu'elle ne peut pas faire.",
+  },
+  {
+    title: "Sous-estimer le coût total d'automatisation",
+    error:
+      "Évaluer le projet GenAI en ne comptant que la souscription au LLM, et découvrir tardivement que l'intégration au système d'information, la construction du RAG, la supervision continue et la conduite du changement représentent l'essentiel du budget réel.",
+    mechanism:
+      "Les éditeurs et les médias mettent en avant le coût d'inférence (« quelques centimes par requête »), qui est facilement comparable et comparable. Le reste du coût est diffus, organisationnel, et difficile à anticiper sans expérience. Résultat : projets sous-budgétisés qui s'effondrent ou se transforment en POC permanents.",
+    mitigation:
+      "Découper systématiquement le budget en 6 lignes : modèle/inférence, ingestion/RAG, intégration SI, conduite du changement, supervision, gouvernance. Si la souscription LLM représente plus de 30 % du total, l'écosystème est sous-budgétisé. Prendre en compte les coûts d'inférence à l'échelle (multiplication par le volume réel) — un POC à 1 000 requêtes/mois ne coûte pas 1 000 fois moins qu'une production à 1 000 000.",
+  },
+  {
+    title: "Confondre démo impressionnante et solution opérationnelle",
+    error:
+      "Décider d'un déploiement GenAI sur la base d'une démonstration spectaculaire (l'éditeur ou un POC interne montre une capacité bluffante sur quelques exemples bien choisis), puis mesurer en production que la qualité varie fortement selon les cas réels, que des cas limites cassent le système, et que les utilisateurs n'adoptent pas.",
+    mechanism:
+      "Les démos sont conçues pour mettre en valeur les forces. Les cas réels contiennent des particularités (jargon métier, cas limites, données mal structurées, attentes utilisateur spécifiques) qui dégradent la performance. Un système GenAI peut être brillant à 80 % du temps et désastreux sur les 20 % restants — qui sont précisément les cas qui comptent en business.",
+    mitigation:
+      "Tester les pilotes GenAI sur des cas réels représentatifs, choisis par les utilisateurs métier (pas par l'éditeur ou le data team), incluant des cas limites et des cas à fort enjeu. Mesurer la qualité à l'échelle (échantillon statistiquement représentatif), pas seulement la vitesse ou la satisfaction superficielle. Ne jamais passer en production sur la base d'une démo seule.",
+  },
+  {
+    title: "Casser le pipeline de formation interne",
+    error:
+      "Supprimer les niveaux juniors d'une fonction métier (analystes, juristes débutants, conseillers premier niveau) en s'appuyant sur GenAI pour traiter leur charge — et constater à 5 ans que l'organisation n'a plus de seniors capables de former la nouvelle génération, ni d'experts capables de superviser intelligemment l'IA.",
+    mechanism:
+      "Les niveaux juniors apprennent en faisant. Les seniors d'aujourd'hui sont les juniors d'hier. Si GenAI traite ce que faisaient les juniors, le pipeline de formation se rompt — les futures recrues n'ont plus de moyens de monter en compétence, et la connaissance métier s'érode silencieusement. Ce risque est invisible à court terme, dévastateur à long terme.",
+    mitigation:
+      "Repenser les niveaux juniors comme superviseurs et améliorateurs du système GenAI plutôt que comme exécutants. Conserver des cas réels traités sans GenAI pour la formation. Documenter explicitement les choix métier que l'IA reproduit (sinon perdus). Mesurer la profondeur d'expertise sur 3-5 ans, pas seulement la productivité immédiate.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Décrire le workflow candidat",
+    body: "Choisissez un workflow métier candidat à GenAI dans votre organisation. Décomposez-le en 3 à 8 sous-tâches, de la plus mécanique à la plus créative/sensible. Pour chaque sous-tâche, notez le temps actuel et le niveau d'enjeu (1-5). Si la décomposition n'est pas possible, le workflow n'est pas mûr pour un pilote.",
+  },
+  {
+    heading: "Identifier les sous-tâches candidates",
+    body: "Pour chaque sous-tâche, posez 3 questions : (1) tâche linguistique ou créative ? (2) connaissance interne nécessaire ? (3) décision à fort enjeu ? Verdict GenAI : automatiser avec RAG / assister l'humain (HITL) / garder humaine / pas un cas GenAI.",
+  },
+  {
+    heading: "Architecturer le pilote",
+    body: "Choisissez l'approche technique (prompting simple / RAG / fine-tuning / combinaison). Listez au moins 5 garde-fous indispensables (sources citées, escalade humaine, validation échantillonnée, filtre PII, logs, signalement utilisateur, mise à jour RAG, RGPD, AI Act). Définissez le périmètre (volume, utilisateurs, durée, critère Go/No-Go).",
+  },
+  {
+    heading: "Évaluer coût total et valeur",
+    body: "Estimez le coût total du pilote en 6 lignes (modèle/inférence + RAG + intégration + conduite du changement + supervision + gouvernance). Estimez la valeur business attendue (temps gagné, qualité, couverture, risque réduit) en € sur 12 mois. Si la souscription LLM représente plus de 30 % du total, l'écosystème est sous-budgétisé.",
+  },
+];
+
+const activityCriteria = [
+  "Le workflow est décomposé en sous-tâches concrètes (au moins 3, idéalement 5-8).",
+  "L'approche technique (prompting / RAG / fine-tuning) est justifiée.",
+  "Au moins 5 garde-fous sont prévus dès le pilote.",
+  "Le coût total du pilote est chiffré, avec extrapolation production.",
+  "La valeur business attendue est chiffrée en € sur 12 mois.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Cadrage du cas GenAI",
+    items: [
+      "Le workflow visé est décomposé en sous-tâches concrètes (3 à 8 étapes).",
+      "Les sous-tâches à automatiser, à assister, et à garder humaines sont identifiées explicitement.",
+      "Le choix entre prompting / RAG / fine-tuning est justifié.",
+      "La métrique de succès business (€, temps, qualité) est définie en plus de la métrique technique.",
+    ],
+  },
+  {
+    title: "Garde-fous et conformité",
+    items: [
+      "Les sources sont systématiquement citées dans les réponses (traçabilité).",
+      "L'escalade humaine est prévue pour les sous-tâches à fort enjeu.",
+      "Les données personnelles dans les prompts et le RAG sont auditées (RGPD).",
+      "La conformité AI Act EU est vérifiée si l'usage tombe en haut risque (RH, crédit, justice, santé, éducation).",
+    ],
+  },
+  {
+    title: "Économie et organisation",
+    items: [
+      "Le coût total est découpé en 6 lignes (modèle / RAG / intégration / changement / supervision / gouvernance).",
+      "La souscription LLM représente moins de 30 % du budget total.",
+      "Les coûts d'inférence à l'échelle (volume réel attendu) sont calculés, pas seulement les coûts du POC.",
+      "L'effet sur le pipeline de formation interne (juniors, seniors) est anticipé sur 3-5 ans.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "Le concept clé : les foundation models changent l'économie de l'IA en entreprise — la même base sert des dizaines de cas d'usage, mais demande RAG ou fine-tuning pour vraiment créer de la valeur.",
+  "Le cas exemplaire : Morgan Stanley AskResearchGPT et Debrief montrent que la valeur GenAI vient de l'orchestration (LLM + RAG sur la base interne + escalade humaine + gouvernance), pas du modèle seul.",
+  "Le piège majeur : prendre une réponse plausible pour une réponse vraie — les hallucinations sont structurelles, pas un bug à corriger. Aucun usage à fort enjeu ne peut reposer sur un LLM seul.",
+  "L'outil opérationnel : le brief de pilote GenAI en 4 étapes (workflow / sous-tâches / architecture + garde-fous / coût total et valeur) avant tout déploiement.",
+  "La suite : le Module 4 explore la robotique en entreprise — autre famille technologique avec des principes de cadrage similaires (système, ROI, gouvernance).",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'video' as const,
+    title: 'Foundation Models and Generative AI (cours complet)',
+    author: 'MIT OpenCourseWare — 6.S087 IAP 2024',
+    description:
+      "Cours MIT structuré sur les foundation models et l'IA générative. Pour qui veut une compréhension technique solide sans être exhaustivement académique. Vidéos, slides et notes.",
+    href: 'https://ocw.mit.edu/courses/6-s087-foundation-models-and-generative-ai-january-iap-2024/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'How to find the right business use cases for generative AI',
+    author: 'MIT Sloan Ideas Made to Matter',
+    description:
+      "Méthodologie de sélection des cas d'usage GenAI pour les managers. Décomposition de workflows, considération des coûts totaux, mise en place de pilotes. Très opérationnel.",
+    href: 'https://mitsloan.mit.edu/ideas-made-to-matter/how-to-find-right-business-use-cases-generative-ai',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'The Present and Future of Generative AI in Business',
+    author: 'MIT Executive Education',
+    description:
+      "Synthèse stratégique sur GenAI en entreprise : fonctions impactées, risques, gouvernance unifiée. Bon support de cadrage pour COMEX.",
+    href: 'https://executive.mit.edu/the-present-and-future-of-generative-ai-in-business-MC4XSPVSXC45F3FNTGEJPXQBO5AU.html',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI at Work',
+    author: 'Brynjolfsson, Li, Raymond — NBER Working Paper w31161',
+    description:
+      "Étude empirique majeure sur l'impact de la GenAI sur la productivité et l'apprentissage au travail. Référence académique incontournable. Données sur des milliers d'agents de service client.",
+    href: 'https://www.nber.org/papers/w31161',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Research: Quantifying GitHub Copilot's impact in the enterprise with Accenture",
+    author: 'GitHub Engineering Blog',
+    description:
+      "Étude conjointe GitHub × Accenture mesurant l'impact réel de Copilot dans une grande entreprise. Productivité, qualité du code, satisfaction des développeurs. Sources et données publiques.",
+    href: 'https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-enterprise-with-accenture/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: 'Brief de pilote IA générative',
+    author: 'AI Strategy — Module 3',
+    description:
+      "Canvas Markdown imprimable pour structurer un pilote GenAI en 4 étapes (workflow / sous-tâches / architecture + garde-fous / coût total et valeur).",
+    href: '/downloads/canvas-pilote-genai-module-3.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module2Url = getLocalizedUrl('/modules/02-machine-learning/', locale);
+const module4Url = getLocalizedUrl('/modules/04-robotique/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+---
+
+<BaseLayout
+  title="Module 3 — IA générative en entreprise"
+  description="Foundation models, LLM, hallucinations, RAG, fine-tuning, décomposition de workflows, coût total d'automatisation. Cas Morgan Stanley AskResearchGPT, étude GitHub Copilot × Accenture, conformité AI Act."
+>
+  <HeroSecondary
+    surtitle="Module 3 · IA générative en entreprise"
+    title="Identifier les cas GenAI à fort ROI et concevoir leurs garde-fous"
+    lead="Troisième module du parcours. On y comprend ce qu'est un foundation model, on apprend à choisir entre prompting, RAG et fine-tuning, on reconnaît les hallucinations comme caractéristique structurelle des LLM, et on apprend à décomposer un workflow pour identifier les bons candidats à un pilote GenAI. Cas exemplaire : Morgan Stanley AskResearchGPT."
+  >
+    <span slot="stats">
+      Durée recommandée : 6-8 h · Niveau : Découverte / Applicable · Prérequis : Modules 1 et 2
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — SYNTHÈSE EXÉCUTIVE === */}
+        <ExecutiveSummary>
+          <p>
+            L'<strong>IA générative</strong> repose sur des <strong>foundation models</strong> — des
+            modèles très grands, pré-entraînés une fois sur des corpus massifs, puis adaptés à des
+            milliers de cas d'usage en aval (texte, code, image, audio). Cette généricité change
+            l'économie de l'IA en entreprise : la même base sert le service client, l'analyse de
+            documents et l'aide à la décision. Mais transformer cette généricité en <strong>valeur
+            business</strong> demande une mise en œuvre soignée — le modèle seul ne suffit jamais.
+          </p>
+          <p>
+            Le risque structurel des LLM est l'<strong>hallucination</strong> : produire des
+            réponses plausibles et convaincantes mais factuellement fausses. Ce n'est pas un bug à
+            corriger, c'est une caractéristique du fonctionnement statistique des modèles. Tout
+            usage à fort enjeu (juridique, médical, financier, technique) doit donc combiner LLM +
+            <strong> RAG</strong> (Retrieval-Augmented Generation, qui ancre les réponses dans des
+            sources internes vérifiables) + <strong>escalade humaine</strong> + supervision continue.
+            Le coût total d'un pilote GenAI se répartit typiquement à 20-30 % sur la souscription LLM
+            et 70-80 % sur l'écosystème (RAG, intégration, conduite du changement, supervision).
+          </p>
+          <p>
+            Pour un dirigeant, la question centrale est : « ce cas GenAI crée-t-il de la valeur
+            mesurable, à coût total maîtrisé, dans le respect des obligations réglementaires
+            (notamment l'AI Act EU pour les usages à haut risque), et sans casser le pipeline de
+            formation interne (juniors qui apprennent en faisant) ? ». Le cas Morgan Stanley
+            AskResearchGPT, détaillé dans ce module, illustre comment une grande institution
+            financière a déployé GenAI à grande échelle en orchestrant ces couches plutôt qu'en
+            misant tout sur le modèle.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIFS === */}
+        <section id="objectifs">
+          <h2>Objectifs d'apprentissage</h2>
+          <p>À l'issue de ce module, vous saurez :</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Concepts clés</h2>
+          <p>
+            Cinq concepts structurent ce module. Chacun est sourcé. La hiérarchie des sources est
+            <a href={methodeUrl}> expliquée dans la méthode</a>.
+          </p>
+
+          <ConceptCard
+            id="foundation-models"
+            title="Foundation models et économie de l'IA générative"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Un <strong>foundation model</strong> est un modèle très grand, pré-entraîné une seule
+              fois sur des corpus massifs (centaines de milliards de mots, images, code), puis
+              utilisable pour des milliers de tâches en aval — sans réentraînement complet, juste
+              par <strong>prompting</strong> (instruction en langage naturel), <strong>RAG</strong>
+              (recherche dans une base de connaissances) ou <strong>fine-tuning</strong> (ajustement
+              ciblé). Les exemples actuels : GPT-4, Claude, Gemini, Llama.
+            </p>
+            <p>
+              Cette généricité change l'économie de l'IA en entreprise. Avant les foundation models,
+              chaque cas d'usage demandait son propre modèle, ses propres données, son propre
+              entraînement — coût élevé, durée longue. Avec les foundation models, le coût
+              d'entraînement initial (centaines de millions de dollars) est mutualisé sur des
+              milliers d'usages aval, et chaque cas d'usage spécifique se réduit à : choisir le
+              modèle, concevoir le prompt, ancrer dans les bonnes données, intégrer au workflow.
+            </p>
+            <p>
+              Conséquence pratique : les barrières à l'entrée pour un projet GenAI sont
+              significativement plus basses qu'à l'époque du ML classique. Mais cette baisse s'inverse
+              à l'échelle : les coûts d'inférence (chaque requête au LLM coûte de l'argent) deviennent
+              significatifs en production.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Conséquence pour le cadrage.</strong> Un POC GenAI à 1 000 requêtes/mois coûte
+                quelques euros. La même fonctionnalité en production à 1 000 000 requêtes/mois coûte
+                des milliers d'euros — et il faut anticiper les pics. Toujours calculer le coût
+                d'inférence à l'échelle réelle attendue, pas seulement à l'échelle du POC.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="prompting-rag-finetuning"
+            title="Prompting, RAG et fine-tuning"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Trois techniques permettent d'adapter un foundation model à un cas d'usage spécifique :
+            </p>
+            <p>
+              <strong>Prompting.</strong> On écrit une instruction élaborée en langage naturel
+              (« tu es expert juridique, voici un contrat, identifie les clauses non standard »).
+              Approche la plus simple, la moins coûteuse, la plus rapide à itérer. Convient aux tâches
+              génériques sans connaissance interne fraîche nécessaire.
+            </p>
+            <p>
+              <strong>RAG (Retrieval-Augmented Generation).</strong> On combine le LLM avec une
+              recherche dans une base de connaissances interne. À chaque requête : recherche des
+              documents pertinents, injection de leur contenu dans le prompt, génération de la
+              réponse ancrée. C'est la méthode privilégiée pour les usages business : traçabilité
+              (sources citées), fraîcheur (mise à jour de la base sans toucher au modèle), maîtrise
+              (on contrôle ce que le modèle voit).
+            </p>
+            <p>
+              <strong>Fine-tuning.</strong> On réentraîne le modèle (ou une partie) sur des données
+              spécifiques pour ajuster son comportement (ton, format, style, expertise sectorielle).
+              Plus coûteux, plus complexe à maintenir, plus lent à itérer. Réservé aux cas où le
+              prompting et le RAG ne suffisent pas — ce qui est rare en business standard.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Règle pratique.</strong> Commencer par le prompting. Si le besoin demande de
+                la connaissance interne fraîche et traçable, passer au RAG. Le fine-tuning est un
+                dernier recours, après avoir épuisé les deux premières approches. Dans la majorité
+                des cas business, le RAG seul suffit.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="hallucinations"
+            title="Hallucinations et garde-fous"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Une <strong>hallucination</strong> est une réponse produite par un LLM qui est plausible
+              et cohérente en surface mais factuellement fausse, parfois entièrement inventée. Faux
+              articles de loi avec numéros qui semblent valides. Fausses citations attribuées à de
+              vrais auteurs. Faux noms de produits ou de fonctionnalités.
+            </p>
+            <p>
+              <strong>Ce n'est pas un bug à corriger.</strong> C'est une conséquence du fonctionnement
+              statistique des LLM : ils sont entraînés à produire la suite de texte la plus probable,
+              pas la plus vraie. Sans mécanisme intrinsèque pour distinguer ce qu'ils savent de ce
+              qu'ils inventent, ils produisent des réponses plausibles que l'utilisateur ne peut
+              distinguer du factuel.
+            </p>
+            <p>
+              <strong>Conséquence pour le manager :</strong> aucun usage à fort enjeu ne peut reposer
+              sur un LLM seul. Les garde-fous obligatoires sont :
+            </p>
+            <ul>
+              <li><strong>RAG sur des sources vérifiables</strong> et tracées (le modèle cite ce qu'il a vu, pas ce qu'il imagine).</li>
+              <li><strong>Citation systématique des sources</strong> dans les réponses (l'utilisateur peut vérifier).</li>
+              <li><strong>Escalade humaine</strong> sur les cas sensibles (l'humain valide avant action).</li>
+              <li><strong>Validation échantillonnée régulière</strong> (audit de la qualité réelle en production).</li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Communication aux utilisateurs.</strong> Un assistant GenAI ne doit jamais
+                être présenté comme infaillible. Mention claire : « cet outil peut produire des
+                erreurs, vérifiez toujours les informations sensibles ». La transparence est un
+                garde-fou en soi — elle déplace la responsabilité de la vérification vers
+                l'utilisateur informé.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="decomposition-workflow"
+            title="Décomposer le workflow plutôt qu'automatiser"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Le bon réflexe en GenAI n'est presque jamais « comment automatiser cette fonction ? »,
+              mais « comment <strong>décomposer ce workflow en sous-tâches</strong>, pour identifier
+              celles que GenAI peut prendre, celles qu'elle peut assister, et celles qui doivent
+              rester humaines ? ».
+            </p>
+            <p>
+              Trois critères de qualification par sous-tâche :
+            </p>
+            <ul>
+              <li><strong>Tâche linguistique ou créative ?</strong> (rédaction, synthèse, classification, extraction). Si non, ce n'est probablement pas un cas GenAI — peut-être un cas ML classique (Module 2).</li>
+              <li><strong>Connaissance interne nécessaire ?</strong> (documentation produit, jurisprudence, base client). Si oui, RAG indispensable.</li>
+              <li><strong>Décision à fort enjeu ?</strong> (engagement, juridique, financier, médical). Si oui, garder humaine ou assister avec validation systématique.</li>
+            </ul>
+            <p>
+              Cette décomposition donne un verdict par sous-tâche : <strong>automatiser avec RAG</strong>,
+              <strong> assister l'humain (HITL)</strong>, <strong>garder humaine</strong>, ou
+              <strong> pas un cas GenAI</strong>. Le pilote se concentre sur les sous-tâches à fort
+              gain et faible risque, et la métrique de succès devient « temps gagné par l'expert
+              métier » plutôt que « part d'automatisation ».
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Exemple — analyse contractuelle.</strong> Workflow décomposé :
+                (1) extraction de clauses [automatiser avec RAG],
+                (2) comparaison à un modèle interne [automatiser avec RAG],
+                (3) identification d'écarts [automatiser avec validation],
+                (4) interprétation des écarts [assister l'humain],
+                (5) décision finale [garder humaine, fort enjeu juridique].
+                Les juristes gagnent 60-80 % du temps sur les phases mécaniques, gardent la décision —
+                qui est aussi leur valeur ajoutée principale.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cout-total-automatisation"
+            title="Le coût total d'automatisation"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Le coût total d'un projet GenAI ne se résume pas à la souscription LLM. Six lignes
+              budgétaires à anticiper :
+            </p>
+            <ul>
+              <li><strong>Souscription LLM / coûts d'inférence</strong> — proportionnel au volume réel attendu, pas au volume du POC.</li>
+              <li><strong>Construction RAG</strong> — ingestion de documents, embeddings, base vectorielle, mise à jour continue.</li>
+              <li><strong>Intégration au système d'information</strong> — CRM, ERP, portail métier, APIs internes.</li>
+              <li><strong>Conduite du changement</strong> — formation des utilisateurs, communication, accompagnement.</li>
+              <li><strong>Supervision</strong> — équipe de validation, mesure de qualité, traitement des signalements.</li>
+              <li><strong>Gouvernance</strong> — comité IA, audit conformité, documentation, mise à jour de la politique.</li>
+            </ul>
+            <p>
+              Une règle de bonne pratique : si la souscription LLM représente plus de 30 % du budget
+              total, l'écosystème (RAG, intégration, conduite du changement) est sous-budgétisé. Et
+              il faut <strong>extrapoler à l'échelle production</strong> — un POC à 1 000 requêtes/mois
+              ne préfigure pas linéairement les coûts d'une production à 1 000 000 requêtes/mois.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test budgétaire.</strong> Demandez à votre équipe le découpage en 6 lignes du
+                budget GenAI candidat. Si une ligne est à zéro ou symbolique, c'est probablement une
+                omission, pas une économie. Les projets sous-budgétisés sont la principale cause des
+                POC GenAI permanents qui ne passent jamais en production.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — ERREURS FRÉQUENTES === */}
+        <section id="erreurs-frequentes">
+          <h2>Erreurs fréquentes</h2>
+          <p>
+            Quatre pièges récurrents en projet GenAI à reconnaître et à mitiger dès le cadrage.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — CAS RÉEL === */}
+        <section id="cas-reel">
+          <h2>Cas réel — Morgan Stanley AskResearchGPT</h2>
+          <p>
+            Morgan Stanley a déployé en production deux assistants GenAI à destination de ses
+            ~16 000 conseillers financiers : <strong>AI @ Morgan Stanley Assistant</strong> (basé sur
+            GPT-4 d'OpenAI), qui permet de retrouver instantanément l'information pertinente dans la
+            documentation interne (notes de recherche, rapports sectoriels, historique client), et
+            <strong> Debrief</strong>, qui synthétise automatiquement les notes des entretiens
+            clients. Cas exemplaire de déploiement GenAI à grande échelle, avec gouvernance et
+            supervision humaine.
+          </p>
+          <CaseCardCompact
+            organization="Morgan Stanley — AskResearchGPT et Debrief"
+            sector="Finance / Banque privée"
+            technology="LLM + RAG sur corpus interne"
+            tagline="Morgan Stanley a investi massivement non dans le modèle (GPT-4 d'OpenAI), mais dans la curation et l'organisation du corpus interne (notes de recherche, rapports sectoriels). Le RAG sur ce corpus permet aux conseillers de trouver l'information vérifiable en secondes plutôt qu'en heures. La décision finale reste celle du conseiller — l'IA produit des éléments traçables, pas de recommandations finales. Communications publiques officielles."
+            href={getLocalizedUrl('/cas/morgan-stanley/', locale)}
+            available={false}
+          />
+
+          <h3>Mini-cas additionnel — GitHub Copilot × Accenture</h3>
+          <p>
+            L'étude conjointe de GitHub et Accenture sur l'impact de Copilot dans une grande
+            entreprise illustre des leçons transposables au-delà du développement logiciel :
+          </p>
+          <ul>
+            <li>
+              <strong>L'impact réel se mesure à l'échelle.</strong> Sur des dizaines de milliers de
+              développeurs, GitHub et Accenture ont mesuré productivité, qualité du code et
+              satisfaction. La méthodologie (groupe traitement vs contrôle, échantillon
+              statistiquement significatif) est applicable à d'autres pilotes GenAI.
+            </li>
+            <li>
+              <strong>L'augmentation, pas le remplacement.</strong> Copilot rend les développeurs
+              plus rapides sur certaines tâches (boilerplate, tests unitaires, fonctions simples),
+              pas sur d'autres (architecture, debugging complexe). Le développeur reste central — la
+              GenAI accélère les phases mécaniques.
+            </li>
+            <li>
+              <strong>L'adoption est un facteur critique.</strong> L'impact ne se matérialise que si
+              les développeurs adoptent réellement l'outil dans leur quotidien. La conduite du
+              changement (formation, démonstration, partage de bonnes pratiques) est aussi importante
+              que le déploiement technique.
+            </li>
+            <li>
+              <strong>La qualité du code reste à mesurer.</strong> L'étude inclut des métriques
+              qualité (bugs introduits, dette technique), pas seulement de productivité — méthodologie
+              à reproduire pour tout pilote GenAI prétendant à la qualité.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source :
+              <a
+                href="https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-enterprise-with-accenture/"
+                rel="noopener noreferrer"
+                target="_blank">étude GitHub × Accenture publiée sur le GitHub Engineering Blog</a>.
+            </em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITÉ === */}
+        <section id="activite">
+          <h2>Activité pratique — Cadrer un pilote GenAI</h2>
+          <p>
+            Cette activité vous fait dérouler concrètement le cadrage d'un pilote GenAI. À réaliser
+            seul ou en petit groupe, en 60 à 90 minutes.
+          </p>
+          <Activity
+            id="activite-pilote-genai"
+            title="Cadrer un pilote GenAI pour votre organisation"
+            duration="60-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Brief de pilote GenAI (Markdown imprimable)"
+            downloadHref="/downloads/canvas-pilote-genai-module-3.md"
+          />
+          <p class="ai-text-muted">
+            <em>Le canvas est fourni en format Markdown imprimable. La version PDF stylisée arrive
+            en Phase 5 du projet.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Quiz formatif</h2>
+          <p>
+            Sept questions pour vérifier votre compréhension. Trois questions de compréhension, trois
+            d'application, une de jugement. Chaque réponse incorrecte déplie une explication
+            pédagogique qui pointe vers la section à revoir.
+          </p>
+          <QuizPlaceholder
+            id="quiz-module-3"
+            title={quizModule3.title}
+            intro={quizModule3.intro}
+            questions={quizModule3.questions}
+            scoringBands={quizModule3.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Checklist manager — Cadrage GenAI</h2>
+          <p>
+            Douze points de contrôle avant de lancer un pilote GenAI. Trois groupes : cadrage du cas,
+            garde-fous et conformité, économie et organisation.
+          </p>
+          <Checklist
+            id="checklist-module-3"
+            title="Cadrage GenAI — 12 points de contrôle"
+            intro="Avant de lancer un pilote GenAI, parcourez ces douze points. Chaque case cochée renforce la défendabilité du dossier — les points de garde-fous sont non négociables pour les usages à fort enjeu."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application dans votre organisation</h2>
+          <p>
+            Cinq questions à poser dans votre contexte. Pas de bonne ou mauvaise réponse universelle —
+            ce qui compte, c'est de pouvoir y répondre <em>spécifiquement</em> pour votre organisation.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Identifiez 2 ou 3 <strong>workflows métier</strong> de votre organisation où GenAI
+              pourrait créer de la valeur. Pour chacun, quelle est la sous-tâche la plus mécanique
+              (candidate à automatisation) et la plus créative (à garder humaine) ?
+            </li>
+            <li>
+              Pour le cas d'usage le plus prometteur, quelle est la <strong>connaissance interne</strong>
+              à mobiliser via RAG ? Cette connaissance est-elle accessible, à jour, et structurée ?
+            </li>
+            <li>
+              Quels <strong>garde-fous</strong> minimum (au moins 5) prévoyez-vous dès le pilote ?
+              Quelle est l'escalade humaine sur les cas sensibles ?
+            </li>
+            <li>
+              Avez-vous calculé le <strong>coût total</strong> du pilote en 6 lignes ? La souscription
+              LLM représente-t-elle moins de 30 % du total ?
+            </li>
+            <li>
+              Quel est l'<strong>effet anticipé sur le pipeline de formation</strong> de votre
+              organisation (juniors, transmission de la connaissance métier) sur 3-5 ans ?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>Pour les consultants</h3>
+            <p>
+              En mission de cadrage GenAI, ces cinq questions structurent un atelier de 3 heures avec
+              une équipe métier élargie (DSI, directeur métier, équipe data, conformité, RH). La
+              diversité des participants est cruciale — les décisions GenAI ont des effets transverses
+              (réglementaire, RH, technique) qu'aucune fonction seule ne peut anticiper.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — À RETENIR === */}
+        <section id="a-retenir">
+          <h2>À retenir</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — POUR ALLER PLUS LOIN === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Pour aller plus loin</h2>
+          <p>
+            Six ressources pour approfondir, classées par type. La hiérarchie des sources est indiquée
+            sur chacune (cf. <a href={methodeUrl}>méthode</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Termes techniques rencontrés ? Consultez le <a href={glossaireUrl}>glossaire</a> (Phase 4.9).
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module2Url,
+            label: 'Machine Learning en entreprise',
+            context: 'Module 2',
+          }}
+          next={{
+            href: module4Url,
+            label: 'Robotique en entreprise',
+            context: 'Module 4',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
