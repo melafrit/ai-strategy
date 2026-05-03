@@ -10,28 +10,27 @@
  * Le placeholder reste utile pédagogiquement : un visiteur peut lire
  * les questions, tester sa compréhension mentalement, et déplier les
  * réponses au moment voulu (via <details> natif).
+ *
+ * Le composant consomme les types de src/lib/quiz-schema.ts (single
+ * source of truth pour le shape des quiz).
  */
 
-interface QuizQuestion {
-  /** The question text. */
-  question: string;
-  /** The 4 answer options. */
-  options: string[];
-  /** Index (0-based) of the correct answer. */
-  correctIndex: number;
-  /** Optional explanation shown when the answer is revealed. */
-  explanation?: string;
-  /** Question kind — affects label display. */
-  kind: 'comprehension' | 'application' | 'judgment';
-}
+import type { QuizQuestion, ScoringBand } from '@/lib/quiz-schema';
 
 interface Props {
   /** Anchor id (kebab-case). */
   id?: string;
   /** Quiz title (e.g. "Quiz formatif — Module 1"). */
   title?: string;
-  /** Number of questions to show in the heading; defaults to questions.length. */
+  /** Questions to display. */
   questions: QuizQuestion[];
+  /**
+   * Optional scoring bands shown above the questions. Provide 3-4 bands
+   * mapping score ranges to interpretations.
+   */
+  scoringBands?: ScoringBand[];
+  /** Optional intro paragraph above the scoring bands. */
+  intro?: string;
   className?: string;
 }
 
@@ -39,6 +38,8 @@ const {
   id,
   title = 'Quiz formatif',
   questions,
+  scoringBands,
+  intro,
   className,
 } = Astro.props;
 
@@ -75,6 +76,28 @@ const kindLabels: Record<QuizQuestion['kind'], string> = {
       </p>
     </div>
   </header>
+
+  {intro && <p class="ai-quiz__intro">{intro}</p>}
+
+  {scoringBands && scoringBands.length > 0 && (
+    <details class="ai-quiz__scoring">
+      <summary>Comment interpréter votre score</summary>
+      <ul class="ai-quiz__bands">
+        {scoringBands.map((band) => (
+          <li class="ai-quiz__band">
+            <span class="ai-quiz__band-range">
+              {band.min === band.max
+                ? `${band.min}/${questions.length}`
+                : `${band.min}–${band.max}/${questions.length}`}
+            </span>
+            <span class="ai-quiz__band-body">
+              <strong>{band.label}.</strong> {band.interpretation}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )}
 
   <ol class="ai-quiz__list">
     {
@@ -151,6 +174,71 @@ const kindLabels: Record<QuizQuestion['kind'], string> = {
     margin: 0;
     color: var(--ai-fg-muted);
     font-size: var(--ai-text-sm);
+  }
+
+  .ai-quiz__intro {
+    margin: 0 0 var(--ai-space-4);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-quiz__scoring {
+    margin: 0 0 var(--ai-space-5);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-accent-subtle);
+    border: 1px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-sm);
+  }
+  .ai-quiz__scoring summary {
+    cursor: pointer;
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    list-style: none;
+  }
+  .ai-quiz__scoring summary::-webkit-details-marker {
+    display: none;
+  }
+  .ai-quiz__scoring summary::before {
+    content: '+ ';
+    font-weight: var(--ai-weight-bold);
+  }
+  .ai-quiz__scoring[open] summary::before {
+    content: '− ';
+  }
+  .ai-quiz__bands {
+    list-style: none;
+    margin: var(--ai-space-3) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+  .ai-quiz__band {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: var(--ai-space-3);
+    align-items: baseline;
+    padding: var(--ai-space-2) 0;
+    border-block-start: 1px solid var(--ai-border-subtle);
+  }
+  .ai-quiz__band:first-child {
+    border-block-start: none;
+  }
+  .ai-quiz__band-range {
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--ai-text-sm);
+  }
+  .ai-quiz__band-body {
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  @media (max-width: 40em) {
+    .ai-quiz__band {
+      grid-template-columns: 1fr;
+      gap: var(--ai-space-1);
+    }
   }
 
   .ai-quiz__list {
