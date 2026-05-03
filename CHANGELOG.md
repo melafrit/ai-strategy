@@ -74,10 +74,18 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 
 ### Planned (Phase 4.1+)
 - ~~Phase 4.1 : Page Programme/overview + Module 1 (Introduction à l'IA) comme pattern-setter.~~ **→ Subdivisé en 4.1a (Programme + index Modules) et 4.1b (Module 1 pattern-setter)**
-- Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).
+- ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ Module 2 publié, Phases 4.3 à 4.6 restent à venir**
 - Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).
 - Phase 4.9 : Glossaire (~30 termes).
 - Phase 4.10 : FAQ + Capstone + Resources hub.
+
+- Phase 4.2 — Module 2 (Machine Learning en entreprise) :
+  - Page Module 2 FR (`/fr/modules/02-machine-learning/`) : 815 lignes, ~3000 mots, structure identique au Module 1 (11 sections selon gabarit). Synthèse exécutive 3 paragraphes (familles ML, conditions de viabilité, question stratégique pour le dirigeant), 5 objectifs d'apprentissage, 5 ConceptCards sourcées (3 familles ML, 4 conditions de viabilité, surapprentissage et généralisation, modèle vs système 5 couches, cadrage stratégique Porter pour ML), 4 erreurs fréquentes structurées (précision vs ROI, sous-estimer étiquetage, corrélation vs causalité, ignorer drift et usure), cas réel principal Stripe Radar (paiements, supervisé à grande échelle) + mini-cas additionnel Recherche MIT Regina Barzilay (dépistage cancer du sein), activité pratique 4 étapes (~45-90 min) avec critères, quiz formatif 7 questions (3 compréhension / 3 application / 1 jugement) avec scoring bands 0-3 / 4-5 / 6-7 et explanations pointant vers les sections (« À revoir : §3.4 »), checklist manager 12 items en 3 groupes (cadrage technique / données et conformité / stratégie et gouvernance), 5 questions d'application transposables, encart consultant, 5 takeaways finaux, 6 ressources sourcées (MIT OCW Intro to ML, Stripe primer ML/fraude FR, recherche MIT Barzilay, NIST AI RMF, AI Act EU FR, canvas Module 2), navigation prev/next vers Module 1 et Module 3.
+  - Quiz data externalisé : `src/content/quizzes/module-2.ts` (142 lignes) suivant le pattern Module 1.
+  - Canvas téléchargeable : `public/downloads/canvas-evaluation-cas-ml-module-2.md` (168 lignes) — évaluation de cas d'usage ML en 4 étapes (description / qualité données 4 dimensions / cadrage stratégique / valeur vs coût total) avec auto-évaluation 6 critères.
+  - 2 stubs EN/AR (`/en/modules/02-machine-learning/`, `/ar/modules/02-machine-learning/`).
+  - Mises à jour : home FR / programme / modules index activent Module 2 (`available=true`). La logique home FR est aussi nettoyée (utilise désormais `m.available` du tableau au lieu d'une condition `i === 0`).
+  - Build validé : 25 pages générées (1 root + 8 FR + 8 EN + 8 AR), 0 erreur / 0 warning / 0 hint Astro check sur 65 fichiers.
 
 - Phase 4.1b sub-3 — Enrichissement quiz Module 1 + schéma React Phase 5 + canvas téléchargeable :
   - **Externalisation des données quiz** : nouveau fichier `src/content/quizzes/module-1.ts` avec le quiz typé selon le schéma canonique. Pattern à suivre pour M2-M6 et capstone (un fichier par module). Le contenu rédigé en sub-2 a été enrichi : explications pédagogiques étendues avec pointeurs vers les sections du module à revoir (« À revoir : §3.1 »), ce qui permet au quiz de jouer un vrai rôle diagnostique, pas uniquement évaluatif.

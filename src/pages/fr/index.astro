@@ -36,12 +36,12 @@ const audiences = [
 ];
 
 const modules = [
-  { number: 1 as const, titleKey: 'modules.module-1.title', summaryKey: 'modules.module-1.summary', slug: '01-introduction-ia' },
-  { number: 2 as const, titleKey: 'modules.module-2.title', summaryKey: 'modules.module-2.summary', slug: '02-machine-learning' },
-  { number: 3 as const, titleKey: 'modules.module-3.title', summaryKey: 'modules.module-3.summary', slug: '03-ia-generative' },
-  { number: 4 as const, titleKey: 'modules.module-4.title', summaryKey: 'modules.module-4.summary', slug: '04-robotique' },
-  { number: 5 as const, titleKey: 'modules.module-5.title', summaryKey: 'modules.module-5.summary', slug: '05-ia-societe' },
-  { number: 6 as const, titleKey: 'modules.module-6.title', summaryKey: 'modules.module-6.summary', slug: '06-futur-ia' },
+  { number: 1 as const, titleKey: 'modules.module-1.title', summaryKey: 'modules.module-1.summary', slug: '01-introduction-ia', available: true },
+  { number: 2 as const, titleKey: 'modules.module-2.title', summaryKey: 'modules.module-2.summary', slug: '02-machine-learning', available: true },
+  { number: 3 as const, titleKey: 'modules.module-3.title', summaryKey: 'modules.module-3.summary', slug: '03-ia-generative', available: false },
+  { number: 4 as const, titleKey: 'modules.module-4.title', summaryKey: 'modules.module-4.summary', slug: '04-robotique', available: false },
+  { number: 5 as const, titleKey: 'modules.module-5.title', summaryKey: 'modules.module-5.summary', slug: '05-ia-societe', available: false },
+  { number: 6 as const, titleKey: 'modules.module-6.title', summaryKey: 'modules.module-6.summary', slug: '06-futur-ia', available: false },
 ] as const;
 
 const programmeUrl = getLocalizedUrl('/programme/', locale);
@@ -81,13 +81,13 @@ const methodeUrl = getLocalizedUrl('/methode/', locale);
       <h2 class="ai-section__title">{t('modules.preview.title', locale)}</h2>
       <p class="ai-section__lead">{t('modules.preview.lead', locale)}</p>
       <div class="ai-modules-grid">
-        {modules.map((m, i) => (
+        {modules.map((m) => (
           <ModuleCard
             number={m.number}
             title={t(m.titleKey, locale)}
             summary={t(m.summaryKey, locale)}
             href={getLocalizedUrl(`/modules/${m.slug}/`, locale)}
-            available={i === 0}
+            available={m.available}
           />
         ))}
       </div>

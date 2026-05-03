@@ -1,0 +1,815 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizPlaceholder from '@/components/QuizPlaceholder.astro';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule2 from '@/content/quizzes/module-2';
+
+const locale = 'fr';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Synthèse exécutive' },
+  { id: 'objectifs', label: "Objectifs d'apprentissage" },
+  { id: 'concepts', label: 'Concepts clés' },
+  { id: 'erreurs-frequentes', label: 'Erreurs fréquentes' },
+  { id: 'cas-reel', label: 'Cas réel' },
+  { id: 'activite', label: 'Activité pratique' },
+  { id: 'quiz', label: 'Quiz formatif' },
+  { id: 'checklist', label: 'Checklist manager' },
+  { id: 'application', label: 'Application dans votre organisation' },
+  { id: 'a-retenir', label: 'À retenir' },
+  { id: 'pour-aller-plus-loin', label: 'Pour aller plus loin' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  "Distinguer apprentissage supervisé, non supervisé et par renforcement, et savoir lequel correspond à un cas d'usage donné.",
+  "Reconnaître les conditions de viabilité d'un projet ML : données disponibles, qualité, étiquetage, intégration au workflow.",
+  "Comprendre les notions clés de surapprentissage et de généralisation, et leurs implications business pour les décisions de déploiement.",
+  "Décider si un cas d'usage ML soutient une stratégie de coût, de différenciation ou de focalisation.",
+  "Évaluer en COMEX un dossier ML candidat sur trois dimensions : stratégique, technique, organisationnelle.",
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Évaluer un projet ML sur la précision du modèle plutôt que sur le ROI réel",
+    error:
+      "Décider de déployer (ou non) un modèle ML uniquement sur la base de sa précision technique en laboratoire (par exemple « 92 % de précision sur le test set »), sans rapporter cette performance à la valeur business attendue ni au coût total du dispositif.",
+    mechanism:
+      "La précision technique est facile à mesurer ; la valeur business demande de modéliser le coût d'une erreur, le bénéfice d'une bonne décision, et le coût des actions déclenchées par les prédictions. Sans ce calcul, un modèle 'précis' peut être économiquement inintéressant — et un modèle 'moyennement précis' très rentable.",
+    mitigation:
+      "Définir avant tout pilote la traduction monétaire d'une bonne et d'une mauvaise prédiction. Calculer le ROI en combinant précision × volume × valeur unitaire − coût total du dispositif. La précision n'est qu'une variable parmi d'autres.",
+  },
+  {
+    title: "Sous-estimer le coût et la complexité de l'étiquetage des données",
+    error:
+      "Lancer un projet ML supervisé en supposant que les données existantes sont 'déjà étiquetées', alors qu'elles ne le sont pas, ou qu'elles le sont avec une qualité insuffisante (étiquetage incohérent, biaisé, ou partiel).",
+    mechanism:
+      "Étiqueter les données est un travail lourd, souvent sous-estimé. Pour un dataset de 50 000 exemples sur un sujet expert (médecine, juridique, finance), le coût d'étiquetage peut représenter 30 à 50 % du budget total du projet. Ignorer ce coût mène à des projets qui s'essoufflent dans la phase de préparation des données.",
+    mitigation:
+      "Auditer la qualité des étiquettes existantes avant de lancer le projet. Budgétiser explicitement la phase d'étiquetage (équipes internes, prestataires spécialisés, plateformes de crowdsourcing). Considérer les approches semi-supervisées ou actives quand les étiquettes sont rares.",
+  },
+  {
+    title: "Confondre corrélation observée et causalité utile en business",
+    error:
+      "Interpréter les sorties d'un modèle ML comme des causes plutôt que comme des prédictions. Par exemple, prendre une corrélation entre 'achat de pizza congelée' et 'défaut de paiement' pour conclure 'la pizza congelée cause le défaut'.",
+    mechanism:
+      "Le ML supervisé apprend à prédire, pas à expliquer. Les variables qui prédisent bien peuvent être des proxies de causes réelles (ici : situation économique du foyer), des artefacts d'échantillonnage, ou des biais de mesure. Confondre prédiction et causalité mène à des décisions business erronées et parfois discriminatoires.",
+    mitigation:
+      "Lire les sorties d'un modèle comme des prédictions, pas comme des explications. Pour comprendre les causes, faire appel à des méthodes dédiées (expérimentation, analyse causale, raisonnement métier). Ne jamais formuler une politique d'entreprise sur la base de corrélations brutes apprises par un modèle.",
+  },
+  {
+    title: "Ignorer le drift des données et l'usure du modèle",
+    error:
+      "Considérer un modèle ML comme stable une fois mis en production, sans dispositif de surveillance ni cycle de mise à jour. Découvrir des mois plus tard que la performance s'est dégradée silencieusement.",
+    mechanism:
+      "Les données réelles évoluent : nouveaux comportements clients, changements réglementaires, ruptures de marché (pandémie, inflation). Un modèle entraîné sur l'historique cesse de bien refléter le présent. Cette dérive — data drift, concept drift — peut être lente et invisible sans monitoring.",
+    mitigation:
+      "Mettre en place dès la phase pilote un dispositif de monitoring continu : suivi des métriques de performance, alertes en cas de dérive des distributions de données, cycle de réentraînement périodique. Prévoir budget et équipe pour le run, pas seulement pour le build.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Décrire le cas d'usage candidat",
+    body: "Choisissez un cas d'usage ML candidat dans votre organisation et formulez en une phrase la décision que le système doit prendre. Identifiez le type de problème : classification, régression, clustering, détection d'anomalies. Si la décision n'est pas formulable clairement, le cas n'est pas mûr pour un ML.",
+  },
+  {
+    heading: "Évaluer la qualité des données",
+    body: "Notez sur 5 chacune des 4 dimensions de qualité : volume (assez d'observations), étiquetage (sortie attendue connue pour le supervisé), qualité (propres, complètes), représentativité (l'historique reflète bien le futur). Score < 8/20 → ML probablement prématuré.",
+  },
+  {
+    heading: "Cadrer stratégiquement",
+    body: "Rattachez le projet à une dimension stratégique (différenciation, leadership de coût, focalisation). Formulez une phrase de défense en 30 secondes. Si la phrase est confuse ou interchangeable d'un projet à l'autre, le cadrage est manquant.",
+  },
+  {
+    heading: "Évaluer valeur et coût total",
+    body: "Estimez la valeur business attendue (en €/an ordre de grandeur) et le coût total du projet (modèle + données + intégration + conduite du changement + gouvernance). Calculez le ratio. Si le modèle représente plus de 40 % du coût, l'écosystème est sous-budgétisé.",
+  },
+];
+
+const activityCriteria = [
+  "La décision à prendre par le ML est formulée en une phrase claire.",
+  "Le type de problème ML est identifié (supervisé / non supervisé / renforcement) et justifié.",
+  "Le score qualité données / 20 est explicite, dimension par dimension.",
+  "Le ratio valeur / coût est défendable devant un COMEX en moins de 90 secondes.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Cadrage technique du cas ML",
+    items: [
+      "La décision à prendre par le ML est formulée en une phrase claire.",
+      "Le type de problème (supervisé / non supervisé / renforcement) est identifié et justifié.",
+      "Les données nécessaires sont identifiées : volume, étiquetage, qualité, représentativité.",
+      "Une métrique de succès business (€, %, satisfaction) est définie en plus de la métrique technique.",
+    ],
+  },
+  {
+    title: "Données et conformité",
+    items: [
+      "L'audit de biais (sous-groupes : genre, origine, âge, géographie) est prévu en amont du déploiement.",
+      "La conformité AI Act EU et RGPD est vérifiée si le cas tombe en 'haut risque' (RH, crédit, justice, santé).",
+      "Le coût d'étiquetage est budgétisé explicitement (souvent 30-50 % du budget total pour les sujets experts).",
+      "Le dispositif de monitoring du drift et de réentraînement est prévu dès la conception.",
+    ],
+  },
+  {
+    title: "Stratégie et gouvernance",
+    items: [
+      "Le projet est rattaché à une dimension stratégique de Porter (différenciation / coût / focalisation).",
+      "La place de l'humain dans la boucle est explicite : qui valide, qui supervise, qui peut reprendre la main.",
+      "Le ROI est calculé sur la base de la valeur business attendue, pas seulement de la précision technique.",
+      "Le comité de gouvernance IA est désigné, avec rôles, cadence et critères de Go/No-Go définis.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "Le concept clé : trois familles de ML (supervisé, non supervisé, renforcement) répondent à des questions différentes — choisir la bonne famille est déjà la moitié du cadrage.",
+  "Le cas exemplaire : Stripe Radar montre comment une infrastructure ML supervisée à très grande échelle protège un acteur central des paiements en ligne, en combinant modèle + retours d'utilisateurs + règles métier.",
+  "Le piège majeur : évaluer un projet ML sur la précision plutôt que sur le ROI — la précision technique est nécessaire mais loin d'être suffisante.",
+  "L'outil opérationnel : le canvas d'évaluation ML en 4 étapes (décrire / qualifier données / cadrer stratégie / chiffrer valeur et coût) avant tout pilote.",
+  "La suite : le Module 3 entre dans l'IA générative en entreprise — autre famille technique, mêmes principes de cadrage.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'video' as const,
+    title: 'Introduction to Machine Learning (cours complet)',
+    author: 'MIT OpenCourseWare — 6.036',
+    description:
+      "Le cours d'introduction MIT au ML, gratuit, structuré, accessible aux non-techniciens motivés. Idéal pour solidifier les bases conceptuelles.",
+    href: 'https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'A primer on machine learning for fraud protection',
+    author: 'Stripe',
+    description:
+      "Guide pédagogique de Stripe sur l'application du ML à la détection de fraude. Disponible en français. Concret, sourcé, écrit par les praticiens.",
+    href: 'https://stripe.com/fr-ca/guides/primer-on-machine-learning-for-fraud-protection',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: "Comment l'IA améliore le dépistage du cancer du sein",
+    author: 'Travaux de Regina Barzilay (MIT CSAIL)',
+    description:
+      "Recherche MIT sur l'apport du ML au dépistage précoce. Cas exemplaire d'IA en santé : amélioration mesurable, supervision humaine, déploiement progressif.",
+    href: 'https://news.mit.edu/topic/artificial-intelligence2',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "Cadre opérationnel américain pour la gestion des risques IA, applicable au ML. Référence indispensable pour les responsables gouvernance et conformité.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Règlement (UE) 2024/1689 — AI Act',
+    author: "Journal officiel de l'Union européenne",
+    description:
+      "Texte intégral du règlement européen sur l'IA, en français. Indispensable pour cadrer la conformité des projets ML, notamment pour les cas 'à haut risque' (RH, crédit, justice, santé).",
+    href: 'https://eur-lex.europa.eu/legal-content/FR/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: "Canvas d'évaluation d'un cas d'usage ML",
+    author: 'AI Strategy — Module 2',
+    description:
+      "Canvas Markdown imprimable pour structurer l'évaluation d'un cas ML candidat sur 4 dimensions (description, données, stratégie, valeur/coût).",
+    href: '/downloads/canvas-evaluation-cas-ml-module-2.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+const module3Url = getLocalizedUrl('/modules/03-ia-generative/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+---
+
+<BaseLayout
+  title="Module 2 — Machine Learning en entreprise"
+  description="Décider quand le ML est pertinent, comment qualifier un cas d'usage, et comment cadrer un dossier ML candidat. Cas Stripe Radar, recherche MIT en santé, conformité AI Act."
+>
+  <HeroSecondary
+    surtitle="Module 2 · Machine Learning en entreprise"
+    title="Décider quand le ML crée vraiment de la valeur"
+    lead="Deuxième module du parcours. On y apprend à distinguer les trois grandes familles de ML, à juger si un cas d'usage est candidat ML, à reconnaître les pièges classiques (surapprentissage, drift, biais), et à cadrer un dossier ML défendable en COMEX. Cas exemplaire : Stripe Radar."
+  >
+    <span slot="stats">
+      Durée recommandée : 6-8 h · Niveau : Découverte / Applicable · Prérequis : Module 1
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — SYNTHÈSE EXÉCUTIVE === */}
+        <ExecutiveSummary>
+          <p>
+            Le <strong>Machine Learning</strong> (ML) est la branche de l'IA qui apprend ses règles
+            à partir des données plutôt que de les coder à la main. Il se divise en trois grandes
+            familles : <strong>supervisé</strong> (apprendre à partir d'exemples étiquetés),
+            <strong> non supervisé</strong> (chercher des structures dans des données sans étiquettes),
+            <strong> par renforcement</strong> (optimiser des actions par essai-erreur). Chaque famille
+            répond à un type de question business spécifique — choisir la bonne famille est déjà la
+            moitié du cadrage.
+          </p>
+          <p>
+            Pour qu'un cas d'usage ML soit viable, quatre conditions concrètes : suffisamment de
+            <strong> données</strong> (volume), correctement <strong>étiquetées</strong> si supervisé,
+            de qualité acceptable, et <strong>représentatives</strong> du futur (pas seulement du
+            passé). Sans ces conditions, le projet est prématuré, quel que soit l'enthousiasme
+            technique. Le coût total d'un projet ML se répartit typiquement à 20-40 % sur le modèle
+            et 60-80 % sur l'écosystème (données, intégration, conduite du changement, gouvernance) —
+            sous-estimer cette répartition est le mode de défaillance le plus fréquent.
+          </p>
+          <p>
+            Pour un dirigeant, la question centrale n'est pas « le ML est-il performant ? » mais
+            « ce ML crée-t-il de la valeur business mesurable, à coût maîtrisé, dans le respect de
+            la stratégie et des obligations réglementaires (notamment l'AI Act EU pour les usages à
+            haut risque comme le scoring RH, le crédit, la santé, la justice) ? ». Le cas Stripe Radar,
+            détaillé dans ce module, illustre comment une grande infrastructure ML peut combiner
+            performance technique, supervision humaine, conformité et création de valeur à très
+            grande échelle.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIFS === */}
+        <section id="objectifs">
+          <h2>Objectifs d'apprentissage</h2>
+          <p>À l'issue de ce module, vous saurez :</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Concepts clés</h2>
+          <p>
+            Cinq concepts structurent ce module. Chacun est sourcé. La hiérarchie des sources est
+            <a href={methodeUrl}> expliquée dans la méthode</a>.
+          </p>
+
+          <ConceptCard
+            id="trois-familles-ml"
+            title="Les trois familles de Machine Learning"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Le ML moderne se divise en <strong>trois grandes familles</strong>, qui répondent à des
+              questions différentes :
+            </p>
+            <p>
+              <strong>L'apprentissage supervisé</strong> apprend à partir d'exemples annotés. On lui
+              fournit des paires (entrée, sortie attendue) et il apprend à généraliser. C'est la famille
+              la plus utilisée en entreprise : détection de fraude (transactions étiquetées 'fraude' ou
+              'légitime'), scoring de crédit (dossiers étiquetés 'remboursé' ou 'défaut'), classification
+              d'images médicales (radiographies étiquetées 'cancer' ou 'sain').
+            </p>
+            <p>
+              <strong>L'apprentissage non supervisé</strong> cherche des structures dans des données
+              sans étiquettes. Pas de bonne réponse à apprendre — l'algorithme révèle des groupes
+              naturels (segmentation de clientèle), des anomalies (détection de comportements
+              suspects), ou des associations (analyse de panier).
+            </p>
+            <p>
+              <strong>L'apprentissage par renforcement</strong> apprend par essai-erreur dans un
+              environnement avec récompense. Domaine d'élection : optimisation séquentielle (gestion
+              de stocks dynamique, jeu, robotique, trading). Plus rare en business standard, mais
+              adapté à certains problèmes opérationnels complexes.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Conséquence pour le cadrage.</strong> Avant tout dossier ML, formulez la
+                question business comme l'une des trois : « j'ai un historique annoté, je veux prédire »
+                (supervisé), « j'ai des données sans étiquettes, je veux comprendre la structure »
+                (non supervisé), « j'ai un système d'actions et de récompenses, je veux optimiser »
+                (renforcement). Si la question ne tombe dans aucune des trois, le cas n'est probablement
+                pas un cas ML.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="conditions-de-viabilite"
+            title="Les quatre conditions de viabilité d'un projet ML"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Avant tout pilote, vérifier quatre conditions de qualité des données :
+            </p>
+            <ul>
+              <li>
+                <strong>Volume.</strong> Le ML statistique a besoin d'observations en quantité — typiquement
+                au moins quelques milliers d'exemples pour les cas standard, plus pour les cas complexes
+                (vision, langage). Sans volume, les approches expert systems ou règles métier sont
+                souvent plus appropriées.
+              </li>
+              <li>
+                <strong>Étiquetage</strong> (si supervisé). Disposer d'exemples passés annotés avec
+                la sortie attendue. C'est souvent le goulot d'étranglement le plus coûteux : un dataset
+                médical de 50 000 images peut demander 500 000 € d'expertise médicale pour être
+                étiqueté correctement.
+              </li>
+              <li>
+                <strong>Qualité.</strong> Données propres, complètes, sans valeurs aberrantes massives,
+                sans biais d'échantillonnage évidents. Mauvaise qualité = mauvais modèle, peu importe
+                l'algorithme.
+              </li>
+              <li>
+                <strong>Représentativité.</strong> L'historique reflète bien les conditions futures
+                (saisonnalité, ruptures, exceptions). Un modèle entraîné sur des données 2019-2023
+                peut être inadapté en 2026 si les comportements ont changé (post-pandémie, inflation,
+                évolutions réglementaires).
+              </li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test rapide.</strong> Pour un projet ML candidat, scoring de 1 à 5 sur les 4
+                dimensions. Score &lt; 8/20 → ML probablement prématuré, focaliser sur la donnée
+                d'abord. Score 8-13/20 → ML envisageable mais budget données significatif. Score 14+
+                → conditions favorables.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="surapprentissage-generalisation"
+            title="Surapprentissage et généralisation"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Le <strong>surapprentissage</strong> (overfitting) est le piège technique le plus
+              important du ML. Un modèle surappris a mémorisé les particularités des données
+              d'entraînement (y compris leur bruit) au lieu d'en apprendre les régularités utiles.
+              Conséquence : excellente performance sur les données vues, performance médiocre sur les
+              données nouvelles.
+            </p>
+            <p>
+              La <strong>généralisation</strong> est la capacité d'un modèle à bien fonctionner sur
+              des données qu'il n'a pas vues. C'est la qualité que l'on cherche réellement — la
+              performance sur l'historique n'est qu'un proxy.
+            </p>
+            <p>
+              La parade s'appelle <strong>validation croisée</strong> et <strong>ensemble de test
+              indépendant</strong> : on garde une portion des données strictement à l'écart de
+              l'entraînement, pour mesurer la performance réelle. C'est non négociable. Tout dossier
+              ML qui ne mentionne que la performance sur l'entraînement (sans test indépendant) doit
+              être considéré comme incomplet.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Signal d'alerte managérial.</strong> Quand un POC ML obtient 98 % en interne
+                puis 73 % chez le premier client, c'est typiquement du surapprentissage. La différence
+                attendue entre laboratoire et production reste de quelques points — pas 25.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="systeme-vs-modele"
+            title="Le modèle n'est qu'une couche du système"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Comme vu en Module 1, un projet IA réussi est un système à 5 couches : modèle, données,
+              workflow, utilisateurs, gouvernance. Le ML accentue cette réalité : le modèle représente
+              typiquement <strong>20 à 40 %</strong> du coût total ; le reste se répartit sur :
+            </p>
+            <ul>
+              <li>La <strong>collecte et l'étiquetage</strong> des données — souvent 30-50 % du budget pour les sujets experts (médecine, juridique, finance).</li>
+              <li>L'<strong>intégration</strong> au système d'information (ERP, CRM, WMS, APIs internes) — 10-25 %.</li>
+              <li>La <strong>conduite du changement</strong> — formation des utilisateurs, communication, accompagnement — 5-15 %.</li>
+              <li>La <strong>gouvernance</strong> — comité IA, audit de biais, conformité, monitoring — 5-15 %.</li>
+            </ul>
+            <p>
+              Sous-estimer ces couches est le mode de défaillance le plus fréquent des projets ML
+              en entreprise. Une règle de bonne pratique : si dans votre dossier le modèle représente
+              plus de 40 % du budget total, l'écosystème est sous-budgétisé.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Test budgétaire.</strong> Découpez votre budget projet ML en 5 lignes : modèle,
+                données, intégration, conduite du changement, gouvernance. Si une ligne est à zéro ou
+                négligeable, c'est probablement une omission, pas une économie.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cadrage-strategique-ml"
+            title="Le cadrage stratégique d'un cas d'usage ML"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Comme vu en Module 1, le cadrage stratégique relie le projet à l'une des trois stratégies
+              génériques de Porter. Pour un projet ML spécifiquement :
+            </p>
+            <ul>
+              <li>
+                <strong>Différenciation.</strong> Le ML crée une expérience perçue comme supérieure :
+                recommandations personnalisées (Spotify Discover Weekly, Netflix), service client
+                réactif (chatbots intelligents), produits adaptatifs.
+              </li>
+              <li>
+                <strong>Leadership de coût.</strong> Le ML automatise des tâches répétitives ou optimise
+                des opérations : détection de fraude (Stripe Radar), prédiction de demande (gestion de
+                stocks), classification automatique de documents.
+              </li>
+              <li>
+                <strong>Focalisation.</strong> Le ML permet de servir un segment avec une précision
+                impossible avant : médecine de précision (recherche Regina Barzilay au MIT sur le
+                dépistage du cancer du sein), souscription d'assurance de niche, B2B technique pointu.
+              </li>
+            </ul>
+            <p>
+              Si un projet ML candidat ne répond clairement à aucune de ces trois dimensions, il est
+              probablement prématuré ou mal cadré. À l'inverse, un projet bien aligné gagne en
+              défendabilité interne (COMEX) et externe (clients, marché).
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Phrase de défense.</strong> Pour chaque projet ML, vous devez pouvoir dire
+                en moins de 30 secondes : « Ce projet ML contribue à la stratégie X par tel mécanisme,
+                avec telle valeur business attendue, et tel coût total ». Si la phrase est confuse,
+                le cadrage manque.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — ERREURS FRÉQUENTES === */}
+        <section id="erreurs-frequentes">
+          <h2>Erreurs fréquentes</h2>
+          <p>
+            Quatre pièges récurrents à reconnaître et à mitiger dès le cadrage d'un projet ML.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — CAS RÉEL === */}
+        <section id="cas-reel">
+          <h2>Cas réel — Stripe Radar</h2>
+          <p>
+            Stripe est un acteur central des paiements en ligne. Sa plateforme traite des centaines
+            de milliards d'euros de transactions par an. <strong>Stripe Radar</strong> est sa solution
+            ML de détection de fraude en temps réel — un cas exemplaire d'application du Machine
+            Learning supervisé à très grande échelle, avec une combinaison réussie de précision
+            technique, de supervision humaine et de gouvernance.
+          </p>
+          <CaseCardCompact
+            organization="Stripe Radar — Détection de fraude par ML"
+            sector="Finance / Paiements"
+            technology="Apprentissage supervisé"
+            tagline="Stripe utilise un modèle ML supervisé entraîné sur des centaines de millions de transactions étiquetées (légitimes / frauduleuses) pour scorer chaque transaction en temps réel. Le système combine signaux du paiement, historique du commerçant, retours des utilisateurs et règles métier. Documenté publiquement par Stripe en français."
+            href={getLocalizedUrl('/cas/stripe-radar/', locale)}
+            available={false}
+          />
+
+          <h3>Mini-cas additionnel — Recherche MIT en dépistage médical</h3>
+          <p>
+            Les travaux de Regina Barzilay (MIT CSAIL) sur le dépistage précoce du cancer du sein
+            illustrent une application différente du ML supervisé : dans le domaine médical, où les
+            étiquettes sont coûteuses et la décision est lourde de conséquences. Plusieurs leçons
+            transposables au business :
+          </p>
+          <ul>
+            <li>
+              <strong>L'étiquetage est le goulot d'étranglement.</strong> Annoter des images médicales
+              demande l'expertise de radiologues, ressource rare et coûteuse. Les approches semi-supervisées
+              et l'apprentissage actif sont exploités pour réduire ce coût.
+            </li>
+            <li>
+              <strong>Human-in-the-loop n'est pas une concession.</strong> Le modèle assiste le
+              radiologue, ne le remplace pas. La décision finale reste humaine — c'est ce qui permet
+              le déploiement.
+            </li>
+            <li>
+              <strong>La validation indépendante est exigée.</strong> Performance mesurée sur des
+              cohortes nouvelles, pas sur les données d'entraînement, et auditée avant tout déploiement
+              clinique.
+            </li>
+            <li>
+              <strong>Cadrage stratégique : focalisation.</strong> Servir une population (femmes à
+              risque) avec une précision impossible auparavant — typique d'une stratégie de focalisation
+              au sens de Porter.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source : <a href="https://www.csail.mit.edu/" rel="noopener noreferrer" target="_blank">MIT CSAIL</a>,
+              MIT News (rubrique IA, recherche Regina Barzilay).
+            </em>
+            <SourceTag level="recommended-complement" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITÉ === */}
+        <section id="activite">
+          <h2>Activité pratique — Évaluer un cas d'usage ML</h2>
+          <p>
+            Cette activité vous fait dérouler concrètement le jugement de pertinence d'un cas d'usage
+            ML. À réaliser seul ou en petit groupe, en 45 à 90 minutes.
+          </p>
+          <Activity
+            id="activite-evaluation-ml"
+            title="Évaluer un cas d'usage Machine Learning"
+            duration="45-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Canvas d'évaluation ML (Markdown imprimable)"
+            downloadHref="/downloads/canvas-evaluation-cas-ml-module-2.md"
+          />
+          <p class="ai-text-muted">
+            <em>Le canvas est fourni en format Markdown imprimable. La version PDF stylisée arrive
+            en Phase 5 du projet.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Quiz formatif</h2>
+          <p>
+            Sept questions pour vérifier votre compréhension. Trois questions de compréhension, trois
+            d'application, une de jugement. Chaque réponse incorrecte déplie une explication
+            pédagogique qui pointe vers la section à revoir. Le quiz est diagnostique — son but est
+            de cadrer votre lecture du Module 3, pas de noter votre progression.
+          </p>
+          <QuizPlaceholder
+            id="quiz-module-2"
+            title={quizModule2.title}
+            intro={quizModule2.intro}
+            questions={quizModule2.questions}
+            scoringBands={quizModule2.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Checklist manager — Cadrage ML</h2>
+          <p>
+            Douze points de contrôle avant de présenter un projet ML en COMEX. Trois groupes :
+            cadrage technique du cas, données et conformité, stratégie et gouvernance.
+          </p>
+          <Checklist
+            id="checklist-module-2"
+            title="Cadrage ML — 12 points de contrôle"
+            intro="Avant de défendre un projet ML en comité de direction, parcourez ces douze points. Chaque case cochée renforce la défendabilité de votre dossier — les points de conformité (AI Act, RGPD) sont non négociables pour les usages à haut risque."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application dans votre organisation</h2>
+          <p>
+            Cinq questions à poser dans votre contexte. Pas de bonne ou mauvaise réponse universelle —
+            ce qui compte, c'est de pouvoir y répondre <em>spécifiquement</em> pour votre organisation.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Identifiez 2 ou 3 cas d'usage ML candidats dans votre organisation. Pour chacun, quelle
+              <strong> famille</strong> (supervisé, non supervisé, renforcement) répond le mieux à la
+              décision à prendre ?
+            </li>
+            <li>
+              Pour chaque candidat, quel <strong>volume de données étiquetées</strong> avez-vous
+              réellement disponible ? À quel coût pourrez-vous compléter l'étiquetage si nécessaire ?
+            </li>
+            <li>
+              Pour le candidat le plus prometteur, quelle est la <strong>métrique business</strong> de
+              succès, en plus de la métrique technique de précision ?
+            </li>
+            <li>
+              Pour ce candidat, le cas tombe-t-il dans une catégorie <strong>'à haut risque'</strong>
+              au sens de l'AI Act EU (RH, crédit, santé, justice, services publics) ? Si oui,
+              quelles obligations supplémentaires ?
+            </li>
+            <li>
+              Le <strong>budget total</strong> du projet est-il découpé en 5 lignes (modèle, données,
+              intégration, conduite du changement, gouvernance) ? Le modèle représente-t-il moins
+              de 40 % du total ?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>Pour les consultants</h3>
+            <p>
+              En mission de cadrage ML, ces cinq questions structurent un atelier de 2 heures avec
+              une équipe métier élargie (DSI, directeur métier, data team, conformité). Préparer un
+              tableau Excel pré-rempli avec les 5 questions × les cas d'usage candidats permet de
+              visualiser rapidement les zones de maturité et d'incomplétude.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — À RETENIR === */}
+        <section id="a-retenir">
+          <h2>À retenir</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — POUR ALLER PLUS LOIN === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Pour aller plus loin</h2>
+          <p>
+            Six ressources pour approfondir, classées par type. La hiérarchie des sources est indiquée
+            sur chacune (cf. <a href={methodeUrl}>méthode</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Termes techniques rencontrés ? Consultez le <a href={glossaireUrl}>glossaire</a> (Phase 4.9).
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module1Url,
+            label: "Introduction à l'IA",
+            context: 'Module 1',
+          }}
+          next={{
+            href: module3Url,
+            label: 'IA générative en entreprise',
+            context: 'Module 3',
+          }}
+        />
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
