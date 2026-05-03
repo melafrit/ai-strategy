@@ -1,0 +1,204 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
+---
+
+<BaseLayout
+  title="Mentions légales"
+  description="Mentions légales du site AI Strategy : éditeur, hébergeur, propriété intellectuelle, données personnelles, cookies, contact, droit applicable."
+>
+  <HeroSecondary
+    surtitle="Mentions légales"
+    title="Mentions légales et politique de confidentialité"
+    lead="Cette page rassemble les informations légales obligatoires (RGPD, droit français) sur l'édition, l'hébergement, la propriété intellectuelle et les données personnelles du site."
+  >
+    <span slot="stats">Dernière mise à jour : voir le CHANGELOG</span>
+  </HeroSecondary>
+
+  <article class="ai-container ai-prose ai-legal-page">
+    <section>
+      <h2>1. Éditeur du site</h2>
+      <p>
+        Ce site est édité à titre <strong>personnel et indépendant</strong> par :
+      </p>
+      <ul>
+        <li><strong>Mohamed El Afrit</strong></li>
+        <li>Enseignant formateur et consultant indépendant</li>
+        <li>Pour tout contact officiel :
+          <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">
+            GitHub Issues
+          </a>
+          (canal officiel)
+        </li>
+      </ul>
+      <p>
+        Le site n'est pas un service commercial, ne propose aucune transaction, et ne demande aucune
+        inscription pour accéder à son contenu.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Hébergement</h2>
+      <p>
+        Le site est hébergé par <strong>OVH SAS</strong>, société française de cloud computing :
+      </p>
+      <ul>
+        <li>OVH SAS · 2 rue Kellermann · 59100 Roubaix · France</li>
+        <li>RCS Lille Métropole 424 761 419</li>
+        <li>Téléphone : 1007</li>
+        <li>Site web : <a href="https://www.ovhcloud.com" rel="noopener noreferrer" target="_blank">www.ovhcloud.com</a></li>
+      </ul>
+      <p>
+        ⚠️ <em>Le type d'hébergement OVH précis (mutualisé, VPS ou Cloud) sera mis à jour ici une
+        fois la décision finalisée. Voir la
+        <a href={`${githubUrl}/blob/main/docs/architecture/skeleton-decisions.md`} rel="noopener noreferrer" target="_blank">documentation technique</a>.</em>
+      </p>
+    </section>
+
+    <section>
+      <h2>3. Propriété intellectuelle</h2>
+
+      <h3>Code source</h3>
+      <p>
+        L'intégralité du code source du site est publiée sur le
+        <a href={githubUrl} rel="noopener noreferrer" target="_blank">repository GitHub public</a>
+        sous <strong>licence MIT</strong>. Voir le fichier
+        <a href={`${githubUrl}/blob/main/LICENSE-CODE`} rel="noopener noreferrer" target="_blank">LICENSE-CODE</a>.
+      </p>
+
+      <h3>Contenu pédagogique</h3>
+      <p>
+        L'intégralité du contenu pédagogique (textes, fiches, schémas, quiz, glossaire, capstone) est
+        publiée sous <strong>licence Creative Commons Attribution – Pas d'Utilisation Commerciale –
+        Partage dans les Mêmes Conditions 4.0 International (CC BY-NC-SA 4.0)</strong>. Voir le fichier
+        <a href={`${githubUrl}/blob/main/LICENSE-CONTENT`} rel="noopener noreferrer" target="_blank">LICENSE-CONTENT</a>.
+      </p>
+
+      <h3>Marques tierces</h3>
+      <p>
+        Les noms d'entreprises, organismes et institutions cités sur le site (notamment Massachusetts
+        Institute of Technology, MIT Sloan School of Management, MIT CSAIL, ainsi que les organisations
+        figurant dans les études de cas) sont des <strong>marques de leurs propriétaires respectifs</strong>.
+        Leur citation sur ce site relève d'un usage <strong>nominatif et descriptif</strong> conforme
+        à l'exception française (article L. 713-3 du Code de la propriété intellectuelle) et à la
+        doctrine du <em>fair use</em> nominatif.
+      </p>
+      <p>
+        Le site n'est <strong>ni affilié, ni validé, ni certifié</strong> par MIT, MIT Sloan, ou MIT
+        CSAIL (cf. <a href={getLocalizedUrl('/methode/', locale)}>Méthode</a>, section 2). Toute
+        marque utilisée est citée à des fins de référence pédagogique.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Données personnelles et RGPD</h2>
+
+      <h3>Principe : pas de collecte par défaut</h3>
+      <p>
+        Ce site est conçu pour <strong>respecter votre vie privée par défaut</strong>. Concrètement :
+      </p>
+      <ul>
+        <li><strong>Aucun compte utilisateur</strong> n'est créé. Aucune inscription n'est requise pour accéder au contenu.</li>
+        <li><strong>Aucun cookie de tracking</strong> n'est posé. Pas de Google Analytics, pas de Facebook Pixel, pas de service tiers de mesure d'audience.</li>
+        <li><strong>Aucune donnée personnelle</strong> n'est demandée, collectée ou stockée côté serveur.</li>
+      </ul>
+
+      <h3>Stockage local navigateur (quiz)</h3>
+      <p>
+        Les quiz du site utilisent le <strong>localStorage du navigateur</strong> pour conserver votre
+        progression et vos scores. Ces données :
+      </p>
+      <ul>
+        <li>Restent <strong>uniquement dans votre navigateur</strong>, sur votre appareil.</li>
+        <li>Ne sont <strong>jamais transmises</strong> à un serveur (ni au nôtre, ni à un tiers).</li>
+        <li>Peuvent être <strong>effacées à tout moment</strong> via le bouton "Réinitialiser ma progression" sur la page Quiz, ou via les paramètres de votre navigateur.</li>
+      </ul>
+      <p>
+        Cela signifie que si vous changez de navigateur ou d'appareil, ou si vous utilisez le mode privé,
+        votre progression ne sera pas conservée. C'est un choix éditorial pour préserver la simplicité
+        et la confidentialité.
+      </p>
+
+      <h3>Logs serveur</h3>
+      <p>
+        L'hébergeur OVH peut conserver des journaux techniques (logs HTTP) à des fins de sécurité et
+        de diagnostic, conformément aux obligations légales françaises. Ces logs contiennent
+        typiquement : adresse IP, date et heure de la requête, URL demandée, code HTTP retourné,
+        type de navigateur. Ils sont conservés pour une durée limitée par OVH selon sa propre
+        politique. Voir
+        <a href="https://www.ovhcloud.com/fr/personal-data-protection/" rel="noopener noreferrer" target="_blank">
+          la politique de protection des données d'OVH
+        </a>.
+      </p>
+
+      <h3>Vos droits RGPD</h3>
+      <p>
+        En l'absence de collecte de données personnelles côté serveur de notre part, les droits RGPD
+        (accès, rectification, effacement, portabilité, opposition) ne donnent lieu à aucune demande
+        spécifique vers nous. Pour les logs hébergeur, adressez-vous directement à OVH.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Liens externes</h2>
+      <p>
+        Le site contient des liens vers des ressources externes (sites institutionnels MIT, NIST, OCDE,
+        publications académiques, communications d'entreprises citées dans les études de cas). Ces
+        liens sont fournis à des fins pédagogiques et de sourcing. Nous n'avons aucun contrôle sur le
+        contenu de ces sites externes et déclinons toute responsabilité quant à leur contenu, leur
+        disponibilité, ou leurs propres pratiques de confidentialité.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. Limitation de responsabilité</h2>
+      <p>
+        Le contenu de ce site est fourni à des fins <strong>pédagogiques et informatives</strong>.
+        Il ne constitue ni un conseil juridique, ni un conseil financier, ni un conseil stratégique
+        adressé à une organisation spécifique. Les choix opérés par les lecteurs à partir du contenu
+        de ce site sont sous leur entière responsabilité.
+      </p>
+      <p>
+        Bien que la plus grande rigueur soit appliquée à la production du contenu (cf.
+        <a href={getLocalizedUrl('/methode/', locale)}>Méthode</a>), aucune garantie d'exhaustivité
+        ou d'absence d'erreur ne peut être donnée. Pour toute correction factuelle, ouvrez une
+        <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">issue GitHub</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. Droit applicable et juridiction</h2>
+      <p>
+        Le site est édité en France. Le présent document est régi par le droit français. Tout litige
+        relatif à son interprétation ou à son application relève de la compétence des juridictions
+        françaises.
+      </p>
+    </section>
+
+    <section>
+      <h2>8. Mise à jour des mentions légales</h2>
+      <p>
+        Les mentions légales peuvent être mises à jour à tout moment. La version actuelle est
+        consultable sur cette page. L'historique des modifications est traçable dans le
+        <a href={`${githubUrl}/blob/main/CHANGELOG.md`} rel="noopener noreferrer" target="_blank">CHANGELOG</a>
+        et dans l'historique Git du repository.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .ai-legal-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+  .ai-legal-page section {
+    margin-block: var(--ai-space-7);
+  }
+  .ai-legal-page section:first-of-type {
+    margin-block-start: 0;
+  }
+</style>

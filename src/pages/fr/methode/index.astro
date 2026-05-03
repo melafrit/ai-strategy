@@ -1,0 +1,347 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
+const githubDocsUrl = `${githubUrl}/tree/main/docs`;
+---
+
+<BaseLayout
+  title="Méthode et indépendance"
+  description="Comment ce site est conçu : hiérarchie des sources, indépendance vis-à-vis de MIT, triple lecture, double licence, gouvernance éditoriale."
+>
+  <HeroSecondary
+    surtitle="Méthode"
+    title="Comment ce site est conçu"
+    lead="Quatre principes éditoriaux structurent ce site. Ils sont appliqués à chaque page, vérifiables, et auditables sur GitHub. Cette page les détaille."
+  >
+    <span slot="stats">~12 minutes de lecture · Mis à jour à chaque commit</span>
+  </HeroSecondary>
+
+  <article class="ai-container ai-prose ai-method-page">
+    <nav class="ai-method-toc" aria-label="Sommaire">
+      <h2>Sommaire</h2>
+      <ol>
+        <li><a href="#hierarchie-sources">1. Hiérarchie des sources visible</a></li>
+        <li><a href="#independance">2. Indépendance vis-à-vis de MIT</a></li>
+        <li><a href="#triple-lecture">3. Triple lecture</a></li>
+        <li><a href="#double-licence">4. Double licence ouverte</a></li>
+        <li><a href="#gouvernance">5. Gouvernance éditoriale</a></li>
+        <li><a href="#contributions">6. Contributions et corrections</a></li>
+      </ol>
+    </nav>
+
+    <section id="hierarchie-sources">
+      <h2>1. Hiérarchie des sources visible</h2>
+      <p>
+        Toute affirmation factuelle sur ce site est étiquetée selon son <strong>niveau de preuve</strong>.
+        Cinq niveaux sont définis, avec un code visuel constant. Vous pouvez toujours savoir si une
+        information vient d'une source officielle, d'un complément MIT-connexe, d'une reconstruction
+        pédagogique, d'une source externe vérifiable, ou si elle reste à vérifier.
+      </p>
+
+      <h3>Les cinq niveaux</h3>
+      <div class="ai-source-demo">
+        <SourceTag
+          level="official-mit"
+          sourceTitle="Page officielle MIT Sloan Executive Education du programme"
+          sourceUrl="https://executive.mit.edu/course/artificial-intelligence/a056g00000URaa3AAD.html"
+          accessedAt="2026-04-30"
+        />
+        <p class="ai-source-demo__note">
+          <strong>Source officielle MIT.</strong> Vient des pages MIT Sloan Executive Education,
+          du sample schedule officiel, ou de communications publiques par le faculty MIT. Le plus
+          haut niveau de preuve.
+        </p>
+
+        <SourceTag
+          level="recommended-complement"
+          sourceTitle="MIT Sloan Ideas Made to Matter"
+          sourceUrl="https://mitsloan.mit.edu/ideas-made-to-matter"
+          accessedAt="2026-04-30"
+        />
+        <p class="ai-source-demo__note">
+          <strong>Complément recommandé.</strong> Sources MIT ou MIT-connexes (MIT Sloan, MIT News,
+          MIT OpenCourseWare, MIT Center for Collective Intelligence). Cohérentes avec le programme
+          mais pas dans son cœur officiel.
+        </p>
+
+        <SourceTag level="pedagogical-reconstruction" />
+        <p class="ai-source-demo__note">
+          <strong>Reconstruction pédagogique.</strong> Quand une information n'est pas publiquement
+          détaillée par MIT (par exemple : la nature exacte d'un devoir d'un module), nous reconstruisons
+          de manière prudente à partir de sources publiques cohérentes avec l'esprit du programme.
+          Ces reconstructions sont toujours signalées et ne sont jamais présentées comme officielles.
+        </p>
+
+        <SourceTag
+          level="external-verifiable"
+          sourceTitle="NIST AI Risk Management Framework"
+          sourceUrl="https://www.nist.gov/itl/ai-risk-management-framework"
+          accessedAt="2026-04-30"
+        />
+        <p class="ai-source-demo__note">
+          <strong>Source externe vérifiable.</strong> Standards publics (NIST, OCDE, AI Act),
+          publications académiques, communications officielles d'entreprises, working papers reconnus.
+          Vérifiables par tout lecteur.
+        </p>
+
+        <SourceTag level="to-verify" />
+        <p class="ai-source-demo__note">
+          <strong>À vérifier.</strong> Information dont la source n'est pas encore stabilisée ou qui
+          mérite une relecture spécifique. Présent provisoirement le temps de la consolidation
+          éditoriale, jamais en production stable.
+        </p>
+      </div>
+
+      <h3>Conséquence opérationnelle</h3>
+      <p>
+        Le composant <code>&lt;SourceTag /&gt;</code> est utilisé partout : pages module, études de cas,
+        glossaire, capstone. Aucune affirmation factuelle n'est publiée sans son niveau associé. Si vous
+        repérez une exception, c'est un bug — signalez-le sur <a href={`${githubUrl}/issues`} rel="noopener noreferrer" target="_blank">GitHub Issues</a>.
+      </p>
+    </section>
+
+    <section id="independance">
+      <h2>2. Indépendance vis-à-vis de MIT</h2>
+
+      <IndependenceNotice variant="block" />
+
+      <p>
+        Ce site n'est ni affilié, ni validé, ni certifié par le Massachusetts Institute of Technology,
+        par MIT Sloan School of Management, ni par MIT Computer Science and Artificial Intelligence
+        Laboratory (CSAIL). Il s'agit d'une <strong>ressource pédagogique indépendante</strong>, conçue
+        et maintenue par Mohamed El Afrit (cf. <a href={getLocalizedUrl('/a-propos/', locale)}>page À propos</a>),
+        inspirée par les thématiques publiques du programme MIT Sloan
+        <em>Artificial Intelligence: Implications for Business Strategy</em>.
+      </p>
+
+      <h3>Ce qui est cité</h3>
+      <p>
+        Nous citons explicitement le programme MIT comme source d'inspiration et de référence
+        pédagogique. Nous renvoyons à ses pages officielles publiques (page de cours, sample schedule
+        PDF, communications MIT Sloan Ideas Made to Matter, MIT OpenCourseWare) lorsqu'elles éclairent
+        un point du contenu.
+      </p>
+
+      <h3>Ce qui n'est pas reproduit</h3>
+      <p>
+        Aucun contenu propriétaire MIT n'est copié sur ce site : ni le syllabus interne, ni les vidéos,
+        ni les supports de cours, ni les évaluations officielles, ni les certificats. Le contenu produit
+        ici est <strong>original</strong>, écrit en français, structuré selon nos propres choix
+        pédagogiques, et publié sous une licence ouverte distincte (cf. section 4).
+      </p>
+
+      <h3>Pourquoi cette indépendance</h3>
+      <p>
+        Trois raisons :
+      </p>
+      <ul>
+        <li><strong>Honnêteté.</strong> Nous n'avons pas l'autorité de représenter MIT, donc nous ne le faisons pas.</li>
+        <li><strong>Liberté éditoriale.</strong> Nous pouvons enrichir, recadrer, et adapter au contexte francophone et arabophone sans demander d'autorisation.</li>
+        <li><strong>Sécurité juridique.</strong> Une affiliation non autorisée serait une atteinte aux droits de MIT et un risque pour les utilisateurs du site (qui pourraient se croire certifiés).</li>
+      </ul>
+    </section>
+
+    <section id="triple-lecture">
+      <h2>3. Triple lecture</h2>
+      <p>
+        Le site est conçu pour <strong>trois publics simultanément</strong>, qui n'ont pas le même temps,
+        ni les mêmes besoins, ni la même profondeur d'expertise. Plutôt que de produire trois versions
+        séparées, chaque page est structurée pour offrir trois niveaux de lecture.
+      </p>
+      <ol>
+        <li>
+          <strong>Synthèse exécutive — 3 à 5 minutes.</strong> Encadré dédié en haut de chaque page module.
+          Permet à un dirigeant de cadrer un sujet en réunion sans lire le reste.
+        </li>
+        <li>
+          <strong>Contenu pédagogique — 25 à 45 minutes.</strong> Le corps de la page : objectifs, concepts,
+          erreurs fréquentes, cas réel, activité, quiz, checklist. Pour qui veut comprendre et appliquer.
+        </li>
+        <li>
+          <strong>Annexes opérationnelles — usage en mission.</strong> Templates, matrices, fiches PDF, canvases,
+          rubrics. Téléchargeables, modifiables, citables. Pour le consultant en mission ou l'enseignant
+          en préparation de cours.
+        </li>
+      </ol>
+      <p>
+        Les trois niveaux sont lisibles indépendamment. Vous n'avez jamais besoin de lire le pédagogique
+        pour comprendre la synthèse, ni les annexes pour comprendre le pédagogique. Vous pouvez piocher
+        ce qui sert votre besoin.
+      </p>
+    </section>
+
+    <section id="double-licence">
+      <h2>4. Double licence ouverte</h2>
+      <p>
+        Le projet utilise <strong>deux licences distinctes</strong> selon la nature de ce qui est partagé.
+      </p>
+
+      <h3>Code source — licence MIT</h3>
+      <p>
+        Tout le code (composants Astro, fichiers de configuration, scripts) est sous
+        <a href={`${githubUrl}/blob/main/LICENSE-CODE`} rel="noopener noreferrer" target="_blank">licence MIT</a>.
+        Vous pouvez l'utiliser librement, y compris commercialement, à condition de conserver l'attribution.
+        C'est la licence la plus permissive du monde open source.
+      </p>
+
+      <h3>Contenu pédagogique — CC BY-NC-SA 4.0</h3>
+      <p>
+        Tout le contenu rédactionnel (pages, modules, études de cas, glossaire, FAQ, fiches PDF) est
+        sous <a href={`${githubUrl}/blob/main/LICENSE-CONTENT`} rel="noopener noreferrer" target="_blank">licence Creative Commons BY-NC-SA 4.0</a>.
+        Vous pouvez :
+      </p>
+      <ul>
+        <li>Le <strong>partager</strong> librement, y compris en cours, en interne, ou en mission.</li>
+        <li>Le <strong>modifier</strong> et l'adapter à votre contexte.</li>
+        <li>Mais à <strong>trois conditions</strong> :
+          <ul>
+            <li><strong>Attribution (BY)</strong> : citer la source (lien vers le site et mention de l'auteur).</li>
+            <li><strong>Non-commercial (NC)</strong> : pas de revente, pas d'usage commercial direct.</li>
+            <li><strong>Partage à l'identique (SA)</strong> : si vous publiez vos modifications, sous la même licence.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>Cas concrets</h3>
+      <ul>
+        <li><strong>Vous êtes consultant.</strong> Vous pouvez citer le site dans vos livrables, télécharger les templates, les adapter à un client, mais pas revendre le contenu en tant que tel.</li>
+        <li><strong>Vous êtes enseignant.</strong> Vous pouvez utiliser les pages, quiz et glossaires en cours, distribuer les fiches à vos étudiants, et adapter la rubric capstone à votre contexte.</li>
+        <li><strong>Vous êtes formateur indépendant.</strong> Vous pouvez utiliser comme support de cours en formation continue, à condition de citer la source. Si la formation est payante, l'usage du contenu reste accessoire (ne pas revendre les fiches PDF telles quelles, par exemple).</li>
+      </ul>
+
+      <p>
+        En cas de doute sur un usage spécifique, ouvrez une issue sur GitHub.
+      </p>
+    </section>
+
+    <section id="gouvernance">
+      <h2>5. Gouvernance éditoriale</h2>
+      <p>
+        Le site est rédigé par un auteur unique (cf. <a href={getLocalizedUrl('/a-propos/', locale)}>À propos</a>).
+        Il est versionné sur GitHub et chaque modification passe par un commit traçable.
+      </p>
+
+      <h3>Versionnage</h3>
+      <ul>
+        <li>Le code et le contenu sont sur le même <a href={githubUrl} rel="noopener noreferrer" target="_blank">repository public</a>.</li>
+        <li>Les commits suivent <a href="https://www.conventionalcommits.org/fr/v1.0.0/" rel="noopener noreferrer" target="_blank">Conventional Commits</a> en français.</li>
+        <li>Le <a href={`${githubUrl}/blob/main/CHANGELOG.md`} rel="noopener noreferrer" target="_blank">CHANGELOG</a> trace toutes les évolutions notables.</li>
+      </ul>
+
+      <h3>Documentation interne</h3>
+      <p>
+        Toute la documentation pédagogique et technique est dans le dossier
+        <a href={githubDocsUrl} rel="noopener noreferrer" target="_blank">/docs</a> du repository :
+      </p>
+      <ul>
+        <li><strong>cadrage/</strong> — charte de cadrage, planning, journal des décisions stratégiques (ADR).</li>
+        <li><strong>architecture/</strong> — sitemap, taxonomie, gabarits de pages, décisions techniques.</li>
+        <li><strong>design-system/</strong> — design tokens, typographie, composants, règles RTL, accessibilité, iconographie.</li>
+        <li><strong>personas-parcours/</strong> — personas utilisateurs et user journeys.</li>
+      </ul>
+
+      <h3>Mises à jour</h3>
+      <p>
+        Le site évolue par phases. Chaque phase est taggée sur GitHub (
+        <a href={`${githubUrl}/releases`} rel="noopener noreferrer" target="_blank">Releases</a>
+        ). Les phases publiées à ce jour : Phase 1 (cadrage), Phase 2 (architecture et design system),
+        Phase 3 (squelette technique), Phase 4 en cours (contenus FR).
+      </p>
+    </section>
+
+    <section id="contributions">
+      <h2>6. Contributions et corrections</h2>
+      <p>
+        Toute correction, suggestion, ou contribution est bienvenue.
+      </p>
+      <ul>
+        <li>
+          <strong>Erreur factuelle ou de source ?</strong>
+          <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">Ouvrez une issue GitHub</a>
+          en précisant la page concernée et la source qui contredit.
+        </li>
+        <li>
+          <strong>Suggestion d'amélioration pédagogique ?</strong> Idem, ouvrez une issue avec le tag
+          <code>enhancement</code>.
+        </li>
+        <li>
+          <strong>Vous voulez contribuer un cas, une traduction, un quiz ?</strong> Ouvrez d'abord une
+          issue pour qu'on en discute, avant de soumettre une pull request.
+        </li>
+      </ul>
+
+      <h3>Réactivité</h3>
+      <p>
+        Les issues sont traitées dans l'ordre. La maintenance est bénévole, donc le délai de réponse
+        peut varier de quelques jours à quelques semaines. Les corrections factuelles sont prioritaires.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .ai-method-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-method-toc {
+    margin-block-end: var(--ai-space-7);
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border: 1px solid var(--ai-border-subtle);
+  }
+  .ai-method-toc h2 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-secondary);
+  }
+  :global([dir='rtl']) .ai-method-toc h2 {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .ai-method-toc ol {
+    margin: 0;
+    padding-inline-start: var(--ai-space-5);
+  }
+  .ai-method-toc li {
+    margin-block: var(--ai-space-1);
+  }
+  .ai-method-toc a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+  }
+  .ai-method-toc a:hover,
+  .ai-method-toc a:focus-visible {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+
+  .ai-method-page section {
+    margin-block: var(--ai-space-8);
+  }
+  .ai-method-page section:first-of-type {
+    margin-block-start: 0;
+  }
+
+  .ai-source-demo {
+    display: grid;
+    gap: var(--ai-space-2);
+    margin-block: var(--ai-space-5);
+  }
+  .ai-source-demo__note {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    padding-inline-start: var(--ai-space-4);
+  }
+</style>

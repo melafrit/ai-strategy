@@ -58,9 +58,26 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
   - Build validé : 4 pages générées, sitemap-index.xml créé, 0 erreur sur 19 fichiers Astro check.
 
 ### Planned (Phase 4)
-- Production des contenus FR : modules 1 à 6, ~10 études de cas, glossaire ~30 termes, FAQ, capstone.
+- ~~Production des contenus FR : modules 1 à 6, ~10 études de cas, glossaire ~30 termes, FAQ, capstone.~~ **→ Subdivisé en sous-phases ci-dessous**
 - Premières fiches PDF via composants markdown stylisés.
 - Activation des contenus dans `src/content/<lang>/...`.
+
+- Phase 4.0 — Pages de confiance (FR + stubs EN/AR) :
+  - Nouveau home FR complet (remplace le placeholder Phase 3) avec hero, TrustBar, 3 audiences ciblées (dirigeants/consultants/enseignants), grille de prévisualisation des 6 modules, bloc « comment nous travaillons » en 4 piliers, encadré indépendance MIT.
+  - Page Méthode FR (`/fr/methode/`) : sommaire à 6 sections, démo des 5 niveaux de SourceTag avec exemples sourcés, justification de l'indépendance vis-à-vis de MIT, explication de la triple lecture, détail des deux licences (MIT pour code + CC BY-NC-SA 4.0 pour contenu) avec cas concrets, gouvernance éditoriale via GitHub.
+  - Page À propos FR (`/fr/a-propos/`) : auteur, raison du choix MIT Sloan comme référence, philosophie trilingue, trois principes éditoriaux (pas d'invention, pas de jargon, pas de marketing), canal de contact GitHub.
+  - Page Mentions légales FR (`/fr/mentions-legales/`) : éditeur, hébergeur OVH, propriété intellectuelle (double licence + marques tierces nominatives), RGPD avec engagement de non-collecte par défaut, stockage local quiz, logs serveur, droits utilisateur, droit applicable français.
+  - 6 stubs EN/AR (`/en/methode/`, `/en/a-propos/`, `/en/mentions-legales/`, et équivalents AR) utilisant le composant `<TranslationPending />` qui pointe vers la version FR et la home localisée.
+  - 5 nouveaux composants : `<HeroSecondary />`, `<TrustBar />`, `<AudienceCard />`, `<ModuleCard />` (avec état "available", désactivé jusqu'à publication des modules), `<TranslationPending />`.
+  - ~120 nouvelles clés de traduction FR/EN/AR (audiences, modules preview, trust bar, CTAs génériques, translation pending).
+  - Build validé : 13 pages générées (1 root + 4 FR + 4 EN + 4 AR), 0 erreur Astro check sur 33 fichiers.
+
+### Planned (Phase 4.1+)
+- Phase 4.1 : Page Programme/overview + Module 1 (Introduction à l'IA) comme pattern-setter.
+- Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).
+- Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).
+- Phase 4.9 : Glossaire (~30 termes).
+- Phase 4.10 : FAQ + Capstone + Resources hub.
 
 ### Deferred (open decisions)
 - Type d'hébergement OVH (mutualisé / VPS / Cloud) — bloque l'activation du workflow `deploy.yml`.
