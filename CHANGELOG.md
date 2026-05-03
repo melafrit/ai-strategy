@@ -77,7 +77,34 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- Phase 4.10 : FAQ + Capstone + Resources hub.
+- Phase 4.10 : FAQ + Capstone + Resources hub. **→ EN COURS : Resources hub publié (sub-1)**, Capstone (sub-2) et FAQ (sub-3) restants.
+
+- Phase 4.10 sub-1 — Resources hub :
+  - **NEW DATA — `src/content/resources.ts`** (610 lignes) — Catalogue de 31 ressources externes typées TypeScript, structurées en 8 familles thématiques :
+    - **Programme officiel MIT** (2 ressources) : page certificat + sample schedule PDF
+    - **MIT OpenCourseWare** (4 cours) : AI 101, Intro to ML 6.036, Foundation Models 6.S087, Intro to Robotics 2.12
+    - **Articles MIT Sloan** (3 articles) : business leaders & AI, GenAI use cases, technology & employment
+    - **Articles MIT Executive Education** (1 article) : Present and Future of GenAI in Business
+    - **Standards et gouvernance** (5 sources) : NIST AI RMF page + PDF, OCDE Principes IA, AI Act EU EUR-Lex, ISO/TS 15066
+    - **Sources primaires des cas** (10) : Takeda CCI, GenAI & Collective Intelligence, Morgan Stanley AI, Stripe Radar, MIT News Mirai, CSAIL Barzilay, GitHub Copilot research, Amazon million robots, Universal Robots, MIT IDE
+    - **Publications académiques** (2) : NBER Generative AI at Work, MIT CCI publications
+    - **Ressources externes vérifiables** (4) : WEF Future of Jobs, Commission EU AI Act page, Amazon Robotics corporate, GitHub Copilot product
+  - Chaque ressource : slug + type + title + author + description (2-3 phrases) + href + sourceLevel (officiel-MIT / complément recommandé / source externe vérifiable / reconstruction pédagogique) + relatedModules + relatedCases + tags + language (fr / en / multilingual).
+  - Helpers exportés : `getResource(slug)`, `resourcesByType(type)`, `resourcesForModule(num)`, `resourcesForCase(slug)`, `resourcesByLevel(level)`, `resourcesInFrench()`, `resourcesAlphabetical()`, `countByType()`, constante `TOTAL_RESOURCES`.
+  - Cross-referencing dense vérifié sur HTML buildé : 31× Modules, 26× Cas, 7 ressources directement disponibles en français ou multilingues.
+  - **NEW PAGE — `src/pages/fr/ressources/index.astro`** (725 lignes) — page hub avec :
+    - Hero avec stats (31 ressources · 8 types · 7 FR/multilingue · 10 cas couverts)
+    - Intro pédagogique (3 manières de naviguer : par type, par module/cas, par langue)
+    - 8 cards de types cliquables avec compteur par catégorie
+    - 8 sections par type avec entrées détaillées (titre + lien externe + auteur + description + 2 badges colorés [niveau de source / langue] + références modules+cas + tags)
+    - Section dédiée aux ressources françaises et multilingues (mise en avant pour apprenants francophones)
+    - Matrice ressources × modules avec `<details open>` permettant de naviguer module par module avec compteur
+    - Liens vers programme/cas/glossaire/méthode
+    - IndependenceNotice en pied
+  - **NEW STUBS** : EN + AR avec TranslationPending.
+  - **Activation navigation** : le lien `/ressources/` était déjà câblé dans `Header.astro` — fonctionne désormais.
+  - Build validé : 76 pages générées (1 root + 25 FR + 25 EN + 25 AR), 0 erreur / 0 warning / 0 hint Astro check sur 122 fichiers.
+  - Pattern : 0 nouveau composant. Page self-contained, design tokens cohérents.
 
 - Phase 4.9 — Glossaire pédagogique structuré :
   - **NEW DATA — `src/content/glossary.ts`** (586 lignes) — 31 entrées typées TypeScript en 6 catégories thématiques :

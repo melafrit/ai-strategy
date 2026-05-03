@@ -1,0 +1,725 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import {
+  resources,
+  resourceTypeLabels,
+  resourceTypeDescriptions,
+  resourcesByType,
+  resourcesForModule,
+  resourcesInFrench,
+  countByType,
+  TOTAL_RESOURCES,
+  type ResourceType,
+  type Resource,
+} from '@/content/resources';
+import { getLocalizedUrl } from '@/i18n/helpers';
+
+const locale = 'fr';
+
+// Ordre d'affichage des types
+const typesOrdered: ResourceType[] = [
+  'official-course',
+  'mit-ocw',
+  'mit-sloan-article',
+  'mit-executive-article',
+  'standard',
+  'case-source',
+  'academic-paper',
+  'external-resource',
+];
+
+const counts = countByType();
+const frResources = resourcesInFrench();
+
+// Comptages clés
+const totalFr = frResources.length;
+const totalCases = new Set(
+  resources.flatMap((r) => r.relatedCases ?? [])
+).size;
+
+// Mapping de niveau de source vers label court
+const sourceLevelShort: Record<string, string> = {
+  'official-mit': 'Officiel MIT',
+  'recommended-complement': 'Complément recommandé',
+  'external-verifiable': 'Source externe vérifiable',
+  'pedagogical-reconstruction': 'Reconstruction pédagogique',
+};
+
+// Mapping cas slug → titre court (mêmes intitulés que dans le glossaire)
+const caseTitles: Record<string, string> = {
+  'takeda-superminds': 'Takeda × MIT CCI',
+  'morgan-stanley': 'Morgan Stanley',
+  'stripe-radar': 'Stripe Radar',
+  'mit-barzilay-cancer': 'MIT — Regina Barzilay',
+  'github-copilot-accenture': 'GitHub × Accenture',
+  'amazon-robotics': 'Amazon Robotics',
+  'universal-robots': 'Universal Robots',
+  'nist-ai-rmf': 'NIST AI RMF',
+  'ai-act-eu-haut-risque': 'AI Act EU haut risque',
+  'mit-ide': 'MIT IDE',
+};
+
+function moduleHref(num: number): string {
+  const slugs: Record<number, string> = {
+    1: '/modules/01-introduction-ia/',
+    2: '/modules/02-machine-learning/',
+    3: '/modules/03-ia-generative/',
+    4: '/modules/04-robotique/',
+    5: '/modules/05-ia-societe/',
+    6: '/modules/06-futur-ia/',
+  };
+  return getLocalizedUrl(slugs[num] ?? '/modules/', locale);
+}
+
+function caseHref(slug: string): string {
+  return getLocalizedUrl(`/cas/${slug}/`, locale);
+}
+
+function languageBadge(lang: Resource['language']): string {
+  switch (lang) {
+    case 'fr':
+      return 'Français';
+    case 'multilingual':
+      return 'Multilingue (incl. français)';
+    case 'en':
+      return 'Anglais';
+  }
+}
+
+// Pré-calcul de la matrice modules × ressources pour le tableau croisé
+const moduleNumbers = [1, 2, 3, 4, 5, 6];
+const moduleResourcesTable = moduleNumbers.map((num) => ({
+  num,
+  resources: resourcesForModule(num),
+}));
+
+// Liens dérivés
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const casUrl = getLocalizedUrl('/cas/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
+---
+
+<BaseLayout
+  title={`Ressources — ${TOTAL_RESOURCES} sources publiques pour approfondir`}
+  description={`Hub centralisé des ${TOTAL_RESOURCES} ressources externes citées dans le parcours AI Strategy : programme officiel MIT, MIT OCW, articles MIT Sloan, standards de gouvernance, sources primaires des cas, publications académiques.`}
+>
+  <HeroSecondary
+    surtitle="Hub de ressources pédagogiques"
+    title={`${TOTAL_RESOURCES} ressources publiques pour approfondir`}
+    lead="Toutes les sources citées dans les modules, études de cas et glossaire centralisées en un point unique. Chaque ressource indique son niveau de source, sa langue, ses modules et cas associés. Liens directs vers les pages officielles."
+  >
+    <span slot="stats">
+      {TOTAL_RESOURCES} ressources · 8 types · {totalFr} en français ou multilingue · {totalCases} cas couverts
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-resources-page">
+    {/* === INTRO === */}
+    <section class="ai-resources-intro" aria-labelledby="intro-title">
+      <h2 id="intro-title">Comment utiliser ce hub</h2>
+      <p>
+        Ce hub regroupe les ressources externes que les pages
+        <a href={programmeUrl}>modules</a>, <a href={casUrl}>études de cas</a> et
+        <a href={glossaireUrl}>glossaire</a> citent comme sources d'approfondissement. Trois manières d'y naviguer :
+      </p>
+      <ul>
+        <li>
+          <strong>Par type de ressource</strong> — utile quand vous cherchez un
+          format précis (cours, article, standard, source primaire). Les huit
+          familles ci-dessous regroupent toutes les ressources.
+        </li>
+        <li>
+          <strong>Par module ou par cas associé</strong> — utile quand vous
+          travaillez sur un sujet spécifique du parcours. Chaque entrée indique
+          ses modules et cas en lien.
+        </li>
+        <li>
+          <strong>Par langue</strong> — la dernière section met en avant les
+          ressources directement disponibles en français pour les apprenants
+          francophones, et signale celles qui sont multilingues.
+        </li>
+      </ul>
+      <p class="ai-resources-intro__source-note">
+        <SourceTag level="external-verifiable" inline />
+        Toutes les ressources sont publiques et vérifiables au moment où ce
+        catalogue est construit. Les URLs externes peuvent évoluer dans le
+        temps. Voir la <a href={methodeUrl}>page Méthode</a> pour la hiérarchie
+        des niveaux de source.
+      </p>
+    </section>
+
+    {/* === TYPE OVERVIEW === */}
+    <section class="ai-resources-types-overview" aria-labelledby="types-title">
+      <h2 id="types-title">Huit familles de ressources</h2>
+      <div class="ai-resources-types-grid">
+        {typesOrdered.map((type) => (
+          <a class="ai-resources-type-card" href={`#type-${type}`}>
+            <header class="ai-resources-type-card__head">
+              <h3>{resourceTypeLabels[type]}</h3>
+              <span class="ai-resources-type-card__count">
+                {counts[type]} {counts[type] > 1 ? 'ressources' : 'ressource'}
+              </span>
+            </header>
+            <p>{resourceTypeDescriptions[type]}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* === RESOURCES BY TYPE === */}
+    {typesOrdered.map((type) => {
+      const list = resourcesByType(type);
+      if (list.length === 0) return null;
+      return (
+        <section
+          id={`type-${type}`}
+          class="ai-resources-section"
+          aria-labelledby={`type-${type}-title`}
+        >
+          <header class="ai-resources-section__head">
+            <h2 id={`type-${type}-title`}>{resourceTypeLabels[type]}</h2>
+            <p>{resourceTypeDescriptions[type]}</p>
+          </header>
+
+          <ul class="ai-resources-list">
+            {list.map((r) => (
+              <li id={r.slug} class="ai-resources-item">
+                <article class="ai-resources-item__inner">
+                  <header class="ai-resources-item__head">
+                    <h3 class="ai-resources-item__title">
+                      <a href={r.href} target="_blank" rel="noopener noreferrer">
+                        {r.title}
+                      </a>
+                    </h3>
+                    <p class="ai-resources-item__author">{r.author}</p>
+                  </header>
+
+                  <p class="ai-resources-item__description">{r.description}</p>
+
+                  <footer class="ai-resources-item__footer">
+                    <div class="ai-resources-item__badges">
+                      <span class="ai-resources-item__badge ai-resources-item__badge--level">
+                        {sourceLevelShort[r.sourceLevel]}
+                      </span>
+                      <span class="ai-resources-item__badge ai-resources-item__badge--lang">
+                        {languageBadge(r.language)}
+                      </span>
+                    </div>
+
+                    <div class="ai-resources-item__refs">
+                      {r.relatedModules && r.relatedModules.length > 0 && (
+                        <span class="ai-resources-item__ref-group">
+                          <span class="ai-resources-item__ref-label">
+                            Modules :
+                          </span>
+                          {r.relatedModules.map((num, i) => (
+                            <>
+                              {i > 0 && ', '}
+                              <a href={moduleHref(num)} class="ai-resources-item__ref-link">
+                                M{num}
+                              </a>
+                            </>
+                          ))}
+                        </span>
+                      )}
+                      {r.relatedCases && r.relatedCases.length > 0 && (
+                        <span class="ai-resources-item__ref-group">
+                          <span class="ai-resources-item__ref-label">Cas :</span>
+                          {r.relatedCases.map((slug, i) => (
+                            <>
+                              {i > 0 && ', '}
+                              <a href={caseHref(slug)} class="ai-resources-item__ref-link">
+                                {caseTitles[slug] ?? slug}
+                              </a>
+                            </>
+                          ))}
+                        </span>
+                      )}
+                    </div>
+
+                    {r.tags && r.tags.length > 0 && (
+                      <div class="ai-resources-item__tags">
+                        {r.tags.map((tag) => (
+                          <span class="ai-resources-item__tag">#{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </footer>
+                </article>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })}
+
+    {/* === FRENCH RESOURCES === */}
+    <section class="ai-resources-french" aria-labelledby="fr-title">
+      <header class="ai-resources-section__head">
+        <h2 id="fr-title">
+          Ressources directement disponibles en français ({totalFr})
+        </h2>
+        <p>
+          Les ressources ci-dessous sont rédigées principalement en français,
+          ou disposent d'une version française de qualité équivalente à
+          l'original. Pour les apprenants francophones, ce sont les portes
+          d'entrée les plus accessibles.
+        </p>
+      </header>
+
+      <ul class="ai-resources-list ai-resources-list--french">
+        {frResources.map((r) => (
+          <li class="ai-resources-item">
+            <article class="ai-resources-item__inner">
+              <header class="ai-resources-item__head">
+                <h3 class="ai-resources-item__title">
+                  <a href={r.href} target="_blank" rel="noopener noreferrer">
+                    {r.title}
+                  </a>
+                </h3>
+                <p class="ai-resources-item__author">
+                  {r.author} — <em>{resourceTypeLabels[r.type]}</em>
+                </p>
+              </header>
+              <p class="ai-resources-item__description">{r.description}</p>
+              <footer class="ai-resources-item__footer">
+                <span class="ai-resources-item__badge ai-resources-item__badge--lang">
+                  {languageBadge(r.language)}
+                </span>
+              </footer>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {/* === CROSS-REFERENCE MATRIX === */}
+    <section class="ai-resources-matrix" aria-labelledby="matrix-title">
+      <header class="ai-resources-section__head">
+        <h2 id="matrix-title">Ressources par module</h2>
+        <p>
+          Pour chaque module du parcours, les ressources qui y sont
+          explicitement rattachées. Une même ressource peut apparaître sur
+          plusieurs modules quand elle couvre des aspects transverses.
+        </p>
+      </header>
+
+      <div class="ai-resources-matrix__list">
+        {moduleResourcesTable.map(({ num, resources: modRes }) => (
+          <details class="ai-resources-matrix__group" open>
+            <summary class="ai-resources-matrix__summary">
+              <strong>Module {num}</strong>
+              <span class="ai-resources-matrix__group-count">
+                {modRes.length} {modRes.length > 1 ? 'ressources' : 'ressource'}
+              </span>
+            </summary>
+            <ul class="ai-resources-matrix__items">
+              {modRes.map((r) => (
+                <li>
+                  <a href={`#${r.slug}`} class="ai-resources-matrix__link">
+                    {r.title}
+                  </a>
+                  <span class="ai-resources-matrix__type">
+                    — {resourceTypeLabels[r.type]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <a href={moduleHref(num)} class="ai-resources-matrix__module-link">
+              → Voir le module {num} complet
+            </a>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    {/* === LIENS RAPIDES === */}
+    <section class="ai-resources-links" aria-labelledby="links-title">
+      <h2 id="links-title">Pour aller plus loin</h2>
+      <ul>
+        <li>
+          <a href={programmeUrl}>Vue d'ensemble du programme</a> — les six
+          modules avec leurs objectifs d'apprentissage et compétences développées.
+        </li>
+        <li>
+          <a href={casUrl}>Études de cas</a> — dix cas réels d'organisations
+          déployant l'IA, chacun citant ses sources publiques.
+        </li>
+        <li>
+          <a href={glossaireUrl}>Glossaire</a> — 31 termes structurants avec
+          définitions, exemples et références croisées.
+        </li>
+        <li>
+          <a href={methodeUrl}>Méthode</a> — comment ce site distingue les
+          sources officielles MIT des compléments recommandés et des
+          reconstructions pédagogiques.
+        </li>
+      </ul>
+    </section>
+
+    <div class="ai-resources-independence">
+      <IndependenceNotice variant="block" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ai-resources-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  /* === INTRO === */
+  .ai-resources-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-5);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-resources-intro h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-resources-intro p,
+  .ai-resources-intro li {
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-resources-intro p {
+    margin-block: 0 var(--ai-space-3);
+  }
+  .ai-resources-intro ul {
+    margin: var(--ai-space-3) 0;
+    padding-inline-start: var(--ai-space-5);
+  }
+  .ai-resources-intro li {
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-resources-intro__source-note {
+    margin-block-start: var(--ai-space-4);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-resources-intro a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-resources-intro a:hover {
+    text-decoration: underline;
+  }
+
+  /* === TYPES OVERVIEW === */
+  .ai-resources-types-overview {
+    margin-block: var(--ai-space-7);
+  }
+  .ai-resources-types-overview h2 {
+    margin: 0 0 var(--ai-space-4);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-resources-types-grid {
+    display: grid;
+    gap: var(--ai-space-3);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50em) {
+    .ai-resources-types-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 80em) {
+    .ai-resources-types-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .ai-resources-type-card {
+    display: block;
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .ai-resources-type-card:hover {
+    border-color: var(--ai-accent-primary);
+    transform: translateY(-1px);
+  }
+  .ai-resources-type-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-resources-type-card h3 {
+    margin: 0;
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+  }
+  .ai-resources-type-card__count {
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ai-resources-type-card p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+
+  /* === SECTION === */
+  .ai-resources-section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-resources-section__head {
+    border-block-end: 2px solid var(--ai-accent-primary);
+    padding-block-end: var(--ai-space-3);
+    margin-block-end: var(--ai-space-5);
+  }
+  .ai-resources-section__head h2 {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-2xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-resources-section__head p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  /* === LIST === */
+  .ai-resources-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-4);
+  }
+  .ai-resources-item {
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+  .ai-resources-item__inner {
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    transition: border-color 120ms ease;
+  }
+  .ai-resources-item__inner:hover {
+    border-color: var(--ai-accent-primary);
+  }
+  .ai-resources-item__head {
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-resources-item__title {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    line-height: var(--ai-leading-snug);
+  }
+  .ai-resources-item__title a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+  }
+  .ai-resources-item__title a:hover {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+  .ai-resources-item__author {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-muted);
+  }
+  .ai-resources-item__description {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-resources-item__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    align-items: center;
+    padding-block-start: var(--ai-space-3);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-resources-item__badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-1);
+  }
+  .ai-resources-item__badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-medium);
+    line-height: 1.4;
+  }
+  .ai-resources-item__badge--level {
+    background: var(--ai-accent-subtle);
+    color: var(--ai-accent-primary);
+  }
+  .ai-resources-item__badge--lang {
+    background: var(--ai-bg-subtle);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-resources-item__refs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-3);
+    color: var(--ai-fg-muted);
+  }
+  .ai-resources-item__ref-group {
+    white-space: nowrap;
+  }
+  .ai-resources-item__ref-label {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+    margin-inline-end: var(--ai-space-1);
+  }
+  .ai-resources-item__ref-link {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+  }
+  .ai-resources-item__ref-link:hover {
+    text-decoration: underline;
+  }
+  .ai-resources-item__tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-1);
+    width: 100%;
+    padding-block-start: var(--ai-space-2);
+  }
+  .ai-resources-item__tag {
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-muted);
+  }
+
+  /* === FRENCH RESOURCES === */
+  .ai-resources-french {
+    margin-block: var(--ai-space-8);
+    padding: var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-resources-list--french .ai-resources-item__inner {
+    background: var(--ai-bg-base);
+  }
+
+  /* === MATRIX === */
+  .ai-resources-matrix {
+    margin-block: var(--ai-space-8);
+  }
+  .ai-resources-matrix__list {
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-resources-matrix__group {
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    padding: var(--ai-space-4);
+  }
+  .ai-resources-matrix__summary {
+    cursor: pointer;
+    padding-block-end: var(--ai-space-2);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+  }
+  .ai-resources-matrix__summary:hover {
+    color: var(--ai-accent-primary);
+  }
+  .ai-resources-matrix__summary strong {
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-base);
+  }
+  .ai-resources-matrix__group-count {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-resources-matrix__items {
+    list-style: none;
+    margin: var(--ai-space-2) 0;
+    padding: 0;
+  }
+  .ai-resources-matrix__items li {
+    line-height: var(--ai-leading-relaxed);
+    padding-block: 0.15rem;
+  }
+  .ai-resources-matrix__link {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-resources-matrix__link:hover {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+  .ai-resources-matrix__type {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-resources-matrix__module-link {
+    display: inline-block;
+    margin-block-start: var(--ai-space-2);
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-resources-matrix__module-link:hover {
+    text-decoration: underline;
+  }
+
+  /* === LIENS === */
+  .ai-resources-links {
+    margin-block: var(--ai-space-8);
+  }
+  .ai-resources-links h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-resources-links ul {
+    margin: 0;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-resources-links li {
+    margin-block-end: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-resources-links a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-resources-links a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-resources-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
