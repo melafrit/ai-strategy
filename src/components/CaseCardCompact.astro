@@ -1,0 +1,183 @@
+---
+/**
+ * CaseCardCompact.astro — carte compacte référençant une étude de cas.
+ *
+ * Utilisée dans les pages module (section "Cas réel principal") pour
+ * pointer vers la page cas complète. Différente de la <CaseCard /> de
+ * la grille (Phase 4.7+) qui sera plus visuelle.
+ *
+ * Affiche : organisation, secteur, technologie, lien vers la page cas.
+ * Tant que la page cas n'existe pas, marquée 'available={false}' avec
+ * un état "Bientôt disponible" similaire à <ModuleCard />.
+ */
+
+interface Props {
+  /** Organisation name (e.g. "Takeda × MIT CCI"). */
+  organization: string;
+  /** Sector chip (e.g. "Santé"). */
+  sector?: string;
+  /** Technology chip (e.g. "Intelligence collective"). */
+  technology?: string;
+  /** Tagline / problem framing — 1 short paragraph. */
+  tagline: string;
+  /** URL of the dedicated case page. */
+  href: string;
+  /** Whether the dedicated case page is published yet. */
+  available?: boolean;
+  className?: string;
+}
+
+const {
+  organization,
+  sector,
+  technology,
+  tagline,
+  href,
+  available = false,
+  className,
+} = Astro.props;
+---
+
+<article class:list={['ai-case-compact', className]} aria-disabled={!available}>
+  <header class="ai-case-compact__header">
+    <span class="ai-case-compact__icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+        <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01" />
+      </svg>
+    </span>
+    <p class="ai-case-compact__surtitle">Étude de cas</p>
+  </header>
+
+  <h4 class="ai-case-compact__title">
+    {available ? <a href={href}>{organization}</a> : <span>{organization}</span>}
+  </h4>
+
+  {(sector || technology) && (
+    <p class="ai-case-compact__tags">
+      {sector && <span class="ai-case-compact__chip">{sector}</span>}
+      {technology && <span class="ai-case-compact__chip">{technology}</span>}
+    </p>
+  )}
+
+  <p class="ai-case-compact__tagline">{tagline}</p>
+
+  <p class="ai-case-compact__cta">
+    {available ? (
+      <a href={href}>Lire le cas complet →</a>
+    ) : (
+      <span class="ai-case-compact__pending">
+        ● Le cas dédié sera publié en Phase 4.7
+      </span>
+    )}
+  </p>
+</article>
+
+<style>
+  .ai-case-compact {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-inline-start: 4px solid var(--ai-fg-primary);
+    border-radius: var(--ai-radius-md);
+    margin-block: var(--ai-space-4);
+  }
+  .ai-case-compact[aria-disabled='true'] {
+    border-inline-start-color: var(--ai-fg-muted);
+  }
+
+  .ai-case-compact__header {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    margin-block-end: var(--ai-space-1);
+  }
+
+  .ai-case-compact__icon {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-case-compact__surtitle {
+    margin: 0;
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-secondary);
+  }
+  :global([dir='rtl']) .ai-case-compact__surtitle {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-case-compact__title {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-case-compact__title a {
+    color: var(--ai-fg-primary);
+    text-decoration: none;
+  }
+  .ai-case-compact__title a:hover,
+  .ai-case-compact__title a:focus-visible {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .ai-case-compact__tags {
+    margin: 0 0 var(--ai-space-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-1);
+  }
+
+  .ai-case-compact__chip {
+    display: inline-block;
+    padding: 0.1em 0.6em;
+    background: var(--ai-bg-muted);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    border-radius: var(--ai-radius-pill);
+    letter-spacing: var(--ai-tracking-wide);
+  }
+  :global([dir='rtl']) .ai-case-compact__chip {
+    letter-spacing: 0;
+  }
+
+  .ai-case-compact__tagline {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-case-compact__cta {
+    margin: 0;
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-case-compact__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+  }
+  .ai-case-compact__cta a:hover,
+  .ai-case-compact__cta a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .ai-case-compact__pending {
+    color: var(--ai-fg-muted);
+  }
+</style>

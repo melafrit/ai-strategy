@@ -1,0 +1,146 @@
+---
+/**
+ * PitfallList.astro — liste d'erreurs fréquentes.
+ *
+ * Pour chaque piège : un titre, l'erreur (description), le mécanisme
+ * (pourquoi c'est piège), et la mitigation (comment éviter).
+ * Format orienté action, pas catalogue.
+ */
+
+interface PitfallItem {
+  title: string;
+  error: string;
+  mechanism: string;
+  mitigation: string;
+}
+
+interface Props {
+  items: PitfallItem[];
+  className?: string;
+}
+
+const { items, className } = Astro.props;
+---
+
+<ol class:list={['ai-pitfalls', className]}>
+  {
+    items.map((item, index) => (
+      <li class="ai-pitfalls__item">
+        <header class="ai-pitfalls__header">
+          <span class="ai-pitfalls__num" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <span class="ai-pitfalls__icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 9v4M12 17h.01" />
+              <polygon points="13.41 1.99 22 16 2 16 10.59 1.99 12 1.6 13.41 1.99" />
+            </svg>
+          </span>
+          <h4 class="ai-pitfalls__title">{item.title}</h4>
+        </header>
+        <dl class="ai-pitfalls__body">
+          <dt>L'erreur</dt>
+          <dd>{item.error}</dd>
+          <dt>Pourquoi c'est piège</dt>
+          <dd>{item.mechanism}</dd>
+          <dt>Comment éviter</dt>
+          <dd>{item.mitigation}</dd>
+        </dl>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .ai-pitfalls {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-4);
+  }
+
+  .ai-pitfalls__item {
+    padding: var(--ai-space-5);
+    background: var(--ai-warning-subtle);
+    border-inline-start: 4px solid var(--ai-warning);
+    border-radius: var(--ai-radius-md);
+  }
+
+  .ai-pitfalls__header {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-3);
+  }
+
+  .ai-pitfalls__num {
+    color: var(--ai-warning);
+    font-weight: var(--ai-weight-bold);
+    font-size: var(--ai-text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-pitfalls__icon {
+    color: var(--ai-warning);
+    flex-shrink: 0;
+    display: inline-flex;
+  }
+
+  .ai-pitfalls__title {
+    margin: 0;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    flex: 1;
+  }
+
+  .ai-pitfalls__body {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--ai-space-2);
+  }
+  @media (min-width: 48em) {
+    .ai-pitfalls__body {
+      grid-template-columns: 9rem 1fr;
+      gap: var(--ai-space-2) var(--ai-space-4);
+    }
+  }
+
+  .ai-pitfalls__body dt {
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-warning);
+  }
+  :global([dir='rtl']) .ai-pitfalls__body dt {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-pitfalls__body dd {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  @media (max-width: 48em) {
+    .ai-pitfalls__body dd {
+      margin-block-end: var(--ai-space-2);
+    }
+    .ai-pitfalls__body dd:last-of-type {
+      margin-block-end: 0;
+    }
+  }
+</style>

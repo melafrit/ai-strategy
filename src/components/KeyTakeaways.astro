@@ -1,0 +1,114 @@
+---
+/**
+ * KeyTakeaways.astro — encart "À retenir" en fin de page module.
+ *
+ * Convention : 5 puces qui synthétisent
+ *   - le concept clé du module
+ *   - le cas exemplaire
+ *   - le piège majeur
+ *   - l'outil opérationnel à retenir
+ *   - le lien vers la suite
+ *
+ * Style visuel distinctif : fond inversé pour l'emphase finale.
+ */
+
+interface Props {
+  /** Anchor id (kebab-case). */
+  id?: string;
+  /** Title. */
+  title?: string;
+  /** Bullet points (plain text). */
+  items: string[];
+  className?: string;
+}
+
+const { id, title = 'À retenir', items, className } = Astro.props;
+---
+
+<aside class:list={['ai-takeaways', className]} role="note" id={id}>
+  <header class="ai-takeaways__header">
+    <span class="ai-takeaways__icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" />
+      </svg>
+    </span>
+    <h3 class="ai-takeaways__title">{title}</h3>
+  </header>
+  <ul class="ai-takeaways__list">
+    {
+      items.map((item) => (
+        <li class="ai-takeaways__item">
+          <span class="ai-takeaways__bullet" aria-hidden="true">→</span>
+          <span>{item}</span>
+        </li>
+      ))
+    }
+  </ul>
+</aside>
+
+<style>
+  .ai-takeaways {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-inverse);
+    color: var(--ai-fg-inverse);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block: var(--ai-space-4);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-takeaways__header {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-3);
+  }
+
+  .ai-takeaways__icon {
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+    display: inline-flex;
+  }
+
+  .ai-takeaways__title {
+    margin: 0;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-inverse);
+  }
+
+  .ai-takeaways__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+
+  .ai-takeaways__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-takeaways__bullet {
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    flex-shrink: 0;
+    margin-block-start: 0.05em;
+  }
+  :global([dir='rtl']) .ai-takeaways__bullet {
+    transform: scaleX(-1);
+  }
+</style>

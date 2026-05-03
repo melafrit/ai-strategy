@@ -1,0 +1,169 @@
+---
+/**
+ * PrevNextNav.astro — navigation entre pages sœur (modules, cas, épisodes).
+ *
+ * Comportement RTL : ordre visuel inversé (Suivant à gauche, Précédent
+ * à droite). Les flèches s'inversent visuellement via scaleX(-1) en
+ * RTL. Le sens sémantique reste le même.
+ */
+
+interface NavItem {
+  /** URL of the previous/next page. */
+  href: string;
+  /** Page title (translated). */
+  label: string;
+  /** Short context (e.g. "Module 2"). */
+  context?: string;
+}
+
+interface Props {
+  prev?: NavItem;
+  next?: NavItem;
+  className?: string;
+}
+
+const { prev, next, className } = Astro.props;
+---
+
+<nav class:list={['ai-prevnext', className]} aria-label="Navigation entre modules">
+  <div class="ai-prevnext__slot ai-prevnext__slot--prev">
+    {prev ? (
+      <a href={prev.href} class="ai-prevnext__link">
+        <span class="ai-prevnext__icon ai-prevnext__icon--prev" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            data-direction
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </span>
+        <span class="ai-prevnext__body">
+          {prev.context && <span class="ai-prevnext__context">← {prev.context}</span>}
+          <span class="ai-prevnext__label">{prev.label}</span>
+        </span>
+      </a>
+    ) : (
+      <span aria-hidden="true" />
+    )}
+  </div>
+
+  <div class="ai-prevnext__slot ai-prevnext__slot--next">
+    {next ? (
+      <a href={next.href} class="ai-prevnext__link ai-prevnext__link--next">
+        <span class="ai-prevnext__body">
+          {next.context && <span class="ai-prevnext__context">{next.context} →</span>}
+          <span class="ai-prevnext__label">{next.label}</span>
+        </span>
+        <span class="ai-prevnext__icon ai-prevnext__icon--next" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            data-direction
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </span>
+      </a>
+    ) : (
+      <span aria-hidden="true" />
+    )}
+  </div>
+</nav>
+
+<style>
+  .ai-prevnext {
+    display: grid;
+    gap: var(--ai-space-3);
+    grid-template-columns: 1fr;
+    margin-block: var(--ai-space-7);
+    padding-block: var(--ai-space-5);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+
+  @media (min-width: 48em) {
+    .ai-prevnext {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .ai-prevnext__slot--next {
+    text-align: end;
+  }
+
+  .ai-prevnext__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    text-decoration: none;
+    color: var(--ai-fg-primary);
+    transition:
+      border-color var(--ai-duration-fast) var(--ai-easing-default),
+      background var(--ai-duration-fast) var(--ai-easing-default);
+    width: 100%;
+  }
+  .ai-prevnext__link:hover,
+  .ai-prevnext__link:focus-visible {
+    border-color: var(--ai-accent-primary);
+    background: var(--ai-bg-primary);
+  }
+
+  .ai-prevnext__link--next {
+    flex-direction: row;
+    justify-content: flex-end;
+    text-align: end;
+  }
+
+  .ai-prevnext__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+    min-width: 0;
+  }
+
+  .ai-prevnext__context {
+    font-size: var(--ai-text-xs);
+    color: var(--ai-fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+  }
+  :global([dir='rtl']) .ai-prevnext__context {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-prevnext__label {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-snug);
+  }
+
+  .ai-prevnext__icon {
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+  }
+
+  /* RTL: invert directional icons */
+  :global([dir='rtl']) [data-direction] {
+    transform: scaleX(-1);
+  }
+</style>

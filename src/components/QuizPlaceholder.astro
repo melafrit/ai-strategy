@@ -1,0 +1,264 @@
+---
+/**
+ * QuizPlaceholder.astro — placeholder de quiz formatif.
+ *
+ * En Phase 4, les quiz sont représentés par un composant placeholder
+ * qui affiche les questions et leurs réponses dans un format lisible.
+ * En Phase 5, ce placeholder sera remplacé par <Quiz /> (React island
+ * avec persistance localStorage, scoring, feedback immédiat).
+ *
+ * Le placeholder reste utile pédagogiquement : un visiteur peut lire
+ * les questions, tester sa compréhension mentalement, et déplier les
+ * réponses au moment voulu (via <details> natif).
+ */
+
+interface QuizQuestion {
+  /** The question text. */
+  question: string;
+  /** The 4 answer options. */
+  options: string[];
+  /** Index (0-based) of the correct answer. */
+  correctIndex: number;
+  /** Optional explanation shown when the answer is revealed. */
+  explanation?: string;
+  /** Question kind — affects label display. */
+  kind: 'comprehension' | 'application' | 'judgment';
+}
+
+interface Props {
+  /** Anchor id (kebab-case). */
+  id?: string;
+  /** Quiz title (e.g. "Quiz formatif — Module 1"). */
+  title?: string;
+  /** Number of questions to show in the heading; defaults to questions.length. */
+  questions: QuizQuestion[];
+  className?: string;
+}
+
+const {
+  id,
+  title = 'Quiz formatif',
+  questions,
+  className,
+} = Astro.props;
+
+const kindLabels: Record<QuizQuestion['kind'], string> = {
+  comprehension: 'Compréhension',
+  application: 'Application',
+  judgment: 'Jugement',
+};
+---
+
+<section class:list={['ai-quiz', className]} id={id}>
+  <header class="ai-quiz__header">
+    <span class="ai-quiz__icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" />
+      </svg>
+    </span>
+    <div>
+      <h3 class="ai-quiz__title">{title}</h3>
+      <p class="ai-quiz__meta">
+        {questions.length} question{questions.length > 1 ? 's' : ''} ·
+        Mode placeholder (le quiz interactif arrive en Phase 5)
+      </p>
+    </div>
+  </header>
+
+  <ol class="ai-quiz__list">
+    {
+      questions.map((q, index) => (
+        <li class="ai-quiz__item">
+          <header class="ai-quiz__item-header">
+            <span class="ai-quiz__item-num" aria-hidden="true">
+              Q{index + 1}
+            </span>
+            <span class="ai-quiz__item-kind">{kindLabels[q.kind]}</span>
+          </header>
+          <p class="ai-quiz__question">{q.question}</p>
+          <ol class="ai-quiz__options">
+            {q.options.map((opt, optIndex) => (
+              <li
+                class:list={[
+                  'ai-quiz__option',
+                  { 'ai-quiz__option--correct': optIndex === q.correctIndex },
+                ]}
+              >
+                <span class="ai-quiz__option-letter" aria-hidden="true">
+                  {String.fromCharCode(65 + optIndex)}
+                </span>
+                <span>{opt}</span>
+              </li>
+            ))}
+          </ol>
+          <details class="ai-quiz__answer">
+            <summary>Voir la réponse</summary>
+            <p>
+              <strong>Bonne réponse :</strong>{' '}
+              {String.fromCharCode(65 + q.correctIndex)} — {q.options[q.correctIndex]}
+            </p>
+            {q.explanation && <p class="ai-quiz__explanation">{q.explanation}</p>}
+          </details>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .ai-quiz {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-default);
+    border-radius: var(--ai-radius-md);
+    margin-block: var(--ai-space-4);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-quiz__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-4);
+    padding-block-end: var(--ai-space-3);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+
+  .ai-quiz__icon {
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+    margin-block-start: 0.15em;
+  }
+
+  .ai-quiz__title {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+  }
+
+  .ai-quiz__meta {
+    margin: 0;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-quiz__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-5);
+  }
+
+  .ai-quiz__item {
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+  }
+
+  .ai-quiz__item-header {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-2);
+  }
+
+  .ai-quiz__item-num {
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    font-size: var(--ai-text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-quiz__item-kind {
+    padding: 0.1em 0.5em;
+    background: var(--ai-bg-primary);
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    border-radius: var(--ai-radius-pill);
+    letter-spacing: var(--ai-tracking-wide);
+  }
+  :global([dir='rtl']) .ai-quiz__item-kind {
+    letter-spacing: 0;
+  }
+
+  .ai-quiz__question {
+    margin: 0 0 var(--ai-space-3);
+    font-weight: var(--ai-weight-medium);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-quiz__options {
+    list-style: none;
+    margin: 0 0 var(--ai-space-3);
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+
+  .ai-quiz__option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-quiz__option-letter {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+    flex-shrink: 0;
+    width: 1.5em;
+  }
+
+  .ai-quiz__answer {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+  }
+
+  .ai-quiz__answer summary {
+    cursor: pointer;
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    list-style: none;
+  }
+  .ai-quiz__answer summary::-webkit-details-marker {
+    display: none;
+  }
+  .ai-quiz__answer summary::before {
+    content: '+ ';
+    font-weight: var(--ai-weight-bold);
+  }
+  .ai-quiz__answer[open] summary::before {
+    content: '− ';
+  }
+
+  .ai-quiz__answer p {
+    margin: var(--ai-space-2) 0 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-quiz__answer .ai-quiz__explanation {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+</style>

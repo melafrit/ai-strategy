@@ -1,0 +1,92 @@
+---
+/**
+ * ConceptCard.astro — bloc concept clé d'une page module.
+ *
+ * Chaque concept = un h3 + définition + exemple business + un encadré
+ * <SourceTag /> indiquant le niveau de preuve. Convention :
+ *   - Aucune affirmation factuelle sans source associée.
+ *   - L'exemple est concret (entreprise réelle si possible).
+ *   - Le lien glossaire (si term existe) renvoie vers /glossaire/#slug.
+ */
+
+import SourceTag from './SourceTag.astro';
+
+type SourceLevel =
+  | 'official-mit'
+  | 'recommended-complement'
+  | 'pedagogical-reconstruction'
+  | 'external-verifiable'
+  | 'to-verify';
+
+interface Props {
+  /** Anchor id (kebab-case) — used for ToC linking. */
+  id: string;
+  /** Concept name as h3. */
+  title: string;
+  /** Optional source-tag config; renders inline pill in the header. */
+  sourceLevel?: SourceLevel;
+  className?: string;
+}
+
+const { id, title, sourceLevel, className } = Astro.props;
+---
+
+<section class:list={['ai-concept', className]} id={id}>
+  <header class="ai-concept__header">
+    <h3 class="ai-concept__title">{title}</h3>
+    {sourceLevel && <SourceTag level={sourceLevel} inline />}
+  </header>
+  <div class="ai-concept__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .ai-concept {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    margin-block: var(--ai-space-4);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-concept__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-3);
+  }
+
+  .ai-concept__title {
+    margin: 0;
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-concept__body :global(p) {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-concept__body :global(p:last-child) {
+    margin-block-end: 0;
+  }
+
+  .ai-concept__body :global(.ai-concept__example) {
+    margin: var(--ai-space-3) 0 0;
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-concept__body :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+</style>

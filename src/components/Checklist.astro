@@ -1,0 +1,184 @@
+---
+/**
+ * Checklist.astro — checklist statique groupée par catégories.
+ *
+ * Convention : 10-12 items par checklist module, organisés en 3-4
+ * catégories (cadrage / gouvernance / mise en œuvre selon le module).
+ *
+ * En Phase 4, la checklist est statique (juste lisible). En Phase 5
+ * un comportement React island remplacera ce composant pour permettre
+ * cocher / persister / exporter PDF.
+ */
+
+interface ChecklistGroup {
+  /** Group title (translated). */
+  title: string;
+  /** Items — plain text. */
+  items: string[];
+}
+
+interface Props {
+  /** Anchor id (kebab-case). */
+  id?: string;
+  /** Checklist title. */
+  title: string;
+  /** Optional intro paragraph. */
+  intro?: string;
+  /** Groups of items. */
+  groups: ChecklistGroup[];
+  className?: string;
+}
+
+const { id, title, intro, groups, className } = Astro.props;
+---
+
+<section class:list={['ai-checklist', className]} id={id}>
+  <header class="ai-checklist__header">
+    <span class="ai-checklist__icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M9 11l3 3L22 4" />
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+      </svg>
+    </span>
+    <div>
+      <h3 class="ai-checklist__title">{title}</h3>
+      {intro && <p class="ai-checklist__intro">{intro}</p>}
+    </div>
+  </header>
+
+  <div class="ai-checklist__groups">
+    {
+      groups.map((group) => (
+        <fieldset class="ai-checklist__group">
+          <legend class="ai-checklist__group-title">{group.title}</legend>
+          <ul class="ai-checklist__items">
+            {group.items.map((item) => (
+              <li class="ai-checklist__item">
+                <span class="ai-checklist__checkbox" aria-hidden="true" />
+                <span class="ai-checklist__text">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
+      ))
+    }
+  </div>
+
+  <p class="ai-checklist__note">
+    <em>
+      La version interactive (cocher, sauvegarder, exporter PDF) arrive en Phase 5.
+      D'ici là, vous pouvez imprimer cette page ou recopier les items dans votre outil habituel.
+    </em>
+  </p>
+</section>
+
+<style>
+  .ai-checklist {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-primary);
+    border: 1px solid var(--ai-border-default);
+    border-radius: var(--ai-radius-md);
+    margin-block: var(--ai-space-4);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-checklist__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-5);
+  }
+
+  .ai-checklist__icon {
+    color: var(--ai-success);
+    flex-shrink: 0;
+    margin-block-start: 0.15em;
+  }
+
+  .ai-checklist__title {
+    margin: 0 0 var(--ai-space-1);
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-semibold);
+  }
+
+  .ai-checklist__intro {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-checklist__groups {
+    display: grid;
+    gap: var(--ai-space-5);
+  }
+
+  .ai-checklist__group {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+  }
+
+  .ai-checklist__group-title {
+    padding: 0;
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-secondary);
+  }
+  :global([dir='rtl']) .ai-checklist__group-title {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-checklist__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-2);
+  }
+
+  .ai-checklist__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-checklist__checkbox {
+    flex-shrink: 0;
+    width: 1.1em;
+    height: 1.1em;
+    border: 2px solid var(--ai-border-strong);
+    border-radius: var(--ai-radius-sm);
+    margin-block-start: 0.25em;
+  }
+
+  .ai-checklist__text {
+    flex: 1;
+  }
+
+  .ai-checklist__note {
+    margin: var(--ai-space-5) 0 0;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    line-height: var(--ai-leading-relaxed);
+  }
+</style>

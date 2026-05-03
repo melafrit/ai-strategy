@@ -1,0 +1,114 @@
+---
+/**
+ * ExecutiveSummary.astro — synthèse exécutive d'une page module.
+ *
+ * Encadré distinct (couleur + bordure d'accent + icône) en début de
+ * page module. Lisible en isolation : un dirigeant pressé doit pouvoir
+ * cadrer le sujet en 3-5 minutes sans lire le reste.
+ *
+ * Convention :
+ *   - 200-300 mots maximum
+ *   - 3 paragraphes courts
+ *   - Couvre : enjeu business, ce que l'IA apporte ici, ce qu'il faut décider
+ */
+
+interface Props {
+  title?: string;
+  readingTime?: string;
+  className?: string;
+}
+
+const {
+  title = 'Synthèse exécutive',
+  readingTime = '3-5 min',
+  className,
+} = Astro.props;
+---
+
+<aside
+  class:list={['ai-exec-summary', className]}
+  role="note"
+  aria-labelledby="ai-exec-summary-title"
+  id="synthese-executive"
+>
+  <header class="ai-exec-summary__header">
+    <span class="ai-exec-summary__icon" aria-hidden="true">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 3v18h18" />
+        <path d="M7 16h2v-3H7v3Zm5 0h2v-7h-2v7Zm5 0h2v-5h-2v5Z" />
+      </svg>
+    </span>
+    <h2 id="ai-exec-summary-title" class="ai-exec-summary__title">{title}</h2>
+    <span class="ai-exec-summary__time">{readingTime}</span>
+  </header>
+  <div class="ai-exec-summary__body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .ai-exec-summary {
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+    padding: var(--ai-space-5);
+    margin-block: var(--ai-space-5);
+  }
+
+  .ai-exec-summary__header {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-3);
+  }
+
+  .ai-exec-summary__icon {
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+    display: inline-flex;
+  }
+
+  .ai-exec-summary__title {
+    margin: 0;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    flex: 1;
+  }
+
+  .ai-exec-summary__time {
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-accent-primary);
+    background: var(--ai-bg-primary);
+    padding: 0.15em 0.6em;
+    border-radius: var(--ai-radius-pill);
+    letter-spacing: var(--ai-tracking-wide);
+  }
+  :global([dir='rtl']) .ai-exec-summary__time {
+    letter-spacing: 0;
+  }
+
+  .ai-exec-summary__body :global(p) {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-exec-summary__body :global(p:last-child) {
+    margin-block-end: 0;
+  }
+  .ai-exec-summary__body :global(strong) {
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-semibold);
+  }
+</style>

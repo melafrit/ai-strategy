@@ -1,0 +1,202 @@
+---
+/**
+ * ResourceList.astro — liste de ressources externes (lectures, vidéos,
+ * standards, podcasts).
+ *
+ * Utilisé en fin de page module dans la section "Pour aller plus loin",
+ * et dans la page Ressources globale (Phase 4.10). Chaque item porte
+ * un type qui détermine l'icône et l'aria-label.
+ */
+
+import SourceTag from './SourceTag.astro';
+
+type ResourceType = 'reading' | 'video' | 'podcast' | 'standard' | 'pdf';
+
+type SourceLevel =
+  | 'official-mit'
+  | 'recommended-complement'
+  | 'pedagogical-reconstruction'
+  | 'external-verifiable'
+  | 'to-verify';
+
+interface ResourceItem {
+  type: ResourceType;
+  /** Title — link text. */
+  title: string;
+  /** Author or publisher. */
+  author?: string;
+  /** Optional 1-line description. */
+  description?: string;
+  /** Destination URL. */
+  href: string;
+  /** Optional source level for the inline pill. */
+  sourceLevel?: SourceLevel;
+}
+
+interface Props {
+  /** Optional section title (rendered as h4). */
+  title?: string;
+  /** Items in display order. */
+  items: ResourceItem[];
+  className?: string;
+}
+
+const { title, items, className } = Astro.props;
+
+const iconByType: Record<ResourceType, { svg: string; label: string }> = {
+  reading: {
+    svg: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    label: 'Lecture',
+  },
+  video: {
+    svg: '<polygon points="23 7 16 12 23 17 23 7"/><rect width="15" height="14" x="1" y="5" rx="2" ry="2"/>',
+    label: 'Vidéo',
+  },
+  podcast: {
+    svg: '<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>',
+    label: 'Podcast',
+  },
+  standard: {
+    svg: '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>',
+    label: 'Standard',
+  },
+  pdf: {
+    svg: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+    label: 'Fiche PDF',
+  },
+};
+---
+
+<section class:list={['ai-resources', className]}>
+  {title && <h4 class="ai-resources__title">{title}</h4>}
+  <ul class="ai-resources__list">
+    {
+      items.map((item) => {
+        const iconInfo = iconByType[item.type];
+        return (
+          <li class="ai-resources__item">
+            <span class="ai-resources__icon" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                set:html={iconInfo.svg}
+              />
+            </span>
+            <div class="ai-resources__body">
+              <p class="ai-resources__line">
+                <a href={item.href} rel="noopener noreferrer" target="_blank">
+                  {item.title}
+                </a>
+                {item.author && <span class="ai-resources__author"> · {item.author}</span>}
+                {item.sourceLevel && (
+                  <SourceTag level={item.sourceLevel} inline className="ai-resources__tag" />
+                )}
+              </p>
+              {item.description && (
+                <p class="ai-resources__description">{item.description}</p>
+              )}
+              <p class="ai-resources__type">
+                <span class="sr-only">Type : </span>
+                {iconInfo.label}
+              </p>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+</section>
+
+<style>
+  .ai-resources {
+    margin-block: var(--ai-space-4);
+  }
+
+  .ai-resources__title {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-resources__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+
+  .ai-resources__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+  }
+
+  .ai-resources__icon {
+    color: var(--ai-accent-primary);
+    flex-shrink: 0;
+    margin-block-start: 0.15em;
+  }
+
+  .ai-resources__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-resources__line {
+    margin: 0;
+    line-height: var(--ai-leading-snug);
+  }
+
+  .ai-resources__line a {
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+  }
+  .ai-resources__line a:hover,
+  .ai-resources__line a:focus-visible {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .ai-resources__author {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-resources__tag {
+    margin-inline-start: var(--ai-space-2);
+  }
+
+  .ai-resources__description {
+    margin: var(--ai-space-1) 0 0;
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-resources__type {
+    margin: var(--ai-space-1) 0 0;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+  }
+  :global([dir='rtl']) .ai-resources__type {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+</style>

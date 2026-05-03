@@ -1,0 +1,161 @@
+---
+/**
+ * TableOfContents.astro — sommaire sticky avec scrollspy.
+ *
+ * Used on module pages and capstone. Sticky desktop (à droite en LTR,
+ * gauche en RTL via propriété logique inset-inline-end). Sur mobile,
+ * affiché en début de page comme une TOC classique sans sticky.
+ *
+ * Le scrollspy (mise en évidence de l'item actif au scroll) est
+ * géré par un petit script inline IntersectionObserver — léger, sans
+ * dépendance, désactivé si JavaScript est off (le sommaire reste alors
+ * pleinement fonctionnel comme liste d'ancres).
+ */
+
+interface TocItem {
+  /** Anchor target without the #. */
+  id: string;
+  /** Display label. */
+  label: string;
+}
+
+interface Props {
+  items: TocItem[];
+  /** Optional title. Defaults to "Sommaire". */
+  title?: string;
+  className?: string;
+}
+
+const { items, title = 'Sommaire', className } = Astro.props;
+---
+
+<nav class:list={['ai-toc', className]} aria-label={title}>
+  <p class="ai-toc__title">{title}</p>
+  <ol class="ai-toc__list" role="list">
+    {
+      items.map((item, index) => (
+        <li class="ai-toc__item">
+          <a href={`#${item.id}`} data-toc-link={item.id}>
+            <span class="ai-toc__num" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span>{item.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<script>
+  // Scrollspy minimal — met aria-current="location" sur le lien dont la
+  // section est la plus visible. Prefers-reduced-motion ignoré ici car
+  // pas d'animation : on ne fait que toggler un attribut.
+  if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+    const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+    if (links.length > 0) {
+      const linkById = new Map<string, HTMLAnchorElement>();
+      links.forEach((link) => {
+        const id = link.dataset.tocLink;
+        if (id) linkById.set(id, link);
+      });
+
+      const observed = Array.from(linkById.keys())
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => el !== null);
+
+      let activeId: string | null = null;
+      const setActive = (id: string | null) => {
+        if (id === activeId) return;
+        if (activeId) linkById.get(activeId)?.removeAttribute('aria-current');
+        if (id) linkById.get(id)?.setAttribute('aria-current', 'location');
+        activeId = id;
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          // Pick the entry with greatest intersection ratio that is intersecting.
+          const visible = entries.filter((e) => e.isIntersecting);
+          if (visible.length === 0) return;
+          visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          const id = visible[0].target.id;
+          setActive(id);
+        },
+        {
+          rootMargin: '-20% 0px -60% 0px',
+          threshold: [0, 0.25, 0.5, 0.75, 1],
+        },
+      );
+
+      observed.forEach((el) => observer.observe(el));
+    }
+  }
+</script>
+
+<style>
+  .ai-toc {
+    background: var(--ai-bg-subtle);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    padding: var(--ai-space-4);
+  }
+
+  .ai-toc__title {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--ai-tracking-wide);
+    color: var(--ai-fg-secondary);
+  }
+  :global([dir='rtl']) .ai-toc__title {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .ai-toc__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .ai-toc__item a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-2) var(--ai-space-2);
+    color: var(--ai-fg-secondary);
+    text-decoration: none;
+    font-size: var(--ai-text-sm);
+    line-height: var(--ai-leading-snug);
+    border-inline-start: 2px solid transparent;
+    transition:
+      color var(--ai-duration-fast) var(--ai-easing-default),
+      border-color var(--ai-duration-fast) var(--ai-easing-default),
+      background var(--ai-duration-fast) var(--ai-easing-default);
+  }
+
+  .ai-toc__item a:hover,
+  .ai-toc__item a:focus-visible {
+    color: var(--ai-fg-primary);
+    background: var(--ai-bg-muted);
+    border-inline-start-color: var(--ai-accent-primary);
+  }
+
+  .ai-toc__item a[aria-current='location'] {
+    color: var(--ai-accent-primary);
+    background: var(--ai-bg-primary);
+    border-inline-start-color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-semibold);
+  }
+
+  .ai-toc__num {
+    color: var(--ai-fg-muted);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    min-width: 1.5em;
+  }
+</style>
