@@ -1,14 +1,199 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of the Legal Notice page is scheduled for Phase 7. The French version is available now."
+  title="Legal notice"
+  description="Legal notice for the AI Strategy site: publisher, host, intellectual property, personal data, cookies, contact, applicable law."
 >
-  <TranslationPending frenchPagePath="/mentions-legales/" />
+  <HeroSecondary
+    surtitle="Legal notice"
+    title="Legal notice and privacy policy"
+    lead="This page gathers the mandatory legal information (GDPR, French law) about the publisher, hosting, intellectual property and personal data of the site."
+  >
+    <span slot="stats">Last update: see CHANGELOG</span>
+  </HeroSecondary>
+
+  <article class="ai-container ai-prose ai-legal-page">
+    <section>
+      <h2>1. Site publisher</h2>
+      <p>
+        This site is published <strong>personally and independently</strong> by:
+      </p>
+      <ul>
+        <li><strong>Mohamed El Afrit</strong></li>
+        <li>Independent educator, trainer and consultant</li>
+        <li>For any official contact:
+          <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">
+            GitHub Issues
+          </a>
+          (official channel)
+        </li>
+      </ul>
+      <p>
+        The site is not a commercial service, offers no transaction, and requires no registration
+        to access its content.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Hosting</h2>
+      <p>
+        The site is hosted by <strong>OVH SAS</strong>, a French cloud computing company:
+      </p>
+      <ul>
+        <li>OVH SAS · 2 rue Kellermann · 59100 Roubaix · France</li>
+        <li>RCS Lille Métropole 424 761 419</li>
+        <li>Phone: 1007</li>
+        <li>Website: <a href="https://www.ovhcloud.com" rel="noopener noreferrer" target="_blank">www.ovhcloud.com</a></li>
+      </ul>
+      <p>
+        ⚠️ <em>The exact OVH hosting type (shared, VPS or Cloud) will be updated here once the
+        decision is finalized. See the
+        <a href={`${githubUrl}/blob/main/docs/architecture/skeleton-decisions.md`} rel="noopener noreferrer" target="_blank">technical documentation</a>.</em>
+      </p>
+    </section>
+
+    <section>
+      <h2>3. Intellectual property</h2>
+
+      <h3>Source code</h3>
+      <p>
+        The entire source code of the site is published on the
+        <a href={githubUrl} rel="noopener noreferrer" target="_blank">public GitHub repository</a>
+        under <strong>MIT license</strong>. See the
+        <a href={`${githubUrl}/blob/main/LICENSE-CODE`} rel="noopener noreferrer" target="_blank">LICENSE-CODE</a>
+        file.
+      </p>
+
+      <h3>Pedagogical content</h3>
+      <p>
+        The entire pedagogical content (texts, handouts, diagrams, quizzes, glossary, capstone) is
+        published under <strong>Creative Commons Attribution – NonCommercial – ShareAlike 4.0
+        International (CC BY-NC-SA 4.0) license</strong>. See the
+        <a href={`${githubUrl}/blob/main/LICENSE-CONTENT`} rel="noopener noreferrer" target="_blank">LICENSE-CONTENT</a>
+        file.
+      </p>
+
+      <h3>Third-party trademarks</h3>
+      <p>
+        The names of companies, organizations and institutions cited on the site (notably
+        Massachusetts Institute of Technology, MIT Sloan School of Management, MIT CSAIL, as well
+        as the organizations appearing in the case studies) are <strong>trademarks of their
+        respective owners</strong>. Their citation on this site falls under <strong>nominative and
+        descriptive use</strong> compliant with the French exception (article L. 713-3 of the
+        Intellectual Property Code) and the doctrine of nominative <em>fair use</em>.
+      </p>
+      <p>
+        The site is <strong>neither affiliated, validated, nor certified</strong> by MIT, MIT Sloan,
+        or MIT CSAIL (see <a href={getLocalizedUrl('/methode/', locale)}>Method</a>, section 2).
+        Any trademark used is cited for pedagogical reference purposes.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Personal data and GDPR</h2>
+
+      <h3>Principle: no collection by default</h3>
+      <p>
+        This site is designed to <strong>respect your privacy by default</strong>. Concretely:
+      </p>
+      <ul>
+        <li><strong>No user account</strong> is created. No registration is required to access the content.</li>
+        <li><strong>No tracking cookies</strong> are placed. No Google Analytics, no Facebook Pixel, no third-party audience measurement service.</li>
+        <li><strong>No personal data</strong> is requested, collected or stored on the server side.</li>
+      </ul>
+
+      <h3>Local browser storage (quizzes)</h3>
+      <p>
+        The site's quizzes use the <strong>browser's localStorage</strong> to retain your progress
+        and scores. This data:
+      </p>
+      <ul>
+        <li>Stays <strong>only in your browser</strong>, on your device.</li>
+        <li>Is <strong>never transmitted</strong> to any server (neither ours nor a third party's).</li>
+        <li>Can be <strong>cleared at any time</strong> via the "Reset my progress" button on the Quiz page, or via your browser settings.</li>
+      </ul>
+      <p>
+        This means that if you switch browsers or devices, or use private browsing mode, your
+        progress will not be preserved. This is an editorial choice to preserve simplicity and
+        confidentiality.
+      </p>
+
+      <h3>Server logs</h3>
+      <p>
+        The host OVH may keep technical logs (HTTP logs) for security and diagnostic purposes, in
+        accordance with French legal obligations. These logs typically contain: IP address, date
+        and time of request, URL requested, HTTP code returned, browser type. They are kept for a
+        limited period by OVH according to its own policy. See
+        <a href="https://www.ovhcloud.com/en/personal-data-protection/" rel="noopener noreferrer" target="_blank">
+          OVH's data protection policy
+        </a>.
+      </p>
+
+      <h3>Your GDPR rights</h3>
+      <p>
+        In the absence of personal data collection on our server side, GDPR rights (access,
+        rectification, erasure, portability, objection) do not give rise to any specific request
+        to us. For host logs, address OVH directly.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. External links</h2>
+      <p>
+        The site contains links to external resources (institutional sites MIT, NIST, OECD,
+        academic publications, communications from companies cited in case studies). These links
+        are provided for pedagogical and sourcing purposes. We have no control over the content
+        of these external sites and decline any responsibility regarding their content,
+        availability, or their own privacy practices.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. Limitation of liability</h2>
+      <p>
+        The content of this site is provided for <strong>pedagogical and informational</strong>
+        purposes. It does not constitute legal advice, financial advice, or strategic advice
+        addressed to a specific organization. Decisions made by readers based on the content of
+        this site are under their sole responsibility.
+      </p>
+      <p>
+        Although the greatest rigor is applied to content production (see
+        <a href={getLocalizedUrl('/methode/', locale)}>Method</a>), no guarantee of completeness
+        or absence of error can be given. For any factual correction, open a
+        <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">GitHub issue</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. Applicable law and jurisdiction</h2>
+      <p>
+        The site is published in France. This document is governed by French law. Any dispute
+        relating to its interpretation or application falls under the jurisdiction of French
+        courts.
+      </p>
+    </section>
+
+    <section>
+      <h2>8. Updates to legal notice</h2>
+      <p>
+        The legal notice may be updated at any time. The current version can be consulted on this
+        page. The history of modifications is traceable in the
+        <a href={`${githubUrl}/blob/main/CHANGELOG.md`} rel="noopener noreferrer" target="_blank">CHANGELOG</a>
+        and in the Git history of the repository.
+      </p>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  .ai-legal-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-legal-page section { margin-block: var(--ai-space-7); }
+  .ai-legal-page section:first-of-type { margin-block-start: 0; }
+</style>

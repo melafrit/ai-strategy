@@ -91,7 +91,7 @@ export const translations = {
     /* === Translation pending (for EN/AR stubs while content is FR-only) === */
     'translation-pending.title': 'Traduction en cours',
     'translation-pending.lead':
-      "Cette page est disponible en français pour l'instant. La traduction est planifiée pour la Phase 7.",
+      "Cette page est complète en français. Sa traduction dans cette langue est en cours dans le cadre de la Phase 7 du projet. Vous pouvez consulter dès maintenant la version française intégrale.",
     'translation-pending.cta-fr': 'Lire en français',
     'translation-pending.cta-home': "Revenir à l'accueil",
 
@@ -201,9 +201,9 @@ export const translations = {
     '404.lead': 'The page you are looking for does not exist or has been moved.',
     '404.cta-home': 'Back to home',
 
-    'translation-pending.title': 'Translation pending',
+    'translation-pending.title': 'Translation in progress',
     'translation-pending.lead':
-      'This page is available in French at this stage. The English translation is scheduled for Phase 7 of the project.',
+      'This page is complete in French. Its English translation is in progress as part of Phase 7 of the project. You can read the full French version right now using the link below.',
     'translation-pending.cta-fr': 'Read in French',
     'translation-pending.cta-home': 'Back to home',
 
@@ -311,7 +311,7 @@ export const translations = {
 
     'translation-pending.title': 'الترجمة قيد الإعداد',
     'translation-pending.lead':
-      'هذه الصفحة متاحة بالفرنسية في هذه المرحلة. الترجمة العربية مخططة للمرحلة 7 من المشروع.',
+      'هذه الصفحة كاملة بالفرنسية. الترجمة العربية جارية ضمن المرحلة 7 من المشروع. يمكنك قراءة النسخة الفرنسية الكاملة الآن عبر الرابط أدناه.',
     'translation-pending.cta-fr': 'القراءة بالفرنسية',
     'translation-pending.cta-home': 'العودة إلى الرئيسية',
 

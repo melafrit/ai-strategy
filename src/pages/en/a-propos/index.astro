@@ -1,14 +1,171 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of the About page is scheduled for Phase 7. The French version is available now."
+  title="About"
+  description="The team, the author and the philosophy of the AI Strategy project. An independent, French-speaking and trilingual pedagogical site, designed for executives, consultants and educators."
 >
-  <TranslationPending frenchPagePath="/a-propos/" />
+  <HeroSecondary
+    surtitle="About"
+    title="The team and the project's philosophy"
+    lead="This site is run by a single person. It assumes its subjectivity, its Mediterranean point of view, and its ambition: to make AI strategy readable and operable in French as well as in English and Arabic."
+  />
+
+  <article class="ai-container ai-prose ai-about-page">
+    <section>
+      <h2>The author</h2>
+      <p>
+        <strong>Mohamed El Afrit</strong> is an <strong>educator, trainer and consultant</strong> in
+        software engineering, data science, and project and information systems management. This
+        site is his response to a recurring observation in engagements and in class:
+      </p>
+      <blockquote>
+        Good content on AI for managers exists, but it is scattered, English-only, paywalled, or
+        wrapped in consulting firm rhetoric. French-speakers and Arabic-speakers deserve a
+        structured, sourced, and free entry point.
+      </blockquote>
+      <p>
+        The site is his personal contribution to filling this gap. It is not financed by any
+        sponsor. No firm, school, or organization sponsors the project — this is an editorial
+        choice to preserve the independence of recommendations.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why the MIT Sloan program as reference</h2>
+      <p>
+        The program <em>Artificial Intelligence: Implications for Business Strategy</em> offered
+        by MIT Sloan School of Management and MIT Computer Science and Artificial Intelligence
+        Laboratory has two rare qualities:
+      </p>
+      <ul>
+        <li>
+          It is <strong>resolutely managerial and strategic</strong>, not technical. It addresses
+          executives and managers, not future data scientists.
+        </li>
+        <li>
+          It is <strong>structured and complete</strong>: six modules covering AI, machine
+          learning, generative AI, robotics, governance, and the construction of a roadmap.
+        </li>
+      </ul>
+      <p>
+        That makes it an excellent <strong>reference for inspiration</strong> when structuring a
+        French-speaking pedagogical site. This site is not a copy of that program — it is an
+        independent pedagogical resource that shares its spirit and rigor, but develops its own
+        content in French, English and Arabic, with its own cases, its own pedagogical choices,
+        and its own assumed limitations (see
+        <a href={getLocalizedUrl('/methode/', locale)}>Method</a>).
+      </p>
+    </section>
+
+    <section>
+      <h2>Why three languages</h2>
+      <p>
+        AI is not an English-only topic. The strategic, ethical, and economic stakes of AI arise
+        everywhere, and quality content in each language rarely lacks by chance — it lacks because
+        no one has yet taken the time to produce it.
+      </p>
+      <p>
+        The site is trilingual by commitment:
+      </p>
+      <ul>
+        <li>
+          <strong>French</strong> — main language of the project, language of writing, and original
+          language of the author. Phase 4 produces French first.
+        </li>
+        <li>
+          <strong>English</strong> — for international portability and accessibility to a wider
+          audience. Translation scheduled in Phase 7.
+        </li>
+        <li>
+          <strong>Arabic</strong> — because executives, consultants and students from the Maghreb
+          and the Middle East deserve a worthy entry point. Editorial parity FR/AR is a commitment,
+          not an option. Translation scheduled in Phase 7.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>A simple philosophy</h2>
+      <p>
+        Three editorial principles structure every line of the site:
+      </p>
+      <ol>
+        <li>
+          <strong>No invention.</strong> No fabricated cases, no manufactured statistics, no
+          imaginary quotes. Every factual claim has a verifiable source, flagged by the
+          <code>&lt;SourceTag /&gt;</code> component.
+        </li>
+        <li>
+          <strong>No jargon.</strong> Technical concepts are explained when they are necessary
+          for managerial decision-making. The rest — implementation details — has no place here.
+        </li>
+        <li>
+          <strong>No marketing.</strong> No excessive promises, no unexplained buzzwords, no
+          "transform your business with AI in 30 days". AI is a serious topic that deserves a
+          serious voice.
+        </li>
+      </ol>
+      <p>
+        These principles are recorded in the
+        <a href={`${githubUrl}/blob/main/docs/cadrage/charte-de-cadrage.md`} rel="noopener noreferrer" target="_blank">
+          project framing charter
+        </a>
+        and in the <a href={getLocalizedUrl('/methode/', locale)}>Method page</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>The project is open</h2>
+      <p>
+        The code and content are public on
+        <a href={githubUrl} rel="noopener noreferrer" target="_blank">GitHub</a>
+        under dual licensing (see <a href={getLocalizedUrl('/methode/', locale)}>Method</a>).
+        Any correction, suggestion or contribution is welcome via
+        <a href={`${githubUrl}/issues`} rel="noopener noreferrer" target="_blank">GitHub Issues</a>.
+      </p>
+      <p>
+        If you are an educator adopting the site in a course, a consultant using it in an
+        engagement, or an executive deriving a deliverable from it — a notification by email or
+        via an issue is appreciated, if only to measure the project's usefulness.
+      </p>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>
+        The official channel is
+        <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">GitHub Issues</a>.
+        This allows:
+      </p>
+      <ul>
+        <li>Keeping a public trace of exchanges for the benefit of other readers.</li>
+        <li>Avoiding the noise of a saturated mailbox.</li>
+        <li>Prioritizing factual corrections over other requests.</li>
+      </ul>
+      <p>
+        For a sensitive request (for example, a case where you are an actor in a cited
+        organization), you can open a private issue simply mentioning the need for discretion.
+      </p>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  .ai-about-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-about-page section { margin-block: var(--ai-space-7); }
+  .ai-about-page section:first-of-type { margin-block-start: 0; }
+  .ai-about-page blockquote {
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    padding-inline-start: var(--ai-space-4);
+    margin: var(--ai-space-5) 0;
+    color: var(--ai-fg-secondary);
+    font-style: italic;
+  }
+</style>

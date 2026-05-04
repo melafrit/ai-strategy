@@ -1,14 +1,237 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
-const locale = 'en';
+const frGlossaireUrl = getLocalizedUrl('/glossaire/', 'fr');
+
+interface Term {
+  termEN: string;
+  termFR: string; // for cross-reference to FR definitions
+  category: 'fundamentals' | 'ml' | 'genai' | 'robotics' | 'governance' | 'methodology';
+  shortDef: string;
+}
+
+const terms: Term[] = [
+  // === Fundamentals (5) ===
+  { termEN: 'Artificial Intelligence (AI)', termFR: 'Intelligence artificielle (IA)', category: 'fundamentals',
+    shortDef: "Set of techniques and systems that enable machines to perform tasks normally requiring human cognitive functions: perceiving, reasoning, deciding, learning, communicating." },
+  { termEN: 'Narrow AI (Weak AI)', termFR: 'IA faible (IA étroite)', category: 'fundamentals',
+    shortDef: "AI specialized in a precise task (image recognition, fraud detection, language translation). It cannot transfer its skill to other domains. All AI deployed today is narrow AI." },
+  { termEN: 'General AI (AGI)', termFR: 'IA générale (AGI)', category: 'fundamentals',
+    shortDef: "Hypothetical AI capable of performing any cognitive task a human can do, with similar or superior flexibility. Does not exist today. Subject of debates and active research." },
+  { termEN: 'Collective intelligence', termFR: 'Intelligence collective', category: 'fundamentals',
+    shortDef: "Human-machine system where humans and AI cooperate to produce solutions neither could produce alone. Framework popularized by Thomas Malone (MIT CCI)." },
+  { termEN: 'Automation', termFR: 'Automatisation', category: 'fundamentals',
+    shortDef: "Replacement of a human task by a deterministic machine process. Predates AI. AI extends automation to tasks requiring judgment, perception or learning." },
+
+  // === ML (5) ===
+  { termEN: 'Machine Learning (ML)', termFR: 'Machine Learning (ML)', category: 'ml',
+    shortDef: "Family of methods where the machine learns to perform a task from data, rather than being programmed by explicit rules. Foundation of most current applied AI." },
+  { termEN: 'Deep Learning', termFR: 'Apprentissage profond (Deep Learning)', category: 'ml',
+    shortDef: "ML based on multilayer neural networks. Source of major AI advances since ~2012 (image recognition, language, generation). Requires lots of data and computing power." },
+  { termEN: 'Supervised learning', termFR: 'Apprentissage supervisé', category: 'ml',
+    shortDef: "ML from labeled data: each example has the expected answer. The model learns the input-output mapping. Used for fraud detection, medical diagnosis, churn prediction." },
+  { termEN: 'Unsupervised learning', termFR: 'Apprentissage non supervisé', category: 'ml',
+    shortDef: "ML from unlabeled data: the model discovers structures, clusters, or anomalies on its own. Used for customer segmentation, anomaly detection, exploratory analysis." },
+  { termEN: 'Reinforcement learning', termFR: 'Apprentissage par renforcement', category: 'ml',
+    shortDef: "ML where an agent learns by trial and error in an environment, receiving rewards. Used in robotics, games (AlphaGo), industrial control. Less mature in business than supervised ML." },
+
+  // === GenAI (7) ===
+  { termEN: 'Generative model', termFR: 'Modèle génératif', category: 'genai',
+    shortDef: "ML model that produces new content (text, image, audio, code) by learning the distribution of training data. As opposed to a discriminative model that classifies." },
+  { termEN: 'Large Language Model (LLM)', termFR: 'Grand modèle de langage (LLM)', category: 'genai',
+    shortDef: "Generative model specialized in natural language, trained on massive text corpora. Examples: GPT-4, Claude, Llama. Foundation of conversational and content generation applications." },
+  { termEN: 'Foundation model', termFR: 'Foundation model', category: 'genai',
+    shortDef: "Large general-purpose model trained on a vast corpus, then specialized via fine-tuning or prompting for varied tasks. The term covers LLMs and multimodal models." },
+  { termEN: 'Hallucination', termFR: 'Hallucination', category: 'genai',
+    shortDef: "Generation by an LLM of plausible but factually false content. Major risk in business deployment. Mitigated by RAG, internal sources, and human verification." },
+  { termEN: 'RAG (Retrieval-Augmented Generation)', termFR: 'RAG (Retrieval-Augmented Generation)', category: 'genai',
+    shortDef: "Architecture that combines an LLM with a retrieval system in a corpus (e.g., internal documentation). The model generates answers grounded in real documents, reducing hallucinations." },
+  { termEN: 'Prompt engineering', termFR: 'Prompt engineering', category: 'genai',
+    shortDef: "Practice of formulating instructions to an LLM to obtain quality answers. Discipline emerging since 2022, applicable both to individuals and to systematic workflow design." },
+  { termEN: 'Fine-tuning', termFR: 'Fine-tuning', category: 'genai',
+    shortDef: "Specialization of a foundation model on specific data to adapt it to a domain or task. Less needed since RAG and recent LLMs handle many cases without fine-tuning." },
+
+  // === Robotics (3) ===
+  { termEN: 'Robotics', termFR: 'Robotique', category: 'robotics',
+    shortDef: "Discipline of robots — physical machines capable of executing tasks. The current vague combines mechanics (improved sensors), software (AI for perception and decision), and economics (lower cost)." },
+  { termEN: 'Cobot (collaborative robot)', termFR: 'Cobot (robot collaboratif)', category: 'robotics',
+    shortDef: "Robot designed to operate in shared space with humans, with appropriate safety mechanisms (ISO/TS 15066). Democratization in industrial SMEs since ~2010." },
+  { termEN: 'AMR (Autonomous Mobile Robot)', termFR: 'AMR (Autonomous Mobile Robot)', category: 'robotics',
+    shortDef: "Mobile robot navigating autonomously in its environment without fixed guides. Massive deployments in logistics (Amazon: 1+ million AMRs in 2025)." },
+
+  // === Governance (7) ===
+  { termEN: 'Algorithmic bias', termFR: 'Biais algorithmique', category: 'governance',
+    shortDef: "Systematic distortion in an AI model's decisions, often inherited from training data. Critical in HR, credit, justice, healthcare. Mitigation via auditing and rebalancing." },
+  { termEN: 'AI Governance', termFR: 'Gouvernance IA', category: 'governance',
+    shortDef: "Set of processes and roles structuring AI decisions in an organization: which use cases, which oversight, which controls. NIST RMF and ISO 42001 are reference frameworks." },
+  { termEN: 'AI Risk Management', termFR: 'AI Risk Management', category: 'governance',
+    shortDef: "Discipline of identifying, evaluating, and mitigating risks specific to AI: technical, ethical, regulatory, reputational. Reference NIST AI RMF (4 functions: Govern, Map, Measure, Manage)." },
+  { termEN: 'EU AI Act', termFR: 'AI Act EU', category: 'governance',
+    shortDef: "EU Regulation 2024/1689 on AI. Risk-based approach: prohibited / high-risk / limited / minimal. Progressive entry into application 2025-2027. Extraterritorial like GDPR." },
+  { termEN: 'Explainability', termFR: 'Explicabilité', category: 'governance',
+    shortDef: "Ability to explain how a model arrives at its decision. Required by AI Act for high-risk uses. Tension between performance (often black-box deep models) and explainability." },
+  { termEN: 'Accountability', termFR: 'Accountability (responsabilité)', category: 'governance',
+    shortDef: "Identification of who is responsible for an AI system: design, deployment, oversight, end use. AI Act distinguishes provider, deployer, importer/distributor with distinct obligations." },
+  { termEN: 'Human-in-the-loop', termFR: 'Human-in-the-loop', category: 'governance',
+    shortDef: "Architecture where a human validates or controls the AI's decisions, particularly for sensitive cases. Best practice for high-impact uses (healthcare, justice, HR)." },
+
+  // === Methodology (3) ===
+  { termEN: 'AI roadmap', termFR: 'Roadmap IA', category: 'methodology',
+    shortDef: "Structured plan of AI integration in an organization, typically 12-24 months. 5 dimensions: vision, governance, skills, infrastructure, KPIs. Capstone deliverable of the program." },
+  { termEN: 'AI pilot', termFR: 'Pilote IA', category: 'methodology',
+    shortDef: "Limited-scope project to test the relevance and feasibility of an AI use case before generalization. Often confused with PoC: a pilot has measurable success criteria, a PoC explores." },
+  { termEN: 'Capstone', termFR: 'Capstone (projet final intégrateur)', category: 'methodology',
+    shortDef: "Final integrative project of a program. Here: building an AI roadmap for an organization, mobilizing the 6 modules. Defendable in C-suite or in consulting engagement." },
+];
+
+const categoryLabels: Record<Term['category'], string> = {
+  fundamentals: 'Fundamentals',
+  ml: 'Machine Learning',
+  genai: 'Generative AI',
+  robotics: 'Robotics',
+  governance: 'Governance and ethics',
+  methodology: 'Methodology and project',
+};
+
+const categoryDescriptions: Record<Term['category'], string> = {
+  fundamentals: 'Concepts framing AI in general — definition, narrow vs general, automation, collective intelligence.',
+  ml: 'Machine learning — supervised, unsupervised, reinforcement, deep learning.',
+  genai: 'Generative AI — LLMs, foundation models, RAG, prompts, hallucinations, fine-tuning.',
+  robotics: 'Industrial robotics, cobotics, autonomous mobile robots.',
+  governance: 'Risk management, EU AI Act, NIST RMF, biases, accountability, explainability.',
+  methodology: 'AI project terms — pilot, roadmap, capstone.',
+};
+
+const orderedCategories: Term['category'][] = [
+  'fundamentals', 'ml', 'genai', 'robotics', 'governance', 'methodology',
+];
+
+const totalTerms = terms.length;
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this glossary is scheduled for Phase 7. The French version is available now."
+  title={`Glossary — ${totalTerms} essential terms`}
+  description={`Glossary of ${totalTerms} essential AI terms in business, organized in 6 categories: fundamentals, machine learning, generative AI, robotics, governance, methodology. Brief definitions in English; detailed French definitions linked.`}
 >
-  <TranslationPending frenchPagePath="/glossaire/" />
+  <HeroSecondary
+    surtitle="Glossary"
+    title={`${totalTerms} essential AI terms`}
+    lead={`Brief definitions of ${totalTerms} terms organized in 6 categories. The detailed definitions (with examples and cross-references) are in the French version.`}
+  >
+    <span slot="stats">{totalTerms} terms · 6 categories · brief EN definitions · detailed FR definitions linked</span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-glossary-page">
+    <article class="ai-prose">
+      <section class="ai-glossary-intro">
+        <p>
+          This glossary brings together the {totalTerms} terms necessary to navigate the program
+          comfortably. The English definitions presented here are <strong>brief</strong> — they
+          give you the essence in 2-3 sentences. For <strong>detailed definitions</strong>
+          (with examples, common errors, cross-references between terms), see the
+          <a href={frGlossaireUrl}>French version</a>.
+        </p>
+      </section>
+
+      {orderedCategories.map((cat) => {
+        const list = terms.filter((t) => t.category === cat);
+        return (
+          <section class="ai-glossary-section">
+            <header class="ai-glossary-section__head">
+              <h2>{categoryLabels[cat]}</h2>
+              <p>{categoryDescriptions[cat]} <span class="ai-glossary-section__count">({list.length} terms)</span></p>
+            </header>
+            <dl class="ai-glossary-list">
+              {list.map((t) => (
+                <div class="ai-glossary-item">
+                  <dt>
+                    <strong>{t.termEN}</strong>
+                    {t.termEN !== t.termFR && (
+                      <span class="ai-glossary-item__fr"> — <em>{t.termFR}</em></span>
+                    )}
+                  </dt>
+                  <dd>{t.shortDef}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        );
+      })}
+
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-glossary-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-glossary-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-4);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-glossary-intro p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-intro a {
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+  }
+  .ai-glossary-intro a:hover { text-decoration: underline; }
+
+  .ai-glossary-section { margin-block: var(--ai-space-7); }
+  .ai-glossary-section__head {
+    margin-block-end: var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+  .ai-glossary-section__head h2 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-xl);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-section__head p {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-glossary-section__count {
+    color: var(--ai-fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-glossary-list {
+    display: grid;
+    gap: var(--ai-space-3);
+    margin: 0;
+  }
+  .ai-glossary-item {
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+  }
+  .ai-glossary-item dt {
+    margin-block-end: var(--ai-space-1);
+    color: var(--ai-fg-primary);
+  }
+  .ai-glossary-item__fr {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-normal);
+  }
+  .ai-glossary-item dd {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+</style>

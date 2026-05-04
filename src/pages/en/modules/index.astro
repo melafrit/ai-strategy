@@ -1,14 +1,96 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import ModuleCard from '@/components/ModuleCard.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 import { t } from '@/i18n/translations';
 
 const locale = 'en';
+
+const modules = [
+  { number: 1 as const, titleKey: 'modules.module-1.title', summaryKey: 'modules.module-1.summary', slug: '01-introduction-ia', available: true },
+  { number: 2 as const, titleKey: 'modules.module-2.title', summaryKey: 'modules.module-2.summary', slug: '02-machine-learning', available: true },
+  { number: 3 as const, titleKey: 'modules.module-3.title', summaryKey: 'modules.module-3.summary', slug: '03-ia-generative', available: true },
+  { number: 4 as const, titleKey: 'modules.module-4.title', summaryKey: 'modules.module-4.summary', slug: '04-robotique', available: true },
+  { number: 5 as const, titleKey: 'modules.module-5.title', summaryKey: 'modules.module-5.summary', slug: '05-ia-societe', available: true },
+  { number: 6 as const, titleKey: 'modules.module-6.title', summaryKey: 'modules.module-6.summary', slug: '06-futur-ia', available: true },
+] as const;
+
+const programmeUrl = getLocalizedUrl('/programme/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of the Modules index is scheduled for Phase 7. The French version is available now."
+  title={t('modules.preview.title', locale)}
+  description="The six program modules: introduction to AI, machine learning, generative AI, robotics, AI and society, future of AI. One page per module, with executive summary, case, quiz, checklist and PDF handouts."
 >
-  <TranslationPending frenchPagePath="/modules/" />
+  <HeroSecondary
+    surtitle="Modules"
+    title={t('modules.preview.title', locale)}
+    lead="Six modules to decide, deploy and govern artificial intelligence in your organization. Each module follows the same structure: executive summary, key concepts, common errors, real case, activity, quiz, checklist."
+  >
+    <span slot="stats">
+      Six modules · 6–8 h per week · Triple reading (executive / pedagogical / operational)
+    </span>
+  </HeroSecondary>
+
+  <section class="ai-container ai-section">
+    <div class="ai-modules-index-grid">
+      {modules.map((m) => (
+        <ModuleCard
+          number={m.number}
+          title={t(m.titleKey, locale)}
+          summary={t(m.summaryKey, locale)}
+          href={getLocalizedUrl(`/modules/${m.slug}/`, locale)}
+          available={m.available}
+        />
+      ))}
+    </div>
+
+    <aside class="ai-modules-index-status">
+      <h2>Publication status</h2>
+      <p>
+        All six modules are written in French (Phase 4 of the project). English translations are
+        progressively published in Phase 7 (current). The cards above link to the published
+        French version when the English translation is not yet available.
+      </p>
+      <p>
+        Meanwhile, you can explore the <a href={programmeUrl}>program overview</a>, which details
+        the seven cross-cutting learning outcomes and the skills matrix.
+      </p>
+    </aside>
+  </section>
 </BaseLayout>
+
+<style>
+  .ai-section { padding-block: var(--ai-space-7) var(--ai-space-8); }
+
+  .ai-modules-index-grid {
+    display: grid;
+    gap: var(--ai-space-4);
+    grid-template-columns: 1fr;
+    margin-block-end: var(--ai-space-7);
+  }
+  @media (min-width: 40em) {
+    .ai-modules-index-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 64em) {
+    .ai-modules-index-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .ai-modules-index-status {
+    background: var(--ai-bg-subtle);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    padding: var(--ai-space-5);
+  }
+  .ai-modules-index-status h2 {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+  }
+  .ai-modules-index-status p {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-modules-index-status p:last-child { margin-block-end: 0; }
+</style>

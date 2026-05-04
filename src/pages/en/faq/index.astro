@@ -1,14 +1,194 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+const frFaqUrl = getLocalizedUrl('/faq/', 'fr');
+
+interface FAQItem {
+  question: string;
+  answerHtml: string;
+}
+
+const sectionGeneral: FAQItem[] = [
+  {
+    question: "Is this an official MIT site?",
+    answerHtml: `<p><strong>No.</strong> This site is neither affiliated, validated, nor certified by MIT, MIT Sloan, or MIT CSAIL. It is an independent pedagogical resource inspired by the public themes of the program <em>Artificial Intelligence: Implications for Business Strategy</em>. The independence is detailed in the <a href="${getLocalizedUrl('/methode/', locale)}">Method page</a>, section 2.</p>`,
+  },
+  {
+    question: "Who is this site for?",
+    answerHtml: `<p>For three audiences simultaneously: <strong>executives and top management</strong> who must frame an AI strategy at C-suite level; <strong>consultants and transformation leaders</strong> preparing an engagement; <strong>educators and students</strong> in management or information systems. Each page is readable by all three with its triple reading levels (executive summary / pedagogical content / operational annexes).</p>`,
+  },
+  {
+    question: "Is this program certifying?",
+    answerHtml: `<p><strong>No.</strong> The site does not deliver any certificate, diploma, or accreditation. It is a free pedagogical resource. If you are looking for an MIT-certified course, consult MIT Sloan Executive Education's official page directly. This site exists to provide a free, sourced, French-speaking and trilingual entry point — a different mission from a certifying program.</p>`,
+  },
+  {
+    question: "How long does it take to go through the whole site?",
+    answerHtml: `<p>It depends on your goals. <strong>Executive summary</strong> of one module: 3-5 minutes. <strong>Full module</strong>: 25-45 minutes. <strong>Module + associated case</strong>: 45-90 minutes. <strong>Full program</strong> (6 modules + 10 cases + capstone): 60-90 hours, depending on your starting maturity. The MIT reference suggests 6-8 hours per week over 6 weeks for the original program.</p>`,
+  },
+];
+
+const sectionMethod: FAQItem[] = [
+  {
+    question: "How are cited sources hierarchized?",
+    answerHtml: `<p>Five visible levels via the <code>&lt;SourceTag /&gt;</code> component: <strong>official MIT source</strong>, <strong>recommended complement</strong> (MIT-related), <strong>pedagogical reconstruction</strong>, <strong>verifiable external source</strong>, <strong>to verify</strong>. Every factual claim on the site is tagged. Detail in the <a href="${getLocalizedUrl('/methode/', locale)}">Method page</a>, section 1.</p>`,
+  },
+  {
+    question: "What does 'pedagogical reconstruction' mean?",
+    answerHtml: `<p>When information is not publicly detailed by MIT (for example, the exact nature of an assignment in a module, or a specific quote from a faculty), we cautiously reconstruct from public sources consistent with the spirit of the program. These reconstructions are <strong>always flagged as such</strong> and never presented as official. They allow filling gaps without falsifying.</p>`,
+  },
+];
+
+const sectionStrategy: FAQItem[] = [
+  {
+    question: "How to choose a first AI use case for my organization?",
+    answerHtml: `<p>Three criteria: <strong>(1) Visible business value</strong> — a metric the C-suite cares about (NPS, churn, fraud, time-to-decision, conversion). <strong>(2) Reasonable feasibility</strong> — data already available or producible, internal or external technical skills, governance acceptable. <strong>(3) Mastered risk</strong> — not in AI Act high-risk if your organization is not ready, not on the company's strategic crown jewel for first attempt.</p><p>Don't start with the most attractive case — start with the case that lets you <strong>build the team's collective capability</strong>: a credible test, a learning, and a base for the next ones.</p>`,
+  },
+  {
+    question: "GenAI or classic supervised ML: when to choose which?",
+    answerHtml: `<p>Simplified rule:</p><ul><li><strong>Supervised ML</strong> when you have <strong>labeled historical data</strong> and want to <strong>predict / classify / detect</strong>: fraud, churn, demand forecast, defect detection, credit scoring.</li><li><strong>GenAI</strong> when you want to <strong>produce content</strong> (text, image, code, summary) or <strong>conversationally interact</strong> with a corpus.</li></ul><p>Often, both are useful in different parts of the same workflow. Module 3, section 5, develops the decision matrix.</p>`,
+  },
+  {
+    question: "Is my organization too small for AI?",
+    answerHtml: `<p><strong>No.</strong> The threshold for credibly engaging with AI is no longer about data volume or large IT teams. With cloud APIs, no-code tools, and free open-source models, an SME of 20-50 people can deploy concrete AI. The right question is <strong>not 'can we'</strong> but <strong>'what use case really creates value for us'</strong>. Module 2 case Stripe Radar (large-scale ML) and Module 4 case Universal Robots (cobots for SMEs) illustrate the spectrum.</p>`,
+  },
+];
+
+const sectionGovernance: FAQItem[] = [
+  {
+    question: "Am I concerned by the EU AI Act?",
+    answerHtml: `<p>If you operate any AI system in the EU, <strong>most likely yes</strong>, regardless of your headquarters. The AI Act applies extraterritorially (like GDPR). Five obligations to assess in priority: <strong>(1)</strong> Inventory your AI systems. <strong>(2)</strong> Classify each (prohibited / high-risk / limited / minimal). <strong>(3)</strong> Document the systems for which classification implies obligations. <strong>(4)</strong> Set up a governance with management reporting. <strong>(5)</strong> Train concerned teams. The Module 5 case 'AI Act EU high-risk' details high-risk obligations.</p>`,
+  },
+  {
+    question: "How to concretely articulate EU AI Act and NIST AI RMF?",
+    answerHtml: `<p>Three principles: <strong>(1)</strong> AI Act = legal obligations (mandatory in EU), NIST RMF = operational method (voluntary worldwide, very valuable). <strong>(2)</strong> Use NIST RMF as <strong>internal process backbone</strong> (Govern / Map / Measure / Manage), and AI Act as <strong>compliance grid</strong> for high-risk uses. <strong>(3)</strong> Articulate with existing governances (cyber, audit, compliance) rather than create a separate AI silo. The Module 5 NIST AI RMF case develops this articulation.</p>`,
+  },
+];
+
+const allSections = [
+  { title: 'About this site', items: sectionGeneral },
+  { title: 'Method and sources', items: sectionMethod },
+  { title: 'AI strategy in business', items: sectionStrategy },
+  { title: 'Governance and compliance', items: sectionGovernance },
+];
+
+const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.length, 0);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this FAQ is scheduled for Phase 7. The French version is available now."
+  title="Frequently asked questions"
+  description="FAQ on AI Strategy: identity of the site, method, AI strategy in business, governance and compliance, capstone, multilingual content. About 10 key questions with sourced answers."
 >
-  <TranslationPending frenchPagePath="/faq/" />
+  <HeroSecondary
+    surtitle="FAQ"
+    title="Frequently asked questions"
+    lead={`${totalQuestionsThisPage} key questions answered, organized into 4 thematic sections. Each answer points to the in-depth content on the site.`}
+  >
+    <span slot="stats">
+      {totalQuestionsThisPage} key questions in English · 20 questions in the French version · structured answers · public sources
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-faq-page">
+    <article class="ai-faq-page__content ai-prose">
+      <section class="ai-faq-intro">
+        <p>
+          This FAQ gathers the most frequent questions about the site, the program, and AI
+          strategy in business. The selected questions here are translated into English. The
+          <a href={frFaqUrl}>French version</a> contains 20 questions including specialized
+          ones (capstone duration, capstone size, expertise required, module order,
+          translation availability, content reuse).
+        </p>
+        <p class="ai-faq-page__fr-link">
+          Don't find your question here? See the <a href={frFaqUrl}>complete French FAQ</a> or
+          open an issue on
+          <a href="https://github.com/melafrit/ai-strategy/issues" target="_blank" rel="noopener">GitHub</a>.
+        </p>
+      </section>
+
+      {allSections.map((section) => (
+        <section class="ai-faq-section">
+          <h2>{section.title}</h2>
+          <div class="ai-faq-list">
+            {section.items.map((item) => (
+              <details class="ai-faq-item">
+                <summary class="ai-faq-item__question">{item.question}</summary>
+                <div class="ai-faq-item__answer" set:html={item.answerHtml} />
+              </details>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-faq-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-faq-page__content > section { margin-block: var(--ai-space-6); }
+  .ai-faq-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-4);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-faq-intro p { margin-block: 0 var(--ai-space-2); color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  .ai-faq-intro p:last-child { margin-block-end: 0; }
+  .ai-faq-page__fr-link { font-size: var(--ai-text-sm); color: var(--ai-fg-muted); }
+  .ai-faq-page__fr-link a { color: var(--ai-accent-primary); font-weight: var(--ai-weight-semibold); text-decoration: none; }
+  .ai-faq-page__fr-link a:hover { text-decoration: underline; }
+
+  .ai-faq-section h2 {
+    font-size: var(--ai-text-xl);
+    margin: 0 0 var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+  .ai-faq-list { display: grid; gap: var(--ai-space-2); }
+  .ai-faq-item {
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    background: var(--ai-bg-base);
+    overflow: hidden;
+  }
+  .ai-faq-item__question {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    font-weight: var(--ai-weight-semibold);
+    cursor: pointer;
+    list-style: none;
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-item__question::-webkit-details-marker { display: none; }
+  .ai-faq-item__question::before {
+    content: '+';
+    display: inline-block;
+    margin-inline-end: var(--ai-space-2);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+  }
+  .ai-faq-item[open] .ai-faq-item__question::before { content: '−'; }
+  .ai-faq-item__question:hover { background: var(--ai-bg-subtle); }
+  .ai-faq-item__answer {
+    padding: 0 var(--ai-space-4) var(--ai-space-4);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-item__answer :global(p) { margin: 0 0 var(--ai-space-3); }
+  .ai-faq-item__answer :global(p:last-child) { margin-block-end: 0; }
+  .ai-faq-item__answer :global(ul) { margin: 0 0 var(--ai-space-3); padding-inline-start: var(--ai-space-5); }
+  .ai-faq-item__answer :global(li) { margin-block: var(--ai-space-1); }
+  .ai-faq-item__answer :global(a) { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-faq-item__answer :global(a:hover) { text-decoration: underline; }
+  .ai-faq-item__answer :global(code) {
+    background: var(--ai-bg-subtle);
+    padding: 0 0.3em;
+    border-radius: var(--ai-radius-sm);
+    font-family: var(--ai-font-mono);
+    font-size: 0.9em;
+  }
+</style>

@@ -1,14 +1,316 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
-const locale = 'en';
+const frCapstoneUrl = getLocalizedUrl('/capstone/', 'fr');
+
+const objectives = [
+  "Diagnose your organization's AI maturity across 8 honest dimensions",
+  "Build a 3-5 year vision specific to your context, not interchangeable",
+  "Construct 3 contrasting scenarios at 18-24 months horizon and identify robust actions",
+  "Prioritize 5-8 candidate use cases on a Value × Feasibility × Risk grid",
+  "Decline a 12-24 month plan across 5 coherent dimensions: vision, governance, skills, infrastructure, KPIs",
+  "Produce a deliverable defendable in C-suite presentation or consulting engagement",
+];
+
+const methodologySteps = [
+  {
+    num: 1,
+    title: 'Vision and maturity diagnostic',
+    duration: '6-8 hours',
+    description: 'Pose an AI vision specific to your organization (3-5 years, not interchangeable). Honestly assess current maturity across 8 dimensions: data, skills, governance, projects in production, compliance, change management, infrastructure, social dialogue. Score /40 transparently.',
+  },
+  {
+    num: 2,
+    title: 'Contrasting scenarios and robust actions',
+    duration: '4-6 hours',
+    description: 'Build 3 contrasting prospective scenarios at 18-24 months horizon (e.g., regulation-tightening / market-explosion / status-quo). Identify robust actions — those that are useful in multiple futures. Avoid betting everything on a single future.',
+  },
+  {
+    num: 3,
+    title: 'Use case prioritization (V × F × R)',
+    duration: '6-10 hours',
+    description: '5-8 candidate use cases ranked on three axes: Value (business impact), Feasibility (technical and organizational), Risk (regulatory, ethical, social). Top 3 explicitly justified. Strongly inspired by published methodologies.',
+  },
+  {
+    num: 4,
+    title: '12-24 month plan across 5 dimensions',
+    duration: '8-12 hours',
+    description: 'Sequenced vision, governance, skills, infrastructure, KPIs — across 5 coherent dimensions with realistic budget and 5 major identified risks. Final deliverable: defendable in C-suite or for a consulting engagement.',
+  },
+];
+
+const evaluationDimensions = [
+  'Strategic vision',
+  'Maturity diagnostic',
+  'Robustness to uncertainty',
+  'Use case prioritization',
+  'Governance and ethics',
+  'Realistic execution plan',
+  'Indicators and follow-up',
+];
+
+const evaluationLevels = ['Beginner', 'Solid', 'Advanced', 'Excellent'];
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of the capstone page is scheduled for Phase 7. The French version is available now."
+  title="Capstone — Build your organization's AI roadmap"
+  description="Build a defendable AI roadmap for your organization in 4 structured steps: vision and maturity, scenarios, use case prioritization, 12-24 month plan. Methodology, evaluation grid 7×4, fictional SME example."
 >
-  <TranslationPending frenchPagePath="/capstone/" />
+  <HeroSecondary
+    surtitle="Capstone"
+    title="Build your organization's AI roadmap"
+    lead="The capstone is the final project of the program: at the end of the six modules, you produce a structured AI roadmap, defendable in C-suite presentation or a consulting engagement. This page details the methodology, the evaluation grid, and a fictional pedagogical example."
+  >
+    <span slot="stats">~25-35 hours total · 4 structured steps · 7×4 evaluation grid · CC BY-NC-SA template</span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-capstone-page">
+    <article class="ai-capstone-page__content ai-prose">
+      <section id="overview">
+        <h2>Capstone overview</h2>
+        <p>
+          The capstone consolidates the program's six modules into a single structured deliverable:
+          an <strong>AI roadmap</strong> for the organization of your choice (your own employer, a
+          client in mission, an institution, or a fictional case for educators). It is designed to
+          be <strong>actually used</strong> — in a C-suite presentation, in a consulting
+          engagement, or in continuing education courses.
+        </p>
+        <p>
+          The methodology unfolds in <strong>4 structured steps</strong>, evaluable on a
+          <strong>7-dimension × 4-level grid</strong>. To pass into 'C-suite defendable'
+          territory, the deliverable must achieve <strong>Solid on 5/7 dimensions and Excellent
+          on 2/7</strong>. The 4 steps total approximately 25 to 35 hours of work.
+        </p>
+        <p class="ai-capstone-page__fr-link">
+          <strong>Detailed pedagogical example available</strong> — a fictional SME (Métallurgie
+          de Précision SAS, French metalworking SME, 145 employees, fictional case constructed
+          for the program) is fully developed in the
+          <a href={frCapstoneUrl}>French version of this page</a>: maturity scoring across 8
+          dimensions with concrete numbers, 3 contrasting scenarios, top-3 use cases with V×F×R
+          rationale, and a 24-month plan with budget. The English translation of this example
+          is scheduled for a later phase of the project.
+        </p>
+      </section>
+
+      <section id="objectives">
+        <h2>Learning objectives</h2>
+        <KeyTakeaways items={objectives} />
+      </section>
+
+      <section id="methodology">
+        <h2>4-step methodology</h2>
+
+        <ol class="ai-capstone-steps">
+          {methodologySteps.map((step) => (
+            <li class="ai-capstone-step">
+              <header class="ai-capstone-step__head">
+                <span class="ai-capstone-step__num">Step {step.num}</span>
+                <h3>{step.title}</h3>
+                <p class="ai-capstone-step__duration">~{step.duration}</p>
+              </header>
+              <p class="ai-capstone-step__body">{step.description}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="evaluation-grid">
+        <h2>7×4 evaluation grid</h2>
+        <p>
+          The deliverable is evaluable across 7 dimensions × 4 mastery levels. This grid serves
+          for self-assessment, peer assessment, and supervisor evaluation in pedagogical context.
+        </p>
+        <div class="ai-capstone-grid">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Dimension</th>
+                {evaluationLevels.map((lvl) => (
+                  <th scope="col">{lvl}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {evaluationDimensions.map((dim) => (
+                <tr>
+                  <th scope="row">{dim}</th>
+                  {evaluationLevels.map((_lvl, i) => (
+                    <td>
+                      <span class={`ai-capstone-grid__dot ai-capstone-grid__dot--lvl${i + 1}`} aria-hidden="true"></span>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="ai-capstone-page__fr-link">
+          The detailed grid (with descriptors per cell — what 'Beginner Strategic Vision' means
+          vs 'Excellent Strategic Vision') is in the
+          <a href={frCapstoneUrl}>French version</a>. English translation scheduled for a later
+          phase.
+        </p>
+      </section>
+
+      <section id="checklist">
+        <h2>Pre-submission checklist</h2>
+        <p>
+          Before considering the capstone complete, verify the following 18 points (condensed
+          here, full version in the FR page):
+        </p>
+        <ul class="ai-capstone-checklist">
+          <li>The vision is specific to one organization (not interchangeable across companies)</li>
+          <li>The maturity diagnostic covers all 8 dimensions with explicit scores</li>
+          <li>The 3 scenarios are genuinely contrasting (not 3 variants of the same future)</li>
+          <li>Robust actions are identified (those useful in 2+ scenarios)</li>
+          <li>5-8 use cases are ranked on V × F × R with explicit justification</li>
+          <li>The top-3 use cases have realistic effort/cost estimates</li>
+          <li>The 12-24 month plan covers 5 coherent dimensions, not 1 or 2</li>
+          <li>The plan has realistic budget and 5 major identified risks</li>
+          <li>KPIs are measurable, leading, and decision-making (not vanity metrics)</li>
+          <li>Governance is articulated with existing governance (cyber, audit, compliance)</li>
+          <li>The deliverable handles AI Act compliance for high-risk uses if applicable</li>
+          <li>Change management and skills are not afterthoughts but full sections</li>
+          <li>The deliverable would survive a hostile question from a board director</li>
+          <li>It does not include unsourced numbers presented as exact</li>
+          <li>It does not cite fabricated cases or made-up studies</li>
+          <li>It assumes its limitations and uncertainties rather than masks them</li>
+          <li>The format works as a 30-min C-suite presentation AND a written deliverable</li>
+          <li>It is signable — you would put your name on it before the C-suite</li>
+        </ul>
+      </section>
+
+      <section id="resources">
+        <h2>Resources and downloads</h2>
+        <p>
+          A canvas Markdown is provided to scaffold the deliverable:
+          <a href="/downloads/canvas-roadmap-ia-module-6.md" download>
+            canvas-roadmap-ia-module-6.md
+          </a>
+          (CC BY-NC-SA 4.0 license, modifiable as you wish).
+        </p>
+        <p>
+          For the structured pedagogical example (fictional SME with full numbers, 3 scenarios,
+          top-3 use cases, 24-month plan, evaluation), see the
+          <a href={frCapstoneUrl}>French version of this page</a>.
+        </p>
+      </section>
+
+      <PrintButton />
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-capstone-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-capstone-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-capstone-page__fr-link {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-capstone-page__fr-link a {
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-semibold);
+    text-decoration: none;
+  }
+  .ai-capstone-page__fr-link a:hover { text-decoration: underline; }
+
+  .ai-capstone-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--ai-space-4);
+  }
+  .ai-capstone-step {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-capstone-step__head { margin-block-end: var(--ai-space-3); }
+  .ai-capstone-step__num {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: var(--ai-accent-primary);
+    color: var(--ai-bg-base);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-xs);
+    font-weight: var(--ai-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-block-end: var(--ai-space-2);
+  }
+  .ai-capstone-step__head h3 {
+    margin: var(--ai-space-1) 0;
+    font-size: var(--ai-text-lg);
+    color: var(--ai-fg-primary);
+  }
+  .ai-capstone-step__duration {
+    margin: 0;
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-capstone-step__body {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-capstone-grid {
+    overflow-x: auto;
+    margin-block: var(--ai-space-4);
+  }
+  .ai-capstone-grid table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--ai-text-sm);
+  }
+  .ai-capstone-grid th,
+  .ai-capstone-grid td {
+    padding: var(--ai-space-2) var(--ai-space-3);
+    text-align: start;
+    border: 1px solid var(--ai-border-subtle);
+  }
+  .ai-capstone-grid thead th {
+    background: var(--ai-bg-subtle);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-capstone-grid tbody th[scope="row"] {
+    background: var(--ai-bg-subtle);
+    color: var(--ai-fg-primary);
+  }
+  .ai-capstone-grid td { text-align: center; }
+  .ai-capstone-grid__dot {
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--ai-border-subtle);
+  }
+  .ai-capstone-grid__dot--lvl1 { background: color-mix(in srgb, #d4904a 30%, transparent); }
+  .ai-capstone-grid__dot--lvl2 { background: color-mix(in srgb, #d4904a 60%, transparent); }
+  .ai-capstone-grid__dot--lvl3 { background: color-mix(in srgb, #5a8c63 60%, transparent); }
+  .ai-capstone-grid__dot--lvl4 { background: color-mix(in srgb, #5a8c63 90%, transparent); }
+
+  .ai-capstone-checklist {
+    list-style: disc;
+    padding-inline-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-capstone-checklist li {
+    margin-block: var(--ai-space-2);
+    line-height: var(--ai-leading-relaxed);
+  }
+</style>
