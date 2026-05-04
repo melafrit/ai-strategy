@@ -1,14 +1,529 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Business problem' },
+  { id: 'solution', label: 'AI solution' },
+  { id: 'benefices', label: 'Observed benefits' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: 'Identified risks' },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+const takeaways = [
+  "Morgan Stanley illustrates that the value of a GenAI deployment does not come from the model (OpenAI's GPT-4 here) but from orchestration: RAG on curated internal corpus + human escalation + governance — the model is a commodity, the ecosystem is the competitive advantage.",
+  "The major investment focused on curating and structuring the internal corpus, not on the model itself — transposable best-practice rule: 70-80% of the GenAI budget on the ecosystem, 20-30% on the LLM.",
+  "The case confirms the absence of total autonomy: AI assists financial advisors but the final decision remains human — not by technical concession but by structured choice (responsibility, compliance, customer trust).",
+  "Deployment to ~16,000 advisors demonstrates that well-framed GenAI use can scale up — but this requires operational governance, documented guardrails, and systematic change management.",
+  "The case is transposable beyond finance: any sector where qualified experts (medicine, law, engineering, consulting) must quickly retrieve information from a dense internal corpus can draw inspiration from the LLM + RAG + human escalation architecture.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Technology @ Morgan Stanley — Wealth Management AI official page',
+    author: 'Morgan Stanley',
+    description:
+      "Morgan Stanley official communication page on its technology initiatives in wealth management, including the AI @ Morgan Stanley Assistant and Debrief assistants. Primary source for this case.",
+    href: 'https://www.morganstanley.com/about-us/technology/ai',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Foundation Models and Generative AI (full course)',
+    author: 'MIT OpenCourseWare — 6.S087 IAP 2024',
+    description:
+      "Structured MIT course on foundation models and generative AI. To technically understand what a system like GPT-4 used in the Morgan Stanley deployment is.",
+    href: 'https://ocw.mit.edu/courses/6-s087-foundation-models-and-generative-ai-january-iap-2024/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'How to find the right business use cases for generative AI',
+    author: 'MIT Sloan Ideas Made to Matter',
+    description:
+      "GenAI use case selection methodology for managers, aligned with the Morgan Stanley approach: workflow decomposition, total cost consideration, structured pilot.",
+    href: 'https://mitsloan.mit.edu/ideas-made-to-matter/how-to-find-right-business-use-cases-generative-ai',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+const module3Url = getLocalizedUrl('/modules/03-ia-generative/', locale);
+const stripeRadarUrl = getLocalizedUrl('/cas/stripe-radar/', locale);
+const mitBarzilayUrl = getLocalizedUrl('/cas/mit-barzilay-cancer/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this case study is scheduled for Phase 7. The French version is available now."
+  title="Morgan Stanley AskResearchGPT and Debrief — Case study"
+  description="How Morgan Stanley deployed two GenAI assistants (based on GPT-4) to ~16,000 financial advisors. LLM + RAG architecture on internal corpus + human escalation. Exemplary case for Module 3."
 >
-  <TranslationPending frenchPagePath="/cas/morgan-stanley/" />
+  <HeroSecondary
+    surtitle="Case study · Module 3 (main case) + Module 1 (mini-case)"
+    title="Morgan Stanley — AskResearchGPT and Debrief"
+    lead="How Morgan Stanley structured the large-scale GenAI deployment for its financial advisors. Value does not come from the model (OpenAI's GPT-4) but from orchestration: RAG on curated internal corpus + human escalation + governance."
+  >
+    <span slot="stats">
+      Finance / Private banking · LLM + RAG · ~16,000 advisors
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organization</dt>
+              <dd>Morgan Stanley — American investment and wealth management bank, one of the largest in the world</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sector</dt>
+              <dd>Finance / Private banking — Wealth Management</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technology</dt>
+              <dd>LLM (OpenAI's GPT-4) + RAG (Retrieval-Augmented Generation) on curated internal corpus + human escalation + dedicated governance</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Deployment scope</dt>
+              <dd>Two distinct assistants for approximately 16,000 financial advisors: <strong>AI @ Morgan Stanley Assistant</strong> (search in internal documentation, ~100,000 documents) and <strong>Debrief</strong> (automatic synthesis of client meeting notes)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>Morgan Stanley public official communications on its technology initiatives in wealth management <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Morgan Stanley</strong> has deployed in production two generative AI
+            assistants for its ~16,000 wealth management financial advisors. Both assistants
+            rely on the same foundation model — <strong>OpenAI's GPT-4</strong> — but serve
+            distinct use cases. <strong>AI @ Morgan Stanley Assistant</strong> (formerly
+            presented as AskResearchGPT) allows advisors to instantly retrieve relevant
+            information in internal documentation (research notes, sector reports, client
+            history). <strong>Debrief</strong> automates the writing of synthesis notes after
+            each client meeting.
+          </p>
+          <p>
+            The case is exemplary of Module 3 (Generative AI in Business) because it
+            illustrates <strong>where value really resides</strong> in a serious GenAI
+            deployment: not in the model (Morgan Stanley did not develop GPT-4 — the bank
+            licensed it), but in <strong>orchestration</strong>. The decisive investment
+            focused on curating and structuring the <strong>internal corpus</strong> that the
+            RAG queries on each request, on <strong>guardrails</strong> (human escalation,
+            source traceability, scope limitation), and on <strong>governance</strong> — who
+            validates uses, who supervises, who can suspend.
+          </p>
+          <p>
+            For a leader, the central lesson is clear: in a large-scale GenAI deployment, the
+            LLM is a purchasable commodity. <strong>The structural competitive advantage
+            comes from the ecosystem</strong> — internal corpus, workflow integration, change
+            management, governance. This explains why the total cost of a serious GenAI
+            project is typically distributed at 20-30% on the LLM subscription and 70-80% on
+            the ecosystem.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>Morgan Stanley</strong> is one of the leading investment and wealth
+            management banks worldwide. Its Wealth Management division manages several
+            trillion dollars in assets for high-net-worth clients, through a network of
+            approximately <strong>16,000 financial advisors</strong> in the United States and
+            internationally.
+          </p>
+          <p>
+            Several structural characteristics of this profession make it particularly
+            conducive to a well-framed GenAI deployment:
+          </p>
+          <ul>
+            <li>
+              Advisors rely on a <strong>dense internal corpus</strong> — in-house analyst
+              research notes, sector reports, client histories, allocation policies,
+              regulatory constraints. Finding the right information at the right time is a
+              real difficulty.
+            </li>
+            <li>
+              <strong>Client meetings</strong> generate a significant volume of notes to
+              consolidate — a time-consuming task that reduces the time available for actual
+              advisory work.
+            </li>
+            <li>
+              <strong>Final decisions</strong> (asset allocation, product recommendations,
+              wealth advice) remain high-stakes and require expert human judgment — AI
+              cannot and should not make them alone.
+            </li>
+            <li>
+              The financial sector is <strong>heavily regulated</strong> — any information
+              produced or distributed by an advisor is traceable, verifiable, subject to
+              audit (notably SEC in the United States).
+            </li>
+          </ul>
+          <p>
+            This combination — dense corpus, time-consuming assistance tasks, high-stakes
+            decisions requiring human supervision, strong regulatory constraints — is exactly
+            the ground where well-framed GenAI (LLM + RAG + human escalation) creates the
+            most value without introducing unacceptable risk.
+          </p>
+        </section>
+
+        {/* === BUSINESS PROBLEM === */}
+        <section id="probleme">
+          <h2>Business problem</h2>
+          <p>
+            The business problem Morgan Stanley addresses has two facets:
+          </p>
+          <ul>
+            <li>
+              <strong>For AI @ Morgan Stanley Assistant</strong>: allow advisors to
+              <strong> find relevant information in seconds</strong> rather than hours.
+              Before deployment, finding a specific analysis in a corpus of more than
+              100,000 internal documents could require a long manual search, or a call to a
+              colleague, or dependence on search engines poorly suited to financial content.
+            </li>
+            <li>
+              <strong>For Debrief</strong>: automate the <strong>writing of client meeting
+              notes</strong>. After each appointment (in person or video), the advisor must
+              write a report — a time-consuming step that can take 15 to 30 minutes per
+              meeting and accumulates to several hours of administrative work over a week.
+            </li>
+          </ul>
+          <p>
+            In both cases, GenAI does not replace the advisor's decision — it frees up time
+            that the advisor can redeploy on higher value-added phases (analysis, advice,
+            client relationship). This is the direct application of Module 3's
+            <strong> workflow decomposition</strong> principle: automate mechanical
+            sub-tasks (search, synthesis), keep judgment sub-tasks human (interpretation,
+            recommendation, decision).
+          </p>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>AI solution implemented</h2>
+          <p>
+            The solution combines several articulated layers — Morgan Stanley made the
+            strategic choice to invest massively on the ecosystem rather than on the model.
+          </p>
+
+          <h3>1. Foundation model licensed, not developed</h3>
+          <p>
+            Morgan Stanley uses <strong>OpenAI's GPT-4</strong> as the generation engine. The
+            bank does not develop its own LLM — an investment that would require hundreds of
+            millions of dollars without guaranteed competitive advantage. The LLM is treated
+            as a purchasable commodity. This is a major strategic choice: it frees resources
+            for the ecosystem, where value really resides.
+          </p>
+
+          <h3>2. RAG on curated internal corpus</h3>
+          <p>
+            The heart of the deployment is a <strong>RAG (Retrieval-Augmented
+            Generation)</strong> that anchors the LLM's responses in the Morgan Stanley
+            internal corpus. On each request: the system identifies relevant internal
+            documents, extracts key passages from them, and conditions the LLM's generation
+            on these extracts. Important consequences:
+          </p>
+          <ul>
+            <li>
+              <strong>Traceability.</strong> Each response cites the internal documents used.
+              The advisor can verify the source — a critical regulatory requirement in
+              finance.
+            </li>
+            <li>
+              <strong>Freshness.</strong> Database update is independent of the model — no
+              need to retrain GPT-4 when a new report comes out.
+            </li>
+            <li>
+              <strong>Control.</strong> One controls exactly what the model sees —
+              substantial (but not total) reduction of the hallucination risk.
+            </li>
+          </ul>
+
+          <h3>3. Curation and structuring of the corpus</h3>
+          <p>
+            Morgan Stanley's decisive investment focused here. The internal corpus (over
+            100,000 documents: research notes, sector reports, internal policies, product
+            documentation) was <strong>cleaned, structured, tagged</strong> with metadata
+            (subject, date, author, confidentiality level, usage scope). It is the work of
+            several teams over months — but it is this investment that determines the final
+            quality of responses, not the choice of model.
+          </p>
+
+          <h3>4. Human escalation and scope limits</h3>
+          <p>
+            Neither of the two assistants makes high-stakes decisions alone. The scope is
+            <strong> deliberately limited</strong>: search for existing information
+            (Assistant) or synthesis of content already produced by the human (Debrief). For
+            any question outside scope, the system signals to the advisor to consult a
+            primary source or expert. This limitation is a design choice, not a technical
+            limitation.
+          </p>
+
+          <h3>5. Governance and change management</h3>
+          <p>
+            The deployment was accompanied by an operational governance device (periodic
+            quality review, error reporting by advisors, regular audit) and a change
+            management effort (training of 16,000 advisors, internal communication on
+            recommended uses and uses to avoid). Without this organizational dimension, the
+            tool alone would have had little effect.
+          </p>
+        </section>
+
+        {/* === BENEFITS === */}
+        <section id="benefices">
+          <h2>Observed benefits</h2>
+          <p>
+            According to Morgan Stanley's public communications, several benefits are
+            documented:
+          </p>
+          <ul>
+            <li>
+              <strong>Substantial reduction of search time</strong> — advisors find in
+              seconds information that previously took minutes or hours. Direct effect on
+              productivity and advisor satisfaction.
+            </li>
+            <li>
+              <strong>Reduction of administrative time</strong> with Debrief — meeting notes
+              are produced in first draft by the AI, the advisor validates and adjusts
+              rather than writing from scratch.
+            </li>
+            <li>
+              <strong>Improvement of advice consistency</strong> — advisors rely on the same
+              curated internal corpus, which reduces variability of recommendations on
+              similar topics.
+            </li>
+            <li>
+              <strong>Strengthening of customer experience</strong> — time redeployed on
+              high value-added phases (analysis, advice, relationship), improved customer
+              perception.
+            </li>
+            <li>
+              <strong>Credibility of large-scale deployment</strong> — going from a few
+              pilot advisors to ~16,000 advisors in production demonstrates that well-framed
+              GenAI can be industrialized in a regulated environment.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: Morgan Stanley publishes qualitative elements and some orders of
+            magnitude, without detailing all KPIs (which are partly competitively sensitive).
+            The case's value lies in the publicly documented architecture, not just in
+            punctual figures.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <ul>
+            <li>
+              <strong>The initial investment is high</strong>. Curating and structuring a
+              corpus of more than 100,000 documents requires dedicated teams over several
+              months — which few smaller organizations can afford. The case is not trivially
+              transposable to an SME.
+            </li>
+            <li>
+              <strong>Dependence on the LLM provider is real</strong>. Morgan Stanley
+              depends on OpenAI for availability, price, and evolution of GPT-4
+              capabilities. Possible mitigation: multi-model policy with switching
+              capability.
+            </li>
+            <li>
+              <strong>The limited scope is also a limit</strong>. More advanced capabilities
+              (comparative analysis, personalized recommendation, complex reasoning) are
+              deliberately not in scope. The quality / risk trade-off is acceptable but
+              limits ambition.
+            </li>
+            <li>
+              <strong>Residual hallucinations</strong>. RAG strongly reduces the risk but
+              does not eliminate it — an LLM can still produce a plausible but false answer.
+              Advisor vigilance and traceability remain essential.
+            </li>
+            <li>
+              <strong>The real effect on the advisor profession</strong> remains to be
+              observed over time. Risk that GenAI produces excessive alignment of advice
+              ("everyone has the same answer"), reducing diversity and creativity of advice.
+              To monitor.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISKS === */}
+        <section id="risques">
+          <h2>Identified risks and guardrails</h2>
+          <ul>
+            <li>
+              <strong>Regulatory risk (SEC, FINRA in the United States; equivalent
+              regulators elsewhere).</strong> Any information produced by advisors remains
+              under Morgan Stanley's responsibility. Guardrails: systematic traceability of
+              sources used, regular audit, training of advisors on permitted uses.
+            </li>
+            <li>
+              <strong>Risk of client data leak.</strong> Advisor queries may contain
+              sensitive information. Guardrails: data isolation in controlled environments,
+              strict contractual agreements with OpenAI on non-reuse of prompts to train
+              other models, regular flow audit.
+            </li>
+            <li>
+              <strong>Risk of bias in the curated corpus</strong>. The internal corpus
+              reflects editorial choices, which may bias responses. Guardrails: regular
+              audit of corpus coverage, monitoring of underrepresentations, editorial
+              adjustments.
+            </li>
+            <li>
+              <strong>Risk of degradation of the advisor profession</strong> if AI is used
+              beyond its intended scope. Guardrails: explicit usage policy, training,
+              internal communication, concrete examples of good and bad uses.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Morgan Stanley invests massively in curating the internal corpus and uses
+              GPT-4 as a commodity. <strong>What is the strategic logic</strong> behind this
+              choice? What would happen if the bank had chosen to develop its own LLM?
+            </li>
+            <li>
+              The deployment is deliberately limited to reduced-scope use cases (information
+              search, synthesis of existing notes). <strong>Why not a more ambitious
+              use</strong> (personalized recommendations, automatic allocation)? What is
+              gained and what is lost with this scope choice?
+            </li>
+            <li>
+              To reproduce this type of architecture in your organization, <strong>which
+              components should be put in place as a priority</strong>? What would be the
+              limiting factors (skills, budget, data, governance)?
+            </li>
+            <li>
+              The case insists on systematic <strong>traceability</strong> of sources.
+              Beyond finance, in which sectors is this requirement also critical? How would
+              it translate technically?
+            </li>
+            <li>
+              In view of the EU AI Act and GDPR, <strong>what additional obligations</strong>
+              would apply to a similar deployment in a European bank?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module3Url}><strong>Module 3 — Generative
+            AI in Business</strong></a> (main case) — LLM + RAG orchestration, guardrails,
+            workflow decomposition, total cost of automation. It is also a support point for
+            <a href={module1Url}><strong>Module 1 — Introduction to AI</strong></a>
+            (mini-case) — narrow AI, socio-technical system, place of the human in the loop.
+            It is also relevant to Module 5 (governance, regulatory compliance) and Module 6
+            (large-scale deployment, change management).
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. See the
+            <a href={methodeUrl}> method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: stripeRadarUrl,
+            label: 'Stripe Radar',
+            context: 'Previous case',
+          }}
+          next={{
+            href: mitBarzilayUrl,
+            label: 'MIT research — Regina Barzilay',
+            context: 'Next case',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) {
+    .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; }
+  }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) {
+    .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; }
+  }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 {
+    margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2);
+    font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary);
+  }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) {
+    .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); }
+  }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

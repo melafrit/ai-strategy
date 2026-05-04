@@ -1,14 +1,608 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Business problem' },
+  { id: 'solution', label: 'AI solution' },
+  { id: 'benefices', label: 'Observed benefits' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: 'Identified risks' },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+// === KEY TAKEAWAYS (5) ===
+const takeaways = [
+  "The Takeda Superminds case is not an automation project, it is a human × machine collective intelligence device — performance comes from the system, not from a single component.",
+  "Explicit role orchestration (who does what, who validates, who learns) is what distinguishes a supermind from a simple AI use — Thomas Malone and MIT CCI provide the conceptual framework.",
+  "Pharmaceutical R&D is a particularly fertile ground for collective intelligence: strong human expertise, complex heterogeneous data, high-stakes decisions and long validation chains.",
+  "The major pitfall is to transform the program into a simple AI POC — the expected value lies in organizational transformation (mixed teams, collaboration processes, capacity to learn collectively), not in the algorithm alone.",
+  "The case is transposable beyond pharma: finance, legal, engineering, any sector combining strong human expertise, complex data and high-stakes decisions.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Takeda Superminds Program',
+    author: 'MIT Center for Collective Intelligence',
+    description:
+      "Official page of the joint Takeda × MIT CCI program on the MIT Center for Collective Intelligence website. Primary source for this case.",
+    href: 'https://cci.mit.edu/takeda-superminds-program/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Superminds — How to think and work better with people and machines',
+    author: 'Thomas Malone (MIT)',
+    description:
+      "Reference book for the collective intelligence perspective adopted by the program. Establishes the human × machine framework — supermind as a system where intelligence emerges from combination.",
+    href: 'https://cci.mit.edu/publications/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI and Collective Intelligence',
+    author: 'MIT Center for Collective Intelligence',
+    description:
+      "MIT CCI resource explicitly articulating generative AI and collective intelligence. Relevant for understanding how GenAI tools integrate into a supermind approach.",
+    href: 'https://cci.mit.edu/generative-ai-and-collective-intelligence/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+// === URLs ===
+const casIndexUrl = getLocalizedUrl('/cas/', locale);
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+const morganStanleyUrl = getLocalizedUrl('/cas/morgan-stanley/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of the Takeda × MIT CCI Superminds case study is scheduled for Phase 7. The French version is available now."
+  title="Takeda × MIT CCI Superminds — Case study"
+  description="Takeda Superminds Program with the MIT Center for Collective Intelligence: structuring human-machine teams for pharmaceutical R&D. Direct application of the Thomas Malone framework."
 >
-  <TranslationPending frenchPagePath="/cas/takeda-superminds/" />
+  <HeroSecondary
+    surtitle="Case study · Module 1"
+    title="Takeda × MIT CCI — Superminds Program"
+    lead="How Takeda Pharmaceuticals partnered with the MIT Center for Collective Intelligence to structure a human × machine collective intelligence device in drug R&D. Exemplary case for Module 1 and the Thomas Malone perspective."
+  >
+    <span slot="stats">
+      Healthcare / Pharmaceutical · Collective intelligence · MIT CCI
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organization</dt>
+              <dd>Takeda Pharmaceuticals (Japan — one of the world's leading pharmaceutical companies) in partnership with the MIT Center for Collective Intelligence (CCI)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sector</dt>
+              <dd>Healthcare / Pharmaceutical — drug R&D</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technology</dt>
+              <dd>Collective intelligence — explicit human × machine orchestration, integrating analytical tools and more recently generative AI</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Conceptual framework</dt>
+              <dd>Thomas Malone's work (MIT) on superminds — systems where intelligence emerges from the combination of multiple intelligences (human, organizational, machine)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>Official program page on the MIT CCI website <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            The <strong>Takeda Superminds</strong> program is a partnership between the
+            Japanese pharmaceutical group Takeda and the MIT Center for Collective Intelligence
+            led by <strong>Thomas Malone</strong>. Its objective is not to automate R&D — it is
+            to <strong>structure mixed human × machine teams</strong> capable of addressing
+            complex drug development problems that neither humans alone nor machines alone can
+            solve effectively.
+          </p>
+          <p>
+            The case directly illustrates the central concept of Module 1: <strong>collective
+            intelligence</strong> as a framework for thinking about AI in organizations. Rather
+            than seeking to replace researchers or doctors with models, the program designs
+            the organization as a <em>supermind</em> where humans, processes and tools combine
+            their strengths — each playing the role they do best.
+          </p>
+          <p>
+            For a leader, the case is important because it shifts the strategic question:
+            <strong> not "how can AI replace X?", but "how can we combine human and machine
+            intelligences to progress faster on problems we cannot solve alone?"</strong> — a
+            more defensible, more durable, and more value-creating question than the first.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>Takeda Pharmaceutical Company</strong> is one of the largest
+            pharmaceutical groups in the world, headquartered in Osaka, Japan. Its main
+            therapeutic areas include oncology, rare diseases, neurosciences and
+            gastroenterology. Like the entire pharmaceutical sector, Takeda faces structural
+            challenges:
+          </p>
+          <ul>
+            <li>
+              Developing a new drug typically takes <strong>10 to 15 years</strong> and costs
+              several billion dollars, with high attrition rates at each clinical phase.
+            </li>
+            <li>
+              Researchers, doctors and data scientists often work in <strong>functional
+              silos</strong>, with different tools, languages and cadences.
+            </li>
+            <li>
+              The <strong>volumes of data</strong> to be exploited (historical clinical
+              trials, scientific literature, patient data, molecular data) exceed what humans
+              alone can integrate into a decision.
+            </li>
+            <li>
+              <strong>Decisions are high-stakes</strong> — choices to invest hundreds of
+              millions on a therapeutic target, choices of clinical trial design — and
+              require human expertise, solid data, and analytical capacity for both.
+            </li>
+          </ul>
+          <p>
+            The <strong>MIT Center for Collective Intelligence</strong> (MIT CCI), led by
+            Thomas Malone, is one of the most internationally recognized research centers on
+            the question of how humans and machines can combine their strengths to produce
+            intelligence at the scale of a group or organization. Its work has nourished the
+            concept of <em>supermind</em> popularized by Malone's book.
+          </p>
+          <p>
+            The partnership between Takeda and MIT CCI fits into this perspective: applying
+            collective intelligence principles to concrete pharmaceutical R&D problems.
+          </p>
+        </section>
+
+        {/* === BUSINESS PROBLEM === */}
+        <section id="probleme">
+          <h2>Business problem</h2>
+          <p>
+            The business problem Takeda seeks to address through Superminds is not task
+            automation — pharmaceutical R&D obviously has many tasks that could be automated
+            in a more classical way. The problem is more structuring:
+          </p>
+          <ul>
+            <li>
+              <strong>How to accelerate the creative phases</strong> of drug development
+              (therapeutic target selection, trial design, mechanism hypotheses) <strong>
+              without losing the depth of expertise</strong> that distinguishes the best
+              researchers?
+            </li>
+            <li>
+              <strong>How to integrate into a single decision</strong> heterogeneous data
+              (clinical, molecular, literature, patient feedback) that neither humans alone
+              nor machines alone can reliably synthesize?
+            </li>
+            <li>
+              <strong>How to make collaborate</strong> over time researchers (critical
+              thinking, contextual judgment), data scientists (statistical and AI models),
+              and tools (large-scale analysis, historical memory)?
+            </li>
+          </ul>
+          <p>
+            The problem formulation distinguishes the Takeda case from other AI uses in
+            pharma. Classical cases seek to <strong>automate identifiable tasks</strong>
+            (automatic molecular screening, medical image reading, toxicity prediction). The
+            Superminds case seeks to <strong>transform the way teams work</strong> on the most
+            complex phases — which are also those where strategic value is strongest.
+          </p>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>AI solution implemented</h2>
+          <p>
+            The solution is not an AI product but an <strong>organizational device</strong>
+            structured around several principles of the supermind framework:
+          </p>
+
+          <h3>1. Mixed teams by construction</h3>
+          <p>
+            Rather than mono-functional teams (researchers among themselves, data scientists
+            among themselves, doctors among themselves) cooperating on an ad hoc basis, the
+            program structures <strong>durably mixed teams</strong> where medical expertise,
+            scientific expertise, data expertise, and AI modeling capabilities are
+            permanently represented and orchestrated. Functional diversity is treated as a
+            structural asset, not as an occasional constraint.
+          </p>
+
+          <h3>2. Explicit role orchestration</h3>
+          <p>
+            Each actor in the system (human or machine) has a <strong>clarified role</strong>:
+            who formulates hypotheses, who tests them, who validates them, who learns from
+            results. This explicitation is the heart of the supermind method — it
+            distinguishes a collective intelligence device from a simple sum of
+            competencies.
+          </p>
+
+          <h3>3. Analytical and AI tools as support</h3>
+          <p>
+            The deployed tools (statistical models, generative AI for literature exploration,
+            data analysis platforms) are designed as <strong>collaborators</strong> of the
+            teams — not as products to use. The program's evolution progressively integrates
+            generative AI capabilities, but always in the same logic: as an actor in a larger
+            system, not as a replacement.
+          </p>
+
+          <h3>4. Structured collective learning</h3>
+          <p>
+            Lessons learned from projects are capitalized <strong>at the organizational
+            level</strong>, not just at the team level — so that knowledge does not evaporate
+            with the departure of individuals. This is a dimension often neglected in
+            classical AI projects, treated centrally in Superminds.
+          </p>
+        </section>
+
+        {/* === BENEFITS === */}
+        <section id="benefices">
+          <h2>Observed benefits</h2>
+          <p>
+            Benefits publicly documented by MIT CCI focus mainly on <strong>organizational
+            and strategic dimensions</strong> rather than raw productivity figures:
+          </p>
+          <ul>
+            <li>
+              <strong>Capacity to address more complex problems</strong> — explicit human ×
+              machine orchestration allows tackling questions that researchers alone or
+              machines alone would abandon as too complex.
+            </li>
+            <li>
+              <strong>Speed of organizational learning</strong> — structured capitalization
+              of lessons accelerates the upskilling of successive teams on related problems.
+            </li>
+            <li>
+              <strong>Diversity of explored hypotheses</strong> — combining human expertise
+              and analytical tools makes more hypotheses emerge than each actor alone, which
+              improves discovery chances.
+            </li>
+            <li>
+              <strong>Credibility and transferability</strong> — the supermind method,
+              academically validated by MIT CCI, is defensible internally (researchers,
+              doctors, leadership) and transposable to other domains (finance, legal,
+              engineering).
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: Takeda and MIT CCI publish the program's principles and some
+            qualitative results. As with most pharmaceutical R&D cases, precise figures
+            (phase duration reduction, success rate) are not all public. The case's value
+            lies in the structure of the device, not just in punctual KPIs.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <p>
+            Several challenges and limits must be anticipated for those wishing to draw
+            inspiration from this case:
+          </p>
+          <ul>
+            <li>
+              <strong>The device is demanding in skills</strong>. Constituting durably mixed
+              teams (researchers + doctors + data scientists + AI experts) assumes that these
+              profiles exist internally or can be recruited — this is not obvious for
+              organizations smaller than Takeda.
+            </li>
+            <li>
+              <strong>A culture of collaboration is a prerequisite</strong>. If the
+              organization functions in rigid silos, the program first requires cultural and
+              organizational work — which can take years before producing tangible results.
+            </li>
+            <li>
+              <strong>Benefits are indirect and difficult to quantify</strong>. This is not a
+              project with simple payback ("we save €X per year thanks to AI"). The value
+              lies in increased capacity to solve complex problems — less defensible to the
+              C-suite if internal culture demands precise figures.
+            </li>
+            <li>
+              <strong>The risk of fashion effect</strong>. The word supermind can be adopted
+              superficially ("we do supermind" without changing real practices) — the effect
+              is then nil. The framework only has value if applied with methodological rigor.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISKS === */}
+        <section id="risques">
+          <h2>Identified risks and guardrails</h2>
+          <p>
+            Three families of risks structure the implementation:
+          </p>
+          <ul>
+            <li>
+              <strong>Risk of drift toward simple automation.</strong> The program may drift
+              toward classical AI tool use if the human × machine orchestration dimension is
+              not actively maintained. Guardrail: regular review of composition and roles in
+              mixed teams.
+            </li>
+            <li>
+              <strong>Scientific risk.</strong> AI tools may introduce biases or errors in
+              the scientific hypotheses explored (for example: over-weighting certain
+              literatures, missing atypical cases). Guardrails: systematic human validation
+              of hypotheses before investment, regular audit of AI outputs.
+            </li>
+            <li>
+              <strong>Organizational and social risk.</strong> Like any project impacting
+              work organization, the program requires HR support and social dialogue —
+              particularly in contexts where the perception "AI = replacement" is strong.
+              Guardrail: clear internal communication on the augmentative (and not
+              substitutive) character of the approach, team training, explicit support.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <p>
+            Five questions to use in training, workshops or courses to deepen the case:
+          </p>
+          <ol class="ai-discussion-questions">
+            <li>
+              The Takeda Superminds case presents AI not as a tool but as an actor in a
+              larger system. <strong>How does this perspective change the way to frame an AI
+              project</strong> in your organization?
+            </li>
+            <li>
+              To apply supermind logic in your context, what would be the
+              <strong> 3 or 4 functions to associate durably</strong> in a mixed team? Why
+              these functions and not others?
+            </li>
+            <li>
+              The case insists on <strong>collective capitalization of lessons</strong>. What
+              mechanisms does your organization have for this? What are the gaps?
+            </li>
+            <li>
+              If you had to defend a supermind approach to the C-suite, how would you justify
+              <strong> the investment compared to classical automation projects</strong>
+              whose ROI is more directly quantifiable?
+            </li>
+            <li>
+              <strong>What sectors other than pharma</strong> seem particularly fertile for
+              this approach to you, and why? Conversely, what sectors seem ill-suited?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module1Url}><strong>Module 1 — Introduction
+            to AI</strong></a>, in particular the <strong>collective intelligence</strong>
+            perspective (Thomas Malone, MIT CCI) that structures the entire program. It is
+            also a support point for discussing the HR and organizational dimension of AI
+            projects, treated in more detail in Module 5.
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. No factual information from this case
+            comes from internal Takeda communications. See the
+            <a href={methodeUrl}> method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: casIndexUrl,
+            label: 'All case studies',
+            context: 'Index',
+          }}
+          next={{
+            href: morganStanleyUrl,
+            label: 'Morgan Stanley AskResearchGPT',
+            context: 'Next case',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-case-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-case-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-case-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-case-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-case-page__content {
+    min-width: 0;
+  }
+
+  .ai-case-page__content > section {
+    margin-block: var(--ai-space-7);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-case-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-case-page__content > section h3 {
+    margin-block-start: var(--ai-space-5);
+    margin-block-end: var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+
+  /* Meta box */
+  .ai-case-meta-section {
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-case-meta-section__title {
+    margin: 0 0 var(--ai-space-3);
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-case-meta {
+    display: grid;
+    gap: var(--ai-space-3);
+    margin: 0;
+  }
+  .ai-case-meta__row {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: var(--ai-space-3);
+    align-items: start;
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 1px solid var(--ai-border-subtle);
+  }
+  .ai-case-meta__row:last-child {
+    border-block-end: none;
+    padding-block-end: 0;
+  }
+  .ai-case-meta dt {
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-case-meta dd {
+    margin: 0;
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  @media (max-width: 50em) {
+    .ai-case-meta__row {
+      grid-template-columns: 1fr;
+      gap: var(--ai-space-1);
+    }
+  }
+
+  /* Discussion questions */
+  .ai-discussion-questions {
+    list-style: none;
+    counter-reset: discuss;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-discussion-questions li {
+    counter-increment: discuss;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-discussion-questions li::before {
+    content: 'Q' counter(discuss);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-case-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
