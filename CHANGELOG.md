@@ -79,6 +79,28 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
 - ~~Phase 7 — Traductions EN + AR + polices IBM Plex~~ **→ ✅ COMPLÈTE : sub-1 (polices + 3 pages EN-AR centrales) + sub-2 (11 pages EN refondues) + sub-3 (9 pages AR refondues + audit final i18n) publiés**
 
+## 🎙️ Post-Phase 7 — Prompts NotebookLM pour la production podcasts
+
+Préparation opérationnelle pour la production effective des 10 podcasts NotebookLM (FR uniquement par design, voir page de transparence).
+
+- **NEW DIRECTORY — `docs/podcasts/notebooklm-prompts/`** (10 fichiers + README)
+  - 10 prompts NotebookLM autonomes, un par épisode, chacun **sous 5 200 caractères** pour tenir dans le champ "Custom instructions" de NotebookLM sans troncature.
+  - Gabarit unifié en 6 sections : (1) documents à charger avec liste précise des PDFs/URLs et liste de ce qu'il NE faut PAS charger ; (2) procédure NotebookLM en 7 étapes ; (3) prompt complet à coller incluant langue, public, durée, format Deep Dive, structure 6 chapitres, takeaways, instructions spécifiques, contraintes strictes ; (4) grille qualité 8 critères ; (5) procédure publication post-validation ; (6) Plan B en cas d'échec de génération.
+  - **Différenciation par épisode** :
+    - `ep-01` : Dirigeants COMEX, cas Takeda, garde-fous AGI/OpenAI hors sources
+    - `ep-02` : Chefs de projet ML, Stripe + Mirai chacun 2 min, garde-fous algorithmes (XGBoost interdit)
+    - `ep-03` : CIO, angle "20-30% modèle / 70-80% écosystème", garde-fous comparaisons LLM
+    - `ep-04` : Dirigeants industrie, Amazon = contre-exemple, ISO/TS 15066, signalement explicite Métallurgie de Précision SAS comme fictive
+    - `ep-05` : Juristes/DPO, AI Act 4 catégories + 3 rôles + calendrier août 2027, garde-fous "AI Act vs RGPD"
+    - `ep-06` : Responsables data, NIST RMF 4 fonctions Govern/Map/Measure/Manage, articulation avec AI Act
+    - `ep-07` : Tous, méthodologie capstone 4 étapes + grille 7×4, épisode le plus dense (15-18 min)
+    - `ep-08` : DRH/transformation, cadre MIT CCI Superminds, Takeda incarné 3 min minimum
+    - `ep-09` : DRH/formation, travaux David Autor + NBER w31161, garde-fous "X% emplois remplacés"
+    - `ep-10` : Tous, bilan synthèse 10 pièges, ton direct sans cynisme, renvoi au capstone
+  - **README opérationnel** : tableau des 10 prompts, workflow recommandé pour produire la série complète (~10-12h opérateur), justification de la limite 5 200 caractères, liens vers briefs et workflow technique.
+  - Pattern : ces prompts COMPLÈTENT les briefs éditoriaux (`docs/podcasts/briefs/`) sans les remplacer. Les briefs restent la référence éditoriale longue ; les prompts sont l'outil de production immédiat.
+  - Build validé : 98 pages, 0 erreur Astro check sur 141 fichiers.
+
 ## 🎯 PHASE 7 COMPLÈTE — Site multilingue FR/EN/AR opérationnel
 
 Phase 7 est désormais terminée. Le site est navigable de bout en bout en français, anglais et arabe avec :
