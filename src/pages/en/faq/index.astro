@@ -66,13 +66,61 @@ const sectionGovernance: FAQItem[] = [
     question: "How to concretely articulate EU AI Act and NIST AI RMF?",
     answerHtml: `<p>Three principles: <strong>(1)</strong> AI Act = legal obligations (mandatory in EU), NIST RMF = operational method (voluntary worldwide, very valuable). <strong>(2)</strong> Use NIST RMF as <strong>internal process backbone</strong> (Govern / Map / Measure / Manage), and AI Act as <strong>compliance grid</strong> for high-risk uses. <strong>(3)</strong> Articulate with existing governances (cyber, audit, compliance) rather than create a separate AI silo. The Module 5 NIST AI RMF case develops this articulation.</p>`,
   },
+  {
+    question: "Should I create an AI ethics committee in my organization?",
+    answerHtml: `<p>Yes for most organizations seriously deploying AI — but with an important framing: <strong>an AI ethics committee is not a moral body, it's an operational governance body</strong>.</p><p><strong>Bad version</strong>: a committee that publishes ethical principle charters and meets twice a year to validate that company values were respected. This serves no operational purpose.</p><p><strong>Good version</strong>: a committee that (a) classifies use cases per EU AI Act from the framing stage, (b) reviews technical documentation of high-risk systems before deployment, (c) tracks governance KPIs (bias audits, incidents, compliance), (d) can suspend a drifting system, (e) is consulted before any significant AI investment.</p><p><strong>Typical composition</strong>: CEO or executive direction (authority), CIO or technical direction, HR director (employment impact), CFO or compliance, lawyer/DPO, business representative, one referent per ongoing use case. For mature organizations, adding an external member (researcher, independent consultant) strengthens credibility. <strong>Articulate with existing governance</strong> (cyber, audit, compliance) rather than creating an AI silo.</p>`,
+  },
+  {
+    question: "How to address the risk of algorithmic bias?",
+    answerHtml: `<p>Algorithmic bias appears when an AI system produces systematically different results for subgroups (gender, origin, age) without legitimate business justification. Three main sources: bias in training data, design choices (proxy variables implicitly correlated with protected attributes), feedback loops.</p><p><strong>Detection</strong>: apply specific fairness metrics by subgroup from design phase, not downstream. Systematically test performance by sensitive subpopulation. A model that works very well on average can produce unacceptable decisions on minority subgroups.</p><p><strong>Mitigation</strong>: review training data composition, remove or neutralize problematic proxy variables, adjust decision threshold by subgroup when legally possible, set up reinforced human supervision on contested cases.</p><p><strong>Regulatory framework</strong>: the EU AI Act requires "data governance" (Article 10) including bias prevention and detection for high-risk systems. NIST AI RMF dedicates part of the Measure function to bias auditing. GDPR and anti-discrimination laws apply.</p><p><strong>Exemplary case</strong>: a CV screening system trained on historical recruitment data may learn to implicitly penalize female CVs even if gender is not an input variable — this is typical. A pre-deployment bias audit is non-negotiable on this type of use.</p>`,
+  },
+];
+
+const sectionCapstone: FAQItem[] = [
+  {
+    question: "How long does it take to complete the capstone?",
+    answerHtml: `<p>Duration depends on your ambition level and your organization's maturity. Three engagement levels:</p><p><strong>Short version (90-120 minutes)</strong> — fill out the Module 6 downloadable canvas autonomously. You get a synthetic one-page roadmap. Sufficient to structure your thinking and engage internal discussion.</p><p><strong>Medium version (1-2 days)</strong> — version usable in C-suite with methodological annexes (substantiated maturity diagnostic, V × F × R scoring of candidate use cases with justifications, detailed action plan across 5 dimensions, estimated budget, major risks mapping). Sufficient for a validation call by executive direction.</p><p><strong>Complete version (2-3 weeks)</strong> — in team workshop mode with internal validation. Implies 2-3 collective work sessions, interviews with concerned business directions, EU AI Act compliance analysis, preliminary social partner consultation if applicable. Sufficient for an operational launch.</p><p>The 7-dimension × 4-level evaluation grid in the capstone page allows assessing achieved quality. A "Solid" score on 5 dimensions and "Excellent" on 2 marks the C-suite defendability threshold.</p>`,
+  },
+  {
+    question: "Is the capstone suitable for all organization sizes?",
+    answerHtml: `<p>Yes — methodology is invariant by size, but deliverable scope and budget orders of magnitude adapt.</p><p><strong>For an SME (50-300 employees)</strong> — simplified diagnostic, 1-2 priority use cases, lightweight governance (a reduced committee suffices), typical budget €200-500k over 18 months. The fictional Métallurgie de Précision SAS example in the capstone page illustrates this ambition level.</p><p><strong>For a mid-cap or large group</strong> — more formal diagnostic, 5-10 prioritized use cases in portfolio, structured governance (AI committee + project leads per use case), multi-year 7-figure budget, articulation with group strategy. The canvas remains applicable but with more iterations between steps.</p><p><strong>For a public administration</strong> — adaptation needed on the AI Act dimension (essential public services = high-risk by default), strong social partner involvement from framing stage, articulation with administrative transparency obligations.</p><p><strong>For a very small organization (small business, association)</strong> — the canvas's short version (90-120 min) is appropriate. Focus on 1 clear and well-bounded use case. No need to produce a 50-page deliverable.</p>`,
+  },
+  {
+    question: "What level of expertise is needed before tackling the capstone?",
+    answerHtml: `<p>The capstone is designed to be achievable by an executive, manager, or consultant <strong>without prior technical expertise</strong>. This is consistent with the program's business-first positioning.</p><p><strong>Minimum prerequisites</strong> — having gone through at least modules 1 (Introduction), 5 (AI and society), and 6 (Future of AI). Ideally all 6 modules. Having basic information about your organization's strategic context (objectives, constraints, approximate resources).</p><p><strong>What helps</strong> — knowing the current AI situation in your organization (do projects already exist? a data team? deployed tools?), having a sponsor in executive direction, having at least a few hours to collect information from concerned business directions.</p><p><strong>What is not needed</strong> — knowing how to program in Python, understanding transformer technical details, having trained an ML model, mastering optimization mathematics. The capstone focuses on strategic framing, not implementation.</p><p><strong>For very technical profiles</strong> (data scientist, ML engineer) — the capstone may seem insufficiently technical. This is intentional: the challenge for you will be articulating your technical skills with a governance and strategy decision. Modules 5 and 6 and the 7-dimension evaluation grid will help.</p>`,
+  },
+];
+
+const sectionPractical: FAQItem[] = [
+  {
+    question: "In what order should I go through the 6 modules?",
+    answerHtml: `<p>Numerical order (Module 1 → 2 → 3 → 4 → 5 → 6) is recommended for those discovering the topic. Each module prepares the next: Module 1 lays conceptual foundations, Module 6 consolidates into a roadmap.</p><p><strong>For more advanced profiles</strong>, alternative paths are possible:</p><p><strong>"Governance-first" path</strong> (useful for compliance leaders, lawyers, DPOs) — Module 1 → Module 5 → Module 6 → then Modules 2-3-4 according to priority uses.</p><p><strong>"Technical-first" path</strong> (useful for data scientists who must rise in governance) — Modules 2-3-4 first to articulate what they already do with business framing, then Modules 5-6 for the strategic dimension.</p><p><strong>"Use case" path</strong> (useful for business managers) — start from the 10 case studies that concern them (by sector or by technology), return to associated modules as needed, finish with the capstone.</p><p><strong>The capstone</strong> remains the recommended endpoint in all cases. It integrates all concepts and forces articulating what was understood into concrete decisions for the organization.</p>`,
+  },
+  {
+    question: "When will the English and Arabic versions be available?",
+    answerHtml: `<p>The English (EN) and Arabic (AR) versions are largely available now. As of the most recent CHANGELOG update: <strong>EN parity is essentially complete</strong> for the 6 modules, the 10 cases, the capstone, the FAQ, the glossary, and all overview pages. <strong>AR parity is partial</strong>: the structural pages (FAQ, glossary, methodology, program, resources, etc.) are translated; deep content pages (modules, cases, capstone) currently display "Translation pending" notices for Arabic with links to French equivalents.</p><p><strong>Why this delay on AR deep content?</strong> Quality professional Arabic translation of long technical content takes time. Producing it via machine translation would be lower quality and could mislead readers. We prefer to signal explicitly what is and isn't translated.</p><p><strong>If you read Arabic or English</strong> and want to help accelerate translations — feel free to contribute via the GitHub repo. Source files are in <code>src/pages/{en,ar}/</code> and <code>src/i18n/translations.ts</code>. Any serious contribution will be integrated and credited.</p>`,
+  },
+  {
+    question: "Is the content regularly updated? Can I reuse it?",
+    answerHtml: `<p><strong>Updates</strong> — the site evolves regularly. Evolutions are tracked in the CHANGELOG on GitHub with dates and version numbers. Content is sensitive to regulatory evolutions (notably EU AI Act) and technological evolutions (new foundation models, ecosystem evolutions); we update according to our availability.</p><p><strong>Pedagogical reuse</strong> — content is under <strong>Creative Commons BY-NC-SA 4.0</strong> license. You can:</p><p><strong>Reuse freely</strong> in training, higher education, corporate academy, provided you (a) <em>cite the source</em> (link to site and license), (b) <em>preserve conditions</em> (BY-NC-SA), (c) <em>do not use it for direct commercial purposes</em> (selling content as is).</p><p><strong>Adapt and modify</strong> while keeping the license on derivative work. If you correct an error or add useful content, you are welcome to contribute back via the GitHub repo.</p><p><strong>Do not confuse with the official MIT program</strong> — the license covers only content produced for this site, not MIT works we cite (which remain under their own licenses).</p><p>For direct commercial uses (integration into a paid product, for example), contact us via GitHub to discuss a specific license.</p>`,
+  },
+];
+
+const sectionMethodExt: FAQItem[] = [
+  ...sectionMethod,
+  {
+    question: "How do you guarantee source reliability?",
+    answerHtml: `<p>Three operational principles:</p><p><strong>Public sources only</strong> — every cited resource is freely accessible by anyone, at the indicated URL. No private citations, no "according to internal sources", no unverifiable claims.</p><p><strong>Source level signaled</strong> — the source hierarchy (official MIT / recommended complement / verifiable external source / pedagogical reconstruction) lets the reader calibrate the confidence given to each claim.</p><p><strong>No invented factual information</strong> — no approximate numbers presented as exact, no quotes attributed without source, no invented studies. When a number is not publicly documented with precision, we indicate the order of magnitude and source, or we abstain.</p><p>That said, the site remains an independent production: we remain fallible. If you identify a factual error, signal it via the GitHub repo. Corrections are public and tracked in the CHANGELOG.</p>`,
+  },
 ];
 
 const allSections = [
   { title: 'About this site', items: sectionGeneral },
-  { title: 'Method and sources', items: sectionMethod },
+  { title: 'Method and sources', items: sectionMethodExt },
   { title: 'AI strategy in business', items: sectionStrategy },
   { title: 'Governance and compliance', items: sectionGovernance },
+  { title: 'Capstone and roadmap', items: sectionCapstone },
+  { title: 'Practical course', items: sectionPractical },
 ];
 
 const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.length, 0);
@@ -85,10 +133,10 @@ const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.leng
   <HeroSecondary
     surtitle="FAQ"
     title="Frequently asked questions"
-    lead={`${totalQuestionsThisPage} key questions answered, organized into 4 thematic sections. Each answer points to the in-depth content on the site.`}
+    lead={`${totalQuestionsThisPage} key questions answered, organized into 6 thematic sections. Each answer points to the in-depth content on the site.`}
   >
     <span slot="stats">
-      {totalQuestionsThisPage} key questions in English · 20 questions in the French version · structured answers · public sources
+      {totalQuestionsThisPage} key questions in English · full parity with the French version · structured answers · public sources
     </span>
   </HeroSecondary>
 
@@ -97,15 +145,15 @@ const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.leng
       <section class="ai-faq-intro">
         <p>
           This FAQ gathers the most frequent questions about the site, the program, and AI
-          strategy in business. The selected questions here are translated into English. The
-          <a href={frFaqUrl}>French version</a> contains 20 questions including specialized
-          ones (capstone duration, capstone size, expertise required, module order,
-          translation availability, content reuse).
+          strategy in business. The English version is now at <strong>full parity with the
+          French version</strong>: 20 questions across 6 thematic sections, including specialized
+          ones (capstone duration, capstone for all sizes, expertise required, module order,
+          translation status, content reuse).
         </p>
         <p class="ai-faq-page__fr-link">
-          Don't find your question here? See the <a href={frFaqUrl}>complete French FAQ</a> or
-          open an issue on
-          <a href="https://github.com/melafrit/ai-strategy/issues" target="_blank" rel="noopener">GitHub</a>.
+          See also the <a href={frFaqUrl}>French version</a>, or open an issue on
+          <a href="https://github.com/melafrit/ai-strategy/issues" target="_blank" rel="noopener">GitHub</a>
+          if your question isn't covered.
         </p>
       </section>
 

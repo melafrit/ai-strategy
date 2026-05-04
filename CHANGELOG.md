@@ -81,7 +81,20 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 
 ## 🌍 Post-Phase 7 — Approfondissement des traductions EN
 
-Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean (28 FR + 28 EN + 10 AR), 18 stubs AR intentionnels exclus.
+Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean. **Étape D (FAQ EN/AR à parité) 100% complète** : 20 questions × 3 langues = 60 entrées Q+A.
+
+### Étape D — FAQ EN/AR à parité avec FR (terminée)
+
+Enrichissement des FAQ EN et AR pour atteindre la parité complète avec la FAQ FR. La version EN passe de 11 à 20 questions (4 → 6 sections), la version AR passe de 11 à 20 questions (4 → 6 sections). Les 9 questions manquantes ont été traduites depuis le source FR avec une qualité éditoriale professionnelle.
+
+- **MODIFIED — `src/pages/en/faq/index.astro`** (~243 lignes, vs 195 lignes auparavant) : FAQ EN enrichie avec 9 nouvelles questions traduites depuis le source FR `src/content/faq.ts`. Nouvelles sections ajoutées : **"Capstone and roadmap"** (3 questions : duration, organization sizes, expertise prerequisites) et **"Practical course"** (3 questions : module order, EN/AR translation timing, content updates and reuse). Section "Method and sources" étendue avec 1 question (source reliability guarantees). Section "Governance and compliance" étendue avec 2 questions (AI ethics committee, algorithmic bias treatment). HeroSecondary lead/stats mis à jour ("organized into 6 thematic sections" / "full parity with the French version"). Intro mise à jour pour annoncer la parité complète. Total : 20 questions = parité avec FR.
+- **MODIFIED — `src/pages/ar/faq/index.astro`** (~241 lignes, vs 194 lignes auparavant) : FAQ AR enrichie avec les mêmes 9 nouvelles questions traduites en arabe formel professionnel. Mêmes 6 sections, mêmes thèmes, mêmes Q+A. Préservation systématique des termes anglais standards (capstone, COMEX, AI Act, NIST, RGPD, ML, GenAI, RAG, foundation model, GitHub, DPO, KPI, etc.) en latin au sein du texte arabe. Préservation des noms propres en latin (Métallurgie de Précision SAS, MIT, Module 5, etc.). HeroSecondary lead/stats mis à jour ("منظمة في 6 أقسام موضوعية" / "تكافؤ كامل مع النسخة الفرنسية"). Intro mise à jour pour annoncer la parité complète. Total : 20 questions = parité avec EN/FR.
+- **VALIDATION FINALE** :
+  - Trilingual FAQ parity : **FR 20 questions ✅ — EN 20 questions ✅ — AR 20 questions ✅** (vs 20/11/11 avant cette étape)
+  - Astro check : **0 erreurs / 0 warnings / 0 hints** sur 147 fichiers
+  - Build : **98 pages** en ~12 s — aucune régression
+  - Audit SEO toujours à 100% (Stage A préservé) : FR 28/28, EN 28/28, AR 10/10 clean
+  - Pages rendues : FR 92 KB, EN 34 KB, AR 41 KB — la FR garde les fonctionnalités riches (pages individuelles `/faq/[slug]`, cross-references détaillées) mais le nombre de questions est désormais identique trilingue.
 
 ### Étape A — Polish SEO trilingue (terminée)
 
