@@ -63,12 +63,41 @@ const homeUrl = getLocalizedUrl('/', locale);
 const modulesUrl = getLocalizedUrl('/modules/', locale);
 const methodeUrl = getLocalizedUrl('/methode/', locale);
 const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+
+// Schema.org Course JSON-LD — describes the AI Strategy program.
+const siteOrigin = (Astro.site?.toString() ?? 'https://ai-strategy.example.com').replace(/\/$/, '');
+const courseJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'AI Strategy — Parcours pédagogique inspiré du MIT Sloan',
+  description: "Parcours pédagogique en 6 modules sur l'intelligence artificielle en entreprise : machine learning, IA générative, robotique, gouvernance et conformité, roadmap stratégique. Inspiré du programme MIT Sloan « Artificial Intelligence: Implications for Business Strategy ».",
+  provider: { '@id': `${siteOrigin}/#organization` },
+  inLanguage: 'fr',
+  educationalLevel: 'professional',
+  audience: {
+    '@type': 'Audience',
+    audienceType: 'Executives, managers, consultants, transformation leaders',
+  },
+  about: ['Artificial Intelligence', 'Business Strategy', 'Machine Learning', 'Generative AI', 'AI Governance', 'AI Act EU'],
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'online',
+    inLanguage: 'fr',
+    courseWorkload: 'PT36H',
+  },
+  numberOfCredits: 0,
+  isAccessibleForFree: true,
+  license: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+};
+const courseJsonLdString = JSON.stringify(courseJsonLd);
 ---
 
 <BaseLayout
-  title="Le programme en un coup d'œil"
+  title="Le programme AI Strategy — 6 modules en 6 semaines"
   description="6 modules, 6 semaines, en français : machine learning, IA générative, robotique, gouvernance, roadmap. Inspiré du programme MIT Sloan, indépendant, sourcé."
 >
+  {/* === Schema.org Course JSON-LD for SEO === */}
+  <script is:inline type="application/ld+json" slot="head" set:html={courseJsonLdString} />
   <HeroSecondary
     surtitle={t('site.surtitle', locale)}
     title="Le programme en un coup d'œil"

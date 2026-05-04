@@ -124,12 +124,45 @@ const allSections = [
 ];
 
 const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.length, 0);
+
+/**
+ * تحويل HTML الخام للإجابات إلى نص صرف لـ Schema.org FAQPage.
+ * يبقى عرض HTML الغني في الإخراج المرئي عبر set:html.
+ */
+function answerToPlainText(html: string): string {
+  return html
+    .replace(/<\/?(strong|em|code|p|br)\s*\/?\s*>/gi, '')
+    .replace(/<\/?[^>]+>/g, '')
+    .replace(/\n\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Schema.org FAQPage JSON-LD construction
+const faqPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: 'ar',
+  mainEntity: allSections.flatMap((section) =>
+    section.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answerToPlainText(item.answerHtml),
+      },
+    })),
+  ),
+};
+const jsonLdString = JSON.stringify(faqPageJsonLd);
 ---
 
 <BaseLayout
   title="الأسئلة الشائعة حول AI Strategy"
   description={`الأسئلة الشائعة حول AI Strategy: هوية الموقع، المنهجية، الذكاء الاصطناعي في الأعمال، الحوكمة وAI Act الأوروبي، capstone. إجابات موثَّقة بمراجع.`}
 >
+  {/* === Schema.org FAQPage JSON-LD for SEO === */}
+  <script is:inline type="application/ld+json" slot="head" set:html={jsonLdString} />
   <HeroSecondary
     surtitle="الأسئلة الشائعة"
     title="الأسئلة الشائعة"

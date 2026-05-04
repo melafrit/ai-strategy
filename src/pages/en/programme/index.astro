@@ -63,12 +63,41 @@ const homeUrl = getLocalizedUrl('/', locale);
 const modulesUrl = getLocalizedUrl('/modules/', locale);
 const methodeUrl = getLocalizedUrl('/methode/', locale);
 const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+
+// Schema.org Course JSON-LD — describes the AI Strategy program.
+const siteOrigin = (Astro.site?.toString() ?? 'https://ai-strategy.example.com').replace(/\/$/, '');
+const courseJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'AI Strategy — Pedagogical program inspired by MIT Sloan',
+  description: 'A 6-module pedagogical program on artificial intelligence in business: machine learning, generative AI, robotics, governance and compliance, strategic roadmap. Inspired by the MIT Sloan program "Artificial Intelligence: Implications for Business Strategy".',
+  provider: { '@id': `${siteOrigin}/#organization` },
+  inLanguage: 'en',
+  educationalLevel: 'professional',
+  audience: {
+    '@type': 'Audience',
+    audienceType: 'Executives, managers, consultants, transformation leaders',
+  },
+  about: ['Artificial Intelligence', 'Business Strategy', 'Machine Learning', 'Generative AI', 'AI Governance', 'EU AI Act'],
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'online',
+    inLanguage: 'en',
+    courseWorkload: 'PT36H',
+  },
+  numberOfCredits: 0,
+  isAccessibleForFree: true,
+  license: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+};
+const courseJsonLdString = JSON.stringify(courseJsonLd);
 ---
 
 <BaseLayout
   title="The AI Strategy program — 6 modules in 6 weeks"
   description="6 modules, 6 weeks, in English: machine learning, generative AI, robotics, governance, roadmap. Inspired by the MIT Sloan program, independent and sourced."
 >
+  {/* === Schema.org Course JSON-LD for SEO === */}
+  <script is:inline type="application/ld+json" slot="head" set:html={courseJsonLdString} />
   <HeroSecondary
     surtitle={t('site.surtitle', locale)}
     title="The program at a glance"

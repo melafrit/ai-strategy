@@ -63,12 +63,41 @@ const homeUrl = getLocalizedUrl('/', locale);
 const modulesUrl = getLocalizedUrl('/modules/', locale);
 const methodeUrl = getLocalizedUrl('/methode/', locale);
 const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+
+// Schema.org Course JSON-LD — describes the AI Strategy program.
+const siteOrigin = (Astro.site?.toString() ?? 'https://ai-strategy.example.com').replace(/\/$/, '');
+const courseJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'AI Strategy — برنامج تربوي مستوحى من MIT Sloan',
+  description: 'برنامج تربوي من ٦ وحدات حول الذكاء الاصطناعي في الأعمال: تعلم الآلة، الذكاء التوليدي، الروبوتيات، الحوكمة والامتثال، خارطة الطريق الاستراتيجية. مستوحى من برنامج MIT Sloan «Artificial Intelligence: Implications for Business Strategy».',
+  provider: { '@id': `${siteOrigin}/#organization` },
+  inLanguage: 'ar',
+  educationalLevel: 'professional',
+  audience: {
+    '@type': 'Audience',
+    audienceType: 'Executives, managers, consultants, transformation leaders',
+  },
+  about: ['Artificial Intelligence', 'Business Strategy', 'Machine Learning', 'Generative AI', 'AI Governance', 'EU AI Act'],
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'online',
+    inLanguage: 'ar',
+    courseWorkload: 'PT36H',
+  },
+  numberOfCredits: 0,
+  isAccessibleForFree: true,
+  license: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+};
+const courseJsonLdString = JSON.stringify(courseJsonLd);
 ---
 
 <BaseLayout
   title="برنامج AI Strategy — ٦ وحدات في ٦ أسابيع"
   description="٦ وحدات، ٦ أسابيع، بالعربية: تعلّم الآلة، الذكاء التوليدي، الروبوتيات، الحوكمة، خارطة الطريق. مستوحى من برنامج MIT Sloan، مستقل، موثّق."
 >
+  {/* === Schema.org Course JSON-LD for SEO === */}
+  <script is:inline type="application/ld+json" slot="head" set:html={courseJsonLdString} />
   <HeroSecondary
     surtitle={t('site.surtitle', locale)}
     title="البرنامج بنظرة سريعة"

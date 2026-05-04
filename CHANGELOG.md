@@ -81,7 +81,22 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 
 ## 🌍 Post-Phase 7 — Approfondissement des traductions EN
 
-Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean. **Étape D (FAQ EN/AR à parité) 100% complète** : 20 questions × 3 langues = 60 entrées Q+A.
+Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean. **Étape D (FAQ EN/AR à parité) 100% complète** : 20 questions × 3 langues = 60 entrées Q+A. **Étape E (Schema.org JSON-LD trilingue) 100% complète** : 97 pages avec Organization + WebSite, 6 pages FAQ avec FAQPage, 6 pages programme avec Course.
+
+### Étape E — Schema.org JSON-LD trilingue (terminée)
+
+Instrumentation des pages avec balisage Schema.org JSON-LD pour optimiser le référencement et les résultats enrichis. **Quatre types de schémas déployés** : `Organization` (entité globale), `WebSite` (entité globale), `FAQPage` (FAQ FR/EN/AR), `Course` (programme FR/EN/AR). **97 pages instrumentées au total** sur les 3 langues.
+
+- **MODIFIED — `src/layouts/BaseLayout.astro`** : Ajout d'un bloc JSON-LD `Organization` + `WebSite` dans `<head>`, **injecté globalement sur toutes les pages** du site (3 langues × 32 pages ≈ 97 pages au total). Utilise le `@graph` Schema.org pour lier l'entité `Organization` (avec `@id` `${siteOrigin}/#organization`, name, url, description traduite via `t('site.tagline', locale)`, sameAs vers le repo GitHub) et `WebSite` (publisher = ref vers `Organization`, inLanguage = ['fr', 'en', 'ar']). Permet aux moteurs de recherche d'établir une entité de knowledge graph stable pour le site.
+- **MODIFIED — `src/pages/{en,ar}/faq/index.astro`** : Port du JSON-LD `FAQPage` depuis FR vers EN et AR. Helper `answerToPlainText` ajouté inline dans chaque frontmatter (commentaire AR localisé). Construction du schéma à partir de `allSections.flatMap(...)` pour itérer sur les 20 questions de chaque langue. `inLanguage` correctement défini par locale ('en' ou 'ar'). Injection via `<script is:inline type="application/ld+json" slot="head">`. La FAQ FR conservait déjà ce schéma — désormais cohérence trilingue complète.
+- **MODIFIED — `src/pages/{fr,en,ar}/programme/index.astro`** : Ajout du JSON-LD `Course` sur les 3 pages programme. Champs renseignés : name (titre traduit), description (description complète localisée), provider (référence vers `Organization` global), inLanguage (par locale), educationalLevel='professional', audience (executives, managers, consultants, transformation leaders), about (Artificial Intelligence, Business Strategy, Machine Learning, Generative AI, AI Governance, AI Act EU), hasCourseInstance (courseMode='online', courseWorkload='PT36H' = 36 heures = 6h × 6 semaines), numberOfCredits=0, isAccessibleForFree=true, license=CC BY-NC-SA 4.0. Permet le rich result Course dans Google. Title FR programme aligné avec audit SEO Stage A ("Le programme AI Strategy — 6 modules en 6 semaines", 51 chars).
+- **VALIDATION FINALE** :
+  - JSON-LD coverage : **39/39 pages FR ✅ — 29/29 pages EN ✅ — 29/29 pages AR ✅** (chaque page a au minimum Organization + WebSite ; pages FAQ ajoutent FAQPage ; pages programme ajoutent Course)
+  - Schema types vérifiés sur HTML rendu : Organization + WebSite + Course sur programme (3 types simultanés), Organization + WebSite + FAQPage sur FAQ
+  - Astro check : **0 erreurs / 0 warnings / 0 hints** sur 147 fichiers
+  - Build : **98 pages** en ~14 s — aucune régression
+  - Audit SEO Stage A préservé à 100% : FR 28/28, EN 28/28, AR 10/10 clean
+  - Validation Schema.org possible via [Google Rich Results Test](https://search.google.com/test/rich-results) une fois le site déployé sur le domaine final
 
 ### Étape D — FAQ EN/AR à parité avec FR (terminée)
 

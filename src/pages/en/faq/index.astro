@@ -124,12 +124,45 @@ const allSections = [
 ];
 
 const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.length, 0);
+
+/**
+ * Convert raw HTML answers to plain text for Schema.org FAQPage.
+ * The rich HTML rendering remains in the visual output via set:html.
+ */
+function answerToPlainText(html: string): string {
+  return html
+    .replace(/<\/?(strong|em|code|p|br)\s*\/?\s*>/gi, '')
+    .replace(/<\/?[^>]+>/g, '')
+    .replace(/\n\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Schema.org FAQPage JSON-LD construction
+const faqPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: 'en',
+  mainEntity: allSections.flatMap((section) =>
+    section.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answerToPlainText(item.answerHtml),
+      },
+    })),
+  ),
+};
+const jsonLdString = JSON.stringify(faqPageJsonLd);
 ---
 
 <BaseLayout
   title="Frequently asked questions"
   description="FAQ on AI Strategy: site identity, method, AI in business, governance and AI Act EU, capstone. Sourced answers with cross-references."
 >
+  {/* === Schema.org FAQPage JSON-LD for SEO === */}
+  <script is:inline type="application/ld+json" slot="head" set:html={jsonLdString} />
   <HeroSecondary
     surtitle="FAQ"
     title="Frequently asked questions"

@@ -56,6 +56,34 @@ const canonicalUrl = canonical ?? `${siteOrigin}${pathname}`;
 
 const siteName = t('site.name', locale);
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+
+// Schema.org Organization + WebSite JSON-LD — global for every page.
+// Helps search engines establish a knowledge graph entity for the site.
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${siteOrigin}/#organization`,
+      name: siteName,
+      url: siteOrigin,
+      description: t('site.tagline', locale),
+      sameAs: [
+        'https://github.com/melafrit/ai-strategy',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteOrigin}/#website`,
+      url: siteOrigin,
+      name: siteName,
+      description: t('site.tagline', locale),
+      publisher: { '@id': `${siteOrigin}/#organization` },
+      inLanguage: ['fr', 'en', 'ar'],
+    },
+  ],
+};
+const orgJsonLdString = JSON.stringify(orgJsonLd);
 ---
 
 <!doctype html>
@@ -119,6 +147,9 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
         crossorigin
       />
     )}
+
+    {/* Schema.org Organization + WebSite — global for every page */}
+    <script is:inline type="application/ld+json" set:html={orgJsonLdString} />
 
     {/* Optional per-page head injection (JSON-LD, extra meta, etc.) */}
     <slot name="head" />
