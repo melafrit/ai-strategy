@@ -1,14 +1,812 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizInteractive from '@/components/QuizInteractive';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule2EN from '@/content/quizzes/module-2-en';
 
 const locale = 'en';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Executive summary' },
+  { id: 'objectifs', label: 'Learning objectives' },
+  { id: 'concepts', label: 'Key concepts' },
+  { id: 'erreurs-frequentes', label: 'Common errors' },
+  { id: 'cas-reel', label: 'Real case' },
+  { id: 'activite', label: 'Practical activity' },
+  { id: 'quiz', label: 'Formative quiz' },
+  { id: 'checklist', label: 'Manager checklist' },
+  { id: 'application', label: 'Application in your organization' },
+  { id: 'a-retenir', label: 'Key takeaways' },
+  { id: 'pour-aller-plus-loin', label: 'Going further' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  'Distinguish supervised, unsupervised and reinforcement learning, and know which one matches a given use case.',
+  'Recognize the viability conditions of an ML project: available data, quality, labeling, workflow integration.',
+  'Understand the key notions of overfitting and generalization, and their business implications for deployment decisions.',
+  'Decide whether an ML use case supports a cost, differentiation or focus strategy.',
+  'Evaluate at the C-suite level a candidate ML case on three dimensions: strategic, technical, organizational.',
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Evaluating an ML project on model accuracy rather than real ROI",
+    error:
+      "Deciding to deploy (or not) an ML model solely on the basis of its technical accuracy in the lab (e.g., '92% accuracy on the test set'), without relating this performance to expected business value or to the total cost of the system.",
+    mechanism:
+      "Technical accuracy is easy to measure; business value requires modeling the cost of an error, the benefit of a good decision, and the cost of actions triggered by predictions. Without this calculation, an 'accurate' model can be economically uninteresting — and a 'moderately accurate' model very profitable.",
+    mitigation:
+      "Before any pilot, define the monetary translation of a good and a bad prediction. Calculate ROI by combining accuracy × volume × unit value − total cost of the system. Accuracy is just one variable among others.",
+  },
+  {
+    title: "Underestimating the cost and complexity of data labeling",
+    error:
+      "Launching a supervised ML project assuming that existing data is 'already labeled', when it is not, or when it is with insufficient quality (inconsistent, biased, or partial labeling).",
+    mechanism:
+      "Labeling data is heavy work, often underestimated. For a 50,000-example dataset on an expert subject (medical, legal, financial), labeling cost can represent 30 to 50% of total project budget. Ignoring this cost leads to projects that run out of steam in the data preparation phase.",
+    mitigation:
+      "Audit existing label quality before launching the project. Explicitly budget the labeling phase (internal teams, specialized providers, crowdsourcing platforms). Consider semi-supervised or active approaches when labels are scarce.",
+  },
+  {
+    title: "Confusing observed correlation and useful causality in business",
+    error:
+      "Interpreting an ML model's outputs as causes rather than predictions. For example, taking a correlation between 'frozen pizza purchase' and 'payment default' to conclude 'frozen pizza causes default'.",
+    mechanism:
+      "Supervised ML learns to predict, not to explain. Variables that predict well may be proxies for real causes (here: household economic situation), sampling artifacts, or measurement biases. Confusing prediction and causality leads to erroneous and sometimes discriminatory business decisions.",
+    mitigation:
+      "Read model outputs as predictions, not explanations. To understand causes, use dedicated methods (experimentation, causal analysis, business reasoning). Never formulate a corporate policy based on raw correlations learned by a model.",
+  },
+  {
+    title: "Ignoring data drift and model decay",
+    error:
+      "Considering an ML model as stable once deployed in production, without monitoring or update cycle. Discovering months later that performance has silently degraded.",
+    mechanism:
+      "Real data evolves: new customer behaviors, regulatory changes, market disruptions (pandemic, inflation). A model trained on history stops reflecting the present well. This drift — data drift, concept drift — can be slow and invisible without monitoring.",
+    mitigation:
+      "Set up continuous monitoring from the pilot phase: performance metrics tracking, alerts on data distribution drift, periodic retraining cycle. Plan budget and team for run, not just build.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Describe the candidate use case",
+    body: "Choose a candidate ML use case in your organization and formulate in one sentence the decision the system must make. Identify the problem type: classification, regression, clustering, anomaly detection. If the decision cannot be clearly formulated, the case is not mature for ML.",
+  },
+  {
+    heading: "Evaluate data quality",
+    body: "Score 1-5 on each of the 4 quality dimensions: volume (enough observations), labeling (expected output known for supervised), quality (clean, complete), representativity (history reflects the future well). Score < 8/20 → ML probably premature.",
+  },
+  {
+    heading: "Frame strategically",
+    body: "Tie the project to a strategic dimension (differentiation, cost leadership, focus). Formulate a 30-second defense sentence. If the sentence is confused or interchangeable from one project to another, framing is missing.",
+  },
+  {
+    heading: "Evaluate value and total cost",
+    body: "Estimate expected business value (in €/year order of magnitude) and total project cost (model + data + integration + change management + governance). Calculate the ratio. If the model represents more than 40% of cost, the ecosystem is under-budgeted.",
+  },
+];
+
+const activityCriteria = [
+  "The decision to be made by ML is formulated in one clear sentence.",
+  "The ML problem type is identified (supervised / unsupervised / reinforcement) and justified.",
+  "The data quality score / 20 is explicit, dimension by dimension.",
+  "The value / cost ratio is defensible before a steering committee in less than 90 seconds.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Technical framing of the ML case",
+    items: [
+      "The decision to be made by ML is formulated in one clear sentence.",
+      "The problem type (supervised / unsupervised / reinforcement) is identified and justified.",
+      "Required data is identified: volume, labeling, quality, representativity.",
+      "A business success metric (€, %, satisfaction) is defined in addition to the technical metric.",
+    ],
+  },
+  {
+    title: "Data and compliance",
+    items: [
+      "Bias audit (subgroups: gender, origin, age, geography) is planned upstream of deployment.",
+      "EU AI Act and GDPR compliance is verified if the case falls into 'high risk' (HR, credit, justice, healthcare).",
+      "Labeling cost is explicitly budgeted (often 30-50% of total budget for expert subjects).",
+      "Drift monitoring and retraining setup is planned from design.",
+    ],
+  },
+  {
+    title: "Strategy and governance",
+    items: [
+      "The project is tied to a Porter strategic dimension (differentiation / cost / focus).",
+      "The role of humans in the loop is explicit: who validates, who supervises, who can take back control.",
+      "ROI is calculated based on expected business value, not just technical accuracy.",
+      "The AI governance committee is appointed, with defined roles, cadence and Go/No-Go criteria.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "The key concept: three ML families (supervised, unsupervised, reinforcement) answer different questions — choosing the right family is already half the framing.",
+  "The exemplary case: Stripe Radar shows how a very large-scale supervised ML infrastructure protects a central player in online payments, by combining model + user feedback + business rules.",
+  "The major pitfall: evaluating an ML project on accuracy rather than ROI — technical accuracy is necessary but far from sufficient.",
+  "The operational tool: the 4-step ML evaluation canvas (describe / qualify data / frame strategy / quantify value and cost) before any pilot.",
+  "Next: Module 3 dives into generative AI in business — different technical family, same framing principles.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'video' as const,
+    title: 'Introduction to Machine Learning (full course)',
+    author: 'MIT OpenCourseWare — 6.036',
+    description:
+      "MIT's introduction course to ML, free, structured, accessible to motivated non-technical learners. Ideal for solidifying conceptual foundations.",
+    href: 'https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'A primer on machine learning for fraud protection',
+    author: 'Stripe',
+    description:
+      "Stripe's pedagogical guide on applying ML to fraud detection. Available in French. Concrete, sourced, written by practitioners.",
+    href: 'https://stripe.com/fr-ca/guides/primer-on-machine-learning-for-fraud-protection',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'How AI improves breast cancer screening',
+    author: 'Work of Regina Barzilay (MIT CSAIL)',
+    description:
+      "MIT research on the contribution of ML to early screening. Exemplary case of AI in healthcare: measurable improvement, human supervision, progressive deployment.",
+    href: 'https://news.mit.edu/topic/artificial-intelligence2',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "American operational framework for AI risk management, applicable to ML. Indispensable reference for governance and compliance leads.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Regulation (EU) 2024/1689 — AI Act',
+    author: 'Official Journal of the European Union',
+    description:
+      "Full text of the European AI regulation. Indispensable to frame ML project compliance, notably for 'high-risk' cases (HR, credit, justice, healthcare).",
+    href: 'https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: "ML use case evaluation canvas",
+    author: 'AI Strategy — Module 2',
+    description:
+      "Printable Markdown canvas to structure the evaluation of a candidate ML case on 4 dimensions (description, data, strategy, value/cost).",
+    href: '/downloads/canvas-evaluation-cas-ml-module-2.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
+const module3Url = getLocalizedUrl('/modules/03-ia-generative/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of Module 2 (Machine Learning in Business) is scheduled for Phase 7. The French version is available now."
+  title="Module 2 — Machine Learning in Business"
+  description="Decide when ML is relevant, how to qualify a use case, and how to frame a candidate ML case. Stripe Radar case, MIT healthcare research, AI Act compliance."
 >
-  <TranslationPending frenchPagePath="/modules/02-machine-learning/" />
+  <HeroSecondary
+    surtitle="Module 2 · Machine Learning in Business"
+    title="Decide when ML really creates value"
+    lead="Second module of the program. We learn to distinguish the three major ML families, judge whether a use case is an ML candidate, recognize the classic pitfalls (overfitting, drift, bias), and frame an ML case defensible at the C-suite level. Exemplary case: Stripe Radar."
+  >
+    <span slot="stats">
+      Recommended duration: 6-8 h · Level: Discovery / Applicable · Prerequisite: Module 1
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — EXECUTIVE SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Machine Learning</strong> (ML) is the branch of AI that learns its rules
+            from data rather than coding them by hand. It divides into three major families:
+            <strong> supervised</strong> (learning from labeled examples),
+            <strong> unsupervised</strong> (looking for structures in data without labels),
+            <strong> reinforcement</strong> (optimizing actions by trial and error). Each family
+            answers a specific type of business question — choosing the right family is already
+            half the framing.
+          </p>
+          <p>
+            For an ML use case to be viable, four concrete conditions: enough
+            <strong> data</strong> (volume), correctly <strong>labeled</strong> if supervised, of
+            acceptable quality, and <strong>representative</strong> of the future (not just the
+            past). Without these conditions, the project is premature, regardless of technical
+            enthusiasm. The total cost of an ML project typically distributes 20-40% on the
+            model and 60-80% on the ecosystem (data, integration, change management, governance)
+            — underestimating this distribution is the most frequent failure mode.
+          </p>
+          <p>
+            For a leader, the central question is not "is ML performant?" but "does this ML
+            create measurable business value, at controlled cost, in compliance with strategy
+            and regulatory obligations (notably the EU AI Act for high-risk uses such as HR
+            scoring, credit, healthcare, justice)?". The Stripe Radar case, detailed in this
+            module, illustrates how a large ML infrastructure can combine technical performance,
+            human supervision, compliance and value creation at very large scale.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIVES === */}
+        <section id="objectifs">
+          <h2>Learning objectives</h2>
+          <p>By the end of this module, you will be able to:</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Key concepts</h2>
+          <p>
+            Five concepts structure this module. Each is sourced. The source hierarchy is
+            <a href={methodeUrl}> explained in the method page</a>.
+          </p>
+
+          <ConceptCard
+            id="trois-familles-ml"
+            title="The three Machine Learning families"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Modern ML divides into <strong>three major families</strong>, which answer
+              different questions:
+            </p>
+            <p>
+              <strong>Supervised learning</strong> learns from annotated examples. It is given
+              pairs (input, expected output) and learns to generalize. It is the most used
+              family in business: fraud detection (transactions labeled 'fraud' or 'legitimate'),
+              credit scoring (cases labeled 'repaid' or 'default'), medical image classification
+              (X-rays labeled 'cancer' or 'healthy').
+            </p>
+            <p>
+              <strong>Unsupervised learning</strong> seeks structures in data without labels.
+              No right answer to learn — the algorithm reveals natural groups (customer
+              segmentation), anomalies (suspicious behavior detection), or associations (basket
+              analysis).
+            </p>
+            <p>
+              <strong>Reinforcement learning</strong> learns by trial and error in a reward
+              environment. Field of choice: sequential optimization (dynamic stock management,
+              gaming, robotics, trading). Rarer in standard business, but suited to certain
+              complex operational problems.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Framing consequence.</strong> Before any ML case, formulate the business
+                question as one of three: "I have annotated history, I want to predict"
+                (supervised), "I have unlabeled data, I want to understand structure"
+                (unsupervised), "I have an action and reward system, I want to optimize"
+                (reinforcement). If the question fits none of the three, the case is probably
+                not an ML case.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="conditions-de-viabilite"
+            title="The four viability conditions of an ML project"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Before any pilot, verify four data quality conditions:
+            </p>
+            <ul>
+              <li>
+                <strong>Volume.</strong> Statistical ML needs observations in quantity —
+                typically at least a few thousand examples for standard cases, more for complex
+                cases (vision, language). Without volume, expert systems or business rules
+                approaches are often more appropriate.
+              </li>
+              <li>
+                <strong>Labeling</strong> (if supervised). Having past examples annotated with
+                the expected output. This is often the most expensive bottleneck: a medical
+                dataset of 50,000 images can require €500,000 of medical expertise to be
+                correctly labeled.
+              </li>
+              <li>
+                <strong>Quality.</strong> Clean, complete data, without massive outliers, without
+                obvious sampling biases. Bad quality = bad model, regardless of the algorithm.
+              </li>
+              <li>
+                <strong>Representativity.</strong> The history reflects future conditions well
+                (seasonality, disruptions, exceptions). A model trained on 2019-2023 data may be
+                inappropriate in 2026 if behaviors have changed (post-pandemic, inflation,
+                regulatory changes).
+              </li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> For a candidate ML project, score 1-5 on the 4
+                dimensions. Score &lt; 8/20 → ML probably premature, focus on data first. Score
+                8-13/20 → ML conceivable but significant data budget. Score 14+ → favorable
+                conditions.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="surapprentissage-generalisation"
+            title="Overfitting and generalization"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              <strong>Overfitting</strong> is the most important technical pitfall of ML. An
+              overfitted model has memorized the particularities of the training data
+              (including their noise) instead of learning the useful regularities. Consequence:
+              excellent performance on seen data, mediocre performance on new data.
+            </p>
+            <p>
+              <strong>Generalization</strong> is a model's ability to work well on data it
+              hasn't seen. It is the quality we are really looking for — performance on history
+              is just a proxy.
+            </p>
+            <p>
+              The countermeasure is called <strong>cross-validation</strong> and
+              <strong> independent test set</strong>: a portion of the data is kept strictly
+              away from training, to measure real performance. This is non-negotiable. Any ML
+              case that only mentions training performance (without independent test) must be
+              considered incomplete.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Managerial warning signal.</strong> When an ML POC obtains 98% in-house
+                then 73% at the first customer, it is typically overfitting. The expected
+                difference between lab and production remains a few points — not 25.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="systeme-vs-modele"
+            title="The model is just one layer of the system"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              As seen in Module 1, a successful AI project is a 5-layer system: model, data,
+              workflow, users, governance. ML accentuates this reality: the model typically
+              represents <strong>20 to 40%</strong> of total cost; the rest distributes across:
+            </p>
+            <ul>
+              <li>Data <strong>collection and labeling</strong> — often 30-50% of budget for expert subjects (medical, legal, financial).</li>
+              <li><strong>Integration</strong> with the information system (ERP, CRM, WMS, internal APIs) — 10-25%.</li>
+              <li><strong>Change management</strong> — user training, communication, support — 5-15%.</li>
+              <li><strong>Governance</strong> — AI committee, bias audit, compliance, monitoring — 5-15%.</li>
+            </ul>
+            <p>
+              Underestimating these layers is the most frequent failure mode of ML projects in
+              business. A best-practice rule: if in your case the model represents more than 40%
+              of total budget, the ecosystem is under-budgeted.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Budget test.</strong> Break down your ML project budget into 5 lines:
+                model, data, integration, change management, governance. If a line is at zero or
+                negligible, it is probably an omission, not savings.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cadrage-strategique-ml"
+            title="Strategic framing of an ML use case"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              As seen in Module 1, strategic framing connects the project to one of Porter's
+              three generic strategies. For an ML project specifically:
+            </p>
+            <ul>
+              <li>
+                <strong>Differentiation.</strong> ML creates a perceived superior experience:
+                personalized recommendations (Spotify Discover Weekly, Netflix), responsive
+                customer service (smart chatbots), adaptive products.
+              </li>
+              <li>
+                <strong>Cost leadership.</strong> ML automates repetitive tasks or optimizes
+                operations: fraud detection (Stripe Radar), demand forecasting (stock
+                management), automatic document classification.
+              </li>
+              <li>
+                <strong>Focus.</strong> ML allows serving a segment with precision impossible
+                before: precision medicine (Regina Barzilay's research at MIT on breast cancer
+                screening), niche insurance underwriting, sharp technical B2B.
+              </li>
+            </ul>
+            <p>
+              If a candidate ML project clearly answers none of these three dimensions, it is
+              probably premature or poorly framed. Conversely, a well-aligned project gains in
+              internal defensibility (C-suite) and external defensibility (customers, market).
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Defense sentence.</strong> For each ML project, you must be able to say
+                in less than 30 seconds: "This ML project contributes to strategy X by such
+                mechanism, with such expected business value, and such total cost". If the
+                sentence is confused, framing is missing.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — COMMON ERRORS === */}
+        <section id="erreurs-frequentes">
+          <h2>Common errors</h2>
+          <p>
+            Four recurring pitfalls to recognize and mitigate from the framing of an ML project.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — REAL CASE === */}
+        <section id="cas-reel">
+          <h2>Real case — Stripe Radar</h2>
+          <p>
+            Stripe is a central player in online payments. Its platform processes hundreds of
+            billions of euros in transactions per year. <strong>Stripe Radar</strong> is its ML
+            real-time fraud detection solution — an exemplary case of supervised Machine
+            Learning applied at very large scale, with a successful combination of technical
+            accuracy, human supervision and governance.
+          </p>
+          <CaseCardCompact
+            organization="Stripe Radar — ML fraud detection"
+            sector="Finance / Payments"
+            technology="Supervised learning"
+            tagline="Stripe uses a supervised ML model trained on hundreds of millions of labeled transactions (legitimate / fraudulent) to score each transaction in real time. The system combines payment signals, merchant history, user feedback and business rules. Publicly documented by Stripe."
+            href={getLocalizedUrl('/cas/stripe-radar/', locale)}
+            available={true}
+          />
+
+          <h3>Additional mini-case — MIT research in medical screening</h3>
+          <p>
+            Regina Barzilay's work (MIT CSAIL) on early breast cancer screening illustrates a
+            different application of supervised ML: in the medical field, where labels are
+            costly and the decision has heavy consequences. Several lessons transposable to
+            business:
+          </p>
+          <ul>
+            <li>
+              <strong>Labeling is the bottleneck.</strong> Annotating medical images requires
+              radiologist expertise, a rare and costly resource. Semi-supervised approaches and
+              active learning are leveraged to reduce this cost.
+            </li>
+            <li>
+              <strong>Human-in-the-loop is not a concession.</strong> The model assists the
+              radiologist, does not replace them. The final decision remains human — that is
+              what enables deployment.
+            </li>
+            <li>
+              <strong>Independent validation is required.</strong> Performance measured on new
+              cohorts, not on training data, and audited before any clinical deployment.
+            </li>
+            <li>
+              <strong>Strategic framing: focus.</strong> Serving a population (at-risk women)
+              with precision impossible before — typical of a focus strategy in the Porter sense.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source: <a href="https://www.csail.mit.edu/" rel="noopener noreferrer" target="_blank">MIT CSAIL</a>,
+              MIT News (AI section, Regina Barzilay research).
+            </em>
+            <SourceTag level="recommended-complement" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITY === */}
+        <section id="activite">
+          <h2>Practical activity — Evaluate an ML use case</h2>
+          <p>
+            This activity makes you concretely walk through the relevance judgment of an ML use
+            case. To be done alone or in a small group, in 45 to 90 minutes.
+          </p>
+          <Activity
+            id="activite-evaluation-ml"
+            title="Evaluate a Machine Learning use case"
+            duration="45-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="ML evaluation canvas (printable Markdown)"
+            downloadHref="/downloads/canvas-evaluation-cas-ml-module-2.md"
+          />
+          <p class="ai-text-muted">
+            <em>The canvas is provided in printable Markdown format. The styled PDF version
+            arrives in Phase 5 of the project.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Formative quiz</h2>
+          <p>
+            Seven questions to verify your understanding. Three comprehension questions, three
+            application, one judgment. Each incorrect answer unfolds a pedagogical explanation
+            pointing to the section to review. The quiz is diagnostic — its goal is to frame
+            your reading of Module 3, not to grade your progression.
+          </p>
+          <QuizInteractive client:visible
+            id="quiz-module-2-en"
+            title={quizModule2EN.title}
+            intro={quizModule2EN.intro}
+            questions={quizModule2EN.questions}
+            scoringBands={quizModule2EN.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Manager checklist — ML framing</h2>
+          <p>
+            Twelve checkpoints before presenting an ML project to the C-suite. Three groups:
+            technical case framing, data and compliance, strategy and governance.
+          </p>
+          <Checklist
+            id="checklist-module-2-en"
+            title="ML framing — 12 checkpoints"
+            intro="Before defending an ML project before a steering committee, go through these twelve points. Each checked box reinforces the defensibility of your case — compliance points (AI Act, GDPR) are non-negotiable for high-risk uses."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application in your organization</h2>
+          <p>
+            Five questions to ask in your context. No universal right or wrong answer — what
+            matters is being able to answer them <em>specifically</em> for your organization.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Identify 2 or 3 candidate ML use cases in your organization. For each, which
+              <strong> family</strong> (supervised, unsupervised, reinforcement) best answers
+              the decision to be made?
+            </li>
+            <li>
+              For each candidate, what <strong>volume of labeled data</strong> do you actually
+              have available? At what cost can you complete labeling if necessary?
+            </li>
+            <li>
+              For the most promising candidate, what is the <strong>business success
+              metric</strong>, in addition to the technical accuracy metric?
+            </li>
+            <li>
+              For this candidate, does the case fall into a <strong>'high-risk'</strong> category
+              under the EU AI Act (HR, credit, healthcare, justice, public services)? If so,
+              what additional obligations?
+            </li>
+            <li>
+              Is the project's <strong>total budget</strong> broken down into 5 lines (model,
+              data, integration, change management, governance)? Does the model represent less
+              than 40% of the total?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>For consultants</h3>
+            <p>
+              In an ML framing engagement, these five questions structure a 2-hour workshop with
+              an extended business team (CIO, business director, data team, compliance).
+              Preparing a pre-filled Excel table with the 5 questions × candidate use cases
+              allows quick visualization of maturity and incompleteness zones.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — KEY TAKEAWAYS === */}
+        <section id="a-retenir">
+          <h2>Key takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — GOING FURTHER === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Going further</h2>
+          <p>
+            Six resources to deepen, sorted by type. The source hierarchy is indicated on each
+            (cf. <a href={methodeUrl}>method</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Technical terms encountered? Check the <a href={glossaireUrl}>glossary</a>.
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module1Url,
+            label: 'Introduction to AI',
+            context: 'Module 1',
+          }}
+          next={{
+            href: module3Url,
+            label: 'Generative AI in Business',
+            context: 'Module 3',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
