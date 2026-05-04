@@ -1,14 +1,849 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizInteractive from '@/components/QuizInteractive';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule4EN from '@/content/quizzes/module-4-en';
 
 const locale = 'en';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Executive summary' },
+  { id: 'objectifs', label: 'Learning objectives' },
+  { id: 'concepts', label: 'Key concepts' },
+  { id: 'erreurs-frequentes', label: 'Common errors' },
+  { id: 'cas-reel', label: 'Real case' },
+  { id: 'activite', label: 'Practical activity' },
+  { id: 'quiz', label: 'Formative quiz' },
+  { id: 'checklist', label: 'Manager checklist' },
+  { id: 'application', label: 'Application in your organization' },
+  { id: 'a-retenir', label: 'Key takeaways' },
+  { id: 'pour-aller-plus-loin', label: 'Going further' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  'Distinguish classical industrial robot, cobot and autonomous mobile robot (AMR/AGV) — and know which one matches a given use case.',
+  'Understand the three pillars of a robotic system (perception, planning, control) and their implications for project framing.',
+  'Know the applicable safety standards (ISO 10218 for industrial robots, ISO/TS 15066 for cobots) and the obligations they entail.',
+  'Evaluate the real total cost of a robotics project by integrating the decisive share of integration (50-70% of total).',
+  'Build a defensible economic and social framing: payback, HR dimension, social dialogue, change management.',
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Comparing robot prices without comparing total cost",
+    error:
+      "Choosing a robot or cobot based mainly on its purchase price ('€25,000 for this one, €35,000 for that one'), and discovering during integration that real costs (grippers, programming, certification, training, environment modifications) completely upend the initial ranking.",
+    mechanism:
+      "Robot purchase price is a metric easy to compare between suppliers. Integration cost is diffuse, site-specific, and hard to anticipate without experience. Integration typically represents 50 to 70% of total project cost — the robot itself is only 30 to 50%. Underestimating this distribution leads to economically false cases.",
+    mitigation:
+      "Always reason in total project cost, never in robot price. Break down the budget into at least 8 lines (robot + tooling + workstation study + programming + commissioning + safety + training + first-year maintenance). If the robot represents more than 50% of total, integration is probably underestimated.",
+  },
+  {
+    title: "Confusing standalone and collaborative robotics",
+    error:
+      "Choosing a classical industrial robot assuming it can be 'made collaborative' with added devices (external sensors, light barriers), or conversely choosing a cobot thinking it will achieve industrial-robot performance — and finding both bets lost.",
+    mechanism:
+      "Industrial robot and cobot answer to different normative and technical frameworks. The industrial robot (ISO 10218) is designed for raw performance in isolation from humans; the cobot (ISO/TS 15066) is designed for coexistence with force and speed control. Trying to bridge the gap with add-ons does not change the system's nature and may compromise safety.",
+    mitigation:
+      "Decide early and clearly between the two families. If the workstation requires frequent human coexistence, the cobot is the right answer — accept its performance limits. If raw performance prevails and the workstation can be isolated, the industrial robot is the right answer — accept the caged cell. Hybrid solutions exist but require specific safety integration expertise.",
+  },
+  {
+    title: "Underestimating HR, social and legal stakes",
+    error:
+      "Presenting a robotics project to the C-suite solely on productivity and payback figures, without explicitly addressing consequences for affected operators (redeployment, training, position elimination), and finding out late about blockages — works council refusal, union challenge, labor court conflict, employer brand damage.",
+    mechanism:
+      "Robotics changes the work setting. French and European legislation imposes specific obligations: works council (CSE) information-consultation, impact study, training plan, support for affected employees. Ignoring these obligations exposes the employer legally, and lowers the chances of operational success (a contested project is poorly adopted by teams).",
+    mitigation:
+      "Integrate from initial framing an explicit HR dimension: who is affected, what path is offered (redeployment, training, mobility), how social dialogue is conducted. Favor projects whose benefit combines productivity + ergonomics + quality, more socially defensible than pure payroll reduction projects.",
+  },
+  {
+    title: "Neglecting maintenance and run after commissioning",
+    error:
+      "Considering the robotics project as 'done' at commissioning, without recurring budget for maintenance, without service contract with the integrator, without internally trained personnel for first-level interventions — and finding that unscheduled downtime destroys the originally calculated ROI.",
+    mechanism:
+      "A robot in production is exposed to mechanical wear, sensor degradation, program drift over product evolutions, and incidents (collision, overload). Without preventive and corrective maintenance, availability rate drops. Yet payback calculation assumes high and durable availability.",
+    mitigation:
+      "Explicitly budget preventive maintenance (typically 5-10% of investment per year), the service contract with the integrator, and internal training of a maintenance referent. Continuously measure availability rate (OEE) and compare to the payback calculation hypothesis. Adjust as soon as a gap is confirmed.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Describe the candidate workstation",
+    body: "Choose a candidate workstation for robotization in your organization. Describe precisely the current work: who does it, with what tools, at what pace. Identify the characteristics (repetitive, strenuous, precise, risky). Formulate in one sentence why this workstation is a candidate — favor combined motivations (ergonomics + productivity) over pure payroll cost reductions.",
+  },
+  {
+    heading: "Choose the robotic family",
+    body: "Decide between classical industrial robot (ISO 10218, raw performance, isolation), cobot (ISO/TS 15066, human coexistence), or autonomous mobile robot (AMR/AGV for transport in changing environments). Justify the choice in 2 lines — it must be traceable up to the C-suite argument.",
+  },
+  {
+    heading: "Analyze safety and integration",
+    body: "Identify the applicable normative framework, list safety requirements (risk analysis, force/speed measurement for cobots, training, incident procedures, maintenance). Inventory the necessary integration components (grippers, conveyors, sensors, IS interfaces, environment modifications). Estimate integration duration in weeks.",
+  },
+  {
+    heading: "Evaluate total cost and payback",
+    body: "Break down cost into at least 8 lines (robot + tooling + study + programming + commissioning + safety + training + maintenance). Estimate multi-dimensional gains (productivity + quality + ergonomics + flexibility). Calculate payback. Target: 18-36 months for a well-framed project, 36-60 months acceptable if ergonomics or quality justify.",
+  },
+];
+
+const activityCriteria = [
+  "The candidate workstation is described precisely (who, what, how much).",
+  "The robotic family is chosen and justified (industrial/cobot/AMR).",
+  "The applicable normative framework is identified and at least 4 safety requirements are planned.",
+  "Total cost is broken down into at least 8 lines; the robot represents less than 50% of the total.",
+  "Gains are multi-dimensional and the HR dimension is explicitly addressed.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Technical project framing",
+    items: [
+      "The candidate workstation is described precisely (volume, pace, environment, constraints).",
+      "The choice of robotic family (industrial, cobot, AMR) is justified given the workstation.",
+      "The three pillars (perception, planning, control) are correctly positioned for the case.",
+      "The selected integrator has verifiable references on similar projects.",
+    ],
+  },
+  {
+    title: "Safety, standards and compliance",
+    items: [
+      "The applicable normative framework is identified (ISO 10218 / ISO/TS 15066 / Machinery Directive).",
+      "A formal risk analysis is planned before commissioning (by the integrator, internal counter-expertise).",
+      "Operator training and certification are planned (emergency procedures, incident reporting).",
+      "A preventive maintenance plan and periodic safety check are defined.",
+    ],
+  },
+  {
+    title: "Economy and social",
+    items: [
+      "Total cost includes integration (typical 50-70%) in addition to the robot itself.",
+      "Expected gains are multi-dimensional (productivity + quality + ergonomics + flexibility).",
+      "Estimated payback is in a defensible range (18-36 months target, 36-60 months if strong ergonomics/quality).",
+      "The HR dimension is addressed: works council information-consultation, training plan, support for affected employees.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "The key concept: robotics in business rests on three pillars (perception, planning, control) — the choice of family (industrial robot, cobot, AMR) is structuring for what follows.",
+  "The exemplary case: Amazon Robotics shows how massive integration of autonomous mobile robotics in logistics transforms the economics of the distribution chain — human + machine orchestration, not replacement.",
+  "The major pitfall: comparing robot prices without comparing total costs — integration represents 50-70% of the cost of a robotics project in business.",
+  "The operational tool: the 4-step robotics project evaluation canvas (workstation / family / safety+integration / total cost and payback) before any commitment.",
+  "Next: Module 5 takes a step back and explores AI issues in business and society (governance, ethics, work, compliance) — which transcend a particular technological family.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'video' as const,
+    title: 'Introduction to Robotics (full course)',
+    author: 'MIT OpenCourseWare — 2.12',
+    description:
+      "MIT introduction course to robotics. Technical foundations (kinematics, dynamics, control, perception) accessible to a motivated audience. Videos, lecture notes, exercises.",
+    href: 'https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Amazon deploys over 1 million robots and launches new AI foundation model',
+    author: 'About Amazon (official communications)',
+    description:
+      "Amazon official communication on the deployment of over one million robots in its global logistics network and the launch of DeepFleet. Exemplary case of large-scale human-machine orchestration.",
+    href: 'https://www.aboutamazon.com/news/operations/amazon-million-robots-ai-foundation-model',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "American operational framework for AI risk management, also applicable to autonomous robotic systems or systems integrating AI. Reference for governance and safety leads.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Regulation (EU) 2024/1689 — AI Act',
+    author: 'Official Journal of the European Union',
+    description:
+      "Full text of the European AI regulation. Indispensable to frame compliance of robotics projects integrating AI components — particularly for high-risk uses (healthcare, critical safety).",
+    href: 'https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'OECD Principles on Artificial Intelligence',
+    author: 'OECD',
+    description:
+      "Five principles for responsible AI deployment (and by extension autonomous robotic systems). Adopted by 47 countries. Available in French.",
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: 'Robotics project evaluation canvas',
+    author: 'AI Strategy — Module 4',
+    description:
+      "Printable Markdown canvas to structure robotics project evaluation in 4 steps (workstation / family / safety+integration / total cost and payback).",
+    href: '/downloads/canvas-evaluation-projet-robotique-module-4.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module3Url = getLocalizedUrl('/modules/03-ia-generative/', locale);
+const module5Url = getLocalizedUrl('/modules/05-ia-societe/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of Module 4 (Robotics in Business) is scheduled for Phase 7. The French version is available now."
+  title="Module 4 — Robotics in Business"
+  description="Industrial robot, cobot, AMR/AGV: choose the right family. Normative framework (ISO 10218, ISO/TS 15066), real total cost (integration 50-70%), economic and social framing. Amazon Robotics case."
 >
-  <TranslationPending frenchPagePath="/modules/04-robotique/" />
+  <HeroSecondary
+    surtitle="Module 4 · Robotics in Business"
+    title="Frame a robotics project: family, safety, total cost"
+    lead="Fourth module of the program. We learn to distinguish the robotic families (industrial, cobot, AMR), know the applicable safety standards, honestly evaluate the total cost of a project (with integration weighing 50-70% of the total), and build a defensible economic and social framing. Exemplary case: Amazon Robotics."
+  >
+    <span slot="stats">
+      Recommended duration: 6-8 h · Level: Discovery / Applicable · Prerequisite: Modules 1 to 3
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — EXECUTIVE SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Robotics</strong> is one of the most mature applied AI technologies — series
+            production has existed since the 1960s — and one of the most rapidly evolving today,
+            driven by two ruptures: the arrival of <strong>cobots</strong> (collaborative
+            robots, ISO/TS 15066) which can share human space, and the growing integration of
+            <strong> AI</strong> (computer vision, learning, planning) which allows autonomous
+            mobile robots (AMR/AGV) to operate in less structured environments.
+          </p>
+          <p>
+            For a leader, the robotics decision is framed on three axes. The <strong>family
+            choice</strong> — classical industrial (raw performance, isolation), cobot (human
+            coexistence), AMR (autonomous mobility) — is structuring for everything that
+            follows. The <strong>total cost</strong> is the most frequent pitfall: integration
+            typically represents 50 to 70% of total project cost, the robot itself only 30 to
+            50%. Comparing robot prices without comparing total costs leads to economically
+            false decisions. The <strong>HR and social dimension</strong> is non-negotiable:
+            works council (CSE) information-consultation, training plan, support for affected
+            employees are both legal obligations and conditions for operational success.
+          </p>
+          <p>
+            Well-framed robotics projects combine productivity, quality and ergonomics — not
+            pure payroll reduction. Typical payback of a well-framed project is between 18 and
+            36 months; beyond 60 months, the scope or ambition needs revisiting. The Amazon
+            Robotics case, detailed in this module, illustrates how orchestrating over one
+            million robots in logistics can durably transform a distribution economy — not by
+            replacing humans but by reorganizing their work.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIVES === */}
+        <section id="objectifs">
+          <h2>Learning objectives</h2>
+          <p>By the end of this module, you will be able to:</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Key concepts</h2>
+          <p>
+            Five concepts structure this module. Each is sourced. The source hierarchy is
+            <a href={methodeUrl}> explained in the method page</a>.
+          </p>
+
+          <ConceptCard
+            id="familles-robotique"
+            title="Three robotic families for three use cases"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Robotics in business today comes in three major families, each with its
+              normative framework, typical use cases, and constraints:
+            </p>
+            <p>
+              <strong>Classical industrial robot</strong> (ISO 10218 standard). Designed for
+              raw performance — speed, precision, high payload. Must be isolated from humans by
+              caged cell or light barriers. Suited to series production, structured
+              environment, very large volumes. Canonical examples: automotive welding robots,
+              painting, heavy handling.
+            </p>
+            <p>
+              <strong>Cobot</strong> (ISO/TS 15066 standard). Designed from the outset for
+              coexistence with humans: contact-detecting sensors, limited force, speed adapted
+              to the work zone. Suited to mixed workstations, assisted assembly, shared quality
+              control. Allows SMEs to access robotics without complex cells. Typical examples:
+              Universal Robots cobots or equivalents, on light palletizing, screwing or small
+              component assembly workstations.
+            </p>
+            <p>
+              <strong>Autonomous mobile robot (AMR/AGV)</strong>. Designed to transport loads
+              in potentially changing environments (warehouses, hospitals, workshops). Combines
+              perception (lidar, cameras), autonomous navigation, trajectory planning. Suited
+              to intralogistics. Canonical examples: Amazon robots in distribution centers,
+              AGVs in manufacturing warehouses.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> If the workstation requires frequent human
+                coexistence → cobot. If the workstation is isolatable and requires raw
+                performance → industrial robot. If the mission is to transport in variable
+                environment → AMR. If you hesitate, the project is probably not yet mature —
+                clarify the workstation.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="trois-piliers"
+            title="Perception, planning, control — the three pillars"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              Any modern robotic system combines three fundamental capabilities:
+            </p>
+            <ul>
+              <li>
+                <strong>Perception.</strong> Transform the physical world into digital
+                representation: cameras, lidar, force sensors, proximity sensors. Perception
+                conditions everything else — a robot can only act intelligently on what it
+                perceives correctly.
+              </li>
+              <li>
+                <strong>Planning.</strong> Decide which action to perform based on perception
+                and the assigned goal: obstacle detection, trajectory choice, adaptation to
+                unexpected events. This is where AI contributes most today.
+              </li>
+              <li>
+                <strong>Control.</strong> Execute the action precisely via actuators (motors,
+                grippers, jacks). This is the most mature aspect — industrial robot precision
+                is often submillimetric.
+              </li>
+            </ul>
+            <p>
+              Understanding these three pillars allows framing what is mature today (perception
+              and control in structured environments) and what remains a challenge (planning in
+              open, unpredictable environments). Recent AI progress progressively opens
+              planning to more varied contexts — that is what makes modern AMRs or
+              vision-equipped collaborative robots possible.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Framing consequence.</strong> The more structured the work environment
+                (fixed positions, controlled lighting, identical objects), the easier the
+                robotization. If your candidate workstation requires a lot of contextual
+                adaptation, the project is more complex and more costly — you must know this
+                before committing.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="securite-humain-machine"
+            title="Human-machine safety and normative framework"
+            sourceLevel="external-verifiable"
+          >
+            <p>
+              Human-machine safety in robotics rests on a structured normative framework:
+            </p>
+            <ul>
+              <li>
+                <strong>ISO 10218</strong> (parts 1 and 2) — safety of industrial robots and
+                their cells. Defines requirements for robots designed to operate in isolation
+                from humans.
+              </li>
+              <li>
+                <strong>ISO/TS 15066</strong> — specific requirements for cobots. Defines
+                acceptable force and speed thresholds at contact with a human, by body zone.
+              </li>
+              <li>
+                <strong>Machinery Directive 2006/42/EC</strong> — European framework for CE
+                marking of machines, applicable to any robotic system placed on the market or
+                put into service in the EU.
+              </li>
+              <li>
+                <strong>Sectoral regulations</strong> specific (food, pharmaceutical, medical)
+                that add their own constraints.
+              </li>
+            </ul>
+            <p>
+              For the manager, the consequence is clear: safety cannot be entirely delegated
+              to the integrator. The employer remains responsible for the final risk analysis,
+              training plan, emergency stop and incident reporting procedures. Internal
+              counter-expertise (at least a critical reading of the integrator's deliverable)
+              is good practice.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> Ask your integrator for the applied normative
+                framework and the associated risk analysis. If the answer is imprecise ("it
+                complies with standards"), require detailed documentation. Safety traceability
+                is both a legal requirement and a signal of supplier seriousness.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cout-total-projet"
+            title="The real total cost of a robotics project"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              A best-practice rule observed in industry is that in a robotics project in
+              business, <strong>integration represents 50 to 70% of total cost</strong>, the
+              robot itself only 30 to 50%. Integration covers:
+            </p>
+            <ul>
+              <li><strong>Workstation study</strong> — understand the real operation, its variations, its constraints.</li>
+              <li><strong>Custom mechanics</strong> — grippers adapted to the product, jigs, conveyors, presentation devices.</li>
+              <li><strong>Programming</strong> of trajectories and sequences.</li>
+              <li><strong>On-site commissioning</strong>, which always reveals unanticipated cases.</li>
+              <li><strong>Safety certification</strong> and risk analyses.</li>
+              <li><strong>Training</strong> of operators and maintenance personnel.</li>
+              <li><strong>Environment modifications</strong> (reinforced floor, electrical supply, fluid access).</li>
+              <li><strong>First-year maintenance</strong>, often included in the project.</li>
+            </ul>
+            <p>
+              For economic framing, the direct consequence: comparing robot prices without
+              comparing total costs is misleading. Realistic payback of a well-framed project
+              is typically between 18 and 36 months. Shorter: to validate by POC (probably too
+              optimistic). Longer: to justify by strong ergonomic or quality benefits,
+              otherwise the scope needs revisiting.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Budget test.</strong> Break down your robotics project budget into at
+                least 8 lines (robot + tooling + study + programming + commissioning + safety +
+                training + maintenance). If the robot exceeds 50% of the total, integration is
+                probably underestimated. If training is at zero, it is probably an omission,
+                not savings.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cadrage-rh-social"
+            title="Economic and social framing"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              A robotics project changes the work setting. Presenting a robotics case to the
+              C-suite solely on productivity and payback figures, without explicitly addressing
+              the HR dimension, is both legally risky and operationally fragile.
+            </p>
+            <p>
+              Three requirements to integrate from initial framing:
+            </p>
+            <ul>
+              <li>
+                <strong>Information-consultation of representative bodies</strong> (CSE in
+                France) — legal obligation for any project impacting work organization. To be
+                addressed upstream, not downstream.
+              </li>
+              <li>
+                <strong>Training and support plan</strong> for affected employees. What paths
+                are offered (redeployment, upskilling, internal mobility)? At what cost and on
+                what horizon?
+              </li>
+              <li>
+                <strong>Combined argument</strong>. A defensible project combines several
+                benefits: productivity + quality + ergonomics + flexibility. A project limited
+                to pure payroll reduction is socially and legally fragile.
+              </li>
+            </ul>
+            <p>
+              For the manager, the HR dimension is not an additional cost — it is a condition
+              for success. A contested project is poorly adopted by teams, which degrades the
+              actually achieved ROI, regardless of technical performance.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Observed best practices.</strong> Start with projects clearly improving
+                working conditions (strenuous workstations, musculoskeletal disorders) —
+                socially defensible, positive internal feedback, base for more ambitious later
+                projects. The ideal pilot is not just economic: it is also pedagogical for the
+                organization.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — COMMON ERRORS === */}
+        <section id="erreurs-frequentes">
+          <h2>Common errors</h2>
+          <p>
+            Four recurring pitfalls in robotics projects to recognize and mitigate from the
+            framing stage.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — REAL CASE === */}
+        <section id="cas-reel">
+          <h2>Real case — Amazon Robotics</h2>
+          <p>
+            <strong>Amazon Robotics</strong> is one of the largest deployments of autonomous
+            mobile robotics in the world. According to Amazon's official public communications,
+            the company has deployed over one million robots in its global logistics network,
+            and announced in 2025 the launch of DeepFleet, an AI foundation model dedicated to
+            orchestrating this fleet. The case is exemplary for understanding massive
+            integration of robotics in logistics with human + machine orchestration.
+          </p>
+          <CaseCardCompact
+            organization="Amazon Robotics — DeepFleet and robotic orchestration"
+            sector="Logistics / E-commerce"
+            technology="Autonomous mobile robots (AMR) + AI orchestration"
+            tagline="Amazon reached the symbolic threshold of one million robots deployed in its global logistics network. Value does not come from the robot taken in isolation, but from orchestration: DeepFleet, a dedicated AI foundation model, manages traffic and coordination of the entire fleet. Humans remain central in judgment phases (quality, exception, incident management) — robotics handles transport and simple picking."
+            href={getLocalizedUrl('/cas/amazon-robotics/', locale)}
+            available={true}
+          />
+
+          <h3>Additional mini-case — Universal Robots and SME robotics</h3>
+          <p>
+            Universal Robots, a Danish cobot manufacturer, illustrates a complementary
+            approach: making robotics accessible to industrial SMEs via cobots simple to
+            program, ISO/TS 15066 certified, at a purchase price significantly lower than
+            classical industrial robots. Several lessons transposable:
+          </p>
+          <ul>
+            <li>
+              <strong>Accessibility does not reduce integration.</strong> Even with a
+              relatively simple-to-program cobot, integration (custom gripper, workstation
+              study, safety certification, training) remains the majority of total cost. The
+              "cobot = simple project" trap is a myth to avoid.
+            </li>
+            <li>
+              <strong>Reconfigurability has real value.</strong> A cobot can be moved and
+              reprogrammed for another workstation if needs change — precious flexibility for
+              SMEs with uncertain volumes. This flexibility must enter the value calculation.
+            </li>
+            <li>
+              <strong>The normative market evolves quickly.</strong> ISO/TS 15066 standards
+              and their sectoral derivatives continue to evolve — a project committed today
+              must plan a margin to integrate evolutions in 2-3 years.
+            </li>
+            <li>
+              <strong>The ecosystem counts as much as the robot.</strong> The choice of a
+              cobot supplier depends as much on the local integrator and spare parts
+              ecosystem as on the robot's specifications themselves.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source: <a href="https://www.universal-robots.com/" rel="noopener noreferrer" target="_blank">Universal Robots public communications</a>,
+              ISO 10218 and ISO/TS 15066 standards.
+            </em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITY === */}
+        <section id="activite">
+          <h2>Practical activity — Frame a robotics project</h2>
+          <p>
+            This activity makes you concretely walk through the framing of a robotics project.
+            To be done alone or in a small group, in 60 to 90 minutes.
+          </p>
+          <Activity
+            id="activite-projet-robotique"
+            title="Frame a robotics project for your organization"
+            duration="60-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Robotics project canvas (printable Markdown)"
+            downloadHref="/downloads/canvas-evaluation-projet-robotique-module-4.md"
+          />
+          <p class="ai-text-muted">
+            <em>The canvas is provided in printable Markdown format. The styled PDF version
+            arrives in Phase 5 of the project.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Formative quiz</h2>
+          <p>
+            Seven questions to verify your understanding. Three comprehension questions, three
+            application, one judgment. Each incorrect answer unfolds a pedagogical explanation
+            pointing to the section to review.
+          </p>
+          <QuizInteractive client:visible
+            id="quiz-module-4-en"
+            title={quizModule4EN.title}
+            intro={quizModule4EN.intro}
+            questions={quizModule4EN.questions}
+            scoringBands={quizModule4EN.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Manager checklist — Robotics framing</h2>
+          <p>
+            Twelve checkpoints before presenting a robotics project to the C-suite or in
+            CSE information-consultation. Three groups: technical framing, safety and
+            compliance, economy and social.
+          </p>
+          <Checklist
+            id="checklist-module-4-en"
+            title="Robotics framing — 12 checkpoints"
+            intro="Before defending a robotics project before a steering committee or in works council information-consultation, go through these twelve points. Safety and compliance points are non-negotiable; social points condition operational success."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application in your organization</h2>
+          <p>
+            Five questions to ask in your context. No universal right or wrong answer — what
+            matters is being able to answer them <em>specifically</em> for your organization.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Identify 1 or 2 <strong>candidate workstations</strong> for robotization in
+              your organization. For each, what is the main motivation (productivity, quality,
+              ergonomics, safety)?
+            </li>
+            <li>
+              For the most promising candidate, which <strong>robotic family</strong>
+              (industrial, cobot, AMR) is most appropriate? Why?
+            </li>
+            <li>
+              What is the <strong>applicable normative framework</strong> and have you
+              identified safety requirements (risk analysis, training, emergency procedures)?
+            </li>
+            <li>
+              Do you have a <strong>budget broken down into at least 8 lines</strong>? Does
+              the robot represent less than 50% of the total? Is the payback in the
+              defensible range (18-36 months target)?
+            </li>
+            <li>
+              How is the <strong>HR dimension</strong> addressed (works council
+              information-consultation, training plan, support for affected employees)?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>For consultants</h3>
+            <p>
+              In a robotics framing engagement, these five questions structure a 3-hour
+              workshop with an extended business team (CIO / Industrial Director / HR
+              Director / EHS / employee representatives). The presence of HR Director and
+              employee representatives from initial framing is a best practice — it avoids
+              late blockages and improves case quality.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — KEY TAKEAWAYS === */}
+        <section id="a-retenir">
+          <h2>Key takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — GOING FURTHER === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Going further</h2>
+          <p>
+            Six resources to deepen, sorted by type. The source hierarchy is indicated on each
+            (cf. <a href={methodeUrl}>method</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Technical terms encountered? Check the <a href={glossaireUrl}>glossary</a>.
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module3Url,
+            label: 'Generative AI in Business',
+            context: 'Module 3',
+          }}
+          next={{
+            href: module5Url,
+            label: 'AI in Business and Society',
+            context: 'Module 5',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
