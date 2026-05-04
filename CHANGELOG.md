@@ -81,7 +81,23 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 
 ## 🌍 Post-Phase 7 — Approfondissement des traductions EN
 
-Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues.
+Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean (28 FR + 28 EN + 10 AR), 18 stubs AR intentionnels exclus.
+
+### Étape A — Polish SEO trilingue (terminée)
+
+Audit SEO programmatique des **66 pages translatables** (FR + EN + 10 vraies AR) avec corrections systématiques des titles et meta-descriptions hors fenêtre SEO idéale (titres 25-65 chars, descriptions 100-165 chars). 18 pages AR sont des stubs `TranslationPending` intentionnels — correctement identifiés et exclus du périmètre.
+
+- **NEW — `scripts/audit_seo.py`** (~165 lignes) : Script d'audit SEO programmatique trilingue avec extraction robuste des titles/descriptions Astro. Supporte 4 patterns d'attribut : string literals, template literals, i18n `t()` calls, et variable lookups (avec single + double quotes). Compte les caractères Unicode (graphèmes) — pas les bytes — pour mesurer correctement les longueurs arabe. Détecte automatiquement les stubs `TranslationPending` et les distingue des vraies traductions. Scope l'extraction à la balise `<BaseLayout>` opening tag pour ne pas confondre avec le title visible du HeroSecondary. Stats : `lang/total translatable pages clean (issues, intentional stubs)`.
+- **MODIFIED — 64 fichiers `.astro`** : Polish des titles + descriptions sur les 66 pages translatables.
+  - **A1 — Pages d'overview (10 pages × 3 langues = 30 fichiers)** : Titles enrichis sur a-propos / mentions-legales / methode / programme (FR + EN + AR), descriptions raccourcies sur faq / glossaire / ressources / podcasts / capstone / programme (FR + EN), root index (FR + EN + AR). Pages AR : a-propos title 4→33 chars, mentions-legales 15→33 chars, methode 21→37 chars, programme 20→40 chars, ressources 24→45 chars + descriptions raccourcies cohérentes.
+  - **A2 — Cas individuels (10 cas × 2 langues = 20 fichiers)** : Descriptions raccourcies de 170-234 chars vers 130-160 chars sur ai-act-eu-haut-risque / amazon-robotics / github-copilot-accenture / mit-barzilay-cancer / mit-ide / morgan-stanley / nist-ai-rmf / stripe-radar / takeda-superminds / universal-robots (FR + EN). Titles raccourcis pour mit-barzilay-cancer FR (68→55) ; titles enrichis pour stripe-radar (FR 27→47, EN 25→44).
+  - **A3 — Modules individuels (12 fichiers)** : Descriptions raccourcies de 171-219 chars vers 132-160 chars sur les 6 modules × FR/EN. Title enrichi pour FR module 6 (24→36 chars).
+  - **A4 — Pages racines (FR + EN + AR)** : Description du site raccourcie de ~190 chars vers ~155 chars dans les 3 langues.
+- **VALIDATION FINALE** :
+  - Audit SEO trilingue : **FR 28/28 ✅ — EN 28/28 ✅ — AR 10/10 ✅** (avec 18 stubs AR intentionnels exclus du périmètre)
+  - Astro check : **0 erreurs / 0 warnings / 0 hints** sur 147 fichiers
+  - Build : **98 pages** en ~11 s — aucune régression
+- **Cibles SEO atteintes** : Tous les titles dans la fenêtre 25-65 caractères (idéal Google : 50-60). Toutes les descriptions dans la fenêtre 100-165 caractères (idéal Google : 120-160). Aucune page sans title ni description. Couverture trilingue complète sur les 66 pages translatables.
 
 ### Étape 5 — Glossaire EN/AR (terminée)
 
