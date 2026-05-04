@@ -1,14 +1,169 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import StatsBar from '@/components/StatsBar.astro';
+import IdentityTable from '@/components/IdentityTable.astro';
+import ModulesTable from '@/components/ModulesTable.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import BloomMatrix from '@/components/BloomMatrix.astro';
+import CapstonePreview from '@/components/CapstonePreview.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 import { t } from '@/i18n/translations';
 
 const locale = 'ar';
+
+const stats = [
+  { value: '٦', label: 'وحدات' },
+  { value: '٦–٨ ساعات', label: 'في الأسبوع' },
+  { value: '٦', label: 'أسابيع' },
+  { value: 'FR · EN · AR', label: 'ثلاثي اللغات' },
+];
+
+const identityRows = [
+  { label: 'المؤسسة المرجعية', value: 'MIT Sloan School of Management + MIT CSAIL' },
+  { label: 'الصيغة الأصلية', value: '١٠٠٪ على الإنترنت، ذاتي الإيقاع' },
+  { label: 'المدة المرجعية', value: '٦ أسابيع باستثناء التوجيه' },
+  { label: 'حجم العمل', value: '٦ إلى ٨ ساعات في الأسبوع' },
+  { label: 'التموقع', value: 'إداري واستراتيجي — غير تقني' },
+  { label: 'المشروع المرجعي', value: 'خطة استخدام الذكاء الاصطناعي للمؤسسة' },
+  { label: 'الجمهور', value: 'مدراء، قياديون، مستشارون، ملفات تعريف بيانات وتسويق ومبيعات' },
+  { label: 'الشروط التقنية المسبقة', value: 'لا شيء — لا يُفترض رصيد تقني' },
+];
+
+const moduleRows = [
+  { number: 1 as const, title: t('modules.module-1.title', locale), objective: 'تأطير الذكاء الاصطناعي والذكاء الجماعي.', href: getLocalizedUrl('/modules/01-introduction-ia/', locale), available: true },
+  { number: 2 as const, title: t('modules.module-2.title', locale), objective: 'تحديد متى يكون تعلّم الآلة ملائماً.', href: getLocalizedUrl('/modules/02-machine-learning/', locale), available: true },
+  { number: 3 as const, title: t('modules.module-3.title', locale), objective: 'تفكيك سير العمل وإطلاق التجارب.', href: getLocalizedUrl('/modules/03-ia-generative/', locale), available: true },
+  { number: 4 as const, title: t('modules.module-4.title', locale), objective: 'تقييم ملاءمة الأتمتة الفيزيائية.', href: getLocalizedUrl('/modules/04-robotique/', locale), available: true },
+  { number: 5 as const, title: t('modules.module-5.title', locale), objective: 'الحوكمة، الأخلاقيات، الامتثال، العمل.', href: getLocalizedUrl('/modules/05-ia-societe/', locale), available: true },
+  { number: 6 as const, title: t('modules.module-6.title', locale), objective: 'بناء خارطة طريق ذكاء اصطناعي موثوقة.', href: getLocalizedUrl('/modules/06-futur-ia/', locale), available: true },
+];
+
+const outcomes = [
+  "شرح العائلات الكبرى للذكاء الاصطناعي (تعلّم الآلة، الذكاء التوليدي، الروبوتيات) وانعكاساتها على الأعمال.",
+  "الحكم على ملاءمة حالة استخدام تعلّم الآلة لاستراتيجية تكلفة أو تمييز أو تركيز.",
+  "تحديد وترتيب أولويات حالات استخدام الذكاء التوليدي في مؤسسة، وتصميم تجربة.",
+  "تقييم متى تخلق الروبوتيات قيمة — ومتى لا تخلقها.",
+  "فهم تأثير الذكاء الاصطناعي على العمل والمهارات والمجتمع، واستباق إدارة التغيير.",
+  "بناء خارطة طريق لدمج الذكاء الاصطناعي في مؤسسة: تشخيص، ترتيب أولويات، حوكمة، مؤشرات أداء.",
+  "التحاور مع خبراء تقنيين دون أن تكون نفسك تقنياً: طرح الأسئلة الصحيحة، قراءة دفتر شروط، تفسير نتيجة.",
+];
+
+const bloomRows = [
+  { competency: 'فهم المفاهيم الأساسية للذكاء الاصطناعي', bloomLevel: 'فهم', modules: [1, 2, 3, 4] as (1|2|3|4|5|6)[] },
+  { competency: 'تحديد حالات استخدام ذكاء اصطناعي ملائمة', bloomLevel: 'تطبيق', modules: [2, 3, 4] as (1|2|3|4|5|6)[] },
+  { competency: 'مقارنة الخيارات الاستراتيجية بين عائلات الذكاء الاصطناعي', bloomLevel: 'تحليل', modules: [2, 3, 4, 5] as (1|2|3|4|5|6)[] },
+  { competency: 'تقييم الملاءمة وعائد الاستثمار لمشروع ذكاء اصطناعي', bloomLevel: 'تقييم', modules: [2, 3, 4, 5] as (1|2|3|4|5|6)[] },
+  { competency: 'تصميم خارطة طريق ذكاء اصطناعي لمؤسسة', bloomLevel: 'إنشاء', modules: [6] as (1|2|3|4|5|6)[], capstone: true },
+  { competency: 'استباق التأثيرات الأخلاقية والتنظيمية', bloomLevel: 'تقييم', modules: [5, 6] as (1|2|3|4|5|6)[] },
+];
+
+const homeUrl = getLocalizedUrl('/', locale);
+const modulesUrl = getLocalizedUrl('/modules/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const module1Url = getLocalizedUrl('/modules/01-introduction-ia/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية لصفحة «نظرة عامة على البرنامج» مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title="البرنامج بنظرة سريعة"
+  description="٦ وحدات، ٦ أسابيع، بالعربية: تعلّم الآلة، الذكاء التوليدي، الروبوتيات، الحوكمة، خارطة الطريق. مستوحى من برنامج MIT Sloan، مستقل، موثّق."
 >
-  <TranslationPending frenchPagePath="/programme/" />
+  <HeroSecondary
+    surtitle={t('site.surtitle', locale)}
+    title="البرنامج بنظرة سريعة"
+    lead="ست وحدات لاتخاذ القرار، النشر، والحوكمة في الذكاء الاصطناعي بمؤسستك. نهج يضع الأعمال أولاً، مصادر متدرّجة، واستقلالية معلَنة عن البرنامج الأصلي."
+  />
+
+  <section class="ai-container ai-section">
+    <StatsBar stats={stats} />
+  </section>
+
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">هوية البرنامج</h2>
+    <p class="ai-section__lead">
+      البرنامج الأصلي <em>Artificial Intelligence: Implications for Business Strategy</em>
+      تقدّمه MIT Sloan School of Management وMIT Computer Science and Artificial
+      Intelligence Laboratory. هذا الموقع مستوحى منه — دون أن يكون نسخة عنه.
+    </p>
+    <IdentityTable rows={identityRows} caption="الخصائص الموثَّقة علنياً لبرنامج MIT Sloan المرجعي" />
+    <div class="ai-section__notice">
+      <IndependenceNotice variant="block" />
+    </div>
+  </section>
+
+  <section class="ai-section--full">
+    <div class="ai-container ai-section">
+      <h2 class="ai-section__title">الوحدات الست</h2>
+      <p class="ai-section__lead">
+        ست وحدات تُتَّبع بالترتيب، أو يُتصفَّح بحسب الموضوع. كل وحدة مبنية حول ملخص
+        تنفيذي، محتوى تربوي معمَّق، وملاحق عملية قابلة للتنزيل (قوالب، قوائم مراجعة،
+        ملفات PDF).
+      </p>
+      <ModulesTable rows={moduleRows} />
+    </div>
+  </section>
+
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">سبع نتائج تعلّم عابرة</h2>
+    <p class="ai-section__lead">
+      في نهاية البرنامج، ينبغي أن تكون قادراً على القيام بالأفعال السبعة التالية باستقلالية.
+      هي تشكّل الشبكة الضمنية للتقييم الذاتي في كل وحدة.
+    </p>
+    <OutcomesList outcomes={outcomes} />
+  </section>
+
+  <section class="ai-section--full">
+    <div class="ai-container ai-section">
+      <h2 class="ai-section__title">المهارات المطوَّرة</h2>
+      <p class="ai-section__lead">
+        تخطيط المهارات الرئيسية مقابل مستويات تصنيف Bloom والوحدات التي تُطوَّر فيها أساساً.
+        المشروع الختامي يدمج المستوى الأعلى — الإنشاء.
+      </p>
+      <BloomMatrix rows={bloomRows} />
+    </div>
+  </section>
+
+  <section class="ai-container ai-section ai-section--narrow">
+    <CapstonePreview
+      title="ابنِ خارطة طريق الذكاء الاصطناعي لمؤسستك"
+      description="في نهاية الوحدات الست، تُنتج خارطة طريق مهيكلة في ١٢ قسماً: تشخيص النضج، حالات الاستخدام المرشّحة، ترتيب الأولويات، الحوكمة، الميزانية، مؤشرات الأداء، المخاطر، تخطيط ١٢-٢٤ شهر. قالب مدرَج، مثال تربوي، شبكة تقييم."
+      ctaLabel="اكتشف المشروع الختامي"
+    />
+  </section>
+
+  <section class="ai-container ai-section ai-section--cta">
+    <h2 class="ai-section__title">من أين تبدأ؟</h2>
+    <div class="ai-cta-pair">
+      <a class="ai-cta ai-cta--primary" href={module1Url}>
+        ← ابدأ بالوحدة ١
+      </a>
+      <a class="ai-cta ai-cta--secondary" href={modulesUrl}>
+        مشاهدة كل الوحدات
+      </a>
+    </div>
+    <p class="ai-cta-pair__note">
+      <em>كل الوحدات الست منشورة بالفرنسية. النسخ العربية تُترجم تدريجياً في المرحلة 7.
+      في انتظار ذلك، يمكنك استكشاف <a href={methodeUrl}>المنهجية</a>،
+      <a href={homeUrl}>النظرة العامة</a>، أو تصفح الوثائق على GitHub.</em>
+    </p>
+  </section>
 </BaseLayout>
+
+<style>
+  .ai-section { padding-block: var(--ai-space-7); }
+  .ai-section--full { background: var(--ai-bg-subtle); }
+  .ai-section--narrow { max-width: var(--ai-container-md); }
+  .ai-section--cta { text-align: center; padding-block-end: var(--ai-space-9); }
+  .ai-section__title { margin: 0 0 var(--ai-space-3); }
+  .ai-section__lead { margin: 0 0 var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-lg); max-width: 65ch; line-height: var(--ai-leading-relaxed); }
+  .ai-section__notice { margin-block-start: var(--ai-space-5); }
+
+  .ai-cta-pair { display: inline-flex; flex-wrap: wrap; gap: var(--ai-space-3); justify-content: center; margin-block: var(--ai-space-4); }
+  .ai-cta-pair__note { margin: var(--ai-space-3) auto 0; color: var(--ai-fg-muted); font-size: var(--ai-text-sm); max-width: 60ch; }
+  .ai-cta { display: inline-flex; align-items: center; gap: var(--ai-space-2); padding: var(--ai-space-3) var(--ai-space-5); border-radius: var(--ai-radius-md); font-weight: var(--ai-weight-semibold); text-decoration: none; }
+  .ai-cta--primary { background: var(--ai-accent-primary); color: var(--ai-bg-primary); }
+  .ai-cta--primary:hover, .ai-cta--primary:focus-visible { background: var(--ai-accent-hover); }
+  .ai-cta--secondary { background: transparent; color: var(--ai-fg-primary); border: 1px solid var(--ai-border-default); }
+  .ai-cta--secondary:hover, .ai-cta--secondary:focus-visible { background: var(--ai-bg-muted); }
+</style>

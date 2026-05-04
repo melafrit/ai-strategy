@@ -1,14 +1,132 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { resources, TOTAL_RESOURCES, type ResourceType } from '@/content/resources';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
-const locale = 'ar';
+const frRessourcesUrl = getLocalizedUrl('/ressources/', 'fr');
+
+const typeLabelsAR: Record<ResourceType, string> = {
+  'official-course': 'مقرّر MIT الرسمي',
+  'mit-sloan-article': 'مقال MIT Sloan',
+  'mit-executive-article': 'مقال MIT Executive Education',
+  'mit-ocw': 'MIT OpenCourseWare',
+  'academic-paper': 'منشور أكاديمي',
+  'standard': 'معيار / لائحة',
+  'case-source': 'مصدر حالة (شركات)',
+  'external-resource': 'مَورد خارجي مُتحقَّق',
+};
+
+const typeDescriptionsAR: Record<ResourceType, string> = {
+  'official-course': 'صفحات برنامج MIT Sloan المرجعي — مرجع غير منتسب للسياق.',
+  'mit-sloan-article': 'مقالات MIT Sloan Management Review وIdeas Made to Matter.',
+  'mit-executive-article': 'مقالات من MIT Sloan Executive Education والبرامج المجاورة.',
+  'mit-ocw': 'MIT OpenCourseWare — مقررات MIT مجانية على مواضيع ذات صلة.',
+  'academic-paper': 'أوراق أكاديمية محكَّمة وأوراق عمل معترف بها.',
+  'standard': 'نصوص تنظيمية (AI Act الأوروبي، NIST، ISO، OECD).',
+  'case-source': 'تواصلات عامة من الشركات المعروضة في دراسات الحالة.',
+  'external-resource': 'مصادر مرجعية أخرى مُتحقَّقة من قبل الفريق التحريري.',
+};
+
+const orderedTypes: ResourceType[] = [
+  'official-course', 'mit-sloan-article', 'mit-executive-article', 'mit-ocw',
+  'academic-paper', 'standard', 'case-source', 'external-resource',
+];
+
+const grouped = {} as Record<ResourceType, typeof resources>;
+for (const t of orderedTypes) grouped[t] = [];
+for (const r of resources) grouped[r.type].push(r);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية لمركز الموارد مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title={`الموارد — ${TOTAL_RESOURCES} مرجعاً مُتحقَّقاً`}
+  description={`مركز ${TOTAL_RESOURCES} مَورداً مُتحقَّقاً لتعميق استراتيجية الذكاء الاصطناعي: مقررات MIT الرسمية، مقالات MIT Sloan / MIT IDE، NIST AI RMF، AI Act الأوروبي، MIT OCW، أوراق عمل، مصادر حالات. متدرّجة وقابلة للتحقق.`}
 >
-  <TranslationPending frenchPagePath="/ressources/" />
+  <HeroSecondary
+    surtitle="الموارد"
+    title="مركز المراجع المُتحقَّقة"
+    lead={`${TOTAL_RESOURCES} مرجعاً مُتحقَّقاً منظماً في 8 عائلات. كل مَورد له مستوى تدرّجه (مصدر رسمي MIT، مكمّل موصى به، مصدر خارجي قابل للتحقق) وقابل للتحقق علنياً.`}
+  >
+    <span slot="stats">{TOTAL_RESOURCES} مرجعاً · 8 عائلات · قابل للتحقق علنياً · مصادر متدرّجة عبر SourceTag</span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-resources-page">
+    <article class="ai-prose">
+      <section class="ai-resources-intro">
+        <p>
+          يجمع هذا المركز الـ {TOTAL_RESOURCES} مَورداً المرجعي المستخدم في كل البرنامج.
+          منظمة في 8 عائلات: من المصادر الرسمية لـ MIT إلى المعايير التنظيمية، عبر
+          المنشورات الأكاديمية ومصادر الحالات.
+        </p>
+        <p>
+          عناوين الموارد محفوظة بلغتها الأصلية (معظمها بالإنجليزية بطبيعتها). أوصاف
+          الموارد بالفرنسية في <a href={frRessourcesUrl}>النسخة الفرنسية لهذه الصفحة</a>؛
+          على هذه الصفحة العربية، نعرض العناوين والأنواع والروابط.
+        </p>
+      </section>
+
+      {orderedTypes.map((type) => {
+        const list = grouped[type];
+        if (list.length === 0) return null;
+        return (
+          <section class="ai-resources-section">
+            <header class="ai-resources-section__head">
+              <h2>{typeLabelsAR[type]}</h2>
+              <p>{typeDescriptionsAR[type]} <span class="ai-resources-section__count">({list.length} مَورد{list.length > 1 ? '' : ''})</span></p>
+            </header>
+            <ul class="ai-resources-list">
+              {list.map((r) => (
+                <li class="ai-resources-item">
+                  <a class="ai-resources-item__title" href={r.href} target="_blank" rel="noopener noreferrer">
+                    {r.title}
+                  </a>
+                  {r.author && (
+                    <span class="ai-resources-item__author"> · {r.author}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-resources-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-resources-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-4);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-resources-intro p { margin-block: 0 var(--ai-space-3); color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  .ai-resources-intro p:last-child { margin-block-end: 0; }
+  .ai-resources-intro a { color: var(--ai-accent-primary); font-weight: var(--ai-weight-semibold); text-decoration: none; }
+  .ai-resources-intro a:hover { text-decoration: underline; }
+  .ai-resources-section { margin-block: var(--ai-space-7); }
+  .ai-resources-section__head {
+    margin-block-end: var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+  .ai-resources-section__head h2 { margin: 0 0 var(--ai-space-2); font-size: var(--ai-text-xl); }
+  .ai-resources-section__head p { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); font-size: var(--ai-text-sm); }
+  .ai-resources-section__count { color: var(--ai-fg-muted); }
+  .ai-resources-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ai-space-2); }
+  .ai-resources-item {
+    padding: var(--ai-space-2) var(--ai-space-3);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-resources-item__title { color: var(--ai-fg-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-resources-item__title:hover { color: var(--ai-accent-primary); text-decoration: underline; }
+  .ai-resources-item__author { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+</style>

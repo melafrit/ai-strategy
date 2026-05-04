@@ -1,14 +1,193 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'ar';
+const frFaqUrl = getLocalizedUrl('/faq/', 'fr');
+
+interface FAQItem {
+  question: string;
+  answerHtml: string;
+}
+
+const sectionGeneral: FAQItem[] = [
+  {
+    question: "هل هذا موقع رسمي لـ MIT؟",
+    answerHtml: `<p><strong>لا.</strong> هذا الموقع غير منتسب ولا معتمد ولا مصدّق من MIT أو MIT Sloan أو MIT CSAIL. إنه مَورد تربوي مستقل مستوحى من المواضيع العامة لبرنامج <em>Artificial Intelligence: Implications for Business Strategy</em>. الاستقلالية مفصَّلة في <a href="${getLocalizedUrl('/methode/', locale)}">صفحة المنهجية</a>، القسم 2.</p>`,
+  },
+  {
+    question: "لمن هذا الموقع؟",
+    answerHtml: `<p>لثلاثة جماهير في آن واحد: <strong>القياديون والإدارة العليا</strong> الذين يجب عليهم تأطير استراتيجية ذكاء اصطناعي على مستوى تنفيذي؛ <strong>المستشارون وقادة التحوّل</strong> الذين يُعدّون مهمة؛ <strong>المعلّمون والطلاب</strong> في الإدارة أو أنظمة المعلومات. كل صفحة قابلة للقراءة من قِبل الثلاثة بمستويات قراءتها الثلاثية.</p>`,
+  },
+  {
+    question: "هل هذا البرنامج معتمَد؟",
+    answerHtml: `<p><strong>لا.</strong> الموقع لا يقدّم أي شهادة أو دبلوم أو اعتماد. هو مَورد تربوي مجاني. إن كنت تبحث عن مقرّر معتمَد من MIT، استشر صفحة MIT Sloan Executive Education الرسمية مباشرةً. هذا الموقع موجود لتقديم نقطة دخول مجانية، موثَّقة، ناطقة بالفرنسية وثلاثية اللغات — مهمة مختلفة عن برنامج معتمَد.</p>`,
+  },
+  {
+    question: "كم يستغرق تصفّح الموقع كاملاً؟",
+    answerHtml: `<p>يعتمد على أهدافك. <strong>الملخص التنفيذي</strong> لوحدة: 3-5 دقائق. <strong>الوحدة الكاملة</strong>: 25-45 دقيقة. <strong>الوحدة + الحالة المرتبطة</strong>: 45-90 دقيقة. <strong>البرنامج الكامل</strong> (6 وحدات + 10 حالات + capstone): 60-90 ساعة، حسب نضجك المبدئي. مرجع MIT يقترح 6-8 ساعات في الأسبوع على مدى 6 أسابيع للبرنامج الأصلي.</p>`,
+  },
+];
+
+const sectionMethod: FAQItem[] = [
+  {
+    question: "كيف تُتدرَّج المصادر المستشهَد بها؟",
+    answerHtml: `<p>خمسة مستويات مرئية عبر مكوّن <code>&lt;SourceTag /&gt;</code>: <strong>مصدر رسمي MIT</strong>، <strong>مكمّل موصى به</strong> (ذو صلة بـ MIT)، <strong>إعادة بناء تربوية</strong>، <strong>مصدر خارجي قابل للتحقق</strong>، <strong>بحاجة إلى تحقق</strong>. كل ادعاء واقعي على الموقع موسوم. التفاصيل في <a href="${getLocalizedUrl('/methode/', locale)}">صفحة المنهجية</a>، القسم 1.</p>`,
+  },
+  {
+    question: "ما معنى «إعادة بناء تربوية»؟",
+    answerHtml: `<p>حين لا تكون المعلومة مفصّلة علنياً من قبل MIT (مثلاً، الطبيعة الدقيقة لتمرين في وحدة، أو اقتباس محدّد من هيئة تدريس)، نُعيد بناءها بحذر من مصادر عامة متّسقة مع روح البرنامج. هذه الإعادات <strong>دائماً يُشار إليها</strong> ولا تُقدَّم أبداً كرسمية. تسمح بسدّ الفجوات دون تزييف.</p>`,
+  },
+];
+
+const sectionStrategy: FAQItem[] = [
+  {
+    question: "كيف أختار حالة استخدام أولى للذكاء الاصطناعي في مؤسستي؟",
+    answerHtml: `<p>ثلاثة معايير: <strong>(1) قيمة أعمال مرئية</strong> — مقياس يهتم به التنفيذي (NPS، انسحاب، احتيال، زمن القرار، تحويل). <strong>(2) جدوى معقولة</strong> — بيانات متاحة أو يمكن إنتاجها، مهارات تقنية داخلية أو خارجية، حوكمة مقبولة. <strong>(3) خطر مُتقَن</strong> — ليس في AI Act عالي الخطر إن لم تكن مؤسستك جاهزة، ليس على جوهرة استراتيجية للمؤسسة في المحاولة الأولى.</p><p>لا تبدأ بالحالة الأكثر جاذبية — ابدأ بالحالة التي تسمح ببناء القدرة الجماعية للفريق: اختبار موثوق، تعلّم، وقاعدة للحالات التالية.</p>`,
+  },
+  {
+    question: "GenAI أم ML خاضع للإشراف الكلاسيكي: متى نختار أيهما؟",
+    answerHtml: `<p>قاعدة مبسّطة:</p><ul><li><strong>ML خاضع للإشراف</strong> حين يكون لديك <strong>بيانات تاريخية موسومة</strong> وتريد <strong>التنبؤ / التصنيف / الكشف</strong>: احتيال، انسحاب، توقع طلب، كشف عيوب، تسجيل ائتمان.</li><li><strong>GenAI</strong> حين تريد <strong>إنتاج محتوى</strong> (نص، صورة، شيفرة، ملخص) أو <strong>التفاعل محادثاتياً</strong> مع مجموعة.</li></ul><p>غالباً، الاثنان مفيدان في أجزاء مختلفة من نفس سير العمل. الوحدة 3، القسم 5، تطوّر مصفوفة القرار.</p>`,
+  },
+  {
+    question: "هل مؤسستي صغيرة جداً للذكاء الاصطناعي؟",
+    answerHtml: `<p><strong>لا.</strong> عتبة الانخراط بمصداقية مع الذكاء الاصطناعي لم تعد متعلقة بحجم البيانات أو فِرق IT الكبيرة. مع APIs السحابية، أدوات no-code، ونماذج مفتوحة المصدر مجانية، يمكن لـ PME من 20-50 شخصاً نشر ذكاء اصطناعي ملموس. السؤال الصحيح <strong>ليس «هل نستطيع»</strong> بل <strong>«أي حالة استخدام تخلق قيمة حقيقية لنا»</strong>.</p>`,
+  },
+];
+
+const sectionGovernance: FAQItem[] = [
+  {
+    question: "هل أنا معني بـ AI Act الأوروبي؟",
+    answerHtml: `<p>إن كنت تشغّل أي نظام ذكاء اصطناعي في الاتحاد الأوروبي، <strong>على الأرجح نعم</strong>، بصرف النظر عن مقرّك. AI Act ينطبق خارج الإقليم (مثل RGPD). خمس التزامات للتقييم بأولوية: <strong>(1)</strong> جرد أنظمة الذكاء الاصطناعي. <strong>(2)</strong> صنّف كلاً (محظور / عالي الخطر / محدود / أدنى). <strong>(3)</strong> وثّق الأنظمة التي يستلزم تصنيفها التزامات. <strong>(4)</strong> أنشئ حوكمة مع رفع تقارير للإدارة. <strong>(5)</strong> درّب الفِرق المعنية.</p>`,
+  },
+  {
+    question: "كيف نُفصّل عملياً بين AI Act الأوروبي وNIST AI RMF؟",
+    answerHtml: `<p>ثلاثة مبادئ: <strong>(1)</strong> AI Act = التزامات قانونية (إلزامية في الاتحاد الأوروبي)، NIST RMF = طريقة عملية (طوعية عالمياً، قيّمة جداً). <strong>(2)</strong> استخدم NIST RMF كـ<strong>عمود فقري للعمليات الداخلية</strong> (Govern / Map / Measure / Manage)، وAI Act كـ<strong>شبكة امتثال</strong> للاستخدامات عالية الخطر. <strong>(3)</strong> فصّل مع الحوكمات القائمة (سيبراني، تدقيق، امتثال) بدلاً من إنشاء صومعة ذكاء اصطناعي منفصلة.</p>`,
+  },
+];
+
+const allSections = [
+  { title: 'حول هذا الموقع', items: sectionGeneral },
+  { title: 'المنهجية والمصادر', items: sectionMethod },
+  { title: 'استراتيجية الذكاء الاصطناعي في الأعمال', items: sectionStrategy },
+  { title: 'الحوكمة والامتثال', items: sectionGovernance },
+];
+
+const totalQuestionsThisPage = allSections.reduce((sum, s) => sum + s.items.length, 0);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية للأسئلة الشائعة مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title="الأسئلة الشائعة"
+  description={`الأسئلة الشائعة عن AI Strategy: هوية الموقع، المنهجية، استراتيجية الذكاء الاصطناعي في الأعمال، الحوكمة والامتثال، capstone، المحتوى متعدد اللغات. حوالي 10 أسئلة رئيسية مع إجابات موثَّقة.`}
 >
-  <TranslationPending frenchPagePath="/faq/" />
+  <HeroSecondary
+    surtitle="الأسئلة الشائعة"
+    title="الأسئلة الشائعة"
+    lead={`${totalQuestionsThisPage} سؤالاً رئيسياً أُجيب عنه، منظمة في 4 أقسام موضوعية. كل إجابة تشير إلى المحتوى المعمَّق على الموقع.`}
+  >
+    <span slot="stats">
+      {totalQuestionsThisPage} سؤالاً رئيسياً بالعربية · 20 سؤالاً في النسخة الفرنسية · إجابات مهيكلة · مصادر عامة
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-faq-page">
+    <article class="ai-faq-page__content ai-prose">
+      <section class="ai-faq-intro">
+        <p>
+          تجمع هذه الأسئلة الشائعة الأسئلة الأكثر تكراراً عن الموقع، البرنامج، واستراتيجية
+          الذكاء الاصطناعي في الأعمال. الأسئلة المختارة هنا مترجمة إلى العربية. تحتوي
+          <a href={frFaqUrl}>النسخة الفرنسية</a> على 20 سؤالاً تشمل الأسئلة المتخصصة
+          (مدة capstone، حجم capstone، الخبرة المطلوبة، ترتيب الوحدات، توفر الترجمات،
+          إعادة استخدام المحتوى).
+        </p>
+        <p class="ai-faq-page__fr-link">
+          لم تجد سؤالك هنا؟ انظر <a href={frFaqUrl}>الأسئلة الشائعة الفرنسية الكاملة</a> أو
+          افتح issue على
+          <a href="https://github.com/melafrit/ai-strategy/issues" target="_blank" rel="noopener">GitHub</a>.
+        </p>
+      </section>
+
+      {allSections.map((section) => (
+        <section class="ai-faq-section">
+          <h2>{section.title}</h2>
+          <div class="ai-faq-list">
+            {section.items.map((item) => (
+              <details class="ai-faq-item">
+                <summary class="ai-faq-item__question">{item.question}</summary>
+                <div class="ai-faq-item__answer" set:html={item.answerHtml} />
+              </details>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-faq-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-faq-page__content > section { margin-block: var(--ai-space-6); }
+  .ai-faq-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-4);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+  }
+  .ai-faq-intro p { margin-block: 0 var(--ai-space-2); color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  .ai-faq-intro p:last-child { margin-block-end: 0; }
+  .ai-faq-page__fr-link { font-size: var(--ai-text-sm); color: var(--ai-fg-muted); }
+  .ai-faq-page__fr-link a { color: var(--ai-accent-primary); font-weight: var(--ai-weight-semibold); text-decoration: none; }
+  .ai-faq-page__fr-link a:hover { text-decoration: underline; }
+  .ai-faq-section h2 {
+    font-size: var(--ai-text-xl);
+    margin: 0 0 var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+  .ai-faq-list { display: grid; gap: var(--ai-space-2); }
+  .ai-faq-item {
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+    background: var(--ai-bg-base);
+    overflow: hidden;
+  }
+  .ai-faq-item__question {
+    padding: var(--ai-space-3) var(--ai-space-4);
+    font-weight: var(--ai-weight-semibold);
+    cursor: pointer;
+    list-style: none;
+    color: var(--ai-fg-primary);
+  }
+  .ai-faq-item__question::-webkit-details-marker { display: none; }
+  .ai-faq-item__question::before {
+    content: '+';
+    display: inline-block;
+    margin-inline-end: var(--ai-space-2);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+  }
+  .ai-faq-item[open] .ai-faq-item__question::before { content: '−'; }
+  .ai-faq-item__question:hover { background: var(--ai-bg-subtle); }
+  .ai-faq-item__answer {
+    padding: 0 var(--ai-space-4) var(--ai-space-4);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-faq-item__answer :global(p) { margin: 0 0 var(--ai-space-3); }
+  .ai-faq-item__answer :global(p:last-child) { margin-block-end: 0; }
+  .ai-faq-item__answer :global(ul) { margin: 0 0 var(--ai-space-3); padding-inline-start: var(--ai-space-5); }
+  .ai-faq-item__answer :global(li) { margin-block: var(--ai-space-1); }
+  .ai-faq-item__answer :global(a) { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-faq-item__answer :global(a:hover) { text-decoration: underline; }
+  .ai-faq-item__answer :global(code) {
+    background: var(--ai-bg-subtle);
+    padding: 0 0.3em;
+    border-radius: var(--ai-radius-sm);
+    font-family: var(--ai-font-mono);
+    font-size: 0.9em;
+  }
+</style>

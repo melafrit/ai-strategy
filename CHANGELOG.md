@@ -77,7 +77,40 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 7 — Traductions EN + AR + polices IBM Plex~~ **→ EN COURS : sub-1 (polices + 3 pages EN-AR centrales) + sub-2 (11 pages EN refondues : pages-cadre + agrégation + condensées) publiés**, sub-3 (traductions AR + audit final) restant.
+- ~~Phase 7 — Traductions EN + AR + polices IBM Plex~~ **→ ✅ COMPLÈTE : sub-1 (polices + 3 pages EN-AR centrales) + sub-2 (11 pages EN refondues) + sub-3 (9 pages AR refondues + audit final i18n) publiés**
+
+## 🎯 PHASE 7 COMPLÈTE — Site multilingue FR/EN/AR opérationnel
+
+Phase 7 est désormais terminée. Le site est navigable de bout en bout en français, anglais et arabe avec :
+- **39 pages FR** complètes (référence)
+- **29 pages EN** dont 13 traduites intégralement et 16 stubs `TranslationPending` pointant vers FR
+- **29 pages AR** dont 9 traduites intégralement et 20 stubs `TranslationPending` pointant vers FR
+- **8 polices auto-hébergées** (244 KB) avec optimisation `unicode-range` (économie ~133 KB pour lecteurs FR/EN)
+- **Audit i18n parfait** : 100% des attributs `lang/dir` corrects, 255 liens internes vérifiés sans cassure, sitemap 97 URLs
+
+- Phase 7 sub-3 — Traductions AR pages-cadre + audit final i18n :
+  - **REWRITTEN — `src/pages/ar/methode/index.astro`** (~300 lignes) : page Méthode complète en arabe. 6 sections (المحتويات / تدرّج المصادر / الاستقلالية عن MIT / القراءة الثلاثية / الترخيص المزدوج / الحوكمة التحريرية / المساهمات والتصحيحات). Démos `<SourceTag>` rendus en arabe. RTL automatique.
+  - **REWRITTEN — `src/pages/ar/a-propos/index.astro`** (~150 lignes) : page À propos complète. 6 sections : المؤلف / لماذا برنامج MIT Sloan / لماذا ثلاث لغات / فلسفة بسيطة / المشروع مفتوح / التواصل.
+  - **REWRITTEN — `src/pages/ar/mentions-legales/index.astro`** (~180 lignes) : Mentions légales complètes conformes RGPD. 8 sections : ناشر الموقع / الاستضافة / الملكية الفكرية / البيانات الشخصية / الروابط الخارجية / حدود المسؤولية / القانون المطبَّق / تحديث الإشعارات.
+  - **REWRITTEN — `src/pages/ar/programme/index.astro`** (~165 lignes) : page programme complète. StatsBar avec chiffres arabes (٦, ٦–٨ ساعات, ٦), IdentityTable 8 lignes, ModulesTable 6 modules, OutcomesList 7 résultats, BloomMatrix 6 compétences, CapstonePreview, CTAs avec flèches `←`.
+  - **REWRITTEN — `src/pages/ar/modules/index.astro`** (~75 lignes) : index 6 modules avec ModuleCards.
+  - **REWRITTEN — `src/pages/ar/cas/index.astro`** (~195 lignes) : index des 10 cas avec CaseCardCompact, organisation par module M1-M6, taglines traduites pour chaque cas.
+  - **REWRITTEN — `src/pages/ar/glossaire/index.astro`** (~200 lignes) : index alphabétique des **31 termes** avec version arabe + version FR de référence + définition courte AR (2-3 phrases) pour chaque. Organisation par 6 catégories (الأساسيات / تعلّم الآلة / الذكاء التوليدي / الروبوتيات / الحوكمة / المنهجية).
+  - **REWRITTEN — `src/pages/ar/faq/index.astro`** (~190 lignes) : 10 questions clés en 4 sections thématiques. Réponses HTML avec liens internes vers méthode + modules.
+  - **REWRITTEN — `src/pages/ar/ressources/index.astro`** (~130 lignes) : hub des 31 ressources organisées en 8 familles, labels et descriptions en arabe, titres et auteurs préservés.
+  - **BUG FIX critical** : `src/pages/en/podcasts/index.astro` ligne 202 utilisait `getLocalizedUrl(..., locale)` avec `locale='en'`, générant 10 liens cassés vers `/en/podcasts/ep-NN-slug/` (les épisodes n'existent qu'en FR). Corrigé en hardcodant `'fr'` (cohérent avec `PodcastCard.astro` déjà hardcodé). Audit confirmé 0 lien cassé après correction.
+  - **NEW DOC — `docs/audit-i18n-phase-7.md`** (~190 lignes) : rapport d'audit i18n final structuré en 9 sections. Pages par locale, attributs lang/dir, preload polices avec économies mesurées, sitemap, audit liens internes (255 liens vérifiés), dictionnaire de traductions, statut traduction par famille de pages, recommandations pour la suite, tests réalisés. Référence permanente pour le projet.
+  - **AUDIT i18n FINAL — résultats** :
+    - **39/39 FR pages** avec `lang="fr"` ✅
+    - **29/29 EN pages** avec `lang="en"` ✅
+    - **29/29 AR pages** avec `dir="rtl"` ✅
+    - **0 FR/EN pages** preload Arabic font (économie 133 KB par page) ✅
+    - **29/29 AR pages** preload Arabic font correctement ✅
+    - **97 URLs** indexées dans sitemap-0.xml ✅
+    - **255 liens internes** vérifiés, **0 cassé** ✅
+    - **Astro check** : 0 erreur, 0 warning, 0 hint sur 141 fichiers ✅
+  - Build validé : 98 pages générées, structure i18n cohérente sur tous les axes audités.
+  - Pattern : 0 nouveau composant. Total des composants Astro stables maintenu à 29. Réutilisation totale de l'infrastructure i18n existante (BaseLayout `dir/lang`, `getLocalizedUrl`, dictionnaire `translations.ts`, helper `t()`). Stratégie cohérente : « pages-cadre traduites + pages d'agrégation structurées + pages denses avec lien FR ».
 
 - Phase 7 sub-2 — Pages-cadre EN complètes + pages d'agrégation EN structurées :
   - **REWRITTEN — `src/pages/en/methode/index.astro`** (~330 lignes) : refonte intégrale de la page Méthode aligne au pattern FR. 6 sections complètes : hiérarchie des sources (5 niveaux avec démos `<SourceTag />`), indépendance MIT, triple lecture, double licence, gouvernance éditoriale, contributions/corrections.

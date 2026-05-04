@@ -1,14 +1,201 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'ar';
+
+const cases = [
+  {
+    slug: 'takeda-superminds',
+    moduleNumber: 1,
+    organization: 'Takeda × MIT CCI — برنامج Superminds',
+    sector: 'الصحة / الصيدلانيات',
+    technology: 'الذكاء الجماعي',
+    tagline: "برنامج Superminds الذي تقوده Takeda Pharmaceuticals مع MIT Center for Collective Intelligence يُهيكل فِرقاً مختلطة إنسان-آلة على مشاكل معقّدة في تطوير الأدوية. تطبيق مباشر لإطار Thomas Malone.",
+    available: true,
+  },
+  {
+    slug: 'morgan-stanley',
+    moduleNumber: 1,
+    organization: 'Morgan Stanley — AskResearchGPT وDebrief',
+    sector: 'مالية / مصرفية خاصة',
+    technology: 'LLM + RAG على مجموعة داخلية',
+    tagline: "نشرت Morgan Stanley مساعدَين GenAI لـ ~١٦٠٠٠ مستشار مالي. القيمة لا تأتي من النموذج (GPT-4 من OpenAI) بل من التنسيق: RAG على مجموعة داخلية مُنتقاة + تصعيد بشري + حوكمة.",
+    available: true,
+  },
+  {
+    slug: 'stripe-radar',
+    moduleNumber: 2,
+    organization: 'Stripe Radar',
+    sector: 'مالية / مدفوعات على الإنترنت',
+    technology: 'تعلّم خاضع للإشراف على نطاق واسع',
+    tagline: "تستخدم Stripe نموذج تعلّم آلي خاضع للإشراف مدرَّب على مئات الملايين من المعاملات الموسومة (شرعية / احتيالية) لتسجيل كل معاملة في الزمن الحقيقي. مزيج من إشارات الدفع + تاريخ التاجر + ملاحظات المستخدمين + قواعد الأعمال.",
+    available: true,
+  },
+  {
+    slug: 'mit-barzilay-cancer',
+    moduleNumber: 2,
+    organization: 'بحث MIT — Regina Barzilay (CSAIL)',
+    sector: 'الصحة / التصوير الطبي',
+    technology: 'تعلّم خاضع للإشراف على الصور',
+    tagline: "أعمال MIT CSAIL (Regina Barzilay) على الكشف المبكر عن سرطان الثدي عبر تعلّم الآلة. حالة نموذجية للذكاء الاصطناعي في الصحة: وسم مكلف، إشراف بشري غير قابل للتفاوض، تحقق مستقل قبل أي نشر سريري.",
+    available: true,
+  },
+  {
+    slug: 'github-copilot-accenture',
+    moduleNumber: 3,
+    organization: 'GitHub Copilot × Accenture',
+    sector: 'IT / تطوير البرمجيات',
+    technology: 'مساعدة GenAI على الشيفرة',
+    tagline: "دراسة مشتركة GitHub × Accenture تقيس التأثير الحقيقي لـ Copilot في مؤسسة كبيرة. منهجية عامة: مجموعة معالَجة مقابل مجموعة ضابطة، إنتاجية، جودة الشيفرة، رضا. قابلة للنقل إلى تجارب GenAI أخرى.",
+    available: true,
+  },
+  {
+    slug: 'amazon-robotics',
+    moduleNumber: 4,
+    organization: 'Amazon Robotics — DeepFleet',
+    sector: 'لوجستيك / تجارة إلكترونية',
+    technology: 'روبوتات متنقلة مستقلة (AMR) + ذكاء اصطناعي للتنسيق',
+    tagline: "بلغت Amazon العتبة الرمزية بمليون روبوت منشور في شبكتها اللوجستية العالمية، وأطلقت في 2025 DeepFleet — foundation model مخصص لتنسيق الأسطول. يبقى البشر مركزيين للحكم.",
+    available: true,
+  },
+  {
+    slug: 'universal-robots',
+    moduleNumber: 4,
+    organization: 'Universal Robots — Cobots للمؤسسات الصغيرة والمتوسطة',
+    sector: 'الصناعة التحويلية (PME)',
+    technology: 'Cobots ISO/TS 15066',
+    tagline: "مصنّع دانماركي للـ cobots يوضّح كيف تُجعل الروبوتيات التعاونية في متناول المؤسسات الصغيرة والمتوسطة الصناعية. قابلية إعادة التهيئة، شهادة ISO/TS 15066، سعر شراء أدنى — لكن يبقى الدمج المهيمن في التكلفة الإجمالية.",
+    available: true,
+  },
+  {
+    slug: 'nist-ai-rmf',
+    moduleNumber: 5,
+    organization: 'NIST AI Risk Management Framework',
+    sector: 'معايير وممارسات جيدة (الولايات المتحدة ودولياً)',
+    technology: 'إطار حوكمة عملي',
+    tagline: "إطار أمريكي مرجعي لحوكمة وإدارة مخاطر الذكاء الاصطناعي. أربع وظائف مترابطة: Govern, Map, Measure, Manage. مرجع لهيكلة ميثاق داخلي أو تقييم نضج الحوكمة.",
+    available: true,
+  },
+  {
+    slug: 'ai-act-eu-haut-risque',
+    moduleNumber: 5,
+    organization: 'AI Act EU — تصنيف عالي الخطر',
+    sector: 'تنظيم أوروبي',
+    technology: 'إطار قانوني',
+    tagline: "اللائحة الأوروبية 2024/1689 تتبنى مقاربة قائمة على المخاطر (محظور / عالي الخطر / محدود / أدنى). كثير من الاستخدامات الأعمال «العادية» (موارد بشرية، ائتمان، عدالة) تقع تحت عالي الخطر مع التزامات صارمة.",
+    available: true,
+  },
+  {
+    slug: 'mit-ide',
+    moduleNumber: 6,
+    organization: 'MIT Initiative on the Digital Economy (MIT IDE)',
+    sector: 'بحث أكاديمي تطبيقي',
+    technology: 'استباق استراتيجي مهيكل',
+    tagline: "مبادرة بحث MIT Sloan على مستقبل العمل والاقتصاد الرقمي. نموذج للاستباق الاستراتيجي المهيكل: مزيج من بحث أكاديمي صارم، بيانات تجريبية، وترجمة إلى انعكاسات لصانعي القرار.",
+    available: true,
+  },
+];
+
+const totalCases = cases.length;
+const availableCases = cases.filter((c) => c.available).length;
+
+const moduleLabels: Record<number, string> = {
+  1: 'الوحدة ١ — مقدمة في الذكاء الاصطناعي',
+  2: 'الوحدة ٢ — تعلّم الآلة في الأعمال',
+  3: 'الوحدة ٣ — الذكاء التوليدي في الأعمال',
+  4: 'الوحدة ٤ — الروبوتيات في الأعمال',
+  5: 'الوحدة ٥ — الذكاء الاصطناعي في الأعمال والمجتمع',
+  6: 'الوحدة ٦ — مستقبل الذكاء الاصطناعي',
+};
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية لمركز دراسات الحالة مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن مع 10 دراسات حالة."
+  title="دراسات حالة — الذكاء الاصطناعي في الأعمال"
+  description="عشر دراسات حالة حقيقية لمنظمات تنشر الذكاء الاصطناعي، من cobot الصناعي إلى الذكاء التوليدي، من حوكمة NIST إلى foundation models. كل حالة موثَّقة علنياً ومرتبطة بوحدة من المسار التربوي."
 >
-  <TranslationPending frenchPagePath="/cas/" />
+  <HeroSecondary
+    surtitle="دراسات الحالة"
+    title="عشر حالات حقيقية للذكاء الاصطناعي في الأعمال"
+    lead="عشر دراسات حالة حقيقية، موثَّقة علنياً، توضّح مفاهيم الوحدات الست للمسار. كل حالة تتبع نفس القالب (السياق، المشكلة، حل الذكاء الاصطناعي، الفوائد، الحدود، المخاطر، الدروس الإدارية، أسئلة النقاش، المصادر)."
+  >
+    <span slot="stats">
+      {totalCases} حالات — {availableCases} متاحة · مصادر عامة قابلة للتحقق · مرتبطة بالوحدات
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-cases-page">
+    <section class="ai-section">
+      <div class="ai-cases-intro">
+        <p>
+          كل دراسة حالة تتبنى نفس البنية: <strong>سياق المنظمة</strong>،
+          <strong>المشكلة</strong>، <strong>حل الذكاء الاصطناعي</strong>، <strong>الفوائد الملاحظة</strong>،
+          <strong>الحدود والتحديات</strong>، <strong>المخاطر المحدّدة</strong>، <strong>الدروس الإدارية</strong>،
+          <strong>أسئلة النقاش التربوية</strong>، <strong>الروابط مع الوحدات</strong>،
+          و<strong>المصادر العامة القابلة للتحقق</strong>.
+        </p>
+        <p>
+          الحالات مجمَّعة حسب الوحدة المرتبطة. لا حالة مختلَقة. كل المعلومات الواقعية
+          تستند إلى تواصلات عامة من المنظمة المعنية، أو منشورات أكاديمية، أو معايير
+          رسمية — موثَّقة inline على كل صفحة.
+        </p>
+        <p class="ai-cases-intro__note">
+          <em>الحالات العشر منشورة بالفرنسية. الترجمات العربية للصفحات المفصّلة مخططة لمرحلة لاحقة.
+          في انتظار ذلك، يمكنك قراءة النسخ الكاملة على الصفحات الفرنسية — البطاقات أعلاه ترتبط بها.</em>
+        </p>
+      </div>
+    </section>
+
+    {[1, 2, 3, 4, 5, 6].map((mod) => (
+      <section class="ai-section">
+        <h2 class="ai-section__title">{moduleLabels[mod]}</h2>
+        <div class="ai-cases-grid">
+          {cases
+            .filter((c) => c.moduleNumber === mod)
+            .map((c) => (
+              <CaseCardCompact
+                organization={c.organization}
+                sector={c.sector}
+                technology={c.technology}
+                tagline={c.tagline}
+                href={getLocalizedUrl(`/cas/${c.slug}/`, locale)}
+                available={c.available}
+              />
+            ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="ai-section">
+      <IndependenceNotice variant="block" />
+    </section>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-cases-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-section { margin-block: var(--ai-space-7); }
+  .ai-section__title {
+    font-size: var(--ai-text-xl);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-fg-primary);
+    margin: 0 0 var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+  .ai-cases-intro { max-width: 64rem; }
+  .ai-cases-intro p { margin: 0 0 var(--ai-space-3); line-height: var(--ai-leading-relaxed); color: var(--ai-fg-secondary); }
+  .ai-cases-intro__note {
+    margin-block-start: var(--ai-space-4);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-cases-grid { display: grid; gap: var(--ai-space-4); grid-template-columns: 1fr; }
+  @media (min-width: 60em) { .ai-cases-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>

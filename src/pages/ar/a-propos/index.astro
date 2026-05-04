@@ -1,14 +1,153 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'ar';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية لصفحة «حول» مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title="حول"
+  description="الفريق، المؤلف، وفلسفة مشروع AI Strategy. موقع تربوي مستقل، فرانكوفوني وثلاثي اللغات، مصمم للقياديين والمستشارين والمعلمين."
 >
-  <TranslationPending frenchPagePath="/a-propos/" />
+  <HeroSecondary
+    surtitle="حول"
+    title="الفريق وفلسفة المشروع"
+    lead="هذا الموقع يديره شخص واحد. يُقرّ بذاتيته، بنظرته المتوسطية، وبطموحه: جعل استراتيجية الذكاء الاصطناعي قابلة للقراءة والتشغيل بالفرنسية كما بالإنجليزية والعربية."
+  />
+
+  <article class="ai-container ai-prose ai-about-page">
+    <section>
+      <h2>المؤلف</h2>
+      <p>
+        <strong>محمد العفريت</strong> هو <strong>معلّم، مدرّب، ومستشار</strong> في هندسة
+        البرمجيات، علم البيانات، وإدارة المشاريع وأنظمة المعلومات. هذا الموقع هو ردّه
+        على ملاحظة متكرّرة في المهمات والمحاضرات:
+      </p>
+      <blockquote>
+        المحتوى الجيّد عن الذكاء الاصطناعي للمدراء موجود، لكنه مشتّت، باللغة الإنجليزية،
+        مأجور، أو مغلَّف بخطاب مكاتب الاستشارات. يستحقّ الناطقون بالفرنسية والعربية نقطة
+        دخول مهيكلة، موثّقة، ومجانية.
+      </blockquote>
+      <p>
+        الموقع هو مساهمته الشخصية لسدّ هذه الفجوة. لا يُموَّل من أي راعٍ. لا مكتب
+        استشاري، ولا مدرسة، ولا منظمة ترعى المشروع — إنه خيار تحريري للحفاظ على
+        استقلالية التوصيات.
+      </p>
+    </section>
+
+    <section>
+      <h2>لماذا برنامج MIT Sloan كمرجع</h2>
+      <p>
+        برنامج <em>Artificial Intelligence: Implications for Business Strategy</em> الذي
+        تقدّمه MIT Sloan School of Management وMIT Computer Science and Artificial
+        Intelligence Laboratory يتمتع بميزتَين نادرتَين:
+      </p>
+      <ul>
+        <li>
+          إنه <strong>إداري واستراتيجي بشكل صارم</strong>، وليس تقنياً. يخاطب أُطُراً
+          وقياديين، لا علماء بيانات مستقبليين.
+        </li>
+        <li>
+          إنه <strong>مهيكل وكامل</strong>: ست وحدات تغطي الذكاء الاصطناعي، تعلّم الآلة،
+          الذكاء التوليدي، الروبوتيات، الحوكمة، وبناء خارطة طريق.
+        </li>
+      </ul>
+      <p>
+        هذا يجعله <strong>مرجع إلهام</strong> ممتاز لهيكلة موقع تربوي فرانكوفوني. هذا
+        الموقع ليس نسخة من ذلك البرنامج — إنه مَورد تربوي مستقل يتقاسم روحه وصرامته،
+        لكنه يُطوّر محتواه الخاص بالفرنسية والإنجليزية والعربية، بحالاته الخاصة،
+        وخياراته التربوية الخاصة، وحدوده المُعلَنة (انظر
+        <a href={getLocalizedUrl('/methode/', locale)}>المنهجية</a>).
+      </p>
+    </section>
+
+    <section>
+      <h2>لماذا ثلاث لغات</h2>
+      <p>
+        الذكاء الاصطناعي ليس موضوعاً ناطقاً بالإنجليزية فقط. الرهانات الاستراتيجية،
+        الأخلاقية، والاقتصادية للذكاء الاصطناعي تُطرح في كل مكان، والمحتوى الجيد في كل
+        لغة نادراً ما يَنقص بالصدفة — إنه ينقص لأن لم يأخذ أحد بعد الوقت لإنتاجه.
+      </p>
+      <p>
+        الموقع ثلاثي اللغات بالتزام:
+      </p>
+      <ul>
+        <li>
+          <strong>الفرنسية</strong> — اللغة الرئيسية للمشروع، لغة الكتابة، ولغة المؤلف
+          الأصلية. تُنتج المرحلة 4 الفرنسية أولاً.
+        </li>
+        <li>
+          <strong>الإنجليزية</strong> — للقابلية الدولية للنقل والوصول إلى جمهور أوسع.
+          الترجمة مخططة للمرحلة 7.
+        </li>
+        <li>
+          <strong>العربية</strong> — لأن القياديين والمستشارين والطلاب من المغرب العربي
+          والشرق الأوسط يستحقّون نقطة دخول لائقة. التكافؤ التحريري FR/AR هو التزام،
+          ليس خياراً. الترجمة مخططة للمرحلة 7.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>فلسفة بسيطة</h2>
+      <p>
+        ثلاثة مبادئ تحريرية تُهيكل كل سطر من الموقع:
+      </p>
+      <ol>
+        <li>
+          <strong>لا اختراع.</strong> لا حالة مختلَقة، لا إحصائية مصنوعة، لا اقتباس متخيّل.
+          كل ادعاء واقعي له مصدر قابل للتحقق، يُشار إليه بمكوّن
+          <code>&lt;SourceTag /&gt;</code>.
+        </li>
+        <li>
+          <strong>لا مصطلحات معقّدة.</strong> تُشرح المفاهيم التقنية حين تكون ضرورية لاتخاذ
+          القرار الإداري. الباقي — تفاصيل التنفيذ — لا مكان له هنا.
+        </li>
+        <li>
+          <strong>لا تسويق.</strong> لا وعد مفرط، لا كلمات طنّانة غير مشروحة، لا «حوّل أعمالك
+          بالذكاء الاصطناعي في ٣٠ يوماً». الذكاء الاصطناعي موضوع جدّي يستحقّ صوتاً جدّياً.
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>المشروع مفتوح</h2>
+      <p>
+        الشيفرة والمحتوى عامّان على
+        <a href={githubUrl} rel="noopener noreferrer" target="_blank">GitHub</a>
+        تحت ترخيص مزدوج (انظر <a href={getLocalizedUrl('/methode/', locale)}>المنهجية</a>).
+        كل تصحيح، اقتراح، أو مساهمة مرحَّب بها عبر
+        <a href={`${githubUrl}/issues`} rel="noopener noreferrer" target="_blank">GitHub Issues</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>التواصل</h2>
+      <p>
+        القناة الرسمية هي
+        <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">GitHub Issues</a>.
+        هذا يسمح:
+      </p>
+      <ul>
+        <li>بالاحتفاظ بأثر عام للتبادلات لفائدة قراء آخرين.</li>
+        <li>بتجنّب ضوضاء صندوق بريد مشبع.</li>
+        <li>بإعطاء الأولوية للتصحيحات الواقعية على الطلبات الأخرى.</li>
+      </ul>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  .ai-about-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-about-page section { margin-block: var(--ai-space-7); }
+  .ai-about-page section:first-of-type { margin-block-start: 0; }
+  .ai-about-page blockquote {
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    padding-inline-start: var(--ai-space-4);
+    margin: var(--ai-space-5) 0;
+    color: var(--ai-fg-secondary);
+    font-style: italic;
+  }
+</style>

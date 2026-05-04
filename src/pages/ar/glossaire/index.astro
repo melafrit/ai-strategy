@@ -1,14 +1,201 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
-const locale = 'ar';
+const frGlossaireUrl = getLocalizedUrl('/glossaire/', 'fr');
+
+interface Term {
+  termAR: string;
+  termFR: string;
+  category: 'fundamentals' | 'ml' | 'genai' | 'robotics' | 'governance' | 'methodology';
+  shortDef: string;
+}
+
+const terms: Term[] = [
+  // === Fundamentals ===
+  { termAR: 'الذكاء الاصطناعي (IA)', termFR: 'Intelligence artificielle (IA)', category: 'fundamentals',
+    shortDef: "مجموع التقنيات والأنظمة التي تمكّن الآلات من أداء مهام تتطلب عادةً وظائف معرفية بشرية: الإدراك، الاستدلال، اتخاذ القرار، التعلّم، التواصل." },
+  { termAR: 'الذكاء الاصطناعي الضيق', termFR: 'IA faible (IA étroite)', category: 'fundamentals',
+    shortDef: "ذكاء اصطناعي متخصص في مهمة دقيقة (تعرّف الصور، كشف الاحتيال، الترجمة). لا يمكنه نقل مهارته إلى مجالات أخرى. كل الذكاء الاصطناعي المنشور اليوم هو ذكاء ضيق." },
+  { termAR: 'الذكاء الاصطناعي العام (AGI)', termFR: 'IA générale (AGI)', category: 'fundamentals',
+    shortDef: "ذكاء اصطناعي افتراضي قادر على أداء أي مهمة معرفية يستطيعها الإنسان، بمرونة مماثلة أو متفوّقة. لا يوجد اليوم. موضوع جدل وبحث نشط." },
+  { termAR: 'الذكاء الجماعي', termFR: 'Intelligence collective', category: 'fundamentals',
+    shortDef: "نظام إنسان-آلة حيث يتعاون البشر والذكاء الاصطناعي لإنتاج حلول لا يستطيع أي منهما إنتاجها وحده. إطار طوّره Thomas Malone (MIT CCI)." },
+  { termAR: 'الأتمتة', termFR: 'Automatisation', category: 'fundamentals',
+    shortDef: "استبدال مهمة بشرية بعملية آلية حتمية. سابقة للذكاء الاصطناعي. الذكاء الاصطناعي يُوسّع الأتمتة إلى مهام تتطلب الحكم أو الإدراك أو التعلّم." },
+
+  // === ML ===
+  { termAR: 'تعلّم الآلة (ML)', termFR: 'Machine Learning (ML)', category: 'ml',
+    shortDef: "عائلة من الطرق حيث تتعلم الآلة أداء مهمة من البيانات، بدلاً من برمجتها بقواعد صريحة. أساس معظم الذكاء الاصطناعي المطبَّق حالياً." },
+  { termAR: 'التعلم العميق', termFR: 'Apprentissage profond (Deep Learning)', category: 'ml',
+    shortDef: "تعلّم آلة قائم على شبكات عصبية متعددة الطبقات. مصدر التقدم الكبير في الذكاء الاصطناعي منذ ~2012 (تعرّف الصور، اللغة، التوليد). يتطلب الكثير من البيانات وقوة الحوسبة." },
+  { termAR: 'التعلم الخاضع للإشراف', termFR: 'Apprentissage supervisé', category: 'ml',
+    shortDef: "تعلّم آلة من بيانات موسومة: لكل مثال إجابته المتوقعة. يتعلم النموذج التطابق إدخال-إخراج. مستخدم لكشف الاحتيال، التشخيص الطبي، توقع الانسحاب." },
+  { termAR: 'التعلم غير الخاضع للإشراف', termFR: 'Apprentissage non supervisé', category: 'ml',
+    shortDef: "تعلّم آلة من بيانات غير موسومة: يكتشف النموذج البنى أو التجمعات أو الشذوذات بنفسه. مستخدم لتجزئة العملاء، كشف الشذوذ، التحليل الاستكشافي." },
+  { termAR: 'التعلم بالتعزيز', termFR: 'Apprentissage par renforcement', category: 'ml',
+    shortDef: "تعلّم آلة حيث يتعلم وكيل بالمحاولة والخطأ في بيئة، يتلقى مكافآت. مستخدم في الروبوتيات، الألعاب (AlphaGo)، التحكم الصناعي. أقل نضجاً في الأعمال من ML الخاضع للإشراف." },
+
+  // === GenAI ===
+  { termAR: 'النموذج التوليدي', termFR: 'Modèle génératif', category: 'genai',
+    shortDef: "نموذج تعلّم آلة يُنتج محتوى جديد (نص، صورة، صوت، شيفرة) بتعلّم توزيع بيانات التدريب. على عكس النموذج التمييزي الذي يُصنّف." },
+  { termAR: 'النموذج اللغوي الكبير (LLM)', termFR: 'Grand modèle de langage (LLM)', category: 'genai',
+    shortDef: "نموذج توليدي متخصص في اللغة الطبيعية، مدرَّب على مجموعات نصية ضخمة. أمثلة: GPT-4, Claude, Llama. أساس التطبيقات المحادثاتية وتوليد المحتوى." },
+  { termAR: 'Foundation model', termFR: 'Foundation model', category: 'genai',
+    shortDef: "نموذج كبير عام الغرض مدرَّب على مجموعة واسعة، ثم متخصص عبر fine-tuning أو prompting لمهام متنوعة. المصطلح يغطي LLMs والنماذج متعددة الوسائط." },
+  { termAR: 'الهلوسة', termFR: 'Hallucination', category: 'genai',
+    shortDef: "توليد LLM لمحتوى مقبول ظاهرياً لكنه خاطئ واقعياً. خطر رئيسي في النشر الأعمال. يُخفَّف عبر RAG، المصادر الداخلية، والتحقق البشري." },
+  { termAR: 'RAG (الاسترجاع المعزّز للتوليد)', termFR: 'RAG (Retrieval-Augmented Generation)', category: 'genai',
+    shortDef: "بنية تجمع بين LLM ونظام استرجاع في مجموعة (مثلاً: وثائق داخلية). يُولّد النموذج إجابات مستندة إلى وثائق حقيقية، مقللاً الهلوسة." },
+  { termAR: 'هندسة المُطالَبات (Prompt engineering)', termFR: 'Prompt engineering', category: 'genai',
+    shortDef: "ممارسة صياغة التعليمات لـ LLM للحصول على إجابات جيدة. تخصص ناشئ منذ 2022، قابل للتطبيق على الأفراد وعلى تصميم سير عمل منهجي." },
+  { termAR: 'Fine-tuning', termFR: 'Fine-tuning', category: 'genai',
+    shortDef: "تخصيص foundation model على بيانات محدّدة لتكييفه مع مجال أو مهمة. أقل ضرورة منذ أن أصبح RAG وLLMs الحديثة تعالج كثيراً من الحالات بدون fine-tuning." },
+
+  // === Robotics ===
+  { termAR: 'الروبوتيات', termFR: 'Robotique', category: 'robotics',
+    shortDef: "تخصص الروبوتات — آلات فيزيائية قادرة على تنفيذ مهام. الموجة الحالية تجمع الميكانيك (مستشعرات محسّنة)، البرمجيات (ذكاء اصطناعي للإدراك والقرار)، والاقتصاد (تكلفة منخفضة)." },
+  { termAR: 'الـ Cobot (الروبوت التعاوني)', termFR: 'Cobot (robot collaboratif)', category: 'robotics',
+    shortDef: "روبوت مصمم للعمل في فضاء مشترك مع البشر، مع آليات أمان ملائمة (ISO/TS 15066). تعميم في الـ PME الصناعية منذ ~2010." },
+  { termAR: 'AMR (الروبوت المتنقل المستقل)', termFR: 'AMR (Autonomous Mobile Robot)', category: 'robotics',
+    shortDef: "روبوت متنقل يتحرك باستقلالية في بيئته دون أدلة ثابتة. نشر ضخم في اللوجستيك (Amazon: 1+ مليون AMR في 2025)." },
+
+  // === Governance ===
+  { termAR: 'التحيز الخوارزمي', termFR: 'Biais algorithmique', category: 'governance',
+    shortDef: "تشويه منهجي في قرارات نموذج الذكاء الاصطناعي، غالباً موروث من بيانات التدريب. حرج في الموارد البشرية، الائتمان، العدالة، الصحة. تخفيف عبر التدقيق وإعادة التوازن." },
+  { termAR: 'حوكمة الذكاء الاصطناعي', termFR: 'Gouvernance IA', category: 'governance',
+    shortDef: "مجموع العمليات والأدوار التي تُهيكل قرارات الذكاء الاصطناعي في مؤسسة: أي حالات استخدام، أي إشراف، أي ضوابط. NIST RMF وISO 42001 أُطر مرجعية." },
+  { termAR: 'إدارة مخاطر الذكاء الاصطناعي', termFR: 'AI Risk Management', category: 'governance',
+    shortDef: "تخصص تحديد، تقييم، وتخفيف المخاطر الخاصة بالذكاء الاصطناعي: تقنية، أخلاقية، تنظيمية، سُمعية. مرجع NIST AI RMF (4 وظائف: Govern, Map, Measure, Manage)." },
+  { termAR: 'AI Act الأوروبي', termFR: 'AI Act EU', category: 'governance',
+    shortDef: "اللائحة الأوروبية 2024/1689 على الذكاء الاصطناعي. مقاربة قائمة على المخاطر: محظور / عالي الخطر / محدود / أدنى. دخول تطبيقي تدريجي 2025-2027. خارج الإقليم مثل RGPD." },
+  { termAR: 'القابلية للتفسير', termFR: 'Explicabilité', category: 'governance',
+    shortDef: "قدرة شرح كيف يصل النموذج إلى قراره. مطلوبة من AI Act للاستخدامات عالية الخطر. توتر بين الأداء (نماذج عميقة غالباً black-box) والقابلية للتفسير." },
+  { termAR: 'المساءلة (Accountability)', termFR: 'Accountability (responsabilité)', category: 'governance',
+    shortDef: "تحديد مَن المسؤول عن نظام ذكاء اصطناعي: التصميم، النشر، الإشراف، الاستخدام النهائي. AI Act يميّز المزوّد، الناشر، المستورد/الموزّع بالتزامات متمايزة." },
+  { termAR: 'Human-in-the-loop', termFR: 'Human-in-the-loop', category: 'governance',
+    shortDef: "بنية حيث يُصادق إنسان أو يتحكم في قرارات الذكاء الاصطناعي، خاصة للحالات الحساسة. ممارسة جيدة للاستخدامات عالية التأثير (صحة، عدالة، موارد بشرية)." },
+
+  // === Methodology ===
+  { termAR: 'خارطة طريق الذكاء الاصطناعي', termFR: 'Roadmap IA', category: 'methodology',
+    shortDef: "خطة مهيكلة لدمج الذكاء الاصطناعي في مؤسسة، عادةً 12-24 شهراً. 5 أبعاد: رؤية، حوكمة، مهارات، بنية تحتية، مؤشرات أداء. مُنتَج المشروع الختامي للبرنامج." },
+  { termAR: 'تجربة الذكاء الاصطناعي (Pilote)', termFR: 'Pilote IA', category: 'methodology',
+    shortDef: "مشروع بنطاق محدود لاختبار ملاءمة وجدوى حالة استخدام ذكاء اصطناعي قبل التعميم. غالباً يُخلط بـ PoC: التجربة لها معايير نجاح قابلة للقياس، PoC يستكشف." },
+  { termAR: 'Capstone (المشروع الختامي المُدمج)', termFR: 'Capstone (projet final intégrateur)', category: 'methodology',
+    shortDef: "مشروع ختامي مُدمج لبرنامج. هنا: بناء خارطة طريق ذكاء اصطناعي لمؤسسة، يحشد الوحدات الست. قابل للدفاع في تنفيذي أو في مهمة استشارية." },
+];
+
+const categoryLabelsAR: Record<Term['category'], string> = {
+  fundamentals: 'الأساسيات',
+  ml: 'تعلّم الآلة',
+  genai: 'الذكاء التوليدي',
+  robotics: 'الروبوتيات',
+  governance: 'الحوكمة والأخلاقيات',
+  methodology: 'المنهجية والمشروع',
+};
+
+const categoryDescriptionsAR: Record<Term['category'], string> = {
+  fundamentals: 'مفاهيم تؤطّر الذكاء الاصطناعي بشكل عام — تعريف، ضيق مقابل عام، أتمتة، ذكاء جماعي.',
+  ml: 'تعلّم الآلة — خاضع للإشراف، غير خاضع، بالتعزيز، تعلّم عميق.',
+  genai: 'الذكاء التوليدي — LLMs، foundation models، RAG، prompts، هلوسات، fine-tuning.',
+  robotics: 'الروبوتيات الصناعية، cobotics، روبوتات متنقلة مستقلة.',
+  governance: 'إدارة المخاطر، AI Act الأوروبي، NIST RMF، تحيزات، مساءلة، قابلية للتفسير.',
+  methodology: 'مصطلحات مشروع ذكاء اصطناعي — تجربة، خارطة طريق، capstone.',
+};
+
+const orderedCategories: Term['category'][] = [
+  'fundamentals', 'ml', 'genai', 'robotics', 'governance', 'methodology',
+];
+
+const totalTerms = terms.length;
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية للمسرد مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title={`القاموس — ${totalTerms} مصطلحاً أساسياً`}
+  description={`قاموس ${totalTerms} مصطلحاً أساسياً للذكاء الاصطناعي في الأعمال، منظماً في 6 فئات: الأساسيات، تعلّم الآلة، الذكاء التوليدي، الروبوتيات، الحوكمة، المنهجية. تعريفات قصيرة بالعربية؛ تعريفات مفصّلة بالفرنسية مرتبطة.`}
 >
-  <TranslationPending frenchPagePath="/glossaire/" />
+  <HeroSecondary
+    surtitle="القاموس"
+    title={`${totalTerms} مصطلحاً أساسياً للذكاء الاصطناعي`}
+    lead={`تعريفات قصيرة لـ ${totalTerms} مصطلحاً منظمة في 6 فئات. التعريفات المفصّلة (مع أمثلة وإحالات متبادلة) موجودة في النسخة الفرنسية.`}
+  >
+    <span slot="stats">{totalTerms} مصطلحاً · 6 فئات · تعريفات قصيرة بالعربية · تعريفات مفصّلة بالفرنسية مرتبطة</span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-glossary-page">
+    <article class="ai-prose">
+      <section class="ai-glossary-intro">
+        <p>
+          يجمع هذا القاموس الـ {totalTerms} مصطلحاً اللازمة للتنقل في البرنامج بأريحية.
+          التعريفات العربية المعروضة هنا <strong>قصيرة</strong> — تُعطيك الجوهر في 2-3 جمل.
+          للحصول على <strong>تعريفات مفصّلة</strong> (مع أمثلة، أخطاء شائعة، إحالات متبادلة)،
+          انظر <a href={frGlossaireUrl}>النسخة الفرنسية</a>.
+        </p>
+      </section>
+
+      {orderedCategories.map((cat) => {
+        const list = terms.filter((t) => t.category === cat);
+        return (
+          <section class="ai-glossary-section">
+            <header class="ai-glossary-section__head">
+              <h2>{categoryLabelsAR[cat]}</h2>
+              <p>{categoryDescriptionsAR[cat]} <span class="ai-glossary-section__count">({list.length} مصطلحاً)</span></p>
+            </header>
+            <dl class="ai-glossary-list">
+              {list.map((t) => (
+                <div class="ai-glossary-item">
+                  <dt>
+                    <strong>{t.termAR}</strong>
+                    <span class="ai-glossary-item__fr"> — <em>{t.termFR}</em></span>
+                  </dt>
+                  <dd>{t.shortDef}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        );
+      })}
+
+      <IndependenceNotice variant="block" />
+    </article>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-glossary-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-glossary-intro {
+    background: var(--ai-bg-subtle);
+    padding: var(--ai-space-4);
+    border-radius: var(--ai-radius-md);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    margin-block-end: var(--ai-space-7);
+  }
+  .ai-glossary-intro p { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  .ai-glossary-intro a { color: var(--ai-accent-primary); font-weight: var(--ai-weight-semibold); text-decoration: none; }
+  .ai-glossary-intro a:hover { text-decoration: underline; }
+  .ai-glossary-section { margin-block: var(--ai-space-7); }
+  .ai-glossary-section__head {
+    margin-block-end: var(--ai-space-4);
+    padding-block-end: var(--ai-space-2);
+    border-block-end: 2px solid var(--ai-accent-primary);
+  }
+  .ai-glossary-section__head h2 { margin: 0 0 var(--ai-space-2); font-size: var(--ai-text-xl); color: var(--ai-fg-primary); }
+  .ai-glossary-section__head p { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); font-size: var(--ai-text-sm); }
+  .ai-glossary-section__count { color: var(--ai-fg-muted); }
+  .ai-glossary-list { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-glossary-item {
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-sm);
+  }
+  .ai-glossary-item dt { margin-block-end: var(--ai-space-1); color: var(--ai-fg-primary); }
+  .ai-glossary-item__fr {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-normal);
+  }
+  .ai-glossary-item dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+</style>

@@ -1,14 +1,183 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'ar';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية لصفحة الإشعارات القانونية مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title="إشعارات قانونية"
+  description="الإشعارات القانونية لموقع AI Strategy: الناشر، الاستضافة، الملكية الفكرية، البيانات الشخصية، ملفات تعريف الارتباط، التواصل، القانون المطبَّق."
 >
-  <TranslationPending frenchPagePath="/mentions-legales/" />
+  <HeroSecondary
+    surtitle="إشعارات قانونية"
+    title="الإشعارات القانونية وسياسة الخصوصية"
+    lead="تجمع هذه الصفحة المعلومات القانونية الإلزامية (RGPD، القانون الفرنسي) عن نشر الموقع، استضافته، الملكية الفكرية، والبيانات الشخصية."
+  >
+    <span slot="stats">آخر تحديث: انظر سجل التغييرات</span>
+  </HeroSecondary>
+
+  <article class="ai-container ai-prose ai-legal-page">
+    <section>
+      <h2>١. ناشر الموقع</h2>
+      <p>
+        يُنشَر هذا الموقع <strong>بصفة شخصية ومستقلة</strong> من قِبل:
+      </p>
+      <ul>
+        <li><strong>محمد العفريت</strong></li>
+        <li>معلّم، مدرّب، ومستشار مستقل</li>
+        <li>للتواصل الرسمي:
+          <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">
+            GitHub Issues
+          </a>
+          (القناة الرسمية)
+        </li>
+      </ul>
+      <p>
+        الموقع ليس خدمة تجارية، لا يقدّم أي معاملة، ولا يطلب أي تسجيل للوصول إلى محتواه.
+      </p>
+    </section>
+
+    <section>
+      <h2>٢. الاستضافة</h2>
+      <p>
+        الموقع مستضاف من قبل <strong>OVH SAS</strong>، شركة فرنسية للحوسبة السحابية:
+      </p>
+      <ul>
+        <li>OVH SAS · 2 rue Kellermann · 59100 Roubaix · فرنسا</li>
+        <li>RCS Lille Métropole 424 761 419</li>
+        <li>الهاتف: 1007</li>
+        <li>الموقع: <a href="https://www.ovhcloud.com" rel="noopener noreferrer" target="_blank">www.ovhcloud.com</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>٣. الملكية الفكرية</h2>
+
+      <h3>الشيفرة المصدرية</h3>
+      <p>
+        كامل الشيفرة المصدرية للموقع منشورة على
+        <a href={githubUrl} rel="noopener noreferrer" target="_blank">مستودع GitHub العام</a>
+        تحت <strong>ترخيص MIT</strong>. انظر ملف
+        <a href={`${githubUrl}/blob/main/LICENSE-CODE`} rel="noopener noreferrer" target="_blank">LICENSE-CODE</a>.
+      </p>
+
+      <h3>المحتوى التربوي</h3>
+      <p>
+        كامل المحتوى التربوي (نصوص، ملفات، مخططات، اختبارات، قاموس، مشروع ختامي) منشور
+        تحت <strong>ترخيص Creative Commons Attribution – NonCommercial – ShareAlike 4.0
+        International (CC BY-NC-SA 4.0)</strong>. انظر ملف
+        <a href={`${githubUrl}/blob/main/LICENSE-CONTENT`} rel="noopener noreferrer" target="_blank">LICENSE-CONTENT</a>.
+      </p>
+
+      <h3>العلامات التجارية للأطراف الثالثة</h3>
+      <p>
+        أسماء الشركات والمنظمات والمؤسسات المذكورة على الموقع (لا سيما Massachusetts
+        Institute of Technology، MIT Sloan School of Management، MIT CSAIL، فضلاً عن
+        المنظمات الواردة في دراسات الحالة) هي <strong>علامات تجارية لأصحابها
+        المعنيّين</strong>. الاستشهاد بها على هذا الموقع يندرج تحت <strong>الاستخدام
+        الاسمي والوصفي</strong> المتوافق مع الاستثناء الفرنسي (المادة L. 713-3 من قانون
+        الملكية الفكرية) ومع مذهب <em>fair use</em> الاسمي.
+      </p>
+      <p>
+        الموقع <strong>غير منتسب ولا معتمد ولا مصدّق</strong> من MIT أو MIT Sloan أو
+        MIT CSAIL (انظر <a href={getLocalizedUrl('/methode/', locale)}>المنهجية</a>،
+        القسم ٢). كل علامة مستخدمة مذكورة لأغراض المرجع التربوي.
+      </p>
+    </section>
+
+    <section>
+      <h2>٤. البيانات الشخصية وRGPD</h2>
+
+      <h3>المبدأ: لا جمع افتراضياً</h3>
+      <p>
+        صُمّم هذا الموقع لـ<strong>احترام خصوصيتك افتراضياً</strong>. على الصعيد العملي:
+      </p>
+      <ul>
+        <li><strong>لا حساب مستخدم</strong> يُنشأ. لا تسجيل مطلوب للوصول إلى المحتوى.</li>
+        <li><strong>لا ملفات تعريف ارتباط للتتبع</strong>. لا Google Analytics، لا
+          Facebook Pixel، لا خدمة طرف ثالث لقياس الجمهور.</li>
+        <li><strong>لا بيانات شخصية</strong> تُطلب أو تُجمع أو تُخزّن من جهة الخادم.</li>
+      </ul>
+
+      <h3>التخزين المحلي للمتصفح (الاختبارات)</h3>
+      <p>
+        تستخدم اختبارات الموقع <strong>localStorage للمتصفح</strong> للاحتفاظ بتقدّمك
+        ودرجاتك. هذه البيانات:
+      </p>
+      <ul>
+        <li>تبقى <strong>فقط في متصفحك</strong>، على جهازك.</li>
+        <li><strong>لا تُنقل أبداً</strong> إلى أي خادم (لا خادمنا ولا أي طرف ثالث).</li>
+        <li>يمكن <strong>محوها في أي وقت</strong> عبر زر «إعادة تعيين تقدّمي» في صفحة
+          الاختبار، أو عبر إعدادات متصفحك.</li>
+      </ul>
+
+      <h3>سجلات الخادم</h3>
+      <p>
+        قد يحتفظ المستضيف OVH بسجلات تقنية (سجلات HTTP) لأغراض الأمن والتشخيص، وفقاً
+        للالتزامات القانونية الفرنسية. تحتوي هذه السجلات عادةً على: عنوان IP، تاريخ
+        ووقت الطلب، URL المطلوب، رمز HTTP المُعاد، نوع المتصفح. يحتفظ بها OVH لمدة
+        محدودة وفق سياسته الخاصة.
+      </p>
+
+      <h3>حقوقك في إطار RGPD</h3>
+      <p>
+        في غياب جمع البيانات الشخصية من جهتنا على الخادم، حقوق RGPD (الوصول، التصحيح،
+        المحو، النقل، الاعتراض) لا تستوجب أي طلب محدّد إلينا. لسجلات المستضيف، توجّه
+        مباشرةً إلى OVH.
+      </p>
+    </section>
+
+    <section>
+      <h2>٥. الروابط الخارجية</h2>
+      <p>
+        يحتوي الموقع على روابط نحو موارد خارجية (مواقع MIT المؤسسية، NIST، OECD،
+        منشورات أكاديمية، تواصلات شركات مذكورة في دراسات الحالة). تُقدَّم هذه الروابط
+        لأغراض تربوية ومرجعية. لا سيطرة لنا على محتوى هذه المواقع الخارجية ونُخلي
+        مسؤوليتنا من محتواها أو توفّرها أو ممارساتها الخاصة في الخصوصية.
+      </p>
+    </section>
+
+    <section>
+      <h2>٦. حدود المسؤولية</h2>
+      <p>
+        محتوى هذا الموقع مُقدَّم لأغراض <strong>تربوية ومعلوماتية</strong>. لا يُشكّل
+        نصيحة قانونية، ولا نصيحة مالية، ولا نصيحة استراتيجية موجّهة إلى منظمة محدّدة.
+        الخيارات التي يتخذها القرّاء بناءً على محتوى هذا الموقع تقع تحت مسؤوليتهم
+        الكاملة.
+      </p>
+      <p>
+        رغم تطبيق أكبر صرامة في إنتاج المحتوى (انظر
+        <a href={getLocalizedUrl('/methode/', locale)}>المنهجية</a>)، لا يمكن إعطاء أي
+        ضمان للشمولية أو لانعدام الخطأ. لأي تصحيح واقعي، افتح
+        <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">issue على GitHub</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>٧. القانون المطبَّق والاختصاص القضائي</h2>
+      <p>
+        الموقع منشور في فرنسا. هذه الوثيقة محكومة بالقانون الفرنسي. كل نزاع متعلق
+        بتفسيرها أو تطبيقها يندرج تحت اختصاص المحاكم الفرنسية.
+      </p>
+    </section>
+
+    <section>
+      <h2>٨. تحديث الإشعارات القانونية</h2>
+      <p>
+        يمكن تحديث الإشعارات القانونية في أي وقت. النسخة الحالية متاحة على هذه الصفحة.
+        تاريخ التعديلات قابل للتتبع في
+        <a href={`${githubUrl}/blob/main/CHANGELOG.md`} rel="noopener noreferrer" target="_blank">سجل التغييرات</a>
+        وفي تاريخ Git للمستودع.
+      </p>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  .ai-legal-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-legal-page section { margin-block: var(--ai-space-7); }
+  .ai-legal-page section:first-of-type { margin-block-start: 0; }
+</style>

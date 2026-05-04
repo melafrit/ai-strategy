@@ -199,7 +199,7 @@ const programmeUrl = getLocalizedUrl('/programme/', locale);
               {episode.number.toString().padStart(2, '0')}
             </span>
             <a
-              href={getLocalizedUrl(`/podcasts/${episode.slug}/`, locale)}
+              href={getLocalizedUrl(`/podcasts/${episode.slug}/`, 'fr')}
               class="ai-podcasts-series-link"
             >
               <strong>{episode.title}</strong>

@@ -1,14 +1,306 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'ar';
+const githubUrl = 'https://github.com/melafrit/ai-strategy';
+const githubDocsUrl = `${githubUrl}/tree/main/docs`;
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="الترجمة العربية لصفحة المنهجية مخططة للمرحلة 7. النسخة الفرنسية متاحة الآن."
+  title="المنهجية والاستقلالية"
+  description="كيف صُمِّم هذا الموقع: تدرّج المصادر، الاستقلالية عن MIT، القراءة الثلاثية، الترخيص المزدوج، الحوكمة التحريرية."
 >
-  <TranslationPending frenchPagePath="/methode/" />
+  <HeroSecondary
+    surtitle="المنهجية"
+    title="كيف صُمِّم هذا الموقع"
+    lead="تَحكم هذا الموقعَ أربعة مبادئ تحريرية، تُطبَّق على كل صفحة، قابلة للتحقق ومتاحة للتدقيق على GitHub. تُفصِّلها هذه الصفحة."
+  >
+    <span slot="stats">حوالي 12 دقيقة قراءة · يُحدَّث مع كل التزام</span>
+  </HeroSecondary>
+
+  <article class="ai-container ai-prose ai-method-page">
+    <nav class="ai-method-toc" aria-label="جدول المحتويات">
+      <h2>المحتويات</h2>
+      <ol>
+        <li><a href="#hierarchie-sources">١. تدرّج المصادر بشكل مرئي</a></li>
+        <li><a href="#independance">٢. الاستقلالية عن MIT</a></li>
+        <li><a href="#triple-lecture">٣. القراءة الثلاثية</a></li>
+        <li><a href="#double-licence">٤. الترخيص المفتوح المزدوج</a></li>
+        <li><a href="#gouvernance">٥. الحوكمة التحريرية</a></li>
+        <li><a href="#contributions">٦. المساهمات والتصحيحات</a></li>
+      </ol>
+    </nav>
+
+    <section id="hierarchie-sources">
+      <h2>١. تدرّج المصادر بشكل مرئي</h2>
+      <p>
+        كل ادعاء واقعي على هذا الموقع موسوم بـ<strong>مستوى دليله</strong>. خمسة مستويات
+        محدّدة، بترميز بصري ثابت. يمكنك دائماً معرفة ما إذا كانت المعلومة من مصدر
+        رسمي، أو مكمّل ذي صلة بـ MIT، أو إعادة بناء تربوية، أو مصدر خارجي قابل
+        للتحقق، أو لا تزال بحاجة إلى تحقق.
+      </p>
+
+      <h3>المستويات الخمسة</h3>
+      <div class="ai-source-demo">
+        <SourceTag
+          level="official-mit"
+          sourceTitle="الصفحة الرسمية لبرنامج MIT Sloan Executive Education"
+          sourceUrl="https://executive.mit.edu/course/artificial-intelligence/a056g00000URaa3AAD.html"
+          accessedAt="2026-04-30"
+        />
+        <p class="ai-source-demo__note">
+          <strong>مصدر رسمي من MIT.</strong> يأتي من صفحات MIT Sloan Executive Education،
+          أو الجدول الزمني الرسمي، أو التواصلات العامة من هيئة التدريس في MIT. أعلى مستوى
+          من الدليل.
+        </p>
+
+        <SourceTag
+          level="recommended-complement"
+          sourceTitle="MIT Sloan Ideas Made to Matter"
+          sourceUrl="https://mitsloan.mit.edu/ideas-made-to-matter"
+          accessedAt="2026-04-30"
+        />
+        <p class="ai-source-demo__note">
+          <strong>مكمّل موصى به.</strong> مصادر MIT أو ذات صلة بـ MIT (MIT Sloan،
+          MIT News، MIT OpenCourseWare، MIT Center for Collective Intelligence). متّسقة
+          مع البرنامج لكنها ليست في صلبه الرسمي.
+        </p>
+
+        <SourceTag level="pedagogical-reconstruction" />
+        <p class="ai-source-demo__note">
+          <strong>إعادة بناء تربوية.</strong> حين لا تكون المعلومة مفصّلة علنياً من قبل
+          MIT (مثلاً: الطبيعة الدقيقة لتمرين في وحدة)، نُعيد بناءها بحذر من مصادر عامة
+          متّسقة مع روح البرنامج. هذه الإعادات يُشار إليها دائماً ولا تُقدَّم أبداً
+          كرسمية.
+        </p>
+
+        <SourceTag
+          level="external-verifiable"
+          sourceTitle="NIST AI Risk Management Framework"
+          sourceUrl="https://www.nist.gov/itl/ai-risk-management-framework"
+          accessedAt="2026-04-30"
+        />
+        <p class="ai-source-demo__note">
+          <strong>مصدر خارجي قابل للتحقق.</strong> معايير عامة (NIST، OECD، AI Act)،
+          منشورات أكاديمية، تواصلات رسمية للشركات، أوراق عمل معترف بها. قابلة للتحقق
+          من قبل أي قارئ.
+        </p>
+
+        <SourceTag level="to-verify" />
+        <p class="ai-source-demo__note">
+          <strong>بحاجة إلى تحقق.</strong> معلومة لم يستقر مصدرها بعد أو تستحق مراجعة
+          محدّدة. حاضرة مؤقتاً خلال التوحيد التحريري، لا تكون أبداً في الإنتاج المستقر.
+        </p>
+      </div>
+
+      <h3>التبعة العملية</h3>
+      <p>
+        مكوّن <code>&lt;SourceTag /&gt;</code> مستخدم في كل مكان: صفحات الوحدات،
+        دراسات الحالة، القاموس، المشروع الختامي. لا يُنشَر أي ادعاء واقعي بدون مستواه
+        المرتبط. إذا لاحظت استثناء، فهذا خطأ — أبلغ عنه عبر
+        <a href={`${githubUrl}/issues`} rel="noopener noreferrer" target="_blank">GitHub Issues</a>.
+      </p>
+    </section>
+
+    <section id="independance">
+      <h2>٢. الاستقلالية عن MIT</h2>
+
+      <IndependenceNotice variant="block" />
+
+      <p>
+        هذا الموقع غير منتسب ولا معتمد ولا مصدّق من معهد ماساتشوستس للتكنولوجيا، ولا
+        من MIT Sloan School of Management، ولا من MIT Computer Science and Artificial
+        Intelligence Laboratory (CSAIL). إنه <strong>مَورد تربوي مستقل</strong>،
+        صَمَّمه ويعتني به محمد العفريت (انظر
+        <a href={getLocalizedUrl('/a-propos/', locale)}>صفحة «حول»</a>)، مستوحى من
+        المواضيع العامة لبرنامج MIT Sloan
+        <em>Artificial Intelligence: Implications for Business Strategy</em>.
+      </p>
+
+      <h3>ما نَستشهد به</h3>
+      <p>
+        نستشهد صراحةً ببرنامج MIT كمصدر إلهام ومرجع تربوي. نُحيل إلى صفحاته الرسمية
+        العامة (صفحة المقرّر، الجدول الزمني، تواصلات MIT Sloan Ideas Made to Matter،
+        MIT OpenCourseWare) عندما تُلقي الضوء على نقطة من المحتوى.
+      </p>
+
+      <h3>ما لا نُعيد إنتاجه</h3>
+      <p>
+        لا يُنسخ على هذا الموقع أي محتوى مملوك لـ MIT: لا المنهج الداخلي، ولا الفيديوهات،
+        ولا مواد المقرّر، ولا التقييمات الرسمية، ولا الشهادات. المحتوى المُنتَج هنا
+        <strong>أصلي</strong>، مكتوب بالفرنسية، مُهيكل وفق خياراتنا التربوية الخاصة،
+        ومنشور تحت ترخيص مفتوح متمايز (انظر القسم ٤).
+      </p>
+
+      <h3>لماذا هذه الاستقلالية</h3>
+      <p>
+        ثلاثة أسباب:
+      </p>
+      <ul>
+        <li><strong>الأمانة.</strong> ليست لدينا سلطة تمثيل MIT، فلا نَفعل.</li>
+        <li><strong>الحرية التحريرية.</strong> يمكننا الإثراء، إعادة التأطير،
+          والتكييف مع السياقَين الفرانكوفوني والعربي دون طلب إذن.</li>
+        <li><strong>الأمان القانوني.</strong> الانتساب غير المرخّص سيكون انتهاكاً
+          لحقوق MIT وخطراً على مستخدمي الموقع (الذين قد يظنّون أنهم معتمدون).</li>
+      </ul>
+    </section>
+
+    <section id="triple-lecture">
+      <h2>٣. القراءة الثلاثية</h2>
+      <p>
+        صُمِّم الموقع لـ<strong>ثلاثة جماهير في آن واحد</strong>، لا تتشارك نفس الوقت،
+        ولا نفس الاحتياجات، ولا نفس عمق الخبرة. بدلاً من إنتاج ثلاث نسخ منفصلة، تُهَيكَل
+        كل صفحة لتقديم ثلاثة مستويات قراءة.
+      </p>
+      <ol>
+        <li>
+          <strong>الملخص التنفيذي — ٣ إلى ٥ دقائق.</strong> إطار مخصص في أعلى كل صفحة
+          وحدة. يسمح للقيادي بتأطير موضوع في اجتماع دون قراءة الباقي.
+        </li>
+        <li>
+          <strong>المحتوى التربوي — ٢٥ إلى ٤٥ دقيقة.</strong> متن الصفحة: الأهداف،
+          المفاهيم، الأخطاء الشائعة، حالة حقيقية، نشاط، اختبار، قائمة مراجعة. لمن يريد
+          أن يفهم ويطبّق.
+        </li>
+        <li>
+          <strong>الملاحق العملية — استخدام في مهام.</strong> قوالب، مصفوفات، ملفات
+          PDF، canvases، شبكات تقييم. قابلة للتنزيل، التعديل، الاستشهاد. للاستشاري في
+          مهمة أو للمعلّم في تحضير مقرّر.
+        </li>
+      </ol>
+      <p>
+        المستويات الثلاثة قابلة للقراءة باستقلالية. لن تحتاج أبداً إلى قراءة المحتوى
+        التربوي لفهم الملخص، ولا الملاحق لفهم المحتوى التربوي. يمكنك أخذ ما يخدم
+        حاجتك.
+      </p>
+    </section>
+
+    <section id="double-licence">
+      <h2>٤. الترخيص المفتوح المزدوج</h2>
+      <p>
+        يستخدم المشروع <strong>ترخيصَين متمايزَين</strong> حسب طبيعة ما يُشارَك.
+      </p>
+
+      <h3>الشيفرة المصدرية — ترخيص MIT</h3>
+      <p>
+        كل الشيفرة (مكوّنات Astro، ملفات الإعداد، السكربتات) تحت
+        <a href={`${githubUrl}/blob/main/LICENSE-CODE`} rel="noopener noreferrer" target="_blank">ترخيص MIT</a>.
+        يمكنك استخدامها بحرية، بما في ذلك تجارياً، شريطة الحفاظ على الإسناد. هو
+        الترخيص الأكثر تساهلاً في عالم المصدر المفتوح.
+      </p>
+
+      <h3>المحتوى التربوي — CC BY-NC-SA 4.0</h3>
+      <p>
+        كل المحتوى التحريري (صفحات، وحدات، دراسات حالة، قاموس، أسئلة شائعة، ملفات PDF)
+        تحت
+        <a href={`${githubUrl}/blob/main/LICENSE-CONTENT`} rel="noopener noreferrer" target="_blank">ترخيص Creative Commons BY-NC-SA 4.0</a>.
+        يمكنك:
+      </p>
+      <ul>
+        <li><strong>مشاركته</strong> بحرية، بما في ذلك في المقررات، داخلياً، أو في المهمات.</li>
+        <li><strong>تعديله</strong> وتكييفه مع سياقك.</li>
+        <li>لكن ضمن <strong>ثلاثة شروط</strong>:
+          <ul>
+            <li><strong>الإسناد (BY)</strong>: استشهد بالمصدر (رابط للموقع وذِكر للمؤلف).</li>
+            <li><strong>غير تجاري (NC)</strong>: لا إعادة بيع، لا استخدام تجاري مباشر.</li>
+            <li><strong>المشاركة بنفس الشروط (SA)</strong>: إذا نشرت تعديلاتك،
+              فبنفس الترخيص.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section id="gouvernance">
+      <h2>٥. الحوكمة التحريرية</h2>
+      <p>
+        الموقع مكتوب من قبل مؤلف وحيد (انظر
+        <a href={getLocalizedUrl('/a-propos/', locale)}>صفحة «حول»</a>). يخضع لإصدار على
+        GitHub وكل تعديل يمر عبر التزام قابل للتتبع.
+      </p>
+
+      <h3>الإصدار</h3>
+      <ul>
+        <li>الشيفرة والمحتوى على نفس
+          <a href={githubUrl} rel="noopener noreferrer" target="_blank">المستودع العام</a>.</li>
+        <li>الالتزامات تتبع
+          <a href="https://www.conventionalcommits.org/en/v1.0.0/" rel="noopener noreferrer" target="_blank">Conventional Commits</a>.</li>
+        <li>
+          <a href={`${githubUrl}/blob/main/CHANGELOG.md`} rel="noopener noreferrer" target="_blank">سجل التغييرات</a>
+          يُتتبَّع كل التطورات الملحوظة.
+        </li>
+      </ul>
+
+      <h3>الوثائق الداخلية</h3>
+      <p>
+        كل الوثائق التربوية والتقنية في مجلد
+        <a href={githubDocsUrl} rel="noopener noreferrer" target="_blank">/docs</a>
+        من المستودع.
+      </p>
+    </section>
+
+    <section id="contributions">
+      <h2>٦. المساهمات والتصحيحات</h2>
+      <p>
+        كل تصحيح، اقتراح، أو مساهمة مرحَّب بها.
+      </p>
+      <ul>
+        <li>
+          <strong>خطأ واقعي أو خطأ في مصدر؟</strong>
+          <a href={`${githubUrl}/issues/new`} rel="noopener noreferrer" target="_blank">افتح issue على GitHub</a>
+          مع توضيح الصفحة المعنية والمصدر الذي يناقض.
+        </li>
+        <li>
+          <strong>اقتراح تحسين تربوي؟</strong> نفس الشيء، افتح issue مع وسم
+          <code>enhancement</code>.
+        </li>
+      </ul>
+
+      <h3>الاستجابة</h3>
+      <p>
+        تُعالَج issues حسب الترتيب. الصيانة طوعية، فقد يتراوح زمن الاستجابة من أيام إلى
+        أسابيع. تصحيحات الوقائع لها الأولوية.
+      </p>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  .ai-method-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-method-toc {
+    margin-block-end: var(--ai-space-7);
+    padding: var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-md);
+    border: 1px solid var(--ai-border-subtle);
+  }
+  .ai-method-toc h2 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-sm);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-method-toc ol { margin: 0; padding-inline-start: var(--ai-space-5); }
+  .ai-method-toc li { margin-block: var(--ai-space-1); }
+  .ai-method-toc a { color: var(--ai-fg-primary); text-decoration: none; }
+  .ai-method-toc a:hover, .ai-method-toc a:focus-visible {
+    color: var(--ai-accent-primary);
+    text-decoration: underline;
+  }
+  .ai-method-page section { margin-block: var(--ai-space-8); }
+  .ai-method-page section:first-of-type { margin-block-start: 0; }
+  .ai-source-demo {
+    display: grid;
+    gap: var(--ai-space-2);
+    margin-block: var(--ai-space-5);
+  }
+  .ai-source-demo__note {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+    padding-inline-start: var(--ai-space-4);
+  }
+</style>
