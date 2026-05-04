@@ -79,6 +79,17 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
 - ~~Phase 7 — Traductions EN + AR + polices IBM Plex~~ **→ ✅ COMPLÈTE : sub-1 (polices + 3 pages EN-AR centrales) + sub-2 (11 pages EN refondues) + sub-3 (9 pages AR refondues + audit final i18n) publiés**
 
+## 🌍 Post-Phase 7 — Approfondissement des traductions EN
+
+Approfondissement des traductions EN au-delà du périmètre Phase 7. Modules de fond traduits intégralement avec leurs quiz, à la demande.
+
+- **NEW — `src/content/quizzes/module-1-en.ts`** (~145 lignes) : version anglaise du quiz Module 1. Mêmes 7 questions, mêmes options, mêmes correctIndex, mêmes scoring bands que le quiz FR — seul le contenu naturel est traduit. Pattern réutilisable pour les modules suivants.
+- **REWRITTEN — `src/pages/en/modules/01-introduction-ia/index.astro`** (~800 lignes) : Module 1 entièrement traduit en anglais. 11 sections complètes : Executive summary, Learning objectives, Key concepts (5 ConceptCards), Common errors (4 PitfallList items), Real case (Takeda × MIT CCI + mini-cas Morgan Stanley), Practical activity (4 steps), Formative quiz (interactive React island via QuizInteractive avec quizModule1EN), Manager checklist (12 points en 3 groupes), Application in your organization (5 questions + aside consultants), Key takeaways, Going further (6 ressources). Composants 100% réutilisés sans modification (TableOfContents, ExecutiveSummary, ConceptCard, PitfallList, CaseCardCompact, Activity, QuizInteractive, Checklist, KeyTakeaways, ResourceList, PrevNextNav, PrintButton, IndependenceNotice).
+- Build validé : 98 pages, **0 erreur / 0 warning / 0 hint** Astro check sur 142 fichiers (+1 vs précédent = quiz EN ajouté). Contenu EN rendu correctement (Narrow AI, Thomas Malone, Takeda tous présents et correctement traduits).
+- Pattern : structure FR strictement préservée. CSS, components, layout identiques. Seul le contenu naturel (texte, titres, descriptions, h1/h2/h3, items des listes, descriptions des cards) est traduit. Les imports composants pointent vers les mêmes composants partagés. Conséquence : si on modifie un composant, les versions FR et EN bénéficient automatiquement.
+
+---
+
 ## 🎙️ Post-Phase 7 — Prompts NotebookLM pour la production podcasts
 
 Préparation opérationnelle pour la production effective des 10 podcasts NotebookLM (FR uniquement par design, voir page de transparence).

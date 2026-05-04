@@ -1,14 +1,804 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizInteractive from '@/components/QuizInteractive';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule1EN from '@/content/quizzes/module-1-en';
 
 const locale = 'en';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Executive summary' },
+  { id: 'objectifs', label: 'Learning objectives' },
+  { id: 'concepts', label: 'Key concepts' },
+  { id: 'erreurs-frequentes', label: 'Common errors' },
+  { id: 'cas-reel', label: 'Real case' },
+  { id: 'activite', label: 'Practical activity' },
+  { id: 'quiz', label: 'Formative quiz' },
+  { id: 'checklist', label: 'Manager checklist' },
+  { id: 'application', label: 'Application in your organization' },
+  { id: 'a-retenir', label: 'Key takeaways' },
+  { id: 'pour-aller-plus-loin', label: 'Going further' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  'Distinguish narrow AI from general AI (AGI), and locate where the state of the art stands today.',
+  'Trace the three major waves of AI history and explain what triggered the current wave.',
+  'Define collective intelligence and explain how people and machines combine to produce smarter organizations.',
+  'Identify the components of a socio-technical system and reason about AI as a system, not as an isolated tool.',
+  'Use a simple strategic framing framework to analyze a potential AI use in your organization.',
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Confusing a model's performance with the project's business value",
+    error:
+      "A model that achieves 95% accuracy in the lab is judged ready to deploy, even though it has never been tested on real business data, nor in the existing operational workflow.",
+    mechanism:
+      "Technical demonstrations produce impressive figures in controlled environments, but business value depends on process integration, user adoption, and quality of real data — which is almost always different from training data.",
+    mitigation:
+      "Before any pilot, require a business metric (time saved, error rate reduced, customer satisfaction) in addition to the technical metric. Test on a sample of authentic operational data. Measure the effect on the end user, not just on the model.",
+  },
+  {
+    title: "Thinking of AI as a ready-to-use product rather than a system to build",
+    error:
+      "Purchase of an external AI solution assuming it will work 'out of the box' in the organization's context, without investment in data, workflow, or team training.",
+    mechanism:
+      "Vendors present their solutions as universal. The reality is that any AI deployment is a system that combines model + specific data + user interface + business process + governance. None of these layers is universal.",
+    mitigation:
+      "Frame each AI project as an organizational transformation project, not a software purchase. Explicitly plan budget and schedule for the data, workflow, training, and governance layers. Estimate typically 20-40% of total budget on the model itself, the rest on the ecosystem.",
+  },
+  {
+    title: "Underestimating the human role in the AI system",
+    error:
+      "Designing an AI project aiming for full automation of a task, when business users need to keep control over sensitive or exceptional decisions.",
+    mechanism:
+      "The seductive idea of 'replacing' a human task obscures two realities: most tasks contain edge cases where humans are indispensable, and user trust depends on their ability to intervene, monitor and correct.",
+    mitigation:
+      "Design human-in-the-loop mechanisms from the start: who validates, who supervises, who corrects, and with what criteria. Measure not only model performance, but also human-machine collaboration effectiveness. Document exceptions where humans take back control.",
+  },
+  {
+    title: "Framing AI outside corporate strategy",
+    error:
+      "Launching scattered AI pilots (HR chatbot, sales predictions, fraud detection) without explicit link to overall strategy (differentiation, cost leadership, or focus).",
+    mechanism:
+      "Without a strategic framework, each AI project justifies itself in isolation but does not add up. The organization ends up with a patchwork of POCs that create neither sustainable competitive advantage nor transversal capability.",
+    mitigation:
+      "For each candidate AI project, explicitly formulate which strategic dimension it contributes to (differentiation through customer experience, operational cost reduction, focus on a segment). If the answer is ambiguous, the project is probably premature or poorly framed.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: 'Map your organization',
+    body: "List 5 to 10 critical business processes in your organization. For each, note: who performs it (business role), with which tools, and what volume / frequency. The goal is to have a global view before searching for AI use cases.",
+  },
+  {
+    heading: 'Identify AI candidates',
+    body: "For each process, ask 3 questions: (1) is there a repetitive decision that could be assisted? (2) is there a large amount of underexploited data? (3) is there a bottleneck whose resolution would create a lot of value? Mark each process as 'strong AI candidate', 'medium', or 'weak'.",
+  },
+  {
+    heading: 'Frame strategically',
+    body: 'For the 3 most promising candidates, formulate in one sentence which strategic dimension AI would contribute to: product differentiation, cost reduction, focus on a segment, or internal improvement (skills, governance). Eliminate those whose strategic link is weak.',
+  },
+  {
+    heading: 'Evaluate the value/risk ratio',
+    body: 'For the remaining candidates, evaluate on a 1-5 scale: (a) expected business value if the project succeeds, (b) implementation difficulty (data, integration, change management), (c) ethical or regulatory risk. The candidate to favor as a pilot is the one combining high value and manageable difficulty.',
+  },
+];
+
+const activityCriteria = [
+  'Listed processes cover at least two different functions (e.g., sales and operations).',
+  'Each AI candidate is explicitly tied to a strategic dimension.',
+  'The value/risk evaluation is explicit and defensible before a C-suite committee.',
+  'The candidate retained for the pilot is defended in less than 90 seconds orally.',
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: 'Strategic framing',
+    items: [
+      'The contemplated AI use is explicitly tied to a strategic dimension (differentiation / cost / focus).',
+      "The mapping of my organization's critical business processes is up to date.",
+      'At least 3 AI candidates have been identified and compared on value and feasibility.',
+      'The selected pilot candidate is defensible before a C-suite committee in less than 2 minutes.',
+    ],
+  },
+  {
+    title: 'System evaluation',
+    items: [
+      'The project is framed as a system (model + data + workflow + users + governance), not as an isolated tool.',
+      "The role of humans in the loop is explicit: who validates, who supervises, who corrects.",
+      'Success metrics include a business metric, not just a technical metric.',
+      'Ethical and regulatory risks (bias, privacy, EU AI Act) are identified and addressed.',
+    ],
+  },
+  {
+    title: 'Decision preparation',
+    items: [
+      'The required data exists or is accessible at reasonable cost.',
+      'The budget covers the ecosystem (data, integration, training), not just the model.',
+      'The schedule includes a pilot phase before scaling deployment.',
+      'An AI governance committee is appointed or planned, with defined roles and cadence.',
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "The key concept: all AI today is narrow AI, performant on a specific task but without automatic transposition to other problems — no general AI in production.",
+  'The exemplary case: Takeda × MIT CCI shows that business value comes from human-machine orchestration (collective intelligence), not human replacement.',
+  "The major pitfall: confusing technical model performance with business project value — model accuracy is never sufficient as a success metric.",
+  'The operational tool: strategic framing in 4 steps (map / identify / frame / evaluate) before any pilot.',
+  'Next: Module 2 dives into machine learning details and learns to judge the relevance of a specific ML use case.',
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'What business leaders need to know about artificial intelligence',
+    author: 'MIT Sloan Ideas Made to Matter',
+    description:
+      'Highly accessible managerial summary: definitions, business framings, typical pitfalls. Good non-technical entry point.',
+    href: 'https://mitsloan.mit.edu/ideas-made-to-matter/what-business-leaders-need-to-know-about-artificial-intelligence',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'AI 101',
+    author: 'MIT OpenCourseWare',
+    description:
+      'MIT non-technical introduction course, designed for non-specialists. Six short videos covering definitions, history, and applications.',
+    href: 'https://ocw.mit.edu/courses/res-6-013-ai-101-fall-2021/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Superminds — How to think and work better with people and machines',
+    author: 'Thomas Malone (MIT)',
+    description:
+      "Reference book for the collective intelligence perspective adopted in the MIT Sloan program. Establishes the human × machine framework.",
+    href: 'https://cci.mit.edu/publications/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'standard' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      'American operational framework for AI risk management. Indispensable reference for governance and compliance leads.',
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'OECD Principles on Artificial Intelligence',
+    author: 'OECD',
+    description:
+      'Five principles for responsible AI deployment. Adopted by 47 countries, basis of the European AI Act. Available in French.',
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Does technology help or hurt employment?',
+    author: 'MIT News — David Autor',
+    description:
+      'Fine economic analysis of technological impact on employment. Indispensable to frame the AI and work conversation (preparation for Module 5).',
+    href: 'https://news.mit.edu/2024/does-technology-help-or-hurt-employment-0401',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+// === URLs ===
+const module2Url = getLocalizedUrl('/modules/02-machine-learning/', locale);
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of Module 1 (Introduction to AI) is scheduled for Phase 7. The French version is available now."
+  title="Module 1 — Introduction to AI"
+  description="Define AI, trace its history, understand collective intelligence and reason about AI as a socio-technical system. First pedagogical module with the Takeda × MIT CCI case, formative quiz and manager checklist."
 >
-  <TranslationPending frenchPagePath="/modules/01-introduction-ia/" />
+  <HeroSecondary
+    surtitle="Module 1 · Introduction to AI"
+    title="Frame AI and collective intelligence"
+    lead="First module of the program. We establish essential definitions, retrace the three waves of AI history, introduce the notion of collective intelligence that structures the entire program, and learn to use a simple strategic framework to analyze an AI use in your organization."
+  >
+    <span slot="stats">
+      Recommended duration: 6-8 h · Level: Discovery · Pattern-setter for M2-M6
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — EXECUTIVE SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Artificial intelligence</strong> is everywhere in today's discourse but
+            remains poorly framed in decision-making. All AI deployed in production in 2026 is
+            <strong> narrow AI</strong> — performant on a specific task, without the ability to
+            transfer its skills to other problems. General AI (AGI), which would have cognitive
+            abilities comparable to humans, remains a research horizon, not an operational
+            reality.
+          </p>
+          <p>
+            The current wave, triggered around 2012 by the convergence of three factors (massive
+            data, GPUs, deep learning), has produced spectacular results in computer vision,
+            translation, and more recently generative AI. But these results only have business
+            value if inserted into a <strong>socio-technical system</strong>: model + data +
+            workflow + users + governance. None of these layers is optional.
+          </p>
+          <p>
+            For a leader, the question is therefore not "should we do AI" but "how do we frame
+            AI in strategy". The framework we adopt comes from the work of
+            <strong> Thomas Malone and the MIT Center for Collective Intelligence</strong>:
+            think of AI not as a human replacement but as a component of a collective
+            intelligence system. Organizations that succeed in their AI projects are those that
+            orchestrate humans and machines rather than seeking to substitute one for the other.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIVES === */}
+        <section id="objectifs">
+          <h2>Learning objectives</h2>
+          <p>By the end of this module, you will be able to:</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Key concepts</h2>
+          <p>
+            Five concepts structure this module. Each is sourced. The source hierarchy is
+            <a href={methodeUrl}> explained in the method page</a>.
+          </p>
+
+          <ConceptCard
+            id="ia-etroite-vs-generale"
+            title="Narrow AI vs general AI"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              <strong>Narrow AI</strong> (ANI) is designed and trained for a specific task:
+              recognizing cat images, translating French to English, detecting fraudulent
+              transactions, recommending movies. It can match or even exceed human performance
+              on this task, but does not transfer its abilities to another problem — the system
+              that plays AlphaGo wouldn't know how to drive a car.
+            </p>
+            <p>
+              <strong>General AI</strong> (AGI) would designate a system with cognitive
+              abilities comparable to a human across a wide range of problems: reasoning,
+              learning, planning, adapting to new situations. To date, AGI <strong>does not
+              exist</strong> in production, and is the subject of intense research debates on
+              its feasibility, timeline (5 to 50 years according to researchers), and even
+              desirability.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Business example.</strong> A system like GPT-4, deployed at Morgan
+                Stanley to assist financial analysts, is narrow AI: it excels at a defined task
+                (financial document synthesis), but remains under human supervision for the
+                final decision. Presenting such a system as "AI capable of doing everything"
+                would be a framing error leading to bad investment decisions.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="histoire-vagues"
+            title="AI history in three waves"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              AI is not a recent topic. As early as <strong>1956</strong>, the Dartmouth
+              conference founded the field with the ambition of creating intelligent machines.
+              Three major waves then structure the history:
+            </p>
+            <p>
+              <strong>First wave (~1956-1980): symbolic AI.</strong> Researchers code logical
+              rules by hand ("if fever then probable infection"). Rigorous approach, but one
+              that collapses against real complexity. Expert systems of the 70s-80s reach
+              their limits.
+            </p>
+            <p>
+              <strong>Second wave (~1980-2010): statistical learning.</strong> Rather than
+              coding rules, algorithms are allowed to learn them from data. This is the birth
+              of machine learning in the modern sense. Progress is real but limited by computing
+              power and the volume of available data.
+            </p>
+            <p>
+              <strong>Third wave (~2010-today): deep learning.</strong> Three factors converge
+              simultaneously: explosion of digital data (web, smartphones, IoT), massive access
+              to GPU computing at reasonable cost, and rediscovery of deep neural networks.
+              The founding moment is often dated to 2012 (AlexNet on ImageNet). The current
+              wave of generative AI (since ~2022 with ChatGPT) is an evolution of this third
+              wave, not a rupture.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Why this matters for the manager.</strong> Understanding history avoids
+                two symmetrical errors. The first: thinking AI is new (it is 70 years old). The
+                second: thinking the current wave will fade like previous ones (the conjunction
+                of data × compute × algorithms is durable). The right reading is: the current
+                wave is massive, durable, and fits into a long history.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="intelligence-collective"
+            title="Collective intelligence and superminds"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              <strong>Thomas Malone</strong>, founder of the
+              <strong> MIT Center for Collective Intelligence</strong>, proposes a powerful
+              framework for thinking about AI in organizations: do not see AI as a human
+              replacement, but as a component of a larger system where humans and machines
+              combine their strengths.
+            </p>
+            <p>
+              Malone speaks of <strong>"superminds"</strong>: systems where intelligence emerges
+              from the combination of multiple intelligences (human, organizational, machine).
+              A team is a supermind. A company is a supermind. The market is a supermind.
+              AI is a new type of actor in these systems — not their center, not their
+              substitute.
+            </p>
+            <p>
+              This perspective has practical consequences. Organizations that succeed in their
+              AI projects do not seek to fully automate, but to <strong>orchestrate</strong>:
+              which tasks to entrust to the machine (fast computation, infinite memory, no
+              fatigue), which to keep human (contextual judgment, creativity, accountability),
+              and how to coordinate them.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Business example.</strong> The Superminds program led by Takeda
+                Pharmaceuticals with MIT CCI is a direct application of this approach: Takeda
+                structured a setup where mixed teams (researchers, doctors, data scientists, AI)
+                collaborate on complex problems in drug development. The question posed to the
+                system is not "how can AI replace X?" but "how can we combine intelligences to
+                progress faster?".
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="systeme-socio-technique"
+            title="AI as a socio-technical system"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              A successful AI project is never an isolated model. It is a <strong>system</strong>
+              that combines at minimum five layers:
+            </p>
+            <ul>
+              <li><strong>The model</strong> — the algorithm trained to make the prediction or decision.</li>
+              <li><strong>The data</strong> — training (historical) and operational (in production).</li>
+              <li><strong>The workflow</strong> — how the model's output integrates into the existing business process.</li>
+              <li><strong>The users</strong> — who consumes the result, how, with what level of trust and control.</li>
+              <li><strong>The governance</strong> — who supervises, who controls biases, who is responsible in case of error.</li>
+            </ul>
+            <p>
+              None of these layers is universal. An off-the-shelf AI solution provides only the
+              first (and sometimes partially layers 2 and 3). The rest must be built in the
+              context of the organization — and that is typically where the real total cost of
+              an AI project concentrates.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Budget consequence.</strong> A best-practice rule observed in many
+                industrial feedback experiences is that the model represents between 20 and 40%
+                of the total budget of an AI project. The rest is distributed across data
+                quality, workflow integration, user training, and governance setup.
+                Underestimating these layers is the most frequent failure mode.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="cadrage-strategique"
+            title="Strategic framing of AI uses"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              To decide whether to invest in an AI project, strategic framing asks three
+              questions mirroring Porter's three generic strategies:
+            </p>
+            <ul>
+              <li>
+                <strong>Differentiation</strong> — will AI create customer-perceived value that
+                competitors cannot reproduce (augmented product experience, fine personalization,
+                superior service quality)?
+              </li>
+              <li>
+                <strong>Cost leadership</strong> — will AI structurally reduce the cost of key
+                operations (automation of repetitive tasks, logistics optimization, demand
+                forecasts that reduce inventory)?
+              </li>
+              <li>
+                <strong>Focus</strong> — will AI allow serving a specific segment with precision
+                impossible today (precision medicine, niche financing, very technical B2B)?
+              </li>
+            </ul>
+            <p>
+              If a candidate AI project clearly answers none of these three dimensions, it is
+              probably premature or poorly framed. Conversely, a well-aligned project gains in
+              internal defensibility (C-suite) and external defensibility (customers, market).
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> For each AI project idea in your organization,
+                require the ability to formulate in less than 30 seconds: "this project
+                contributes to strategy X by such mechanism". If the argument is confused or
+                interchangeable from one project to another, strategic framing is missing.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — COMMON ERRORS === */}
+        <section id="erreurs-frequentes">
+          <h2>Common errors</h2>
+          <p>
+            Four recurring pitfalls to recognize and mitigate from the initial framing of an
+            AI project.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — REAL CASE === */}
+        <section id="cas-reel">
+          <h2>Real case — Takeda × MIT Center for Collective Intelligence</h2>
+          <p>
+            To illustrate the collective intelligence perspective of this module, the case of
+            the <strong>Takeda Superminds</strong> program, conducted by the MIT Center for
+            Collective Intelligence, is particularly pedagogical. Takeda Pharmaceuticals
+            partnered with the CCI to structure an innovation setup where mixed teams
+            (researchers, doctors, data scientists, AI tools) collaborate on complex problems in
+            drug development.
+          </p>
+          <CaseCardCompact
+            organization="Takeda × MIT CCI — Superminds Program"
+            sector="Healthcare"
+            technology="Collective intelligence"
+            tagline="Rather than automating drug development steps, Takeda structures human-machine teams that collaborate on the most creative phases of R&D. A direct application of Thomas Malone's framework."
+            href={getLocalizedUrl('/cas/takeda-superminds/', locale)}
+            available={true}
+          />
+
+          <h3>Additional mini-case — Morgan Stanley AI @ Morgan Stanley</h3>
+          <p>
+            Morgan Stanley deployed an AI assistant (based on OpenAI's GPT-4) for its ~16,000
+            financial advisors, allowing them to instantly find relevant information in internal
+            documentation (research notes, sector reports, customer history). The deployment
+            illustrates several points of the module:
+          </p>
+          <ul>
+            <li>
+              <strong>Narrow AI, not general</strong> — the system excels at searching the
+              internal corpus, not at the investment decision.
+            </li>
+            <li>
+              <strong>System, not isolated model</strong> — the major investment was on the
+              quality and curation of the internal corpus, not on the model itself.
+            </li>
+            <li>
+              <strong>Human-in-the-loop</strong> — the final decision remains the advisor's, AI
+              produces traceable and verifiable response elements.
+            </li>
+            <li>
+              <strong>Clear strategic framing</strong> — focus: enabling advisors to better and
+              faster serve a demanding high-end segment.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>Source: <a href="https://www.morganstanley.com/about-us/technology/ai" rel="noopener noreferrer" target="_blank">Morgan Stanley public communications</a> on the AI @ Morgan Stanley deployment.</em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITY === */}
+        <section id="activite">
+          <h2>Practical activity — Frame an AI use for your organization</h2>
+          <p>
+            This activity makes you concretely walk through the strategic framing seen in
+            concept §3.5. To be done alone or in a small group, in 30 to 60 minutes.
+          </p>
+          <Activity
+            id="activite-cadrage"
+            title="Frame an AI use for your organization"
+            duration="30-60 min"
+            level="Discovery / Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="AI framing canvas (printable Markdown)"
+            downloadHref="/downloads/canvas-cadrage-ia-module-1.md"
+          />
+          <p class="ai-text-muted">
+            <em>The canvas is provided in printable Markdown format. The styled PDF version
+            arrives in Phase 5 of the project. Meanwhile, you can print it as is, copy it to
+            Notion or Obsidian, or use it as collective workshop support.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Formative quiz</h2>
+          <p>
+            Seven questions to verify your understanding. Three comprehension questions, three
+            application, one judgment. Each incorrect answer unfolds a pedagogical explanation
+            pointing to the section to review. The quiz is diagnostic — its goal is to frame
+            your reading of Module 2, not to grade your progression.
+          </p>
+          <QuizInteractive
+            client:visible
+            id="quiz-module-1-en"
+            title={quizModule1EN.title}
+            intro={quizModule1EN.intro}
+            questions={quizModule1EN.questions}
+            scoringBands={quizModule1EN.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Manager checklist — AI framing</h2>
+          <p>
+            Twelve checkpoints before presenting an AI project to the C-suite. Three groups:
+            strategic framing, system evaluation, decision preparation.
+          </p>
+          <Checklist
+            id="checklist-module-1-en"
+            title="AI framing — 12 checkpoints"
+            intro="Before defending an AI project before a steering committee, go through these twelve points. Each checked box reinforces the defensibility of your case."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application in your organization</h2>
+          <p>
+            Five questions to ask in your context. No universal right or wrong answer — what
+            matters is being able to answer them <em>specifically</em> for your organization.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              What is your organization's <strong>generic strategy</strong> today
+              (differentiation / cost / focus), and where can AI reinforce it?
+            </li>
+            <li>
+              Among your <strong>critical business processes</strong>, which generate or consume
+              large amounts of data? Are these data structured and accessible?
+            </li>
+            <li>
+              Have you identified an <strong>AI candidate defensible to the C-suite</strong> in
+              less than 90 seconds? If not, strategic framing probably needs to be redone.
+            </li>
+            <li>
+              For this candidate, what is the <strong>place of humans</strong> in the target
+              system? Who validates, who supervises, who can take back control?
+            </li>
+            <li>
+              What <strong>budget is planned for the ecosystem</strong> (data, integration,
+              training, governance), beyond the model itself?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>For consultants</h3>
+            <p>
+              In an AI framing engagement, these five questions structure a 90-minute workshop
+              with a client steering committee. Preparing a 5 × N matrix (questions × business
+              units) to fill collectively allows quick visualization of the organization's
+              maturity zones.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — KEY TAKEAWAYS === */}
+        <section id="a-retenir">
+          <h2>Key takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — GOING FURTHER === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Going further</h2>
+          <p>
+            Six resources to deepen, sorted by type. The source hierarchy is indicated on each
+            (cf. <a href={methodeUrl}>method</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Technical terms encountered? Check the
+            <a href={glossaireUrl}> glossary</a>.
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: programmeUrl,
+            label: 'Programme overview',
+            context: 'Programme',
+          }}
+          next={{
+            href: module2Url,
+            label: 'Machine Learning in Business',
+            context: 'Module 2',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
