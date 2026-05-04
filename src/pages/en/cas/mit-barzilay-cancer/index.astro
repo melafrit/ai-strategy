@@ -1,14 +1,513 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Business problem' },
+  { id: 'solution', label: 'AI solution' },
+  { id: 'benefices', label: 'Observed benefits' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: 'Identified risks' },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+const takeaways = [
+  "The work of Regina Barzilay (MIT CSAIL) illustrates an exemplary case of supervised ML in healthcare: labeling by medical experts (costly), independent validation before any clinical deployment, non-negotiable human supervision — no shortcut possible when the decision affects a patient's health.",
+  "The Mirai model predicts breast cancer risk at 1 to 5 years from a mammogram — this is a breakthrough compared to classical risk scoring models that rely on few demographic variables. The performance documented in academic publications is superior to traditional scores on diverse cohorts.",
+  "The case illustrates generalization as a central challenge: a model trained on one population may underperform on others (ethnic origin, imaging equipment, protocol). Multi-site validation is non-negotiable before any real clinical deployment.",
+  "The case confirms that AI in healthcare augments the radiologist rather than replacing them — the model produces a score, the radiologist integrates this score into their judgment and the entire patient file. This articulation is required by medical ethics and by regulators.",
+  "Transposition to non-academic organizations is partial but real: any AI case applied to high-stakes decisions (healthcare, justice, education, public services) can draw inspiration from the Barzilay validation standard — rigorous labeling, multi-site validation, human supervision, transparency on limits.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Regina Barzilay — official CSAIL page',
+    author: 'MIT CSAIL',
+    description:
+      "Regina Barzilay's institutional page within the MIT Computer Science and Artificial Intelligence Laboratory. Presents her work on AI in healthcare, particularly early breast cancer screening. Primary source for this case.",
+    href: 'https://www.csail.mit.edu/person/regina-barzilay',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'A new model for breast cancer prediction',
+    author: 'MIT News',
+    description:
+      "MIT News article presenting the Mirai model (5-year breast cancer risk prediction from a mammogram). Provides context, methodology, and performance elements documented in the scientific publication.",
+    href: 'https://news.mit.edu/2021/robust-artificial-intelligence-tools-predict-future-cancer-0128',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Introduction to Machine Learning (full course)',
+    author: 'MIT OpenCourseWare — 6.036',
+    description:
+      "MIT introduction course to ML. To solidify the conceptual foundations — supervised, validation, generalization — that structure Barzilay's work and more generally ML applied to healthcare.",
+    href: 'https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module2Url = getLocalizedUrl('/modules/02-machine-learning/', locale);
+const githubAccentureUrl = getLocalizedUrl('/cas/github-copilot-accenture/', locale);
+const casIndexUrl = getLocalizedUrl('/cas/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this case study is scheduled for Phase 7. The French version is available now."
+  title="MIT research — Regina Barzilay (cancer screening) — Case study"
+  description="Regina Barzilay's work (MIT CSAIL) on early breast cancer screening through ML — Mirai model. Exemplary case of AI in healthcare: rigorous labeling, independent validation, non-negotiable human supervision."
 >
-  <TranslationPending frenchPagePath="/cas/mit-barzilay-cancer/" />
+  <HeroSecondary
+    surtitle="Case study · Module 2 (mini-case)"
+    title="Regina Barzilay (MIT CSAIL) — Cancer screening through ML"
+    lead="MIT CSAIL work on early breast cancer screening through deep learning. Exemplary case to understand the specific requirements of ML in healthcare: labeling by experts, independent validation before clinical deployment, non-negotiable human supervision."
+  >
+    <span slot="stats">
+      Healthcare / Medical imaging · Supervised learning · MIT CSAIL
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organization</dt>
+              <dd>MIT CSAIL — Computer Science and Artificial Intelligence Laboratory of the Massachusetts Institute of Technology, one of the largest research laboratories in computer science and AI in the world</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Principal researcher</dt>
+              <dd>Regina Barzilay — professor at MIT CSAIL, AI Faculty Lead at the MIT Jameel Clinic for AI and Health, one of the most recognized researchers on the application of ML to healthcare</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sector</dt>
+              <dd>Healthcare / Medical imaging — early cancer screening (breast cancer in particular, with extensions to other cancers)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technology</dt>
+              <dd>Supervised deep learning on medical images — Mirai model for breast cancer risk prediction at 1 to 5 years from a mammogram</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>Regina Barzilay's official CSAIL page, MIT News articles, associated scientific publications <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            The work of <strong>Regina Barzilay</strong> and her team at MIT CSAIL on early
+            breast cancer screening is one of the most well-known cases of Machine Learning
+            application in healthcare. The <strong>Mirai</strong> model, published in 2021
+            in reference scientific journals, predicts <strong>breast cancer risk at 1 to
+            5 years</strong> from a mammogram — a breakthrough compared to classical scores
+            that rely on few demographic variables (age, family history).
+          </p>
+          <p>
+            Beyond raw performance, the case is exemplary for Module 2 (Machine Learning in
+            Business) because it illustrates the <strong>specific requirements of ML in
+            healthcare</strong>: labeling by medical experts (slow and costly),
+            <strong> independent validation</strong> on diverse cohorts before any clinical
+            deployment, <strong>non-negotiable human supervision</strong> (the radiologist
+            keeps the decision), transparency on limits and contexts where the model can
+            underperform.
+          </p>
+          <p>
+            For a leader, the central lesson goes beyond healthcare: <strong>any AI
+            deployment on high-stakes decisions</strong> (healthcare, justice, education,
+            public services, credit) must draw inspiration from the standard that Barzilay
+            and her team have set up — rigorous labeling, multi-site validation, human
+            supervision, transparency on limits. No shortcut possible when error has a
+            direct cost on a person.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>MIT CSAIL</strong> is one of the largest research laboratories in
+            computer science and artificial intelligence in the world. Its healthcare
+            division — embodied notably by the <strong>Jameel Clinic for AI and
+            Health</strong> of which Regina Barzilay is the AI Faculty Lead — combines
+            fundamental academic research and collaboration with reference medical centers
+            (notably Massachusetts General Hospital).
+          </p>
+          <p>
+            Several structural characteristics explain why this team has become a reference
+            on the subject:
+          </p>
+          <ul>
+            <li>
+              <strong>Access to labeled medical data</strong> thanks to partnerships with
+              medical centers — critical data because supervised ML in healthcare assumes
+              annotations by qualified experts (radiologists, oncologists), who are rare
+              and costly.
+            </li>
+            <li>
+              The <strong>academic methodological rigor</strong> of MIT — publications in
+              peer-reviewed journals, independent validation, transparency on limits, peer
+              critique.
+            </li>
+            <li>
+              <strong>Interdisciplinary collaboration</strong> — computer scientists,
+              radiologists, oncologists, statisticians work together. It is not an ML team
+              that applies its techniques to medical data blindly.
+            </li>
+            <li>
+              The <strong>personal commitment of Regina Barzilay</strong> on this subject
+              — a researcher herself affected by breast cancer, she has oriented part of
+              her research toward early screening. This personal commitment translates
+              into high operational requirements.
+            </li>
+          </ul>
+        </section>
+
+        {/* === BUSINESS PROBLEM === */}
+        <section id="probleme">
+          <h2>Business problem</h2>
+          <p>
+            Breast cancer is one of the most frequent cancers in women. Early screening
+            significantly improves the chances of recovery. But classical risk scoring
+            methods have limits:
+          </p>
+          <ul>
+            <li>
+              <strong>Traditional scores</strong> (Tyrer-Cuzick, BRCAPRO, Gail) rely on few
+              demographic variables — age, family history, breast density, parity, etc.
+              They are useful but imprecise individually.
+            </li>
+            <li>
+              A <strong>mammogram contains much more information</strong> than a classical
+              score exploits — breast tissue texture, subtle asymmetries, markers difficult
+              to detect visually by a human. ML can potentially exploit these signals.
+            </li>
+            <li>
+              The <strong>diversity of populations</strong> is an issue: a model trained on
+              one population (for example: white American women) may underperform on other
+              populations (different ethnic origins, different imaging equipment, different
+              clinical protocols). Generalization is a central challenge.
+            </li>
+            <li>
+              The <strong>consequences of error</strong> are strong — a false negative can
+              delay diagnosis and treatment (direct impact on health); a false positive
+              can generate anxiety, useless invasive examinations, costs. The arbitration
+              is non-trivial.
+            </li>
+          </ul>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>AI solution implemented</h2>
+
+          <h3>1. Supervised deep learning on images</h3>
+          <p>
+            The Mirai model uses a <strong>deep neural network</strong> trained on tens of
+            thousands of mammograms labeled with their result at 1 to 5 years (cancer
+            diagnosed or not). This is a canonical case of supervised ML in medical
+            imaging — the combination of deep learning + large databases of labeled images
+            + modern computing power makes possible what was not 10 years ago.
+          </p>
+
+          <h3>2. Labeling by qualified experts</h3>
+          <p>
+            <strong>Labeling quality</strong> is non-negotiable. Annotations are made or
+            validated by qualified radiologists — not by crowdsourcing or by students.
+            This labeling is the limiting factor of the project: it is slow and costly.
+            But without this level of quality, the model's performance would not be
+            clinically defensible.
+          </p>
+
+          <h3>3. Independent multi-site validation</h3>
+          <p>
+            Before any publication or clinical deployment, the model is validated on
+            <strong> independent cohorts</strong> — patients different from those used in
+            training, ideally from several medical centers and several countries. This
+            multi-site validation is crucial to demonstrate that the model generalizes and
+            is not overfit to a particular population. Barzilay and her team's publications
+            document this point explicitly.
+          </p>
+
+          <h3>4. Non-negotiable human supervision</h3>
+          <p>
+            The Mirai model produces a <strong>risk score</strong>, not a diagnosis. The
+            radiologist integrates this score into their judgment and the entire patient
+            file. This AI/human articulation is required by medical ethics and by
+            regulators (the FDA in the United States has specific frameworks for medical
+            decision support tools). No total automation envisaged — the radiologist keeps
+            clinical responsibility.
+          </p>
+
+          <h3>5. Transparency on limits</h3>
+          <p>
+            Publications associated with the model <strong>document the limits</strong> —
+            possible underperformance depending on population, dependence on imaging
+            quality, risk of degradation if equipment or acquisition protocol changes.
+            This transparency is itself an act of governance — it distinguishes scientific
+            work from marketing communication.
+          </p>
+        </section>
+
+        {/* === BENEFITS === */}
+        <section id="benefices">
+          <h2>Observed benefits</h2>
+          <p>
+            According to associated scientific publications and MIT News communication:
+          </p>
+          <ul>
+            <li>
+              <strong>Superior predictive performance</strong> compared to traditional
+              scores on diverse cohorts — the Mirai model, in publications, demonstrates a
+              significantly higher risk discrimination capability than classical risk
+              scores (Tyrer-Cuzick and others).
+            </li>
+            <li>
+              <strong>Robustness to population diversity</strong> documented by multi-site
+              validation — performance is maintained (with quantified nuances) on
+              populations different from the initial training set. This is a demanding
+              dimension that few ML models in healthcare rigorously demonstrate.
+            </li>
+            <li>
+              <strong>Potential contribution for personalized screening</strong> — an
+              individualized risk score could allow adapting screening frequency (closer
+              for high-risk women, more spaced for those at very low risk). This clinical
+              contribution is being evaluated in several studies.
+            </li>
+            <li>
+              <strong>Methodological credibility</strong> — Barzilay's work is an
+              international reference cited in scientific journals and medical training.
+              They create a transposable standard for other teams working on ML in
+              healthcare.
+            </li>
+            <li>
+              <strong>Structuring pedagogical effect</strong> — the case is used in the
+              training of future AI healthcare practitioners (at MIT and elsewhere) because
+              it cleanly illustrates the specific requirements of the domain.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: Precise performance figures vary depending on publications and
+            cohorts. Real large-scale clinical deployment remains a long process
+            (validation, regulatory certification, integration into hospital systems).
+            The case sets the methodological standard rather than describing a generalized
+            operational deployment.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <ul>
+            <li>
+              <strong>Labeling is the limiting factor</strong>. Having tens of thousands of
+              mammograms labeled by qualified radiologists represents a substantial
+              investment — out of reach for many teams. This factor limits transposition
+              to other pathologies or to other teams.
+            </li>
+            <li>
+              <strong>Generalization remains to be confirmed over time</strong>. A model
+              may underperform if imaging equipment evolves, if clinical protocols change,
+              or if applied to populations underrepresented in training data. Post-
+              deployment monitoring is essential.
+            </li>
+            <li>
+              <strong>Clinical adoption kinetics is slow</strong>. Between scientific
+              publication and generalized clinical use, there are typically several years:
+              regulatory certifications (FDA, CE marking in Europe), integration into
+              hospital information systems, radiologist training, reimbursement
+              conditions.
+            </li>
+            <li>
+              <strong>GDPR and EU AI Act issues</strong> are substantial in Europe for
+              this type of use — health data in sensitive category, potentially high-risk
+              classification under the AI Act. European deployment requires specific
+              compliance analyses.
+            </li>
+            <li>
+              <strong>The effect on the radiologist profession</strong> is a topic under
+              construction. If the model really helps, how does the profession evolve?
+              Capability augmentation, redeployment to difficult cases, or deeper
+              evolution? The answer is not settled and requires complementary studies.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISKS === */}
+        <section id="risques">
+          <h2>Identified risks and guardrails</h2>
+          <ul>
+            <li>
+              <strong>Risk of ethnic or demographic bias</strong>. A model trained on one
+              population may underperform on others. Guardrails: systematic multi-site
+              multi-population validation, regular audit of performance by subgroups,
+              targeted adjustments or retraining if gaps detected.
+            </li>
+            <li>
+              <strong>Risk of post-deployment degradation</strong>. The evolution of
+              imaging equipment or protocols can drift performance. Guardrails: continuous
+              monitoring, retraining capability, model suspension if degradation
+              confirmed.
+            </li>
+            <li>
+              <strong>Ethical risk</strong> in case of model use beyond its intended
+              scope. The model provides a risk score — it does not pose a diagnosis.
+              Guardrails: explicit clinical scope, integration into protocols with
+              radiologist in the loop, practitioner training on appropriate use.
+            </li>
+            <li>
+              <strong>Risk of false confidence</strong> in the score (by patients or
+              practitioners). A low risk score does not eliminate risk; a high score does
+              not predict certain cancer. Guardrail: careful patient communication,
+              physician training in probabilistic interpretation.
+            </li>
+            <li>
+              <strong>EU AI Act and GDPR regulatory risk</strong>. Clinical uses typically
+              fall into AI Act high-risk and involve GDPR health data. Guardrails:
+              compliance analysis from design, prior DPIA, CE certification as medical
+              device, documentary traceability.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              The Barzilay case illustrates that <strong>quality labeling by experts</strong>
+              is the main limiting factor. In your sector, who could play the equivalent
+              role? What would be the cost of rigorous and defensible labeling?
+            </li>
+            <li>
+              <strong>Multi-site multi-population validation</strong> is required to
+              demonstrate generalization. How would this requirement be transposed to an
+              AI case in your sector (for example: credit scoring, candidate selection,
+              resource allocation)?
+            </li>
+            <li>
+              AI is positioned as <strong>decision support</strong>, not as decision-maker.
+              This AI/human articulation is required by medical ethics. Is there an
+              equivalent requirement in your sector? If yes, how does it translate? If no,
+              why?
+            </li>
+            <li>
+              In view of the <strong>EU AI Act</strong>, this type of model would fall
+              into high-risk (health). What specific obligations should be anticipated for
+              a European deployment? How to articulate with the Medical Devices Regulation
+              (MDR)?
+            </li>
+            <li>
+              The case confirms that <strong>a useful model does not deploy overnight</strong>
+              — between publication and generalized clinical use, several years pass. Is
+              this delay defensible in face of health urgency? How to accelerate without
+              degrading rigor?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module2Url}><strong>Module 2 — Machine
+            Learning in Business</strong></a> (mini-case) — specific requirements of ML in
+            healthcare, labeling by experts, multi-site validation, generalization,
+            non-negotiable human supervision. It is also a central support point for
+            Module 5 (governance, EU AI Act high-risk, GDPR health data, MDR compliance)
+            and for Module 1 (collective intelligence human × machine perspective in
+            medicine).
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. See the
+            <a href={methodeUrl}> method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: githubAccentureUrl,
+            label: 'GitHub Copilot × Accenture',
+            context: 'Previous case',
+          }}
+          next={{
+            href: casIndexUrl,
+            label: 'All case studies',
+            context: 'Index',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

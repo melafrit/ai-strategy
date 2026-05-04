@@ -1,14 +1,511 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Business problem' },
+  { id: 'solution', label: 'Methodological solution' },
+  { id: 'benefices', label: 'Observed benefits' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: 'Identified risks' },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+const takeaways = [
+  "The joint GitHub × Accenture study is exemplary for its methodology: treatment vs control group, multiple metrics (productivity, quality, satisfaction), sufficient duration to observe durable effects — this is the standard to aim for in any serious GenAI pilot.",
+  "Documented benefits are multidimensional — not just raw productivity gain. Developer satisfaction and retention are second-order effects equally important for a large-scale IT organization.",
+  "The case confirms that the effect of a GenAI tool depends on the usage context: an identical tool (Copilot) produces variable effects depending on the language, project type, developer experience level — no useful universal average.",
+  "Change management is central: Accenture accompanied the deployment with training, internal communication, sharing of best practices. Without this, the tool alone would have had a more modest effect.",
+  "The methodology is transposable beyond code: any serious GenAI pilot (legal, marketing, customer support) can adopt the same framework — treatment/control group, multiple metrics, sufficient duration, rigorous measurement before publication.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: "Research: Quantifying GitHub Copilot's impact in the enterprise with Accenture",
+    author: 'GitHub Engineering Blog',
+    description:
+      "Joint GitHub × Accenture study documenting Copilot's real impact in a large enterprise. Public methodology: treatment vs control group, productivity, code quality, satisfaction. Primary source for this case.",
+    href: 'https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-enterprise-with-accenture/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'GitHub Copilot — official product page',
+    author: 'GitHub',
+    description:
+      "GitHub Copilot's official page. Presents features, available models, IDE integrations, pricing models. Complementary primary source.",
+    href: 'https://github.com/features/copilot',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI at Work',
+    author: 'Brynjolfsson, Li, Raymond — NBER Working Paper w31161',
+    description:
+      "Empirical study on GenAI's impact on productivity and learning at work. Major academic reference for HR framing of AI projects — methodology comparable to GitHub × Accenture but on another profession.",
+    href: 'https://www.nber.org/papers/w31161',
+    sourceLevel: 'external-verifiable' as const,
+  },
+];
+
+const module3Url = getLocalizedUrl('/modules/03-ia-generative/', locale);
+const amazonRoboticsUrl = getLocalizedUrl('/cas/amazon-robotics/', locale);
+const mitBarzilayUrl = getLocalizedUrl('/cas/mit-barzilay-cancer/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this case study is scheduled for Phase 7. The French version is available now."
+  title="GitHub Copilot × Accenture — Case study"
+  description="Joint GitHub × Accenture study measuring Copilot's real impact in a large IT enterprise. Public methodology: treatment vs control group, productivity, quality, satisfaction. Exemplary case for Module 3."
 >
-  <TranslationPending frenchPagePath="/cas/github-copilot-accenture/" />
+  <HeroSecondary
+    surtitle="Case study · Module 3 (mini-case)"
+    title="GitHub Copilot × Accenture — Measuring real impact"
+    lead="Joint GitHub × Accenture study rigorously measuring Copilot's impact in a large IT enterprise. Public methodology transposable to any GenAI pilot: treatment vs control group, multiple metrics, sufficient duration."
+  >
+    <span slot="stats">
+      IT / Software development · GenAI code assistance · Joint study
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organizations</dt>
+              <dd>GitHub (Microsoft subsidiary) in partnership with Accenture, one of the world's largest IT services companies (~700,000 employees)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sector</dt>
+              <dd>IT / Software development — IT services in project mode at large scale</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technology</dt>
+              <dd>GitHub Copilot — GenAI code assistance tool (auto-completion, generation, suggestions) integrated into developers' IDEs</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Methodology</dt>
+              <dd>Structured empirical study — treatment group (with Copilot) vs control (without), measurement of multiple dimensions (productivity, quality, satisfaction, retention), sufficient duration for durable effects</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>Official research article published on the GitHub Engineering Blog <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>GitHub Copilot</strong> is a GenAI code assistance tool that suggests
+            code in real time as a developer writes. Launched in 2021, generalized in
+            2022, it is now one of the most widely deployed GenAI tools in IT
+            organizations. But how much does one really gain with such a tool? What are
+            the second-order effects (quality, satisfaction, retention)? How to isolate
+            the tool's own effect from all other factors that influence a developer's
+            productivity?
+          </p>
+          <p>
+            In 2024, <strong>GitHub and Accenture</strong> jointly published a structured
+            empirical study to answer these questions in the context of a large IT
+            enterprise. The methodology — <strong>treatment vs control group</strong>,
+            multiple metrics, sufficient duration, rigorous measurement — is exemplary for
+            those who seriously want to drive a GenAI deployment rather than settle for
+            anecdotes.
+          </p>
+          <p>
+            The case is important for Module 3 (Generative AI in Business) because it
+            illustrates <strong>how to rigorously measure</strong> the impact of a GenAI
+            deployment — and because the methodology is <strong>transposable well beyond
+            code</strong> (legal, marketing, customer support, finance). Any serious GenAI
+            pilot can draw inspiration from the methodological framework implemented by
+            GitHub and Accenture.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>Accenture</strong> is one of the world's largest IT services
+            companies, with approximately 700,000 employees. A significant part of its
+            workforce is composed of software developers who work in project mode at
+            client sites or on internal platforms — that is, several hundred thousand
+            developers potentially affected by a tool like Copilot.
+          </p>
+          <p>
+            Several Accenture characteristics make it particularly interesting for this
+            type of study:
+          </p>
+          <ul>
+            <li>
+              <strong>The scale</strong> allows constituting statistically robust groups
+              (treatment and control) — which is rarely possible in an organization of a
+              few dozen developers.
+            </li>
+            <li>
+              The <strong>diversity of projects, languages, client sectors</strong> allows
+              testing whether Copilot's effect depends on context — to answer the
+              important question: "does it work everywhere equally?"
+            </li>
+            <li>
+              Accenture's <strong>process and data maturity</strong> (internal information
+              system, existing productivity metrics, capability to track code quality)
+              provides the necessary measurement ground.
+            </li>
+            <li>
+              The <strong>business stake</strong> is direct: for a player whose main cost
+              is developer payroll, even a modest productivity gain represents hundreds of
+              millions of dollars in potential value. Measurement rigor is commensurate
+              with the stake.
+            </li>
+          </ul>
+        </section>
+
+        {/* === BUSINESS PROBLEM === */}
+        <section id="probleme">
+          <h2>Business problem</h2>
+          <p>
+            The business problem the study addresses is threefold:
+          </p>
+          <ul>
+            <li>
+              <strong>Quantify Copilot's real impact</strong> in an enterprise context —
+              not in an idealized academic context, not in a synthetic benchmark, but in
+              the real daily work of Accenture developers.
+            </li>
+            <li>
+              <strong>Measure several dimensions</strong> simultaneously — raw productivity
+              (lines count, development velocity) is not enough.
+              <strong> Quality</strong> of the code produced, developer
+              <strong> satisfaction</strong>, the effect on <strong>retention</strong> are
+              equally important dimensions for a large-scale organization.
+            </li>
+            <li>
+              <strong>Isolate the tool's own effect</strong> from the rest of the factors
+              that influence productivity (seniority, language, project type,
+              specification quality, team). Without rigorous isolation, conclusions are
+              fragile — and may even conclude the opposite of reality.
+            </li>
+          </ul>
+          <p>
+            This business problem is generalizable well beyond code: <strong>any
+            organization deploying a GenAI tool at scale</strong> (legal assistant, sales
+            assistant, medical assistant) must be able to answer the same question:
+            "does it work, for whom, in which contexts, at what price, with what
+            second-order effects?".
+          </p>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>Methodological solution implemented</h2>
+
+          <h3>1. Treatment vs control group</h3>
+          <p>
+            The cornerstone of the study is the <strong>comparison between a treatment
+            group</strong> (developers with access to Copilot) <strong>and a control
+            group</strong> (developers without access, in otherwise comparable
+            conditions). This methodology — standard in experimental sciences — allows
+            isolating Copilot's own effect. Without a control group, one does not know
+            whether an observed improvement comes from the tool, from the time passing,
+            from a process improvement, or from a selection bias.
+          </p>
+
+          <h3>2. Multiple metrics</h3>
+          <p>
+            The study measures several dimensions instead of a single one, which allows
+            avoiding counterproductive optimizations. According to the research article,
+            the main dimensions measured include: <strong>development velocity</strong>
+            (writing speed, task velocity), <strong>code quality</strong> (test coverage,
+            technical debt measure, defect rate), <strong>developer
+            satisfaction</strong> (surveys, tool perception, intention of continued
+            use), <strong>retention</strong> (effect of the tool on departure or
+            retention of employees).
+          </p>
+
+          <h3>3. Sufficient duration</h3>
+          <p>
+            The study runs over a sufficiently long period to observe durable effects —
+            not just a novelty effect that fades in a few weeks. This duration is a
+            critical methodological detail: a short pilot of 2-3 weeks typically
+            overestimates participants' enthusiasm and underestimates organizational
+            learning effects.
+          </p>
+
+          <h3>4. Integrated change management</h3>
+          <p>
+            Accenture did not just deploy the tool — the firm accompanied the deployment
+            with <strong>training</strong>, <strong>internal communication</strong> on
+            usage best practices, <strong>experience sharing</strong> between developers.
+            This is a dimension often underestimated in AI projects but essential: the
+            same tool produces very different effects depending on whether the
+            organization accompanies adoption or not.
+          </p>
+
+          <h3>5. Transparent publication</h3>
+          <p>
+            The joint publication on the GitHub Engineering Blog makes the methodology
+            <strong> auditable</strong>. This is exemplary practice: the actors publish
+            part of their empirical work, which credibilizes the conclusions and feeds
+            the professional community. The case becomes a transposable reference, not
+            just a marketing operation.
+          </p>
+        </section>
+
+        {/* === BENEFITS === */}
+        <section id="benefices">
+          <h2>Observed benefits</h2>
+          <p>
+            According to the official research article, several significant benefits
+            were observed in the treatment group compared to the control:
+          </p>
+          <ul>
+            <li>
+              <strong>Productivity</strong> — development velocity (measured by several
+              indicators) is significantly higher in the group with Copilot. The
+              communicated orders of magnitude are substantial but variable depending on
+              contexts.
+            </li>
+            <li>
+              <strong>Code quality</strong> — no degradation observed on quality
+              indicators. This absence of regression is important: a tool that
+              accelerates but degrades quality would create technical debt to pay later.
+            </li>
+            <li>
+              <strong>Developer satisfaction</strong> — high and sustained over time. The
+              effect is not just "novelty that fades" but indeed durable integration into
+              the work experience.
+            </li>
+            <li>
+              <strong>Effects on retention</strong> — according to data reported in the
+              study, access to Copilot has a positive effect on developer retention in
+              the treatment group compared to the control. Strategic second-order effect
+              important for an organization where talent retention is central.
+            </li>
+            <li>
+              <strong>Methodological credibility</strong> — the study creates a
+              transposable standard. Other organizations can replicate the framework for
+              their own GenAI pilots and produce results internally defensible.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: Precise figures vary depending on communications and successive
+            versions of the study. The case's value lies in the public transposable
+            methodology and orders of magnitude — not in a punctual figure to be taken as
+            is.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <ul>
+            <li>
+              <strong>The context is specific</strong>. The study focuses on Accenture
+              developers, in their projects and languages. The observed effects do not
+              transpose mechanically to all IT organizations. The methodology is
+              transposable; the precise figures are not.
+            </li>
+            <li>
+              <strong>Conflict of interest to acknowledge</strong>. GitHub has a direct
+              economic interest in the study concluding positively (Copilot is a GitHub
+              product). The fact that the methodology is public helps neutralize this
+              conflict, but the informed reader keeps a critical reading of the figures
+              presented.
+            </li>
+            <li>
+              <strong>The effect on junior learning</strong> remains an open subject. An
+              important question: does a junior developer who relies massively on
+              Copilot learn as well as without this tool? The study does not exhaust the
+              subject — it is a point to monitor over time.
+            </li>
+            <li>
+              <strong>Unmeasured effects</strong>. Like any empirical study, it measures
+              what is measurable. Diffuse effects (creativity, risk-taking in code,
+              long-term learning capacity, team dynamics) are more difficult to capture
+              and remain outside the main scope of the study.
+            </li>
+            <li>
+              <strong>Emerging regulatory compliance</strong> on AI in code (EU AI Act
+              for some high-risk uses, intellectual property of suggestions, software
+              supply chain compliance) adds constraints that the study does not centrally
+              cover but that weigh on operational deployments.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISKS === */}
+        <section id="risques">
+          <h2>Identified risks and guardrails</h2>
+          <ul>
+            <li>
+              <strong>Intellectual property risk.</strong> Copilot suggestions come from
+              a model trained on public code — the question of traceability and
+              compliance of the software supply chain is serious. Guardrails: systematic
+              code reviews, provenance scanners, clear internal policies.
+            </li>
+            <li>
+              <strong>Risk of client data leak.</strong> The code being written may
+              contain confidential client information. Guardrails: enterprise
+              configurations restricting data sending to models, contractual agreements
+              with GitHub, flow audit.
+            </li>
+            <li>
+              <strong>Risk of generated code quality.</strong> Suggestions are not always
+              correct — they may contain bugs, vulnerabilities, obsolete patterns.
+              Guardrails: code reviews, automated tests, security scanners, developer
+              training on critical evaluation of suggestions.
+            </li>
+            <li>
+              <strong>Risk on long-term learning</strong>. Excessive use among juniors
+              may harm their in-depth learning of languages and architectures.
+              Guardrails: differentiated usage policies (for example, active learning
+              mode for juniors), training, reinforced mentoring.
+            </li>
+            <li>
+              <strong>EU AI Act risk</strong> depending on uses. For projects whose
+              criticality is high (healthcare, critical infrastructure, public services),
+              the code produced may fall under specific obligations. Guardrail:
+              compliance analysis per client project.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              Is the study's <strong>methodology</strong> (treatment vs control group,
+              multiple metrics, sufficient duration) applicable in your organization?
+              What would be the practical obstacles (team size, measurement capability,
+              acceptable duration)?
+            </li>
+            <li>
+              To transpose the methodology to <strong>another profession</strong> (legal,
+              marketing, customer support), what would be the equivalent metrics to
+              measure? Which metrics would disappear and which would appear?
+            </li>
+            <li>
+              The case mentions <strong>software supply chain compliance</strong> as an
+              emerging risk. How does your organization treat this issue? What
+              mechanisms (audit, reviews, scanners, internal policies) are in place?
+            </li>
+            <li>
+              The question of <strong>the effect on junior learning</strong> is open. How
+              would you treat it in your organization? Differentiated usage policy?
+              Reinforced training? Mentoring? Specific measurement?
+            </li>
+            <li>
+              GitHub has a direct economic interest in the study concluding positively.
+              <strong> What criteria</strong> allow the reader to judge the robustness
+              of the study despite this conflict of interest? What level of confidence
+              do you grant to the figures? How to complete with independent studies?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module3Url}><strong>Module 3 —
+            Generative AI in Business</strong></a> (mini-case) — methodology of impact
+            measurement of a GenAI pilot, multiple metrics, transposition beyond code.
+            It is also a support point for Module 5 (governance, intellectual property,
+            supply chain compliance) and Module 6 (long-term impact on the developer
+            profession, scenario planning on the evolution of AI in code).
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. See the
+            <a href={methodeUrl}> method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: amazonRoboticsUrl,
+            label: 'Amazon Robotics',
+            context: 'Previous case',
+          }}
+          next={{
+            href: mitBarzilayUrl,
+            label: 'MIT research — Regina Barzilay',
+            context: 'Next case',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>
