@@ -1,14 +1,877 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizInteractive from '@/components/QuizInteractive';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule6EN from '@/content/quizzes/module-6-en';
 
 const locale = 'en';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Executive summary' },
+  { id: 'objectifs', label: 'Learning objectives' },
+  { id: 'concepts', label: 'Key concepts' },
+  { id: 'erreurs-frequentes', label: 'Common errors' },
+  { id: 'cas-reel', label: 'Real case' },
+  { id: 'activite', label: 'Practical activity' },
+  { id: 'quiz', label: 'Formative quiz' },
+  { id: 'checklist', label: 'Manager checklist' },
+  { id: 'application', label: 'Application in your organization' },
+  { id: 'a-retenir', label: 'Key takeaways' },
+  { id: 'pour-aller-plus-loin', label: 'Going further' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  'Distinguish forecasting (a single future) and scenario planning (multiple possible futures) — choose the approach according to the degree of uncertainty.',
+  'Distinguish technology watch (passive) and strategic anticipation (active) — know how to move from one to the other.',
+  'Understand the main expected evolutions in AI at 3-10 years (technical, regulatory, societal) without falling into excessive prediction.',
+  'Build a strategic AI roadmap structured in 5 dimensions (vision, priority use cases, governance, skills and organization, KPIs).',
+  'Hierarchize an AI roadmap in time (foundations 0-6 months, first results 6-12 months, expanded ambition 12-24 months) respecting natural dependencies.',
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Predicting a single future instead of thinking multiple futures",
+    error:
+      "Building an organization's AI roadmap assuming a single scenario will happen ('generative AI will dominate in 18 months', 'the AI Act will tighten', 'autonomous agents will replace analysts'). Committing heavy investments that assume this scenario materializes — and finding at 12-24 months that reality is different.",
+    mechanism:
+      "The future of AI is intrinsically uncertain at 3-10 years: rapid technical evolutions, regulations under construction, unpredictable social dynamics. Trying to predict a single future is a methodological error. Organizations that commit to it make decisions optimized for one scenario, fragile in others.",
+    mitigation:
+      "Build 3 contrasting scenarios (accelerated continuity, technological breakthrough, regulatory and social tightening) and identify robust actions — those useful in at least 2 of 3 scenarios. Invest primarily in these robust actions. Keep options for actions dependent on a single scenario. Revise scenarios every 6-12 months.",
+  },
+  {
+    title: "Building a purely technological roadmap",
+    error:
+      "Presenting an AI roadmap structured solely as a list of technological projects ('Q1: ML credit scoring; Q2: HR chatbot; Q3: predictive maintenance...'), without human dimensions (skills, training, change management) or organizational dimensions (governance, processes, social dialogue).",
+    mechanism:
+      "A technological roadmap is fast to produce — it suffices to list projects — but it ignores real limiting factors. Skills, user adoption, governance processes, change management determine success more than the technology itself. A roadmap that ignores them typically produces blocked or poorly adopted projects.",
+    mitigation:
+      "Structure any AI roadmap in 5 interdependent dimensions: vision, priority use cases, governance, skills and organization, KPIs. Each dimension is necessary — the absence of a single one weakens the whole. The skills/organization dimension is often the most neglected and yet the most decisive.",
+  },
+  {
+    title: "Confusing technology watch and strategic anticipation",
+    error:
+      "Subscribing to several AI newsletters, subscribing teams to specialized publications, organizing monthly internal presentations — and believing one is anticipating. Finding after 12-24 months that important strategic decisions have been made outside any structured device, based on individual intuitions.",
+    mechanism:
+      "Watch (collecting information about what exists and emerges) is passive. It potentially feeds strategic anticipation but does not replace it. Strategic anticipation requires active work analyzing implications for the organization, identifying decisions to make, building strategic options. Without this active work, watch produces interesting presentations but little effect on decisions.",
+    mitigation:
+      "Explicitly articulate watch and anticipation. Watch is an input; anticipation is a process. Strategic anticipation translates into deliverables: quarterly implication analysis, scenario updates, identification of decisions to make, formalized strategic options. Designate an explicit lead for this process, with proposal mandate to the AI committee.",
+  },
+  {
+    title: "Underestimating the delay between announcement and adoption in business",
+    error:
+      "Reacting immediately to each major technological announcement ('GPT-X is out', 'such-and-such model has beaten such benchmark', 'such actor announced such capability'). Committing internal projects assuming operational maturity will be reached in announced timeframes — and regularly finding projects slipping.",
+    mechanism:
+      "The delay between the announcement of a technical capability and its robust industrial adoption in business is typically 12 to 36 months — even more for sensitive uses (regulated, high-stakes). Media announcements present capabilities at their best; operational reality (integration, reliability, compliance, change management) is slower. Underestimating this delay produces unrealistic roadmaps.",
+    mitigation:
+      "Distinguish three times: (1) technological announcement (media, marketing, sometimes premature), (2) operational technical maturity (the supplier market has structured, best practices emerge), (3) internal organizational maturity (your organization has the skills, data, processes). Calibrate commitments on time 3, not time 1. Count typically 12-24 months of delay between a structuring announcement and its real contribution to business.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "AI vision and maturity mapping",
+    body: "Formulate your organization's AI vision at 3-5 years in 3-5 lines — specific to your organization, articulating what you want to look like, the value created for your stakeholders, and the inscription in your strategy. Then map current maturity on 8 dimensions (data, skills, governance, projects in production, compliance, change management, infrastructure, social dialogue). Maturity frames ambitions.",
+  },
+  {
+    heading: "Build 3 contrasting scenarios",
+    body: "Build 3 AI scenarios at 3-5 years: accelerated continuity, technological breakthrough, regulatory and social tightening. For each scenario, identify the main implications for your organization. Identify robust actions — those useful in at least 2 of 3 scenarios. These robust actions are to be prioritized in investment.",
+  },
+  {
+    heading: "Translate into priority use cases",
+    body: "List 5 to 10 candidate AI use cases. For each, score on business value, feasibility (data quality + integration + organizational maturity), risk (ethical, regulatory, technical). Calculate a net score (V × F − R). Select the top 3 and position each on a temporal horizon (short / medium / long term).",
+  },
+  {
+    heading: "12-24 month action plan",
+    body: "Structure the roadmap by horizon: 0-6 months (foundations: governance, first low-risk pilot, KPIs) / 6-12 months (first projects with measurable business value, skills upskilling) / 12-24 months (ambitious projects that depend on acquired maturity). For each roadmap dimension (vision, use cases, governance, skills, KPIs), specify actions per horizon. Quantify the global budget, identify major risks and their mitigation plans.",
+  },
+];
+
+const activityCriteria = [
+  "The AI vision is specific to your organization (non-interchangeable).",
+  "The maturity mapping covers the 8 key dimensions.",
+  "3 contrasting scenarios are built with implications identified.",
+  "The top 3 use cases is prioritized on value, feasibility and risk.",
+  "The 24-month plan is structured in 5 dimensions with budget and risks.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Vision and anticipation",
+    items: [
+      "The 3-5 year AI vision is formulated explicitly and specifically to the organization.",
+      "At least 3 contrasting AI scenarios at 3-5 years have been built.",
+      "Robust actions (useful in multiple scenarios) are identified and prioritized.",
+      "An active strategic anticipation device exists (not just watch).",
+    ],
+  },
+  {
+    title: "Structured roadmap",
+    items: [
+      "The roadmap covers the 5 dimensions (vision, use cases, governance, skills, KPIs).",
+      "The temporal sequence (0-6 / 6-12 / 12-24 months) respects natural dependencies (foundations before ambition).",
+      "Each priority use case is tied to a Porter strategic dimension (differentiation / cost / focus).",
+      "Skills to recruit, train, redeploy are explicitly identified.",
+    ],
+  },
+  {
+    title: "Budget, risks and execution",
+    items: [
+      "The global 24-month budget is quantified with funding sources.",
+      "Major risks (technical, regulatory, social, financial) are identified with mitigation plans.",
+      "Main KPIs (3-5 indicators) are defined and measurable.",
+      "The one-page roadmap summary is defensible in 5 minutes to the C-suite and the Board.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "The key concept: scenario planning enables strategic decisions in face of AI uncertainty — think multiple futures rather than predict one, identify actions robust to multiple scenarios.",
+  "The exemplary case: the MIT Initiative on the Digital Economy shows how an academic institution structures prospective research on the future of work and the digital economy — method transposable at organizational scale.",
+  "The major pitfall: building a purely technological roadmap without human and organizational dimension — skills, adoption, change management determine success more than technology.",
+  "The operational tool: the 4-step AI roadmap canvas (vision and maturity / 3 scenarios / priority use cases / 12-24 month plan in 5 dimensions) — also serves as capstone preparation.",
+  "Conclusion of the journey: the 6 modules have given you a complete framework (introduction, ML, GenAI, robotics, governance/society, future and roadmap). The capstone consists of applying this framework to your organization to produce a defensible AI roadmap.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'MIT Initiative on the Digital Economy',
+    author: 'MIT Sloan',
+    description:
+      "MIT Sloan research initiative on the future of work, digital economy, and impact of technologies. Regular and accessible publications on structuring evolutions — solid base for strategic anticipation.",
+    href: 'https://ide.mit.edu/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Future of Jobs Report',
+    author: 'World Economic Forum (WEF)',
+    description:
+      "Biennial World Economic Forum report on the expected evolution of jobs and skills. Survey data from hundreds of companies worldwide. Reference for skills framing of an AI roadmap.",
+    href: 'https://www.weforum.org/publications/series/future-of-jobs/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI and Collective Intelligence',
+    author: 'MIT Center for Collective Intelligence',
+    description:
+      "MIT resource explicitly articulating generative AI and collective intelligence — useful perspective for organizations seeking to orchestrate humans and machines rather than substitute.",
+    href: 'https://cci.mit.edu/generative-ai-and-collective-intelligence/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "American operational reference framework for AI governance and risk management. Remains relevant for foresight: structures the durable principles of AI governance facing future evolutions.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Regulation (EU) 2024/1689 — AI Act and application calendar',
+    author: 'Official Journal of the European Union',
+    description:
+      "Full text and progressive application calendar until 2027. Indispensable to anticipate obligations applicable to your organization in the next 24-36 months.",
+    href: 'https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: 'Strategic AI roadmap canvas',
+    author: 'AI Strategy — Module 6',
+    description:
+      "Printable Markdown canvas to structure a strategic AI roadmap in 4 steps (vision and maturity / 3 scenarios / priority use cases / 12-24 month plan) — also serves as capstone preparation for the program.",
+    href: '/downloads/canvas-roadmap-ia-module-6.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module5Url = getLocalizedUrl('/modules/05-ia-societe/', locale);
+const modulesIndexUrl = getLocalizedUrl('/modules/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of Module 6 (Future of AI) is scheduled for Phase 7. The French version is available now."
+  title="Module 6 — The Future of AI"
+  description="Scenario planning, strategic anticipation, building an AI roadmap in 5 dimensions (vision, use cases, governance, skills, KPIs). Concluding module and capstone preparation."
 >
-  <TranslationPending frenchPagePath="/modules/06-futur-ia/" />
+  <HeroSecondary
+    surtitle="Module 6 · The Future of AI"
+    title="Anticipate, build a roadmap, prepare the capstone"
+    lead="Sixth and final module of the program. We learn to anticipate rather than predict (scenario planning), to distinguish technology watch from active strategic anticipation, and to build a strategic AI roadmap structured in 5 dimensions. Concluding module that prepares the capstone — your organization's AI roadmap."
+  >
+    <span slot="stats">
+      Recommended duration: 6-8 h · Level: Applicable / Synthesis · Prerequisite: Modules 1 to 5
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — EXECUTIVE SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            The future of AI in business is <strong>uncertain at 3-10 years</strong> — rapid
+            technical evolutions, regulations under construction, unpredictable social
+            dynamics. Trying to predict a single future is a methodological error.
+            Organizations that commit to it optimize for a scenario that may not happen. The
+            robust method is <strong>scenario planning</strong>: build 3 contrasting scenarios
+            and identify robust actions — those useful in at least 2 of 3 scenarios.
+          </p>
+          <p>
+            Many organizations confuse <strong>technology watch</strong> (passive, information
+            collection) and <strong>strategic anticipation</strong> (active, implications
+            analysis, options construction). Watch feeds anticipation but does not replace it.
+            Without structured strategic anticipation, AI decisions are made on individual
+            intuitions rather than on a defensible process. Organizations that build this
+            process are better prepared for ruptures — whether technological, regulatory or
+            social.
+          </p>
+          <p>
+            A robust <strong>strategic AI roadmap</strong> is structured in 5 interdependent
+            dimensions: vision, priority use cases, governance, skills and organization, KPIs.
+            A roadmap that only addresses technological projects is incomplete — human and
+            organizational factors (skills, adoption, change management, social dialogue)
+            determine success more than technology. The temporal sequence (0-6 / 6-12 / 12-24
+            months) respects natural dependencies: foundations before ambition, first results
+            before scaling. This module closes the program and prepares the capstone — building
+            your organization's AI roadmap.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIVES === */}
+        <section id="objectifs">
+          <h2>Learning objectives</h2>
+          <p>By the end of this module, you will be able to:</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Key concepts</h2>
+          <p>
+            Five concepts structure this module. Each is sourced. The source hierarchy is
+            <a href={methodeUrl}> explained in the method page</a>.
+          </p>
+
+          <ConceptCard
+            id="scenario-planning"
+            title="Scenario planning vs forecasting"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              <strong>Forecasting</strong> seeks to estimate a single most likely future,
+              generally from historical data and statistical models. It works well for stable
+              phenomena (tomorrow's electricity consumption, quarterly sales). It is unsuitable
+              for structurally uncertain phenomena.
+            </p>
+            <p>
+              <strong>Scenario planning</strong> is a method developed notably by Royal Dutch
+              Shell in the 1970s in response to oil shocks that forecasting had missed. The
+              method accepts that the future is multiple and explicitly constructs
+              <strong> 3 or 4 contrasting scenarios</strong> representing different plausible
+              evolutions. The objective is not to guess which one will happen, but to test the
+              robustness of strategic decisions against different evolutions, and to identify
+              robust actions — those useful in multiple scenarios.
+            </p>
+            <p>
+              For AI in business at 3-5 years, uncertainty justifies scenario planning. Three
+              axes typically structure scenarios: <strong>technical maturity</strong>
+              (continuity, breakthrough, plateau), <strong>regulatory environment</strong>
+              (loosening, stability, tightening), <strong>social dynamics</strong>
+              (acceptance, vigilance, contestation). These axes can combine into 3-4
+              contrasting and useful scenarios.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> For each action of your AI roadmap, ask the
+                question: "is this action useful if scenario A happens? if B? if C?". Actions
+                useful in multiple scenarios are to be prioritized in investment. Actions
+                useful in only one scenario are to be deferred or conditioned.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="evolutions-techniques"
+            title="Expected technical evolutions at 3-10 years"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              Technical AI evolutions at 3-10 years are uncertain but a few robust trends can
+              be anticipated:
+            </p>
+            <ul>
+              <li>
+                <strong>Multi-modality.</strong> Models capable of processing text, image,
+                audio, video and code in an integrated way are generalizing. Business use
+                cases mixing several modalities (document analysis with illustrations,
+                customer support with voice and writing) become more accessible.
+              </li>
+              <li>
+                <strong>Autonomous agents.</strong> Systems capable of executing multi-step
+                tasks with relatively little human intervention progress rapidly. Serious
+                business implications (complex automated workflows) but also increased risks
+                (need for robust guardrails, active supervision).
+              </li>
+              <li>
+                <strong>Frugal AI and energy efficiency.</strong> Pressure on inference costs
+                and environmental footprint pushes toward smaller, more specialized, more
+                energy-efficient models. Good news for organizations seeking to industrialize
+                GenAI at scale.
+              </li>
+              <li>
+                <strong>Sector-specialized AI.</strong> Fundamentally specialized models
+                (healthcare, legal, finance, engineering) emerge alongside generalist models.
+                They combine pre-trained foundation models and sectoral fine-tuning or RAG.
+              </li>
+              <li>
+                <strong>Tools and platforms.</strong> The tooling ecosystem around AI
+                (orchestration, monitoring, compliance, MLOps) gains maturity — which reduces
+                integration costs and facilitates scaling for non-technological organizations.
+              </li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Announcement / adoption delay.</strong> For each announced evolution,
+                count typically 12 to 36 months between media announcement and robust
+                operational adoption in standard business — even more for regulated sectors.
+                Calibrate roadmap commitments on adoption delay, not announcement delay.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="construction-roadmap"
+            title="Building a strategic AI roadmap"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              A robust strategic AI roadmap is structured in <strong>5 interdependent
+              dimensions</strong>:
+            </p>
+            <ul>
+              <li>
+                <strong>Vision.</strong> Where does the organization want to be in 3-5 years
+                in AI? The vision must be specific (non-interchangeable with a competitor),
+                articulated with corporate strategy, and understandable in 3-5 lines.
+              </li>
+              <li>
+                <strong>Priority use cases.</strong> Hierarchized list of AI projects to lead
+                to bring closer to the vision. Each use case is scored on value, feasibility,
+                risk, and tied to a Porter strategic dimension (differentiation, cost, focus).
+              </li>
+              <li>
+                <strong>Governance.</strong> AI committee with real decision power, review
+                process, articulation with cross-functional functions (DPO, HR, compliance,
+                security). Seen in detail in Module 5.
+              </li>
+              <li>
+                <strong>Skills and organization.</strong> Profiles to recruit, train,
+                redeploy. Often the real limiting factor of an AI roadmap — underestimated in
+                marketing presentations, decisive in practice.
+              </li>
+              <li>
+                <strong>KPIs.</strong> Measurable success indicators. Combine business
+                metrics (€, productivity, satisfaction), technical metrics (quality,
+                reliability, availability), and organizational metrics (adoption, training,
+                compliance).
+              </li>
+            </ul>
+            <p>
+              The 5 dimensions are necessary — the absence of a single one weakens the whole.
+              A roadmap reduced to the list of projects without human and organizational
+              dimension is typically a presentation for the C-suite that does not survive
+              confrontation with the field.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> Ask your AI roadmap: "if I remove the Skills and
+                organization dimension, are the projects still feasible?". The honest answer
+                is almost always no — skills are systematically the limiting factor. A
+                roadmap that only addresses projects is incomplete.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="veille-vs-anticipation"
+            title="Technology watch and strategic anticipation"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              <strong>Technology watch</strong> is passive: it collects information about what
+              exists and emerges. Newsletters, specialized publications, conferences, analyst
+              reports feed watch. It is useful but not sufficient.
+            </p>
+            <p>
+              <strong>Strategic anticipation</strong> is active: it translates watch into
+              analysis of implications for the organization, into identification of decisions
+              to make, into construction of strategic options. Without this active
+              translation, watch produces interesting presentations but little effect on
+              decisions.
+            </p>
+            <p>
+              Four components structure a strategic anticipation device:
+            </p>
+            <ul>
+              <li>
+                <strong>A dedicated cell</strong> with explicit mandate — typically 1 to 3
+                people part-time or a rotating mandate between functions.
+              </li>
+              <li>
+                <strong>A regular cycle</strong> — typically quarterly — of implications
+                analysis and scenarios update.
+              </li>
+              <li>
+                <strong>Formalized deliverables</strong> — quarterly analysis note, AI
+                scenarios update, decision proposals to the AI committee.
+              </li>
+              <li>
+                <strong>An articulation with decision</strong> — strategic anticipation
+                proposals are examined by the AI committee, which decides to act, defer, or
+                observe.
+              </li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Best practice.</strong> Entrust the strategic anticipation cell with
+                the responsibility of producing and updating the 3 AI scenarios. At each
+                quarterly cycle, scenarios are refined in light of observed evolutions, and
+                robust actions are reconfirmed or adjusted. This discipline avoids disorderly
+                pivots at each media announcement.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="hierarchisation-temporelle"
+            title="Temporal hierarchization of the roadmap"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              A realistic AI roadmap hierarchizes actions respecting natural dependencies.
+              The robust sequence is:
+            </p>
+            <ul>
+              <li>
+                <strong>0-6 months — Foundations.</strong> Setting up governance (active AI
+                committee), first pilot on low-risk case to learn, setting up measurement
+                KPIs. No ambitious projects at this stage — the organization does not yet have
+                the required maturity. The temptation to "start strong" typically produces
+                blocked projects or permanent POCs.
+              </li>
+              <li>
+                <strong>6-12 months — First results.</strong> First projects with measurable
+                business value, skills upskilling (recruitment, training), first real ROI
+                measurement. Capitalization of the first pilot's learnings to structure the
+                following projects.
+              </li>
+              <li>
+                <strong>12-24 months — Expanded ambition.</strong> Differentiation projects,
+                scaling, governance refinement. Possibility to commit more ambitious projects
+                that depend on acquired maturity.
+              </li>
+            </ul>
+            <p>
+              This sequence respects a dependency logic: one cannot do X without first
+              putting Y in place. A roadmap that ignores dependencies (for example: a
+              differentiation project launched before governance is in place) produces
+              projects that get bogged down or must be suspended.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Best practice for the C-suite.</strong> Explicitly present the
+                sequence logic ("we start with foundations because...; ambitious projects
+                will come in the second wave because..."). This logic is better understood
+                and better supported than a list of projects without temporal coherence.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — COMMON ERRORS === */}
+        <section id="erreurs-frequentes">
+          <h2>Common errors</h2>
+          <p>
+            Four recurring pitfalls in AI roadmap construction to recognize and mitigate.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — REAL CASE === */}
+        <section id="cas-reel">
+          <h2>Real case — MIT Initiative on the Digital Economy</h2>
+          <p>
+            The <strong>MIT Initiative on the Digital Economy</strong> (MIT IDE) is one of the
+            main academic devices structuring prospective research on the future of work and
+            the digital economy. It illustrates what a structured strategic anticipation
+            approach is — method transposable at organizational scale.
+          </p>
+          <CaseCardCompact
+            organization="MIT Initiative on the Digital Economy (MIT IDE)"
+            sector="Applied academic research — Future of work"
+            technology="Structured strategic anticipation"
+            tagline="MIT IDE regularly produces publications, studies, and open data on the evolution of the digital economy and the impact of technologies on work. The approach combines rigorous academic research, empirical data, and translation into strategic implications for decision-makers. For an organization, it is a model of what strategic anticipation should be: not passive watch but active work of analysis and production of decision frameworks."
+            href={getLocalizedUrl('/cas/mit-ide/', locale)}
+            available={true}
+          />
+
+          <h3>Additional mini-case — Future of Jobs Report (World Economic Forum)</h3>
+          <p>
+            The <strong>Future of Jobs Report</strong> published biennially by the World
+            Economic Forum is one of the most cited references for framing the skills
+            foresight of an AI roadmap. Several transposable lessons:
+          </p>
+          <ul>
+            <li>
+              <strong>Large-scale survey</strong> of hundreds of companies produces expected
+              evolution data that usefully complements technological analyses. AI vendors'
+              announcements and employers' anticipations do not always converge.
+            </li>
+            <li>
+              <strong>Skills evolution</strong> is systematically highlighted — which skills
+              gain in importance, which lose. This dimension is precious for the Skills and
+              organization dimension of a roadmap.
+            </li>
+            <li>
+              <strong>The reskilling / upskilling distinction</strong> is useful: reskilling
+              (switching to new occupations) vs upskilling (skill enhancement on the existing
+              occupation). Both dynamics coexist in an organization deploying AI.
+            </li>
+            <li>
+              <strong>Timeframes</strong> are calibrated in years — not quarters. This
+              opportunely reminds that skills evolution at organizational scale is a
+              medium-term endeavor, not a one-off operation.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source:
+              <a
+                href="https://www.weforum.org/publications/series/future-of-jobs/"
+                rel="noopener noreferrer"
+                target="_blank">Future of Jobs Reports series published by the World Economic Forum</a>.
+            </em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITY === */}
+        <section id="activite">
+          <h2>Practical activity — Build a strategic AI roadmap</h2>
+          <p>
+            This activity makes you concretely walk through building a strategic AI roadmap
+            for your organization. To be done alone or in a small group, in 90 to 120
+            minutes. The downloadable canvas structures the 4 steps — it also serves as
+            preparation for the capstone of the pedagogical program.
+          </p>
+          <Activity
+            id="activite-roadmap-ia"
+            title="Build a strategic AI roadmap for your organization"
+            duration="90-120 min"
+            level="Applicable / Synthesis"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="Strategic AI roadmap canvas (printable Markdown)"
+            downloadHref="/downloads/canvas-roadmap-ia-module-6.md"
+          />
+          <p class="ai-text-muted">
+            <em>The canvas is provided in printable Markdown format. The styled PDF version
+            arrives in Phase 5 of the project. This canvas also serves as capstone preparation
+            — the AI roadmap of your organization as the final deliverable of the pedagogical
+            program.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Formative quiz</h2>
+          <p>
+            Seven questions to verify your understanding. Three comprehension questions, three
+            application, one judgment. Each incorrect answer unfolds a pedagogical explanation
+            pointing to the section to review.
+          </p>
+          <QuizInteractive client:visible
+            id="quiz-module-6-en"
+            title={quizModule6EN.title}
+            intro={quizModule6EN.intro}
+            questions={quizModule6EN.questions}
+            scoringBands={quizModule6EN.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Manager checklist — Strategic AI roadmap</h2>
+          <p>
+            Twelve checkpoints to assess the quality of your strategic AI roadmap before
+            presentation to the C-suite, the Board or a Board of Directors. Three groups:
+            vision and anticipation, structured roadmap, budget-risks-execution.
+          </p>
+          <Checklist
+            id="checklist-module-6-en"
+            title="Strategic AI roadmap — 12 checkpoints"
+            intro="Before presenting the AI roadmap to the C-suite or Board, go through these twelve points. A roadmap that ticks the 12 points is defensible, robust and applicable. A roadmap with several empty boxes presents blind spots that will be revealed in execution."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application in your organization</h2>
+          <p>
+            Five questions to ask in your context. No universal right or wrong answer — what
+            matters is being able to answer them <em>specifically</em> for your organization.
+            These questions also structure capstone preparation.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              What is your organization's <strong>AI vision</strong> at 3-5 years? Is it
+              specific (non-interchangeable) and defensible in 3-5 lines?
+            </li>
+            <li>
+              Have you built <strong>3 contrasting scenarios</strong> (accelerated continuity,
+              technological breakthrough, regulatory and social tightening)? What are the
+              robust actions useful in multiple scenarios?
+            </li>
+            <li>
+              For your <strong>top 3 priority use cases</strong>, are they scored on value,
+              feasibility and risk? Are they tied to a Porter strategic dimension?
+            </li>
+            <li>
+              Does your roadmap cover the <strong>5 dimensions</strong> (vision, use cases,
+              governance, skills and organization, KPIs)? Is the Skills dimension addressed
+              with as much care as the Use cases dimension?
+            </li>
+            <li>
+              Does the <strong>temporal sequence</strong> of your roadmap (0-6 / 6-12 / 12-24
+              months) respect natural dependencies (foundations before ambition)? Is the
+              sequence logic explicitly defensible to the C-suite?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>For consultants — capstone preparation</h3>
+            <p>
+              In an AI roadmap construction engagement, these five questions structure a
+              half-day to full-day workshop with a cross-functional team (CEO / CIO / HR /
+              business directions / DPO / Compliance / sometimes employee representatives).
+              The final roadmap is exactly the type of deliverable expected in the capstone of
+              the pedagogical program. If you have completed the canvas for your organization,
+              you have the capstone material — it remains to refine the wording, contextualize
+              the arguments, and prepare the oral defense in 10-15 minutes.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — KEY TAKEAWAYS === */}
+        <section id="a-retenir">
+          <h2>Key takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — GOING FURTHER === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Going further</h2>
+          <p>
+            Six resources to deepen, sorted by type. The source hierarchy is indicated on each
+            (cf. <a href={methodeUrl}>method</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            You have completed the 6 modules of the program. To return to the
+            <a href={modulesIndexUrl}> modules overview</a> or explore the
+            <a href={glossaireUrl}> glossary</a>.
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module5Url,
+            label: 'AI in Business and Society',
+            context: 'Module 5',
+          }}
+          next={{
+            href: modulesIndexUrl,
+            label: 'Modules overview',
+            context: 'Index',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
