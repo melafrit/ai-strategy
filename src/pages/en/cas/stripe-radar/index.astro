@@ -1,14 +1,482 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Business problem' },
+  { id: 'solution', label: 'AI solution' },
+  { id: 'benefices', label: 'Observed benefits' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: 'Identified risks' },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+const takeaways = [
+  "Stripe Radar illustrates a canonical case of supervised learning at very large scale — performance comes as much from the volume and quality of labeled data as from the algorithms themselves.",
+  "The system combines ML + user feedback + business rules — not an isolated model. This orchestration is what makes the solution operationally robust against new fraud forms.",
+  "The network effect is central: more transactions processed → better labeling → better model → more merchants attracted. This is a structural competitive advantage difficult to reproduce.",
+  "Fraud detection is a prime ground for supervised ML: binary decision (fraudulent/legitimate), massive labeled history available, business value directly measurable, clear real-time constraints.",
+  "The case is transposable beyond payments — any organization processing massive volumes of repetitive decisions with clear labeling (insurance, telecoms, e-commerce) can draw inspiration from the architecture.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'A primer on machine learning for fraud protection',
+    author: 'Stripe',
+    description:
+      "Stripe pedagogical guide on ML application to fraud detection. Primary source for this case — available in French. Concrete, sourced, written by Stripe practitioners.",
+    href: 'https://stripe.com/guides/primer-on-machine-learning-for-fraud-protection',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Stripe Radar — official product page',
+    author: 'Stripe',
+    description:
+      "Official Stripe Radar product page. Presents features, integration, and merchant customization capabilities. Complementary primary source.",
+    href: 'https://stripe.com/radar',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Introduction to Machine Learning (full course)',
+    author: 'MIT OpenCourseWare — 6.036',
+    description:
+      "MIT introduction course to ML. To solidify the conceptual foundations — supervised, overfitting, validation — that structure this case.",
+    href: 'https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module2Url = getLocalizedUrl('/modules/02-machine-learning/', locale);
+const takedaUrl = getLocalizedUrl('/cas/takeda-superminds/', locale);
+const morganStanleyUrl = getLocalizedUrl('/cas/morgan-stanley/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of the Stripe Radar case study is scheduled for Phase 7. The French version is available now."
+  title="Stripe Radar — Case study"
+  description="Stripe Radar illustrates a canonical case of supervised Machine Learning at very large scale for real-time fraud detection. ML + user feedback + business rules architecture."
 >
-  <TranslationPending frenchPagePath="/cas/stripe-radar/" />
+  <HeroSecondary
+    surtitle="Case study · Module 2"
+    title="Stripe Radar — Fraud detection through ML"
+    lead="How Stripe uses a supervised Machine Learning model trained on hundreds of millions of labeled transactions to score each transaction in real time. Exemplary case for Module 2."
+  >
+    <span slot="stats">
+      Finance / Online payments · Supervised learning · Stripe
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organization</dt>
+              <dd>Stripe — American online payments platform, processing hundreds of billions of dollars in transactions per year for millions of merchants worldwide</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sector</dt>
+              <dd>Finance / Online payments — critical infrastructure for online commerce</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technology</dt>
+              <dd>Large-scale supervised learning — binary classification (fraud / legitimate) with real-time scoring, combined with business rules and user feedback</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Volume processed</dt>
+              <dd>Hundreds of millions of historically labeled transactions, billions of dollars secured annually (figures from Stripe official communications)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>Stripe documentation and official pedagogical guide on ML for fraud detection <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Stripe Radar</strong> is the fraud detection solution integrated into the
+            Stripe payments platform. It uses a <strong>supervised Machine Learning
+            model</strong> trained on hundreds of millions of labeled transactions (legitimate
+            or fraudulent) to <strong>score each new transaction in real time</strong> —
+            typically in less than 100 ms — and block or flag suspicious cases before
+            validation.
+          </p>
+          <p>
+            The system is not limited to the ML model. It combines several layers:
+            transactional signals (amount, geography, payment method history), merchant
+            history, <strong>user feedback</strong> (merchants report false positives and
+            missed fraud, which feeds training back), and <strong>business rules</strong>
+            customizable by merchants themselves.
+          </p>
+          <p>
+            For a leader, the case is emblematic of Module 2: it illustrates how
+            <strong> scale</strong> (volume of labeled data) and <strong>orchestration</strong>
+            (ML + rules + user feedback) are the two conditions of performance — not the
+            algorithm alone. It also illustrates a <strong>structural network effect</strong>:
+            more transactions processed improves labeling, which improves the model, which
+            attracts more merchants, etc. — a competitive advantage difficult to reproduce
+            for a new entrant.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>Stripe</strong>, founded in 2010, has become one of the leading online
+            payments platforms worldwide. Its core business is to provide merchants (from
+            small e-merchants to large platforms like Shopify, Amazon, or several
+            international SaaS services) with a technical infrastructure to accept online
+            credit card payments with a few lines of code.
+          </p>
+          <p>
+            Fraud is a structural challenge for this profession:
+          </p>
+          <ul>
+            <li>
+              <strong>Fraudsters are organized and adaptive</strong> — their techniques evolve
+              constantly (card theft, hacked accounts, money laundering scenarios). A frozen
+              solution becomes obsolete in a few months.
+            </li>
+            <li>
+              <strong>Merchants suffer the losses</strong> in case of chargeback (customer
+              refund following fraud), with heavy financial and operational costs.
+            </li>
+            <li>
+              <strong>False positives are also costly</strong>: blocking a legitimate
+              transaction loses a sale, frustrates a customer, can harm the merchant's
+              reputation. The balance between detection and acceptance is a permanent issue.
+            </li>
+            <li>
+              The <strong>real-time constraint</strong> is strong — decision in less than 100
+              ms typically, without degrading the purchase experience.
+            </li>
+          </ul>
+          <p>
+            Stripe occupies a particular position on this subject: thanks to its volume and
+            the diversity of its merchants, it has a <strong>history of labeled
+            transactions</strong> with no equivalent — which is precisely the main fuel of
+            supervised ML for fraud detection.
+          </p>
+        </section>
+
+        {/* === BUSINESS PROBLEM === */}
+        <section id="probleme">
+          <h2>Business problem</h2>
+          <p>
+            The business problem Stripe Radar addresses is threefold:
+          </p>
+          <ul>
+            <li>
+              <strong>Maximize detection</strong> of frauds (true positives) to reduce
+              chargebacks suffered by merchants and preserve trust in the platform.
+            </li>
+            <li>
+              <strong>Minimize false positives</strong> (legitimate transactions wrongly
+              blocked) to not degrade the merchants' conversion rate or their customer
+              experience.
+            </li>
+            <li>
+              <strong>Allow customization</strong> by merchants. An e-commerce SME and a
+              large SaaS platform do not have the same fraud profile or the same risk
+              appetite — the solution must adapt to each context without requiring ML
+              expertise from the merchants themselves.
+            </li>
+          </ul>
+          <p>
+            The trade-off between detection and false positives is central. A model that
+            blocks everything is trivial but useless. A model that blocks nothing is also
+            useless. Value lies in the <strong>granularity of the trade-off</strong> at
+            scale — and this depends directly on the quality and volume of available data.
+          </p>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>AI solution implemented</h2>
+          <p>
+            The Stripe Radar solution combines several articulated layers:
+          </p>
+
+          <h3>1. Supervised ML model trained at scale</h3>
+          <p>
+            The heart of the system is a <strong>binary classification model</strong> (fraud
+            / legitimate) trained on the massive history of Stripe transactions — history
+            labeled thanks to observed results (real chargeback or not, merchant reporting,
+            manual verification). According to Stripe's official communications, the model
+            exploits hundreds of signals per transaction, including: card characteristics,
+            payment method history at Stripe scale, geography and IP, buyer behavior,
+            merchant profile, temporal context.
+          </p>
+
+          <h3>2. User feedback integrated into the training cycle</h3>
+          <p>
+            Merchants can <strong>report missed frauds</strong> (chargeback received) and
+            <strong> false positives</strong> (legitimate transaction blocked). These reports
+            re-enter the training pipeline and continuously improve the model. This loop is
+            essential to follow the rapid evolution of fraud tactics.
+          </p>
+
+          <h3>3. Customizable business rules</h3>
+          <p>
+            On top of the ML model, Stripe Radar allows merchants to define <strong>explicit
+            business rules</strong> (for example: block transactions over $X from country Y,
+            or flag first orders from a new customer). These rules allow customizing
+            behavior without ML expertise — and give merchants control that no ML model
+            alone can provide transparently.
+          </p>
+
+          <h3>4. Real-time scoring and explainability</h3>
+          <p>
+            Each transaction receives a <strong>real-time risk score</strong>, accompanied by
+            the main signals that contributed to this score (unusual amount, suspicious IP,
+            etc.). This partial explainability allows merchants to understand decisions
+            without being ML experts — and facilitates investigation of disputed cases.
+          </p>
+        </section>
+
+        {/* === BENEFITS === */}
+        <section id="benefices">
+          <h2>Observed benefits</h2>
+          <p>
+            Stripe publicly communicates several orders of magnitude in its pedagogical
+            guide on ML for fraud (and in its product documentation):
+          </p>
+          <ul>
+            <li>
+              <strong>Significant reduction in chargeback rates</strong> for merchants using
+              Radar — precise figures varying according to merchants and their configuration,
+              but effects of several orders of magnitude cited in Stripe documentation.
+            </li>
+            <li>
+              <strong>Rapid adaptation to new fraud tactics</strong> thanks to the merchant
+              reporting feedback loop — the model continuously learns from new frauds.
+            </li>
+            <li>
+              <strong>Positive network effect</strong> — a new merchant immediately benefits
+              from learning across the entire platform, without needing to build their own
+              history.
+            </li>
+            <li>
+              <strong>Possible customization</strong> without ML expertise — business rules
+              allow merchants to calibrate the detection / false positives trade-off
+              according to their risk appetite.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: Stripe publishes orders of magnitude in its pedagogical communication
+            but not all precise figures (which depend on the merchant, sector and
+            configuration). The case's value lies in the publicly documented architecture,
+            not in punctual KPIs.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <ul>
+            <li>
+              <strong>The model remains a probabilistic classification tool</strong>. It
+              never provides absolute guarantee — there will always be missed frauds and
+              false positives. Managing these cases (chargeback, merchant recourse) remains
+              an operational cost.
+            </li>
+            <li>
+              <strong>The network effect benefits established players first</strong>. For a
+              new entrant seeking to compete with Stripe on this ground, the absence of
+              massive labeled history constitutes a structural obstacle — one would either
+              need to acquire an established player, or accept a period of degraded
+              performance while building the history.
+            </li>
+            <li>
+              <strong>The case is not trivially transposable to all domains</strong>. Fraud
+              detection benefits from a clear label (observed chargeback) and a massive
+              history. Other problems (service quality, customer satisfaction) are more
+              difficult to label — naively applying the same architecture would be wrong.
+            </li>
+            <li>
+              <strong>The regulatory dimension is growing</strong>. Compliance obligations
+              (GDPR for personal data used in scoring, EU AI Act for system classification,
+              sectoral payment standards) impose documentary and operational constraints
+              that do not reduce with scale.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISKS === */}
+        <section id="risques">
+          <h2>Identified risks and guardrails</h2>
+          <ul>
+            <li>
+              <strong>Risk of discriminatory bias</strong>. A model trained on historical
+              data may reproduce biases (by geography, card type, buyer profile).
+              Guardrails: regular audit of error rates by subgroups, control of compliance
+              with legal obligations (notably EU AI Act if the use falls into high-risk).
+            </li>
+            <li>
+              <strong>Risk of arms race with fraudsters</strong>. Any model improvement
+              triggers fraudster adaptation. Guardrail: continuous monitoring, short
+              learning cycle, capability to quickly deploy new rules.
+            </li>
+            <li>
+              <strong>Risk of merchant dependency</strong>. The more merchants rely on
+              Radar, the more they depend on Stripe for their protection. Guardrail on
+              Stripe side: transparency on decisions and audit possibility for large
+              merchants; on merchant side: operational redundancy (complementary internal
+              policies).
+            </li>
+            <li>
+              <strong>EU AI Act regulatory risk</strong>. Depending on specific uses (for
+              example: credit decision dependent on scoring), some uses may fall into
+              "high-risk" within the meaning of Regulation EU 2024/1689 — with associated
+              obligations. Guardrail: compliance analysis per merchant use case,
+              documentation of automated decisions.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              The Stripe Radar case combines ML + business rules + user feedback. <strong>Why
+              not only ML?</strong> What specific value does each of the three layers bring?
+            </li>
+            <li>
+              The network effect (more transactions → better labeling → better model) is
+              described as a <strong>structural competitive advantage</strong>. Are there
+              similar network effects in your business sector?
+            </li>
+            <li>
+              The <strong>real-time constraint</strong> (less than 100 ms per decision)
+              imposes specific architectural choices. What would be the trade-offs to make
+              if the constraint were relaxed to several seconds?
+            </li>
+            <li>
+              To reproduce this type of architecture in a smaller organization (SME),
+              <strong> what adaptations</strong> would be necessary? Which parts would
+              remain unchanged?
+            </li>
+            <li>
+              In view of the EU AI Act and GDPR, <strong>what specific obligations</strong>
+              should be anticipated to deploy a similar fraud scoring system in Europe today?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module2Url}><strong>Module 2 — Machine
+            Learning in Business</strong></a>, in particular the viability conditions of an
+            ML project (volume, labeling, quality, representativeness) and the necessity of
+            orchestrating model + rules + user feedback. It is also a support point for
+            discussing governance and compliance issues (Module 5) — GDPR, EU AI Act, bias
+            audit.
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. See the
+            <a href={methodeUrl}> method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: takedaUrl,
+            label: 'Takeda × MIT CCI Superminds',
+            context: 'Previous case',
+          }}
+          next={{
+            href: morganStanleyUrl,
+            label: 'Morgan Stanley AskResearchGPT',
+            context: 'Next case',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) {
+    .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; }
+  }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) {
+    .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; }
+  }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 {
+    margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2);
+    font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary);
+  }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) {
+    .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); }
+  }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>

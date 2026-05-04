@@ -1,14 +1,505 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Business problem' },
+  { id: 'solution', label: 'AI solution' },
+  { id: 'benefices', label: 'Observed benefits' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: 'Identified risks' },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+const takeaways = [
+  "Amazon Robotics illustrates autonomous mobile robotics (AMR) at very large scale — one million robots deployed worldwide, demonstrating that logistics driven by robotics + AI is now possible at the scale of a global player.",
+  "DeepFleet, the AI foundation model to orchestrate the fleet (announced 2025), shows that the breakthrough is not in the individual robot but in the global orchestration of a heterogeneous fleet — direct analogy with LLMs as foundation models for language.",
+  "Amazon publicly emphasizes the augmentation of humans rather than replacement — creation of new technical roles (robotic technician, fleet operator), redeployment to higher value-added tasks. Defensible and reproducible framing.",
+  "The case demonstrates that the competitive advantage in logistics robotics does not come from the robot itself (technology available on the market) but from integration: ground data, orchestration foundation model, software infrastructure, change management.",
+  "Transposition to smaller organizations is partial: few companies have 1 million units to orchestrate, but the principles — robots integrated into the workflow, orchestration AI, human augmentation — remain applicable to more modest fleets (SME cobots, AGV in regional warehouses).",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'Amazon now has 1 million robots and a new AI foundation model',
+    author: 'About Amazon — Operations',
+    description:
+      "Amazon official communication announcing the threshold of one million robots deployed and the launch of DeepFleet — AI foundation model for fleet orchestration. Primary source for this case.",
+    href: 'https://www.aboutamazon.com/news/operations/amazon-million-robots-ai-foundation-model',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Amazon Robotics — official website',
+    author: 'Amazon Robotics',
+    description:
+      "Official site of the Amazon Robotics division, presenting the different generations of robots deployed in the logistics network (Hercules, Pegasus, Sequoia, etc.). Complementary primary source.",
+    href: 'https://www.aboutamazon.com/what-we-do/amazon-robotics',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'video' as const,
+    title: 'Introduction to Robotics (full course)',
+    author: 'MIT OpenCourseWare — 2.12',
+    description:
+      "MIT introduction course to robotics. To solidify the conceptual foundations — perception, kinematics, control, planning — that structure modern robotic systems including AMRs like Amazon's.",
+    href: 'https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+];
+
+const module4Url = getLocalizedUrl('/modules/04-robotique/', locale);
+const morganStanleyUrl = getLocalizedUrl('/cas/morgan-stanley/', locale);
+const githubAccentureUrl = getLocalizedUrl('/cas/github-copilot-accenture/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this case study is scheduled for Phase 7. The French version is available now."
+  title="Amazon Robotics and DeepFleet — Case study"
+  description="How Amazon reached the threshold of one million robots deployed and launched DeepFleet, an AI foundation model to orchestrate its global logistics fleet. Exemplary case for Module 4."
 >
-  <TranslationPending frenchPagePath="/cas/amazon-robotics/" />
+  <HeroSecondary
+    surtitle="Case study · Module 4"
+    title="Amazon Robotics — One million robots and DeepFleet"
+    lead="How Amazon reached the symbolic threshold of one million robots deployed in its global logistics network, and launched in 2025 DeepFleet — an AI foundation model dedicated to fleet orchestration. Emblematic case of Module 4."
+  >
+    <span slot="stats">
+      Logistics / E-commerce · AMR + orchestration AI · 1 million robots
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organization</dt>
+              <dd>Amazon — global logistics and e-commerce operator. Its Amazon Robotics division stems from the acquisition of Kiva Systems in 2012</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Sector</dt>
+              <dd>Logistics / E-commerce — fulfillment centers at global scale</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Technology</dt>
+              <dd>Autonomous Mobile Robots (AMR) + AI foundation model for fleet orchestration (DeepFleet, announced 2025) + operational software infrastructure</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Scale</dt>
+              <dd>Over one million robots deployed in the global Amazon network according to 2025 official communication — several generations coexisting (Hercules, Pegasus, Sequoia, etc.)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>Amazon official communications (About Amazon Operations) on the threshold of one million robots and the DeepFleet launch <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>Amazon Robotics</strong> is one of the largest fleets of industrial
+            robots ever deployed. According to Amazon's official 2025 communication, the
+            firm has reached the symbolic threshold of <strong>one million robots</strong>
+            in operation in its global logistics network — a network of fulfillment centers
+            that handles millions of packages daily. Several generations of robots coexist,
+            from pallet transport (Hercules) to handling varied objects (Sparrow, Sequoia).
+          </p>
+          <p>
+            In 2025, Amazon announced <strong>DeepFleet</strong>, an AI foundation model
+            designed to <strong>orchestrate this heterogeneous fleet</strong> — a logistics
+            analogue of what GPT-4 or Claude are for language. The breakthrough is no longer
+            in the individual robot (technology widely available) but in <strong>global
+            orchestration</strong>: how to decide in real time which robot does what, where,
+            when, while optimizing simultaneously productivity, wear, energy, safety, and
+            interaction with human operators.
+          </p>
+          <p>
+            For a leader, the Amazon case directly illustrates Module 4: <strong>the three
+            pillars of robotics in business</strong> (workflow integration, human-machine
+            safety, orchestration capability), <strong>the place of the human</strong>
+            (Amazon publicly insists on creating new technical roles rather than
+            replacement), and <strong>the structural competitive advantage</strong> that
+            does not come from the robot itself but from the surrounding software and data
+            ecosystem.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>Amazon</strong> is one of the largest logistics operators in the world.
+            Its network of <em>fulfillment centers</em> handles millions of orders daily
+            from hundreds of countries. Warehouse logistics is a particular ground for
+            robotics:
+          </p>
+          <ul>
+            <li>
+              The <strong>volumes</strong> make robotic investment amortizable — each robot
+              performs thousands of movements per day, over operational durations of
+              several years.
+            </li>
+            <li>
+              The <strong>environment is partially structured</strong> — flat floors,
+              defined aisles, ground markings — which simplifies perception and navigation
+              compared to a totally unstructured environment (street, natural terrain).
+            </li>
+            <li>
+              The <strong>tasks are repetitive</strong> but varied in their target (objects
+              of different sizes, weights and fragilities) — which requires versatile
+              robots capable of learning by demonstration or trial.
+            </li>
+            <li>
+              <strong>Human-machine safety</strong> is a central issue: human operators and
+              robots coexist on the same surfaces — which imposes strict standards
+              (notably ISO 10218 and ISO/TS 15066 for cobots).
+            </li>
+          </ul>
+          <p>
+            Amazon has invested massively in this direction since the acquisition of Kiva
+            Systems in 2012, which became Amazon Robotics. Several generations of robots
+            have followed: pallet transport (Hercules, Pegasus), sorting (Robin), object
+            handling (Sparrow), new warehouses designed natively integrating robotics
+            (Sequoia). The 2025 communication on the one million robot threshold and on
+            DeepFleet marks a new step.
+          </p>
+        </section>
+
+        {/* === BUSINESS PROBLEM === */}
+        <section id="probleme">
+          <h2>Business problem</h2>
+          <p>
+            Amazon's business problem evolves with scale. At the warehouse scale, the
+            problems resemble those of any automated logistics. At the scale of a million
+            robots in a global network, new problems emerge:
+          </p>
+          <ul>
+            <li>
+              <strong>How to orchestrate a heterogeneous fleet</strong>? Several robot
+              generations coexist, with different capabilities, constraints and costs.
+              Deciding which robot does what becomes a real-time global optimization
+              problem.
+            </li>
+            <li>
+              <strong>How to share learnings at network scale</strong>? When a robot learns
+              to handle a new type of object, how does this knowledge benefit other robots
+              — including those in other warehouses, even other countries?
+            </li>
+            <li>
+              <strong>How to optimize multiple objectives simultaneously</strong>?
+              Productivity, equipment wear, energy consumption, human-machine safety,
+              operational fluidity — these objectives sometimes come into tension. Local
+              arbitration is not optimal globally.
+            </li>
+            <li>
+              <strong>How to integrate humans</strong>? Human operators remain central —
+              for judgment tasks, maintenance, exception handling, general supervision.
+              How to compose an organization where humans and robots collaborate instead
+              of substituting?
+            </li>
+          </ul>
+        </section>
+
+        {/* === SOLUTION === */}
+        <section id="solution">
+          <h2>AI solution implemented</h2>
+
+          <h3>1. A specialized multi-generation fleet</h3>
+          <p>
+            Amazon Robotics has designed several generations of robots for complementary
+            tasks: <strong>Hercules and Pegasus</strong> for pallet and container
+            transport, <strong>Robin</strong> for sorting, <strong>Sparrow</strong> for
+            grasping varied objects, <strong>Sequoia</strong> as a new generation
+            integrated system. Rather than replacing all generations at each evolution,
+            Amazon makes them coexist — which assumes orchestration capable of managing
+            this heterogeneity.
+          </p>
+
+          <h3>2. DeepFleet — fleet orchestration foundation model</h3>
+          <p>
+            Announced in 2025, <strong>DeepFleet</strong> is positioned as an AI foundation
+            model dedicated to robotic fleet orchestration. The analogy with GPT-4 or
+            Claude for language is explicitly made: a model pre-trained on massive volumes
+            of operational data, capable of orchestrating a heterogeneous fleet in real
+            time and learning from its own decisions. According to Amazon communication,
+            DeepFleet improves the global efficiency of the fleet (transit time reduction,
+            trajectory optimization, load balancing between zones).
+          </p>
+
+          <h3>3. Shared learning at network scale</h3>
+          <p>
+            A structural advantage of operating one million robots is the capacity to
+            <strong> share learning</strong>: a new type of object encountered in an
+            American warehouse can benefit operations in a European warehouse. This sharing
+            assumes a dedicated software infrastructure — data pipeline, validation,
+            controlled propagation — which is itself a major investment.
+          </p>
+
+          <h3>4. Augmenting humans rather than replacing</h3>
+          <p>
+            Amazon publicly insists, in its 2025 communication, on the creation of new
+            technical roles (robotic technician, fleet operator, process engineer) that did
+            not exist before the massive deployment. This augmentation logic is defensible
+            — both internally (social acceptability of deployment) and externally
+            (regulators, public, potential candidates). The public framing is consistent
+            with David Autor's (MIT) recommendations on the impact of technologies on
+            employment.
+          </p>
+
+          <h3>5. Human-machine safety</h3>
+          <p>
+            The cohabitation of humans and robots on the same surfaces imposes strict
+            standards (ISO 10218 industrial robots, ISO/TS 15066 cobots when applicable,
+            local regulations). Amazon has integrated these requirements in the design of
+            its warehouses and in orchestration — for example, shared human-robot zones
+            operate with avoidance rules and adapted speed limits.
+          </p>
+        </section>
+
+        {/* === BENEFITS === */}
+        <section id="benefices">
+          <h2>Observed benefits</h2>
+          <p>
+            According to Amazon's public communications, several orders of magnitude are
+            documented:
+          </p>
+          <ul>
+            <li>
+              <strong>Processing capacity</strong> — a modern robotized fulfillment center
+              processes several times more orders per day than a non-robotized warehouse of
+              equivalent size.
+            </li>
+            <li>
+              <strong>Operational precision</strong> — error rates on sorting and order
+              preparation are structurally lower with robotized and orchestrated systems
+              than in a purely manual environment.
+            </li>
+            <li>
+              <strong>Creation of new roles</strong> — Amazon communicates on tens of
+              thousands of technical jobs created around robotics (technicians, engineers,
+              fleet operators, trainers).
+            </li>
+            <li>
+              <strong>Structural competitive advantage</strong> — the scale effect (one
+              million robots, massive data, shared learning) creates an advantage difficult
+              to reproduce for smaller or younger competitors.
+            </li>
+            <li>
+              <strong>Reusable technology platform</strong> — DeepFleet and the surrounding
+              infrastructure can in principle serve well beyond the Amazon perimeter alone
+              (potential external exposure of capabilities, as already done with AWS).
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: Amazon publishes qualitative elements and some orders of magnitude,
+            but precise KPIs often remain confidential (competition). The case's value lies
+            in the publicly documented architecture and deployment trajectory.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <ul>
+            <li>
+              <strong>The investment is massive</strong>. Acquiring, deploying, maintaining
+              and orchestrating one million robots represents an investment of several
+              billion dollars over time — out of reach for the vast majority of players.
+              The case is not trivially transposable, except for architectural principles
+              applicable at smaller scale.
+            </li>
+            <li>
+              <strong>The lock-in effect is real</strong>. Once committed to a technological
+              and organizational path, it becomes costly to pivot. Competitors starting
+              later start from further away, but can in principle leapfrog a generation of
+              technology.
+            </li>
+            <li>
+              <strong>Working conditions of human operators</strong> remain a sensitive
+              social and political topic — regular media coverage on cadences, indicators,
+              management. The official narrative of robotic augmentation is sometimes
+              contested by unions or journalists — which weighs on the employer brand and
+              public perception.
+            </li>
+            <li>
+              <strong>Dependence on software infrastructures</strong> is total. An
+              unavailability of DeepFleet or the orchestration infrastructure would have
+              direct consequences on operational capacity. Investment in redundancy,
+              security and resilience is commensurate.
+            </li>
+            <li>
+              <strong>The EU AI Act and other regulations</strong> impose specific
+              compliance analyses for systems of this nature, particularly on the
+              dimensions of impact on work, safety, and — in case of evolution toward more
+              autonomous decisions — on potential high-risk obligations.
+            </li>
+          </ul>
+        </section>
+
+        {/* === RISKS === */}
+        <section id="risques">
+          <h2>Identified risks and guardrails</h2>
+          <ul>
+            <li>
+              <strong>Risk of human-machine physical safety</strong>. Direct cohabitation
+              exposes operators to risks of collision, crushing, projection of objects.
+              Guardrails: design of shared spaces, ISO 10218 and ISO/TS 15066 standards,
+              proximity sensors, speed limits, dedicated training, regular audits.
+            </li>
+            <li>
+              <strong>Social risk and change management</strong>. The deployment changes
+              working conditions and the nature of jobs. Guardrails: social dialogue,
+              explicit creation of new roles, training, articulation with HR policies
+              (mobility, support).
+            </li>
+            <li>
+              <strong>Cyber risk</strong>. A fleet of one million robots orchestrated by AI
+              is a significant attack surface. Guardrails: network segmentation, firmware
+              hardening, monitoring, continuity plans.
+            </li>
+            <li>
+              <strong>Risk of drift toward excessive autonomy</strong>. The temptation to
+              extend the autonomy of robots or AI decisions beyond well-framed zones can
+              produce incidents. Guardrails: explicit perimeters, human supervision on
+              high-stakes decisions, regular audit of automated decisions.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              The Amazon case shows that <strong>competitive advantage does not come from
+              the robot</strong> but from orchestration and the data/software ecosystem.
+              How does this logic apply in your sector? What are the structural assets that
+              produce a durable advantage?
+            </li>
+            <li>
+              DeepFleet is positioned as an <strong>orchestration foundation model</strong>,
+              analogous to GPT-4 for language. Does this analogy seem relevant to you? What
+              are the important differences between robotic orchestration and text
+              generation?
+            </li>
+            <li>
+              Amazon publicly insists on the <strong>creation of new technical roles</strong>
+              rather than replacement. Is this framing defensible in view of the real
+              evolution of employment in robotized warehouses? What measurement mechanisms
+              would allow objectifying the debate?
+            </li>
+            <li>
+              To transpose the Amazon logic to a smaller organization (regional company,
+              industrial SME), <strong>what principles should be kept</strong> and which
+              are not replicable as is?
+            </li>
+            <li>
+              In view of the EU AI Act and sectoral standards (ISO 10218, ISO/TS 15066),
+              <strong> what specific obligations</strong> would apply to a deployment of
+              this nature in Europe today?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module4Url}><strong>Module 4 — Robotics
+            in Business</strong></a>. It is also a support point for Module 5 (governance,
+            social dialogue, compliance) and Module 6 (large-scale deployment, scenario
+            planning on the evolution of robotic orchestration with foundation models like
+            DeepFleet).
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. See the
+            <a href={methodeUrl}> method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: morganStanleyUrl,
+            label: 'Morgan Stanley',
+            context: 'Previous case',
+          }}
+          next={{
+            href: githubAccentureUrl,
+            label: 'GitHub Copilot × Accenture',
+            context: 'Next case',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>
