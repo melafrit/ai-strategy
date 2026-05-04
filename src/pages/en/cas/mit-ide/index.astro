@@ -1,14 +1,517 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 
 const locale = 'en';
+
+const tocItems = [
+  { id: 'meta', label: 'Case identity' },
+  { id: 'synthese', label: 'Summary' },
+  { id: 'contexte', label: 'Context' },
+  { id: 'probleme', label: 'Problem addressed' },
+  { id: 'solution', label: 'Methodological approach' },
+  { id: 'benefices', label: 'Observed contributions' },
+  { id: 'limites', label: 'Limits and challenges' },
+  { id: 'risques', label: "Usage risks" },
+  { id: 'enseignements', label: 'Managerial takeaways' },
+  { id: 'discussion', label: 'Discussion questions' },
+  { id: 'modules-sources', label: 'Modules and sources' },
+];
+
+const takeaways = [
+  "MIT IDE illustrates what a structured strategic anticipation approach is — neither forecasting (a single future), nor passive watch (information collection), but active work of analyzing implications, building scenarios, translating into decision frameworks.",
+  "Academic rigor is what distinguishes MIT IDE from an opinion think tank: peer-reviewed publications, empirical data, transparency on methods, peer critique. This rigor is transposable at organizational scale — not as an absolute level, but as a methodological requirement.",
+  "Strategic anticipation is an investment, not a cost. An organization that merely reacts to media announcements makes decisions optimized for scenarios that don't always materialize — and misses the truly structural ruptures.",
+  "MIT IDE regularly produces content accessible to practitioners (general-public publications, conferences, MIT Sloan Management Review) — a useful model for organizations wanting to make their strategic watch exploitable beyond the circle of specialists.",
+  "To transpose the approach, the challenge is less to replicate the institution than to adopt the reflex: ask the question of strategic implications of each observed evolution, not just describe it.",
+];
+
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'MIT Initiative on the Digital Economy — official website',
+    author: 'MIT Sloan',
+    description:
+      "Official website of MIT IDE — MIT Sloan research initiative on the future of work, digital economy, and impact of technologies. Presents research axes, publications, events, team. Primary source for this case.",
+    href: 'https://ide.mit.edu/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'MIT Center for Collective Intelligence — Generative AI and Collective Intelligence',
+    author: 'MIT CCI',
+    description:
+      "MIT CCI resource explicitly articulating generative AI and collective intelligence. Complementary to MIT IDE for those who want to articulate human and technological perspectives in an anticipation approach.",
+    href: 'https://cci.mit.edu/generative-ai-and-collective-intelligence/',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Future of Jobs Report',
+    author: 'World Economic Forum',
+    description:
+      "WEF biennial report on the expected evolution of jobs and skills. Complementary reference to MIT IDE for the skills framing of an AI roadmap — complementary angle (employer surveys vs academic research).",
+    href: 'https://www.weforum.org/publications/series/future-of-jobs/',
+    sourceLevel: 'external-verifiable' as const,
+  },
+];
+
+const module6Url = getLocalizedUrl('/modules/06-futur-ia/', locale);
+const aiActEuUrl = getLocalizedUrl('/cas/ai-act-eu-haut-risque/', locale);
+const casIndexUrl = getLocalizedUrl('/cas/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of this case study is scheduled for Phase 7. The French version is available now."
+  title="MIT Initiative on the Digital Economy — Case study"
+  description="MIT IDE illustrates what a structured strategic anticipation approach is on the future of work and digital economy. Academic method transposable at organizational scale."
 >
-  <TranslationPending frenchPagePath="/cas/mit-ide/" />
+  <HeroSecondary
+    surtitle="Case study · Module 6"
+    title="MIT Initiative on the Digital Economy"
+    lead="MIT Sloan research initiative on the future of work, digital economy, and impact of technologies. Model of structured strategic anticipation — combination of rigorous research, empirical data, and translation into decision frameworks."
+  >
+    <span slot="stats">
+      Applied academic research · Structured strategic anticipation · MIT Sloan
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-case-page">
+    <div class="ai-case-page__layout">
+      <aside class="ai-case-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-case-page__content ai-prose">
+        {/* === META === */}
+        <section id="meta" class="ai-case-meta-section">
+          <h2 class="ai-case-meta-section__title">Case identity</h2>
+          <dl class="ai-case-meta">
+            <div class="ai-case-meta__row">
+              <dt>Organization</dt>
+              <dd>MIT IDE — MIT Initiative on the Digital Economy, structured research initiative within the MIT Sloan School of Management. Founded in 2013 (older origins via the work of associated researchers)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Scope</dt>
+              <dd>Research on the impact of digital technologies on the economy, work, organizations and society. Main axes: automation and AI, future of work, transformation of organizations, productivity, digital platforms</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Approach</dt>
+              <dd>Rigorous academic research (peer-reviewed publications) combined with practitioner translation (general-public publications, MIT Sloan Management Review, conferences, reference works)</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Reputation</dt>
+              <dd>One of the world's main academic centers on these subjects; cited in international media, government reports, corporate strategies. Several reference works from associated researchers</dd>
+            </div>
+            <div class="ai-case-meta__row">
+              <dt>Primary sources</dt>
+              <dd>MIT IDE official website and associated public publications <SourceTag level="external-verifiable" inline /></dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* === SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            The <strong>MIT Initiative on the Digital Economy</strong> (MIT IDE) is one of the
+            main academic devices at international level structuring prospective research on the
+            future of work and the digital economy. Hosted by the MIT Sloan School of
+            Management, it combines rigorous academic research, empirical data, and translation
+            into strategic implications for decision-makers.
+          </p>
+          <p>
+            The case is exemplary for Module 6 (The Future of AI) because it illustrates what a
+            <strong> structured strategic anticipation approach</strong> is — neither forecasting
+            (which assumes a unique predictable future), nor passive watch (which collects
+            information without drawing decisions from it), but <strong>active work</strong> of
+            analyzing implications, building scenarios, and translating into decision
+            frameworks. This approach is transposable at organizational scale — not as an
+            absolute level, but as a methodological requirement.
+          </p>
+          <p>
+            For an executive, the central lesson is that <strong>strategic anticipation is an
+            investment</strong>, not a cost. An organization that merely reacts to media
+            announcements makes decisions optimized for scenarios that don't always materialize
+            — and misses the truly structural ruptures. MIT IDE illustrates what a disciplined
+            approach to the future is, applicable beyond the academic context.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === CONTEXT === */}
+        <section id="contexte">
+          <h2>Organizational context</h2>
+          <p>
+            <strong>MIT IDE</strong> was founded in 2013 but is part of an older line of
+            research at MIT on the digital economy and automation. Several influential
+            researchers have been associated with the initiative and have published reference
+            works (notably in the lineage of <em>The Second Machine Age</em> and other works
+            that contributed to structuring the academic and public debate on the impact of
+            technologies on employment and productivity).
+          </p>
+          <p>
+            Several structural characteristics make MIT IDE an exemplary case to illustrate an
+            anticipation approach:
+          </p>
+          <ul>
+            <li>
+              <strong>Backed by a top-tier academic institution</strong> — MIT Sloan provides
+              methodological rigor, access to data, international network. Research independence
+              is protected by academic standards (peer review, transparency of methods, peer
+              critique).
+            </li>
+            <li>
+              <strong>Multi-disciplinary approach</strong> — economists, sociologists, engineers,
+              management science researchers work together. It is not a single perspective but
+              an integration of multiple angles.
+            </li>
+            <li>
+              <strong>Combination of academic rigor + practitioner accessibility</strong> —
+              scientific publications are complemented by publications in MIT Sloan Management
+              Review, open conferences, general-public works. Research is translated for
+              decision-makers without losing its rigor.
+            </li>
+            <li>
+              <strong>Continuity over time</strong> — more than ten years of documented
+              activity, capitalization of learnings, evolution of themes following technological
+              evolutions (mainframe → web → smartphones → generative AI).
+            </li>
+            <li>
+              <strong>Links with other MIT initiatives</strong> — articulation with MIT CSAIL
+              (technical AI research), MIT Center for Collective Intelligence (human × machine
+              collective intelligence), Jameel Clinic for AI and Health (AI in healthcare). This
+              ecosystem enriches the IDE perspective.
+            </li>
+          </ul>
+        </section>
+
+        {/* === PROBLEM === */}
+        <section id="probleme">
+          <h2>Problem addressed</h2>
+          <p>
+            MIT IDE addresses several problems that many organizations encounter when they try
+            to anticipate the technological future:
+          </p>
+          <ul>
+            <li>
+              <strong>How to go beyond media announcements</strong> and build a solid
+              understanding of technological evolutions? Vendor communications (model
+              announcements, demonstrations) are structured for attention, not for rigor. An
+              anticipation approach must distinguish itself from this.
+            </li>
+            <li>
+              <strong>How to articulate the technical, economic and social dimensions</strong>
+              of a transformation? AI is not just a technology — it has effects on work,
+              skills, productivity, inequality, international competition. A purely technical
+              view is not enough.
+            </li>
+            <li>
+              <strong>How to produce transposable frameworks</strong> for decision-makers
+              without imposing a single point of view? MIT IDE publishes analyses, but
+              acknowledges uncertainties, alternative perspectives, the limits of what can be
+              predicted.
+            </li>
+            <li>
+              <strong>How to anchor the analysis in empirical data</strong> rather than in
+              intuitions? Many discourses on the future of work are not very empirical —
+              anecdotes, vague projections, untested hypotheses. The IDE approach seeks to
+              fill this gap.
+            </li>
+            <li>
+              <strong>How to build durability</strong> on subjects that evolve rapidly? A one-off
+              publication can be outdated in a few months. A structured device allows
+              capitalization over time.
+            </li>
+          </ul>
+        </section>
+
+        {/* === APPROACH === */}
+        <section id="solution">
+          <h2>MIT IDE methodological approach</h2>
+
+          <h3>1. Rigorous academic research</h3>
+          <p>
+            The foundation is <strong>scientific research</strong> published in peer-reviewed
+            academic journals. This rigor (transparency of methods, replicability, peer
+            critique, empirical data) distinguishes MIT IDE from an opinion think tank. Without
+            this foundation, conclusions would be points of view among others.
+          </p>
+
+          <h3>2. Multi-disciplinary approach</h3>
+          <p>
+            The analysis combines <strong>multiple angles</strong>: economic (productivity,
+            inequalities, labor market), technological (AI system capabilities, model
+            evolution), organizational (transformation of companies), sociological (impact on
+            skills, social dynamics). This multi-disciplinary integration is what produces a
+            balanced perspective.
+          </p>
+
+          <h3>3. Empirical data and case studies</h3>
+          <p>
+            Rather than speculating about the future abstractly, MIT IDE produces or exploits
+            <strong> empirical data</strong> — corporate case studies, controlled experiments,
+            statistical analyses of massive databases on work and productivity. This anchors
+            the analysis in reality.
+          </p>
+
+          <h3>4. Translation for practitioners</h3>
+          <p>
+            <strong>Translation</strong> of research into accessible publications is an
+            intentional dimension of the device. Articles in MIT Sloan Management Review,
+            general-public works, conferences, podcasts, executive courses — as many channels
+            that make the contributions exploitable for decision-makers.
+          </p>
+
+          <h3>5. Capitalization over time</h3>
+          <p>
+            The <strong>continuity</strong> of the initiative allows capitalization of
+            learnings over time. Analyses published in 2018 on automation serve as the basis
+            for analyses published in 2024 on generative AI. This institutional memory is
+            precious — it avoids reinventing at each technological wave.
+          </p>
+
+          <h3>6. Articulation with other initiatives</h3>
+          <p>
+            MIT IDE is <strong>articulated</strong> with other MIT initiatives (CSAIL, CCI,
+            Jameel Clinic for AI and Health) and with a network of international researchers.
+            This articulation enriches the perspective and avoids disciplinary isolation.
+          </p>
+        </section>
+
+        {/* === CONTRIBUTIONS === */}
+        <section id="benefices">
+          <h2>Observed contributions and adoption</h2>
+          <p>
+            Several contributions of MIT IDE are observable, both in academic debate and in
+            organizational practice:
+          </p>
+          <ul>
+            <li>
+              <strong>Public debate framing</strong> on the impact of technologies on
+              employment and productivity. The concepts disseminated by associated researchers
+              have structured a large part of the international debate of the last ten years.
+            </li>
+            <li>
+              <strong>Methodological recommendations</strong> for rigorously evaluating the
+              impact of a technological deployment — methodologies (treatment vs control group,
+              multiple metrics, sufficient duration) that are found in studies like GitHub ×
+              Accenture (Module 3 case).
+            </li>
+            <li>
+              <strong>Influence on public policies</strong> — the works are cited in
+              government reports (United States, OECD, World Bank) on the future of work and
+              AI regulation.
+            </li>
+            <li>
+              <strong>Pedagogical resources</strong> for practitioners — executive courses,
+              works, articles, conferences, which make the contributions exploitable beyond
+              the circle of researchers.
+            </li>
+            <li>
+              <strong>Inspiring institutional model</strong> for other equivalent initiatives
+              (Stanford HAI, Oxford Future of Humanity Institute, other institutes dedicated
+              to AI and society) — MIT IDE has contributed to structuring academic practice
+              on these subjects.
+            </li>
+          </ul>
+          <p class="ai-text-muted">
+            <em>Note: The contributions of an academic initiative are by nature diffuse and
+            difficult to quantify precisely. The value of the case lies in the
+            institutionalization of the approach — it exists, lasts, produces, and is cited
+            internationally.</em>
+          </p>
+        </section>
+
+        {/* === LIMITS === */}
+        <section id="limites">
+          <h2>Limits and challenges</h2>
+          <ul>
+            <li>
+              <strong>Academic scale is not organizational scale</strong>. MIT IDE is an
+              academic institution with its resources, its long time, its methodologies. An
+              organization cannot replicate this scale — the challenge is to adopt the reflex
+              and rigor, not to become a miniature MIT IDE.
+            </li>
+            <li>
+              <strong>The academic pace is slow</strong> compared to the technological pace.
+              A peer-reviewed publication typically takes 12 to 24 months between submission
+              and publication. For subjects that evolve in months, this limits agility — hence
+              the importance of complementary channels (blogs, conferences) that allow faster
+              dissemination while preserving rigor.
+            </li>
+            <li>
+              <strong>Objectivity is never total</strong>. Like any research device, MIT IDE
+              has viewpoints, methodological preferences, sometimes conclusions contested by
+              other schools of thought. Credibility lies in transparency on methods — not in
+              a claim of absolute objectivity.
+            </li>
+            <li>
+              <strong>Transposition to an organization's context</strong> requires adaptation
+              work. The frameworks and concepts produced by MIT IDE are generic — applying
+              them to a specific organization requires a contextualization effort that MIT IDE
+              does not do for you.
+            </li>
+            <li>
+              <strong>The risk of academic over-investment</strong>. An organization that
+              would want to equip itself with a mini-MIT IDE internally risks academic
+              over-specialization without operational benefit. The challenge for an
+              organization is more modest: have a cell capable of translating evolutions into
+              strategic implications, not produce original academic research.
+            </li>
+          </ul>
+        </section>
+
+        {/* === USAGE RISKS === */}
+        <section id="risques">
+          <h2>Usage risks and guardrails</h2>
+          <ul>
+            <li>
+              <strong>Risk of citing without applying</strong>. An organization can cite MIT
+              IDE to give weight to a decision already made, without really integrating the
+              anticipation approach. Guardrail: integrate the analyses into a structured
+              decision-making process (committee, scenarios, options), not in
+              post-rationalization.
+            </li>
+            <li>
+              <strong>Risk of over-confidence in conclusions</strong>. Academic analyses are
+              solid but always contain uncertainties and hypotheses. An organization that
+              makes an irreversible decision based solely on a publication runs a risk.
+              Guardrail: combine multiple sources (academic, professional, field feedback),
+              build alternative scenarios.
+            </li>
+            <li>
+              <strong>Risk of delay in operational translation</strong>. Academic analyses
+              published in 2024 reflect data collected in 2022 or before. For short-term
+              decisions, this delay can be problematic. Guardrail: complement academic
+              analyses with active watch on recent evolutions, while maintaining
+              methodological rigor.
+            </li>
+            <li>
+              <strong>Risk of analytical paralysis</strong>. Rigor can lead to always wanting
+              to wait for more data, more studies, before deciding. But decisions must be made
+              under uncertainty. Guardrail: combine anticipation and decision — analysis
+              illuminates, decision cuts.
+            </li>
+          </ul>
+        </section>
+
+        {/* === TAKEAWAYS === */}
+        <section id="enseignements">
+          <h2>Managerial takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === DISCUSSION === */}
+        <section id="discussion">
+          <h2>Pedagogical discussion questions</h2>
+          <ol class="ai-discussion-questions">
+            <li>
+              To transpose the MIT IDE approach to your organization, at what <strong>modest
+              scale</strong> would you start? An internal cell? A partnership with an academic
+              institute? A structured subscription to quality sources?
+            </li>
+            <li>
+              MIT IDE distinguishes <strong>academic research</strong> (scientific
+              publications) and <strong>practitioner translation</strong> (Sloan Management
+              Review, works, conferences). How do you equivalate this dual register in your
+              internal watch?
+            </li>
+            <li>
+              On the <strong>3 most structuring technological subjects</strong> for your
+              sector, what are your most rigorous analysis sources today? Are they up to the
+              challenge?
+            </li>
+            <li>
+              MIT IDE produces analyses without imposing a single point of view. How does your
+              organization manage <strong>alternative perspectives</strong> on the
+              technological future? Is there a mechanism to confront them?
+            </li>
+            <li>
+              If you had to structure a <strong>small strategic anticipation device</strong>
+              in your organization, what would be the 3-5 minimal components? (cell, sources,
+              deliverables, articulation with decision, update cycle)?
+            </li>
+          </ol>
+        </section>
+
+        {/* === MODULES & SOURCES === */}
+        <section id="modules-sources">
+          <h2>Modules and sources</h2>
+
+          <h3>Associated modules</h3>
+          <p>
+            This case mainly illustrates <a href={module6Url}><strong>Module 6 — The Future of
+            AI</strong></a> (main case) — structured strategic anticipation, watch /
+            anticipation distinction, scenario planning, transposable academic approach. It is
+            complementary to the other cases of the journey that each illuminate a specific
+            module. It is also a touchpoint for Module 1 (human × machine collective
+            intelligence perspective) and for Module 5 (governance, articulation with
+            regulatory evolution).
+          </p>
+
+          <h3>Public sources used</h3>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            <em>All sources are public and verifiable. See
+            <a href={methodeUrl}> the method</a> for the source hierarchy.</em>
+          </p>
+        </section>
+
+        <div class="ai-case-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        <PrevNextNav
+          prev={{
+            href: aiActEuUrl,
+            label: "EU AI Act high-risk classification",
+            context: 'Previous case',
+          }}
+          next={{
+            href: casIndexUrl,
+            label: "All case studies",
+            context: 'Index',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-case-page { padding-block: var(--ai-space-7) var(--ai-space-8); }
+  .ai-case-page__layout { display: grid; gap: var(--ai-space-6); grid-template-columns: 1fr; }
+  @media (min-width: 80em) { .ai-case-page__layout { grid-template-columns: 18rem 1fr; align-items: flex-start; } }
+  .ai-case-page__toc { position: relative; }
+  @media (min-width: 80em) { .ai-case-page__toc { position: sticky; inset-block-start: var(--ai-space-7); max-height: calc(100vh - 6rem); overflow-y: auto; } }
+  .ai-case-page__content { min-width: 0; }
+  .ai-case-page__content > section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section:first-of-type { margin-block-start: var(--ai-space-7); }
+  .ai-case-page__content > section h3 { margin-block-start: var(--ai-space-5); margin-block-end: var(--ai-space-2); font-size: var(--ai-text-base); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta-section { padding: var(--ai-space-5); background: var(--ai-bg-subtle); border-radius: var(--ai-radius-md); border-inline-start: 4px solid var(--ai-accent-primary); }
+  .ai-case-meta-section__title { margin: 0 0 var(--ai-space-3); font-size: var(--ai-text-lg); font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); }
+  .ai-case-meta { display: grid; gap: var(--ai-space-3); margin: 0; }
+  .ai-case-meta__row { display: grid; grid-template-columns: 12rem 1fr; gap: var(--ai-space-3); align-items: start; padding-block-end: var(--ai-space-2); border-block-end: 1px solid var(--ai-border-subtle); }
+  .ai-case-meta__row:last-child { border-block-end: none; padding-block-end: 0; }
+  .ai-case-meta dt { font-weight: var(--ai-weight-semibold); color: var(--ai-fg-primary); font-size: var(--ai-text-sm); }
+  .ai-case-meta dd { margin: 0; color: var(--ai-fg-secondary); line-height: var(--ai-leading-relaxed); }
+  @media (max-width: 50em) { .ai-case-meta__row { grid-template-columns: 1fr; gap: var(--ai-space-1); } }
+  .ai-discussion-questions { list-style: none; counter-reset: discuss; padding: 0; margin: 0; display: grid; gap: var(--ai-space-3); }
+  .ai-discussion-questions li { counter-increment: discuss; padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem); background: var(--ai-accent-subtle); border-inline-start: 3px solid var(--ai-accent-primary); border-radius: var(--ai-radius-sm); position: relative; line-height: var(--ai-leading-relaxed); }
+  .ai-discussion-questions li::before { content: 'Q' counter(discuss); position: absolute; inset-inline-start: var(--ai-space-4); inset-block-start: var(--ai-space-3); color: var(--ai-accent-primary); font-weight: var(--ai-weight-bold); font-variant-numeric: tabular-nums; }
+  .ai-text-muted { color: var(--ai-fg-muted); font-size: var(--ai-text-sm); }
+  .ai-section__cta { margin-block-start: var(--ai-space-5); color: var(--ai-fg-secondary); font-size: var(--ai-text-sm); }
+  .ai-section__cta a { color: var(--ai-accent-primary); text-decoration: none; font-weight: var(--ai-weight-semibold); }
+  .ai-section__cta a:hover { text-decoration: underline; }
+  .ai-case-independence { margin-block: var(--ai-space-7); }
+</style>
