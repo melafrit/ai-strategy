@@ -1,14 +1,878 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import TranslationPending from '@/components/TranslationPending.astro';
-import { t } from '@/i18n/translations';
+import HeroSecondary from '@/components/HeroSecondary.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import ExecutiveSummary from '@/components/ExecutiveSummary.astro';
+import OutcomesList from '@/components/OutcomesList.astro';
+import ConceptCard from '@/components/ConceptCard.astro';
+import SourceTag from '@/components/SourceTag.astro';
+import PitfallList from '@/components/PitfallList.astro';
+import CaseCardCompact from '@/components/CaseCardCompact.astro';
+import Activity from '@/components/Activity.astro';
+import QuizInteractive from '@/components/QuizInteractive';
+import Checklist from '@/components/Checklist.astro';
+import KeyTakeaways from '@/components/KeyTakeaways.astro';
+import ResourceList from '@/components/ResourceList.astro';
+import PrevNextNav from '@/components/PrevNextNav.astro';
+import PrintButton from '@/components/PrintButton.astro';
+import IndependenceNotice from '@/components/IndependenceNotice.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
+import quizModule5EN from '@/content/quizzes/module-5-en';
 
 const locale = 'en';
+
+// === TABLE OF CONTENTS ===
+const tocItems = [
+  { id: 'synthese-executive', label: 'Executive summary' },
+  { id: 'objectifs', label: 'Learning objectives' },
+  { id: 'concepts', label: 'Key concepts' },
+  { id: 'erreurs-frequentes', label: 'Common errors' },
+  { id: 'cas-reel', label: 'Real case' },
+  { id: 'activite', label: 'Practical activity' },
+  { id: 'quiz', label: 'Formative quiz' },
+  { id: 'checklist', label: 'Manager checklist' },
+  { id: 'application', label: 'Application in your organization' },
+  { id: 'a-retenir', label: 'Key takeaways' },
+  { id: 'pour-aller-plus-loin', label: 'Going further' },
+];
+
+// === LEARNING OUTCOMES ===
+const outcomes = [
+  'Distinguish ethics and compliance in AI decisions — know where the law ends and where ethical choice begins.',
+  'Identify the EU AI Act classification of a candidate AI use (prohibited / high-risk / limited risk / minimal risk).',
+  'Structure operational AI governance: committee with decision power, review process, articulation with cross-functional functions (CIO, HR, compliance, security).',
+  'Understand the main works on AI impact on work — augmentation vs replacement — and their managerial implications.',
+  'Articulate AI governance with social dialogue (works council, employee representatives) and GDPR, sectoral, and transparency obligations vis-à-vis stakeholders.',
+];
+
+// === PITFALLS ===
+const pitfalls = [
+  {
+    title: "Confusing ethics and compliance",
+    error:
+      "Reducing AI ethics to a legal compliance checklist ('we comply with the AI Act and GDPR, so we are ethical') and neglecting questions not explicitly covered by law (equity between groups, transparency vis-à-vis stakeholders, societal choices).",
+    mechanism:
+      "Compliance is a minimum imposed framework. Ethics is broader: it questions what is just, equitable and desirable, even when the law does not require it. An organization can be perfectly compliant and yet act in a contestable manner. The confusion leads to false security — and to incidents that reveal the gap between formal compliance and real acceptability.",
+    mitigation:
+      "Explicitly distinguish the two levels in AI governance. Compliance protects legally; ethics protects stakeholder trust. Both are necessary, do not substitute. Inscribe in the charter ethical principles that go beyond minimal compliance (for example: transparency vis-à-vis employees on AI uses concerning them, even when the law does not require it).",
+  },
+  {
+    title: "Launching an ethics committee without decision power",
+    error:
+      "Constituting an AI ethics committee composed of recognized personalities, with an ambitious charter, but without operational decision power — a purely consultative role that operational teams can ignore or bypass.",
+    mechanism:
+      "An ornamental committee documents intentions without enforcing them. Without a clear mandate (Go/No-Go on projects, suspension capability, power to define internal standards), the committee produces recommendations that dilute in practice. External users (regulators, journalists, customers) see this quickly and corporate communication loses credibility.",
+    mitigation:
+      "Endow the AI committee with an explicit mandate: Go/No-Go for production deployments, imposed conditions, suspension capability in case of incident. Compose the committee with operational profiles (CIO, business, compliance, HR) in addition to executives. Articulate with existing processes (C-suite passage, budget validation) so AI governance is effective.",
+  },
+  {
+    title: "Underestimating the EU AI Act and GDPR obligations",
+    error:
+      "Starting an AI project without explicitly identifying its EU AI Act classification (prohibited, high-risk, limited risk, minimal risk), without performing a prior GDPR analysis, and discovering late obligations that delay or even block deployment (AI Act registry, compliance analysis, human supervision, documentation, DPIA for personal data).",
+    mechanism:
+      "The EU AI Act came into force in 2024 with a progressive application calendar. Many organizations underestimate the uses falling into 'high-risk' (recruitment and HR management, credit scoring, justice, healthcare, education, public services, critical infrastructure) — these obligations are substantial. GDPR adds requirements on personal data. These obligations are not optional; ignoring them exposes legally and operationally.",
+    mitigation:
+      "Integrate AI Act classification from the framing phase of each AI project. Perform a DPIA (Data Protection Impact Assessment) if personal data. Designate an AI compliance lead (can be the extended DPO). Build a registry of AI systems in service. Articulate with specific sectoral obligations (healthcare, finance, etc.).",
+  },
+  {
+    title: "Communicating in 'AI washing' without real mechanisms",
+    error:
+      "Publishing an ambitious AI ethics charter, communicating publicly on the organization's commitment, but not setting up the operational mechanisms that make these commitments credible (governance with decision power, review process, monitoring indicators, transparency on incidents). The gap between communication and practice is sooner or later detected.",
+    mechanism:
+      "'AI washing' works in the short term — it reassures stakeholders, satisfies communication demands. But audit mechanisms (regulators, journalists, NGOs, employees via reports) eventually reveal the gap between declared commitment and real practice. The reputational cost of such a revelation is much higher than the cost of more modest communication aligned with practice.",
+    mitigation:
+      "Systematically align external communication with operational mechanisms actually in place. Prefer progressive communication ('we have constituted a committee with these powers; we publish our first annual report') rather than ambitious promises not yet operational. Inscribe in the charter verifiable commitments: published indicators, periodic reports, external reporting mechanisms.",
+  },
+];
+
+// === ACTIVITY STEPS ===
+const activitySteps = [
+  {
+    heading: "Define scope and principles",
+    body: "Explicitly delimit the charter scope (which AI systems, which suppliers, which sites). Formulate 5 guiding principles adapted to your organization's context, drawing inspiration from OECD Principles and AI Act requirements. Quality criterion: if the principles are generic enough to be interchangeable with any organization, add a concrete declension linked to your activity.",
+  },
+  {
+    heading: "Structure operational governance",
+    body: "Compose a mixed AI committee (executives + operational CIO/business/compliance/HR/security, plus employee representatives depending on context) with an explicit mandate: Go/No-Go on projects, suspension capability, internal standards definition. Define the AI project review process (framing / design / pilot / pre-deployment / production / annual review) with deliverables and validators.",
+  },
+  {
+    heading: "Map legal obligations",
+    body: "For each candidate or deployed AI use case, identify the AI Act classification (prohibited / high-risk / limited risk / minimal risk). Map extended obligations: GDPR for personal data, labor law (works council), sectoral regulations (healthcare, finance, public services), internal standards (NIST AI RMF, ISO 23894).",
+  },
+  {
+    heading: "Define transparency, explainability and redress",
+    body: "Define stakeholder information (employees, customers/users, civil society/regulators). Establish a quantified redress process (reporting, analysis, decision, communication, feedback) with precise target deadlines. Quality criterion: a redress process without defined deadlines is inoperative.",
+  },
+];
+
+const activityCriteria = [
+  "The charter scope is defined (systems, suppliers, sites).",
+  "The 5 principles are translated into concrete actions for the organization.",
+  "The AI committee has real decision power (Go/No-Go).",
+  "Each candidate AI use case is classified under the EU AI Act.",
+  "Transparency and redress mechanisms have quantified deadlines.",
+];
+
+// === CHECKLIST GROUPS ===
+const checklistGroups = [
+  {
+    title: "Governance and AI committee",
+    items: [
+      "The AI committee exists and is composed of operational profiles in addition to executives (CIO, business, compliance, HR, security).",
+      "The AI committee has a Go/No-Go mandate on production deployments, not just consultative.",
+      "The AI project review process is explicit (framing / design / pilot / pre-deployment / production / annual review) with deliverables and validators.",
+      "The committee has the capability to suspend a system in case of incident, with defined procedure.",
+    ],
+  },
+  {
+    title: "Ethics, bias and impact",
+    items: [
+      "The organization explicitly distinguishes ethics and compliance in its charter (one does not substitute for the other).",
+      "Possible biases of deployed AI systems (by subgroups: gender, origin, age, geography) are regularly audited.",
+      "The impact of AI systems on work (affected positions, redeployment, training) is analyzed upstream.",
+      "Social dialogue (works council information-consultation in France or equivalent) is conducted upstream, not after deployment.",
+    ],
+  },
+  {
+    title: "Compliance and transparency",
+    items: [
+      "Each AI system in service is classified under the EU AI Act and the registry is kept up to date.",
+      "GDPR obligations (legal basis, minimization, individual rights, DPIA) are applied to systems processing personal data.",
+      "Stakeholders (employees, customers, users) are informed of the AI uses concerning them and of the recourse channels.",
+      "Reporting and redress mechanisms are quantified (target deadlines) and operational.",
+    ],
+  },
+];
+
+// === TAKEAWAYS ===
+const takeaways = [
+  "The key concept: ethics and compliance do not merge — compliance is a minimum imposed threshold, ethics raises questions of justice and equity that the law does not always cover.",
+  "The exemplary case: NIST AI RMF illustrates what an operational AI governance framework is — not a list of principles, but a system of governance, measurement, risk management.",
+  "The major pitfall: launching an AI ethics committee without real decision power — ornamental governance is quickly detected by stakeholders.",
+  "The operational tool: the AI governance charter in 4 steps (scope and principles / operational governance / obligations mapping / transparency and redress).",
+  "Next: Module 6 (The Future of AI) takes a step back on 3-10 year evolutions and prepares you to build a strategic AI roadmap for your organization.",
+];
+
+// === RESOURCES ===
+const resources = [
+  {
+    type: 'reading' as const,
+    title: 'AI Risk Management Framework (AI RMF 1.0)',
+    author: 'NIST — National Institute of Standards and Technology',
+    description:
+      "American operational reference framework for AI governance and risk management. Structure in four functions (Govern, Map, Measure, Manage) directly usable as the foundation of an internal charter.",
+    href: 'https://www.nist.gov/itl/ai-risk-management-framework',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Regulation (EU) 2024/1689 — AI Act',
+    author: 'Official Journal of the European Union',
+    description:
+      "Full text of the European AI regulation. System classification by risk level (prohibited / high-risk / limited risk / minimal risk) and associated obligations. Indispensable legal reference for any organization deploying AI in the EU.",
+    href: 'https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ%3AL_202401689',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'OECD Principles on Artificial Intelligence',
+    author: 'OECD',
+    description:
+      "Five principles for responsible AI deployment, adopted by 47 countries. Basis of the European AI Act. Available in French. Useful for structuring internal charter principles.",
+    href: 'https://www.oecd.org/fr/themes/principes-de-l-ia.html',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Does technology help or hurt employment?',
+    author: 'MIT News — David Autor',
+    description:
+      "Fine economic analysis of technological impact on employment by David Autor (MIT). Major academic reference to frame the AI and work conversation — the net effect depends on collective choices (public policies, business practices, training).",
+    href: 'https://news.mit.edu/2024/does-technology-help-or-hurt-employment-0401',
+    sourceLevel: 'recommended-complement' as const,
+  },
+  {
+    type: 'reading' as const,
+    title: 'Generative AI at Work',
+    author: 'Brynjolfsson, Li, Raymond — NBER Working Paper w31161',
+    description:
+      "Empirical study on GenAI's impact on productivity and learning at work. Major academic reference for HR framing of AI projects — real data on thousands of customer service agents.",
+    href: 'https://www.nber.org/papers/w31161',
+    sourceLevel: 'external-verifiable' as const,
+  },
+  {
+    type: 'pdf' as const,
+    title: 'AI governance charter canvas',
+    author: 'AI Strategy — Module 5',
+    description:
+      "Printable Markdown canvas to structure an AI governance charter in 4 steps (scope and principles / operational governance / obligations mapping / transparency and redress).",
+    href: '/downloads/canvas-charte-gouvernance-ia-module-5.md',
+    sourceLevel: 'pedagogical-reconstruction' as const,
+  },
+];
+
+// === URLs ===
+const module4Url = getLocalizedUrl('/modules/04-robotique/', locale);
+const module6Url = getLocalizedUrl('/modules/06-futur-ia/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
+const glossaireUrl = getLocalizedUrl('/glossaire/', locale);
 ---
 
 <BaseLayout
-  title={t('translation-pending.title', locale)}
-  description="The English translation of Module 5 (AI in Business and Society) is scheduled for Phase 7. The French version is available now."
+  title="Module 5 — AI in Business and Society"
+  description="AI governance, ethics, bias, EU AI Act classification, GDPR, impact on work (David Autor MIT), social dialogue, extended compliance. NIST AI RMF, OECD Principles frameworks."
 >
-  <TranslationPending frenchPagePath="/modules/05-ia-societe/" />
+  <HeroSecondary
+    surtitle="Module 5 · AI in Business and Society"
+    title="Governance, ethics, compliance and impact on work"
+    lead="Fifth module of the program. We take a step back on issues that go beyond a particular technological family: operational AI governance, ethics/compliance distinction, EU AI Act classification, impact on work (David Autor MIT perspective), social dialogue, extended GDPR compliance. Exemplary framework: NIST AI RMF."
+  >
+    <span slot="stats">
+      Recommended duration: 6-8 h · Level: Discovery / Applicable · Prerequisite: Modules 1 to 4
+    </span>
+  </HeroSecondary>
+
+  <div class="ai-container ai-module-page">
+    <div class="ai-module-page__layout">
+      <aside class="ai-module-page__toc" role="complementary">
+        <TableOfContents items={tocItems} />
+      </aside>
+
+      <article class="ai-module-page__content ai-prose">
+        {/* === § 1 — EXECUTIVE SUMMARY === */}
+        <ExecutiveSummary>
+          <p>
+            <strong>AI governance</strong> has become structuring — not optional. The
+            <strong> European AI Regulation</strong> (AI Act, EU 2024/1689) classifies uses by
+            risk level (prohibited / high-risk / limited risk / minimal risk) and imposes
+            specific obligations for each category. <strong>GDPR</strong> adds strong
+            requirements on personal data. French labor law imposes
+            <strong> works council (CSE) information-consultation</strong> for projects
+            impacting work organization. These frameworks are not optional: ignoring them
+            exposes legally, operationally and reputationally.
+          </p>
+          <p>
+            But legal compliance is only a <strong>minimum threshold</strong>. <strong>AI
+            ethics</strong> is more demanding: it questions equity between groups, transparency
+            vis-à-vis stakeholders, the societal choice underlying each deployment. An
+            organization can be perfectly compliant and yet act in a contestable manner.
+            Distinguishing the two levels in internal governance is the condition for durable
+            trust from employees, customers and civil society.
+          </p>
+          <p>
+            For a leader, the central question of Module 5 is: "how to build
+            <strong> operational</strong> (and not ornamental) AI governance that protects the
+            organization legally, gives credibility to its external communication, and
+            properly articulates AI decisions with social dialogue and the internal training
+            pipeline?". David Autor's (MIT) work on the impact of technologies on employment
+            reminds us that AI's net effect depends on collective choices — AI has no
+            mechanical effect on employment, it has the effects that our practices and
+            policies produce.
+          </p>
+        </ExecutiveSummary>
+
+        {/* === § 2 — OBJECTIVES === */}
+        <section id="objectifs">
+          <h2>Learning objectives</h2>
+          <p>By the end of this module, you will be able to:</p>
+          <OutcomesList outcomes={outcomes} />
+        </section>
+
+        {/* === § 3 — CONCEPTS === */}
+        <section id="concepts">
+          <h2>Key concepts</h2>
+          <p>
+            Five concepts structure this module. Each is sourced. The source hierarchy is
+            <a href={methodeUrl}> explained in the method page</a>.
+          </p>
+
+          <ConceptCard
+            id="ethique-vs-conformite"
+            title="Ethics and compliance — two distinct levels"
+            sourceLevel="pedagogical-reconstruction"
+          >
+            <p>
+              <strong>Compliance</strong> covers obligations imposed by law: EU AI Act, GDPR,
+              labor law, sectoral regulations. It is a minimum threshold to respect — its
+              non-respect exposes the organization and its leaders legally. Compliance
+              translates into processes, registries, impact analyses, documentation.
+            </p>
+            <p>
+              <strong>Ethics</strong> is broader. It questions what is just, equitable and
+              desirable, even when the law does not require it. Is it acceptable to profile
+              candidates even when not illegal? Is it acceptable to use GenAI to make
+              high-stakes decisions without informing affected persons? These questions are
+              not settled by law alone.
+            </p>
+            <p>
+              <strong>Confusion between the two levels</strong> is dangerous. Reducing ethics
+              to a compliance checklist produces false security: one is "compliant" legally,
+              but incidents reveal the gap between formal compliance and real acceptability.
+              Conversely, ignoring compliance in favor of general ethical principles exposes
+              legally.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Best practice.</strong> Inscribe in the AI governance charter ethical
+                principles that go beyond minimal compliance. For example: transparency
+                vis-à-vis employees on AI uses concerning them (even when the law does not
+                require it), regular bias audit between subgroups (beyond regulatory
+                thresholds), employee participation in defining use cases.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="gouvernance-operationnelle"
+            title="Operational AI governance"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              <strong>Operational</strong> (and not ornamental) AI governance rests on three
+              minimum components:
+            </p>
+            <ul>
+              <li>
+                <strong>An AI committee with real decision power</strong>. Not a consultative
+                committee that operational teams can ignore, but an instance with explicit
+                mandate: Go/No-Go on production deployments, suspension capability in case of
+                incident, definition of internal technical and ethical standards. Mixed
+                composition (executives + operational CIO/business/compliance/HR + sometimes
+                employee representatives) ensures decisions take field reality into account.
+              </li>
+              <li>
+                <strong>A structured review process</strong>. Initial framing → design →
+                pilot → pre-deployment → production → annual review. Each phase has an
+                expected deliverable and an identified validator. Phase passage is not
+                automatic — it is validated by the AI committee or by cross-functional
+                functions (compliance, HR).
+              </li>
+              <li>
+                <strong>Articulation with cross-functional functions</strong>. AI governance
+                does not work in silo: it articulates with the DPO (GDPR), HR (impact on
+                work, training, social dialogue), CISO (security), compliance (AI Act and
+                sectoral obligations). This articulation must be documented, not improvised.
+              </li>
+            </ul>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Quick test.</strong> Ask your AI committee: "if I present a project
+                and the deployment decision belongs to you, what exactly happens if you say
+                No?". If the answer is vague, the committee is probably ornamental — the
+                mandate must be clarified before any other work.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="ai-act-classification"
+            title="The EU AI Act and use classification"
+            sourceLevel="external-verifiable"
+          >
+            <p>
+              The European AI Regulation (EU 2024/1689) adopts a risk-based approach. Four
+              categories structure obligations:
+            </p>
+            <ul>
+              <li>
+                <strong>Prohibited practices.</strong> Social scoring by public authorities,
+                cognitive manipulation, massive real-time biometric identification in public
+                spaces (except strict exceptions). These practices cannot be deployed in the EU.
+              </li>
+              <li>
+                <strong>High-risk.</strong> Recruitment and HR management, credit scoring,
+                educational assessment, critical medical applications, justice, public
+                services, critical infrastructure. Strict obligations: compliance analysis,
+                registry, effective human supervision, data quality and traceability,
+                documentation, robustness tests, cybersecurity.
+              </li>
+              <li>
+                <strong>Limited risk.</strong> Chatbots, deepfakes, systems interacting with
+                humans. Mainly transparency obligations: inform users they are interacting
+                with an AI, mark generated content.
+              </li>
+              <li>
+                <strong>Minimal risk.</strong> Everything else — the vast majority of AI
+                systems in business. No specific obligations beyond common law.
+              </li>
+            </ul>
+            <p>
+              For a leader, <strong>classification of each use case</strong> is the first
+              step of compliance — not the last. Many seemingly innocuous uses fall into
+              "high-risk" (a CV screening system is high-risk), with substantial obligations.
+              Identifying classification from framing avoids late unpleasant surprises.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Application calendar.</strong> The AI Act came into force in August
+                2024, with progressive application. Prohibited practices apply since February
+                2025; obligations on general-purpose models since August 2025; obligations on
+                high-risk systems are being progressively deployed until 2027. Verify the
+                exact calendar for each obligation applicable to your organization.
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="impact-travail"
+            title="AI impact on work — the Autor perspective"
+            sourceLevel="recommended-complement"
+          >
+            <p>
+              The work of <strong>David Autor</strong> (professor of economics at MIT, one of
+              the most recognized researchers on the impact of technologies on employment)
+              defends a nuanced perspective: the net effect of technologies — including AI —
+              on global employment is not mechanical. It depends on collectively made
+              choices.
+            </p>
+            <p>
+              Three findings structure this perspective:
+            </p>
+            <ul>
+              <li>
+                <strong>Historically</strong>, technologies have both destroyed certain jobs
+                and created other tasks, without structural reduction of global employment.
+                But transitions have sometimes been painful for affected workers.
+              </li>
+              <li>
+                <strong>The net positive effect is not guaranteed</strong>. It results from
+                investments in training, labor market institutions (safety nets, collective
+                bargaining), and corporate practices that choose augmentation rather than
+                pure replacement.
+              </li>
+              <li>
+                <strong>AI augments more than it replaces</strong>, provided that public
+                policies and corporate practices accompany the transition. Without this
+                support, AI can produce concentrated and negative effects on certain groups
+                (low-skilled workers, particular sectors).
+              </li>
+            </ul>
+            <p>
+              For the manager, this perspective has a direct consequence: <strong>the
+              organizational choices</strong> made around AI projects (augmenting existing
+              humans or replacing them, investing in training or not, sharing productivity
+              gains or concentrating them) are political choices in the broad sense — not
+              mechanical consequences of technology.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Practical consequence.</strong> Presenting an AI project to the
+                C-suite by highlighting a logic of augmenting humans (productivity + quality
+                + ergonomics) is more defensible — socially, legally, operationally — than a
+                logic of pure workforce reduction. This does not mean there are never
+                position eliminations, but that these decisions must be addressed explicitly
+                and accompanied (redeployment, training, mobility, measures for those
+                leaving).
+              </p>
+            </div>
+          </ConceptCard>
+
+          <ConceptCard
+            id="dialogue-social-rgpd"
+            title="Social dialogue, GDPR and extended compliance"
+            sourceLevel="external-verifiable"
+          >
+            <p>
+              Beyond the AI Act, several regulatory frameworks structure AI deployments in
+              business:
+            </p>
+            <ul>
+              <li>
+                <strong>GDPR</strong> (EU 2016/679). Any system processing personal data
+                must respect GDPR principles: legal basis, minimization, individual rights
+                (information, access, rectification, erasure, opposition, portability), DPIA
+                (Data Protection Impact Assessment) for risky processing, DPO designation if
+                required.
+              </li>
+              <li>
+                <strong>French labor law</strong>. Any project impacting work organization
+                falls under <strong>information-consultation of employee representative
+                bodies (CSE)</strong>, upstream of the project — not after. This obligation
+                is both legal and operational (a contested project is poorly adopted).
+              </li>
+              <li>
+                <strong>Sectoral regulations</strong>. Depending on the sector, specific
+                obligations are added: PSD2 and MiFID in finance, RGCM and HDS in
+                healthcare, DSAA in justice, etc. These obligations interact with the AI Act
+                and GDPR.
+              </li>
+              <li>
+                <strong>Standards and reference frameworks</strong>. The NIST AI RMF (Risk
+                Management Framework) and ISO 23894 provide recognized operational
+                frameworks, which help structure robust internal governance — without being
+                legally mandatory as such.
+              </li>
+            </ul>
+            <p>
+              For the manager, the challenge is to <strong>explicitly map</strong> these
+              obligations for each AI project, from the framing phase — not downstream. An
+              organization that discovers late a DPIA obligation or a CSE
+              information-consultation obligation delays its deployment by several months,
+              sometimes blocks it entirely.
+            </p>
+            <div class="ai-concept__example">
+              <p>
+                <strong>Best practice.</strong> Constitute from the framing phase of each AI
+                project a "compliance fact sheet" recapping: AI Act classification, DPIA if
+                applicable, employee representative consultation obligations, sectoral
+                obligations, internal standards applied. This sheet becomes a deliverable of
+                the review process and facilitates AI committee arbitrations.
+              </p>
+            </div>
+          </ConceptCard>
+        </section>
+
+        {/* === § 4 — COMMON ERRORS === */}
+        <section id="erreurs-frequentes">
+          <h2>Common errors</h2>
+          <p>
+            Four recurring pitfalls in AI governance to recognize and mitigate from the
+            framing stage.
+          </p>
+          <PitfallList items={pitfalls} />
+        </section>
+
+        {/* === § 5 — REAL CASE === */}
+        <section id="cas-reel">
+          <h2>Real case — The NIST AI Risk Management Framework</h2>
+          <p>
+            The <strong>NIST AI Risk Management Framework</strong> (AI RMF 1.0) published in
+            January 2023 by the National Institute of Standards and Technology is one of the
+            most internationally recognized operational AI governance frameworks. It
+            illustrates what structured AI governance is — not a list of principles, but a
+            system articulating governance, risk identification, measurement and management.
+          </p>
+          <CaseCardCompact
+            organization="NIST AI RMF — Operational AI governance framework"
+            sector="Standards and best practices (United States and international)"
+            technology="AI risk management framework"
+            tagline="The framework is structured in four interrelated functions: Govern (organizational governance), Map (identify context and risks), Measure (analyze and measure), Manage (prioritize and address). Each declines into operational sub-categories. Reference for structuring an internal charter or for assessing an organization's governance maturity. Adopted or taken as reference by many large organizations."
+            href={getLocalizedUrl('/cas/nist-ai-rmf/', locale)}
+            available={true}
+          />
+
+          <h3>Additional mini-case — The EU AI Act and high-risk classification</h3>
+          <p>
+            The <strong>EU AI Act</strong> (Regulation EU 2024/1689) became in 2024-2025 the
+            main regulatory reference for organizations operating in the EU. Several
+            transposable lessons:
+          </p>
+          <ul>
+            <li>
+              <strong>The risk-based approach</strong> is a major regulatory innovation:
+              rather than imposing the same obligations on all AI systems, the AI Act
+              calibrates requirements according to potential impact. This is more pragmatic
+              for organizations and more protective for affected persons.
+            </li>
+            <li>
+              <strong>Many "ordinary" uses fall into high-risk</strong>. An automatic CV
+              screening system for recruitment is high-risk, with obligations of compliance
+              analysis, registry, effective human supervision, data quality. Many
+              organizations underestimate this qualification.
+            </li>
+            <li>
+              <strong>Application is progressive</strong>. Obligations on prohibited
+              practices came into force as early as February 2025; those on
+              general-purpose models in August 2025; those on high-risk systems apply
+              progressively until 2027. Organizations have time to prepare — but cannot
+              ignore them.
+            </li>
+            <li>
+              <strong>Sanctions are substantial</strong>. Fines can reach 35 million euros
+              or 7% of worldwide turnover (whichever is higher) for prohibited practices —
+              orders of magnitude comparable to GDPR. The financial dimension of
+              non-compliance is direct.
+            </li>
+          </ul>
+          <p class="ai-text-secondary">
+            <em>
+              Source:
+              <a
+                href="https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ%3AL_202401689"
+                rel="noopener noreferrer"
+                target="_blank">full text of Regulation EU 2024/1689 published in the Official Journal of the European Union</a>.
+            </em>
+            <SourceTag level="external-verifiable" inline />
+          </p>
+        </section>
+
+        {/* === § 6 — ACTIVITY === */}
+        <section id="activite">
+          <h2>Practical activity — Build an AI governance charter</h2>
+          <p>
+            This activity makes you concretely walk through building an AI governance
+            charter for your organization. To be done alone or in a small group, in 60 to 90
+            minutes. The downloadable canvas structures the 4 steps.
+          </p>
+          <Activity
+            id="activite-charte-gouvernance"
+            title="Build an AI governance charter"
+            duration="60-90 min"
+            level="Applicable"
+            steps={activitySteps}
+            criteria={activityCriteria}
+            downloadLabel="AI governance charter canvas (printable Markdown)"
+            downloadHref="/downloads/canvas-charte-gouvernance-ia-module-5.md"
+          />
+          <p class="ai-text-muted">
+            <em>The canvas is provided in printable Markdown format. The styled PDF version
+            arrives in Phase 5 of the project.</em>
+          </p>
+        </section>
+
+        {/* === § 7 — QUIZ === */}
+        <section id="quiz">
+          <h2>Formative quiz</h2>
+          <p>
+            Seven questions to verify your understanding. Three comprehension questions, three
+            application, one judgment. Each incorrect answer unfolds a pedagogical explanation
+            pointing to the section to review.
+          </p>
+          <QuizInteractive client:visible
+            id="quiz-module-5-en"
+            title={quizModule5EN.title}
+            intro={quizModule5EN.intro}
+            questions={quizModule5EN.questions}
+            scoringBands={quizModule5EN.scoringBands}
+          />
+        </section>
+
+        {/* === § 8 — CHECKLIST === */}
+        <section id="checklist">
+          <h2>Manager checklist — AI governance</h2>
+          <p>
+            Twelve checkpoints to assess your organization's AI governance maturity. Three
+            groups: governance and AI committee, ethics-bias-impact,
+            compliance-transparency.
+          </p>
+          <Checklist
+            id="checklist-module-5-en"
+            title="AI governance — 12 checkpoints"
+            intro="Before presenting an AI project to the C-suite or publishing an external charter, go through these twelve points. Compliance points (AI Act, GDPR, labor law) are non-negotiable; ethics points condition durable stakeholder trust."
+            groups={checklistGroups}
+          />
+        </section>
+
+        {/* === § 9 — APPLICATION === */}
+        <section id="application">
+          <h2>Application in your organization</h2>
+          <p>
+            Five questions to ask in your context. No universal right or wrong answer — what
+            matters is being able to answer them <em>specifically</em> for your organization.
+          </p>
+          <ol class="ai-application-questions">
+            <li>
+              Does an <strong>AI governance committee</strong> exist in your organization? Does
+              it have an operational Go/No-Go mandate, or is it purely consultative?
+            </li>
+            <li>
+              For the <strong>3 most important AI use cases</strong> in your organization,
+              have you identified their EU AI Act classification? What obligations follow?
+            </li>
+            <li>
+              How is the <strong>AI governance / DPO / HR / employee representative
+              articulation</strong> structured? Are there topics "between chairs" that no
+              one drives?
+            </li>
+            <li>
+              What <strong>AI governance indicators</strong> do you track (reports handled,
+              bias audits performed, incidents listed)? Are they published internally,
+              externally, or not at all?
+            </li>
+            <li>
+              Is there a <strong>gap between your organization's external communication</strong>
+              on ethical AI and the operational mechanisms actually in place? How is this gap
+              managed?
+            </li>
+          </ol>
+
+          <aside class="ai-application-aside">
+            <h3>For consultants</h3>
+            <p>
+              In an AI governance framing engagement, these five questions structure a
+              3-hour workshop with a cross-functional team (CEO / CIO / DPO / HR /
+              Compliance / CISO / sometimes employee representatives). The presence of the
+              DPO and HR Director is non-negotiable — operational AI governance is by
+              construction cross-functional, and the absence of one of these functions at
+              framing produces costly blind spots later.
+            </p>
+          </aside>
+        </section>
+
+        {/* === § 10 — KEY TAKEAWAYS === */}
+        <section id="a-retenir">
+          <h2>Key takeaways</h2>
+          <KeyTakeaways items={takeaways} />
+        </section>
+
+        {/* === § 11 — GOING FURTHER === */}
+        <section id="pour-aller-plus-loin">
+          <h2>Going further</h2>
+          <p>
+            Six resources to deepen, sorted by type. The source hierarchy is indicated on each
+            (cf. <a href={methodeUrl}>method</a>).
+          </p>
+          <ResourceList items={resources} />
+
+          <p class="ai-section__cta">
+            Technical terms encountered? Check the <a href={glossaireUrl}>glossary</a>.
+          </p>
+        </section>
+
+        {/* === INDEPENDENCE === */}
+        <div class="ai-module-independence">
+          <PrintButton />
+          <IndependenceNotice variant="block" />
+        </div>
+
+        {/* === PREV / NEXT === */}
+        <PrevNextNav
+          prev={{
+            href: module4Url,
+            label: 'Robotics in Business',
+            context: 'Module 4',
+          }}
+          next={{
+            href: module6Url,
+            label: 'The Future of AI',
+            context: 'Module 6',
+          }}
+        />
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .ai-module-page {
+    padding-block: var(--ai-space-7) var(--ai-space-8);
+  }
+
+  .ai-module-page__layout {
+    display: grid;
+    gap: var(--ai-space-6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__layout {
+      grid-template-columns: 18rem 1fr;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-module-page__toc {
+    position: relative;
+  }
+
+  @media (min-width: 80em) {
+    .ai-module-page__toc {
+      position: sticky;
+      inset-block-start: var(--ai-space-7);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  .ai-module-page__content {
+    min-width: 0;
+  }
+
+  .ai-module-page__content > section {
+    margin-block: var(--ai-space-8);
+    scroll-margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content > section:first-of-type {
+    margin-block-start: var(--ai-space-7);
+  }
+
+  .ai-module-page__content :global(.ai-concept__example) {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3) var(--ai-space-4);
+    background: var(--ai-bg-subtle);
+    border-inline-start: 3px solid var(--ai-accent-secondary);
+    border-radius: var(--ai-radius-sm);
+    font-size: var(--ai-text-sm);
+    color: var(--ai-fg-secondary);
+  }
+  .ai-module-page__content :global(.ai-concept__example p) {
+    margin: 0;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-module-page__content :global(.ai-concept__example strong) {
+    color: var(--ai-fg-primary);
+  }
+
+  .ai-application-questions {
+    list-style: none;
+    counter-reset: app-question;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--ai-space-3);
+  }
+  .ai-application-questions li {
+    counter-increment: app-question;
+    padding: var(--ai-space-3) var(--ai-space-4) var(--ai-space-3) calc(var(--ai-space-4) + 2.5rem);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    position: relative;
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-application-questions li::before {
+    content: counter(app-question, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: var(--ai-space-4);
+    inset-block-start: var(--ai-space-3);
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-application-aside {
+    margin-block-start: var(--ai-space-5);
+    padding: var(--ai-space-4) var(--ai-space-5);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 4px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-application-aside h3 {
+    margin: 0 0 var(--ai-space-2);
+    font-size: var(--ai-text-base);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-application-aside p {
+    margin: 0;
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+  }
+
+  .ai-text-secondary {
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-text-muted {
+    color: var(--ai-fg-muted);
+    font-size: var(--ai-text-sm);
+  }
+
+  .ai-section__cta {
+    margin-block-start: var(--ai-space-5);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-section__cta a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-section__cta a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-module-independence {
+    margin-block: var(--ai-space-7);
+  }
+</style>
