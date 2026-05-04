@@ -7,84 +7,325 @@ import { getLocalizedUrl } from '@/i18n/helpers';
 const frGlossaireUrl = getLocalizedUrl('/glossaire/', 'fr');
 
 interface Term {
+  /** URL-friendly identifier — same slug as FR for cross-language linking */
+  slug: string;
+  /** Term as displayed in the title */
   termEN: string;
-  termFR: string; // for cross-reference to FR definitions
+  /** FR term for cross-reference */
+  termFR: string;
+  /** Thematic category */
   category: 'fundamentals' | 'ml' | 'genai' | 'robotics' | 'governance' | 'methodology';
+  /** Short one-sentence definition shown in the list */
   shortDef: string;
+  /** Full definition, 2-3 paragraphs — shown when entry is expanded */
+  longDef: string;
+  /** Concrete business example — shown when entry is expanded */
+  example?: string;
 }
 
 const terms: Term[] = [
-  // === Fundamentals (5) ===
-  { termEN: 'Artificial Intelligence (AI)', termFR: 'Intelligence artificielle (IA)', category: 'fundamentals',
-    shortDef: "Set of techniques and systems that enable machines to perform tasks normally requiring human cognitive functions: perceiving, reasoning, deciding, learning, communicating." },
-  { termEN: 'Narrow AI (Weak AI)', termFR: 'IA faible (IA étroite)', category: 'fundamentals',
-    shortDef: "AI specialized in a precise task (image recognition, fraud detection, language translation). It cannot transfer its skill to other domains. All AI deployed today is narrow AI." },
-  { termEN: 'General AI (AGI)', termFR: 'IA générale (AGI)', category: 'fundamentals',
-    shortDef: "Hypothetical AI capable of performing any cognitive task a human can do, with similar or superior flexibility. Does not exist today. Subject of debates and active research." },
-  { termEN: 'Collective intelligence', termFR: 'Intelligence collective', category: 'fundamentals',
-    shortDef: "Human-machine system where humans and AI cooperate to produce solutions neither could produce alone. Framework popularized by Thomas Malone (MIT CCI)." },
-  { termEN: 'Automation', termFR: 'Automatisation', category: 'fundamentals',
-    shortDef: "Replacement of a human task by a deterministic machine process. Predates AI. AI extends automation to tasks requiring judgment, perception or learning." },
+  // ========================================================================
+  // FUNDAMENTALS (5)
+  // ========================================================================
+  {
+    slug: 'ia',
+    termEN: 'Artificial Intelligence (AI)',
+    termFR: 'Intelligence artificielle (IA)',
+    category: 'fundamentals',
+    shortDef: "Set of techniques and systems that enable machines to perform tasks normally requiring human cognitive functions: perceiving, reasoning, deciding, learning, communicating.",
+    longDef: "Artificial intelligence is a field of study born in the 1950s whose object is the design of systems capable of perceiving, reasoning, learning, deciding, or generating content. The term covers a wide diversity of techniques — from symbolic rule-based systems to modern deep neural networks, including optimization, heuristic search, and statistical methods.\n\nIn a business context, AI today mainly refers to systems based on machine learning, including deep learning and generative models. The word 'AI' is often used imprecisely in marketing — in managerial discussion, it is useful to distinguish the underlying technique (supervised ML, LLM, robotics, etc.) from the generic label.",
+    example: "A Netflix recommendation system, a credit scoring model, an assistant like Claude or ChatGPT, a Universal Robots cobot, and a Stripe Radar fraud detection system are all described as 'AI' — but rely on very different techniques.",
+  },
+  {
+    slug: 'ia-faible',
+    termEN: 'Narrow AI (Weak AI)',
+    termFR: 'IA faible (IA étroite)',
+    category: 'fundamentals',
+    shortDef: "AI specialized in a precise task (image recognition, fraud detection, language translation). It cannot transfer its skill to other domains. All AI deployed today is narrow AI.",
+    longDef: "Narrow AI — also called weak AI — refers to AI systems that are currently and concretely deployed. A fraud detection model is trained specifically for fraud detection; it cannot do anything else. An LLM like GPT-4 handles a wide variety of language tasks but remains, despite its appearance of versatility, a system optimized for next-token prediction — not a general intelligent agent.\n\nThis distinction is important in managerial discussion: what exists and what is being deployed is narrow AI. Spectacular performance on certain tasks should not be interpreted as a step toward general intelligence — it remains a very advanced optimization on a defined scope.",
+    example: "AlphaGo beats the best human players at Go; it cannot play chess without complete retraining. GPT-4 produces plausible texts; it has no model of the world that guarantees factual accuracy.",
+  },
+  {
+    slug: 'ia-generale',
+    termEN: 'General AI (AGI)',
+    termFR: 'IA générale (AGI)',
+    category: 'fundamentals',
+    shortDef: "Hypothetical AI capable of performing any cognitive task a human can do, with similar or superior flexibility. Does not exist today. Subject of debates and active research.",
+    longDef: "General AI — Artificial General Intelligence or AGI — refers to the hypothesis of an AI system whose cognitive capabilities would equal or surpass those of a human across the full set of intellectual tasks, and not on a narrow scope. This concept is central to public AI debates but remains speculative to date: no current system is an AGI.\n\nPredictions on the timeline of AGI arrival vary enormously between experts (from a few years to several decades, or never). For an organization, it is important to distinguish operational AI strategy — which must rely on existing narrow AI — from prospective watch on long-term evolutions. Confusing the two leads to inappropriate decisions.",
+    example: "Public debate around models like GPT-4 oscillates between 'first step toward AGI' and 'advanced optimization of narrow AI'. To decide a corporate roadmap, one does not base a 12-24 month investment on the AGI hypothesis — one bases it on the demonstrated capabilities of narrow AI today.",
+  },
+  {
+    slug: 'intelligence-collective',
+    termEN: 'Collective intelligence',
+    termFR: 'Intelligence collective',
+    category: 'fundamentals',
+    shortDef: "Human-machine system where humans and AI cooperate to produce solutions neither could produce alone. Framework popularized by Thomas Malone (MIT CCI).",
+    longDef: "Collective intelligence refers to the capacity of a system composed of multiple agents — humans, machines, or a combination of both — to produce results superior to what any isolated agent could achieve. The concept is central to the work of Thomas Malone (MIT Center for Collective Intelligence) and structures part of the reflection on AI in business.\n\nIn a managerial context, collective intelligence guides organizational design: rather than replacing humans with machines, the goal is to compose hybrid teams that exploit the strengths of each type of agent. Humans bring judgment, creativity, contextualization, ethical sense; machines bring speed, memory, search across vast spaces. Designing these hybrid teams — who decides what, who supervises, who escalates — is more structuring than the choice of underlying technology.",
+    example: "The Takeda × MIT CCI Superminds program applies this logic to pharmaceutical R&D: rather than an AI model alone to identify drug candidates, mixed human-machine teams are structured around complex problems in drug development.",
+  },
+  {
+    slug: 'automatisation',
+    termEN: 'Automation',
+    termFR: 'Automatisation',
+    category: 'fundamentals',
+    shortDef: "Replacement of a human task by a deterministic machine process. Predates AI. AI extends automation to tasks requiring judgment, perception or learning.",
+    longDef: "Automation is a broader term than AI. A task can be automated by fixed rules (script, programmable controller), by a classical industrial robot without AI, or by an AI system. Any deployed AI participates in automation logic, but not all automation relies on AI.\n\nIn a corporate project, decomposing a process into sub-tasks and analyzing each — automatable by rule / automatable by AI / leave to humans — is a central framing tool. The 'automate / assist / leave to human' matrix serves to arbitrate between the three options according to the nature of the task, the total cost of automation, and the associated risk.",
+    example: "Accounting entry can be largely automated by rules (OCR + parsing). Fraud detection benefits from ML automation (Stripe Radar). Final validation of a mortgage loan typically remains human, with AI helping prepare the file but not deciding alone.",
+  },
 
-  // === ML (5) ===
-  { termEN: 'Machine Learning (ML)', termFR: 'Machine Learning (ML)', category: 'ml',
-    shortDef: "Family of methods where the machine learns to perform a task from data, rather than being programmed by explicit rules. Foundation of most current applied AI." },
-  { termEN: 'Deep Learning', termFR: 'Apprentissage profond (Deep Learning)', category: 'ml',
-    shortDef: "ML based on multilayer neural networks. Source of major AI advances since ~2012 (image recognition, language, generation). Requires lots of data and computing power." },
-  { termEN: 'Supervised learning', termFR: 'Apprentissage supervisé', category: 'ml',
-    shortDef: "ML from labeled data: each example has the expected answer. The model learns the input-output mapping. Used for fraud detection, medical diagnosis, churn prediction." },
-  { termEN: 'Unsupervised learning', termFR: 'Apprentissage non supervisé', category: 'ml',
-    shortDef: "ML from unlabeled data: the model discovers structures, clusters, or anomalies on its own. Used for customer segmentation, anomaly detection, exploratory analysis." },
-  { termEN: 'Reinforcement learning', termFR: 'Apprentissage par renforcement', category: 'ml',
-    shortDef: "ML where an agent learns by trial and error in an environment, receiving rewards. Used in robotics, games (AlphaGo), industrial control. Less mature in business than supervised ML." },
+  // ========================================================================
+  // MACHINE LEARNING (6)
+  // ========================================================================
+  {
+    slug: 'machine-learning',
+    termEN: 'Machine Learning (ML)',
+    termFR: 'Machine Learning (ML)',
+    category: 'ml',
+    shortDef: "Family of methods where the machine learns to perform a task from data, rather than being programmed by explicit rules. Foundation of most current applied AI.",
+    longDef: "Machine learning is the dominant branch of AI today. Instead of coding explicit rules ('if the transaction exceeds €1,000 AND the country is unusual, then alert'), the system is given labeled examples (historical transactions with their fraudulent or legitimate status) and the system itself learns the regularities useful for prediction.\n\nThe three main learning families are supervised (known labels), unsupervised (no labels, looking for structures), and reinforcement (trial-and-error learning with reward signal). Modern ML mainly relies on neural networks, particularly deep learning.",
+    example: "Stripe Radar trains its ML models on hundreds of millions of transactions labeled legitimate or fraudulent to score each new transaction in real time. Performance improves as new data arrives and the model is retrained.",
+  },
+  {
+    slug: 'deep-learning',
+    termEN: 'Deep Learning',
+    termFR: 'Apprentissage profond (Deep Learning)',
+    category: 'ml',
+    shortDef: "ML based on multilayer neural networks. Source of major AI advances since ~2012 (image recognition, language, generation). Requires lots of data and computing power.",
+    longDef: "Deep learning uses artificial neural networks with many successive layers. Each layer progressively extracts more abstract representations of the input data — for example, edges then shapes then objects in an image. The very rich representational capacity, combined with massive data volumes and modern computing power (GPU/TPU), enables performance that was unattainable fifteen years ago.\n\nDeep learning underpins most of the most visible modern AI systems: image recognition, machine translation, voice assistants, generative models like GPT-4 or Claude. Its power comes with high training costs, substantial data needs, and greater interpretation difficulty compared to simpler models.",
+    example: "The Mirai model from Regina Barzilay (MIT CSAIL) for breast cancer screening is a deep neural network trained on tens of thousands of labeled mammograms. It predicts 1-5 year risk with performance superior to traditional scores.",
+  },
+  {
+    slug: 'apprentissage-supervise',
+    termEN: 'Supervised learning',
+    termFR: 'Apprentissage supervisé',
+    category: 'ml',
+    shortDef: "ML from labeled data: each example has the expected answer. The model learns the input-output mapping. Used for fraud detection, medical diagnosis, churn prediction.",
+    longDef: "Supervised learning is the most common form of ML in business. Labeled examples are available — each input is associated with the expected correct output (fraudulent transaction or not, cancer image or not, candidate to recommend or not). The model learns to generalize from these examples to predict the output on unseen new inputs.\n\nThe quality of a supervised model depends critically on the quality and representativeness of labeled data. Labeling is typically the limiting factor: it is slow, costly, and often requires expertise (radiologists for medical images, expert fraud analysts for transactions, lawyers for contractual clauses). Underestimating the labeling effort is the most common error on initial ML projects.",
+    example: "The Mirai model (MIT) on breast cancer is trained on mammograms labeled with their 1-5 year clinical outcome. Stripe Radar is trained on transactions labeled legitimate or fraudulent. Both are supervised ML.",
+  },
+  {
+    slug: 'apprentissage-non-supervise',
+    termEN: 'Unsupervised learning',
+    termFR: 'Apprentissage non supervisé',
+    category: 'ml',
+    shortDef: "ML from unlabeled data: the model discovers structures, clusters, or anomalies on its own. Used for customer segmentation, anomaly detection, exploratory analysis.",
+    longDef: "Unsupervised learning works on data for which no labels are available. The objective is not to predict a known output but to discover structures in the data: natural groups (clustering), anomalies relative to the mass, hidden dimensions that effectively summarize the data.\n\nIn a business context, unsupervised learning is useful for customer segmentation (without prior assumptions about segments), anomaly detection (a transaction very different from all those known), or data compression (dimension reduction). It is generally more difficult to validate than supervised learning: without labels, how to know if the model is 'right'? Validation goes through the business utility of the discovered structures.",
+    example: "A bank can use unsupervised clustering to segment its customer base, then interpret the business segments (urban young professionals, retired wealth managers, etc.). No expert provides the labels a priori — they emerge from the analysis.",
+  },
+  {
+    slug: 'apprentissage-renforcement',
+    termEN: 'Reinforcement learning',
+    termFR: 'Apprentissage par renforcement',
+    category: 'ml',
+    shortDef: "ML where an agent learns by trial and error in an environment, receiving rewards. Used in robotics, games (AlphaGo), industrial control. Less mature in business than supervised ML.",
+    longDef: "Reinforcement learning (RL) models an agent that interacts with an environment. At each action, the agent observes a new situation and receives a reward (positive or negative). Over millions of trials, the agent learns an action policy that maximizes expected cumulative reward.\n\nRL has produced spectacular results in well-defined environments like games (AlphaGo, AlphaZero, Atari). Its application in business is more delicate: precisely defining the reward function is difficult (what exactly do we want to optimize?), and the real environment is often less reproducible than a game. RL is nevertheless used in practice for robotic orchestration (Amazon DeepFleet), long-term personalization, optimization of medical treatments, and RLHF (RL from Human Feedback) used to align LLMs.",
+    example: "DeepFleet, the Amazon Robotics fleet orchestration foundation model, likely uses RL components to optimize trajectories and task allocation between robots in real time. Modern LLMs (GPT-4, Claude) are fine-tuned by RLHF.",
+  },
+  {
+    slug: 'donnees-entrainement',
+    termEN: 'Training data',
+    termFR: "Données d'entraînement",
+    category: 'ml',
+    shortDef: "Set of examples used to adjust the parameters of an ML model — their quality conditions the final performance.",
+    longDef: "Training data is the raw material of supervised machine learning. Its quality, volume, representativeness, and freshness directly condition the performance of the final model. A central ML adage: 'garbage in, garbage out' — a model cannot be better than the data it has to learn from.\n\nSeveral structuring questions in any ML project: do you have enough data? Is it representative of the population on which the model will be used (selection bias, missing subgroups)? Is it up to date (potential drift)? Is labeling reliable and homogeneous? Is data governance respected (GDPR for personal data, copyright for text corpora)? These questions precede and condition any discussion on the choice of model.",
+    example: "Stripe trains its fraud ML models on hundreds of millions of historical labeled transactions. The quality of labeling (legitimate/fraudulent) relies on feedback from merchants, users, and business rules — a permanent challenge.",
+  },
 
-  // === GenAI (7) ===
-  { termEN: 'Generative model', termFR: 'Modèle génératif', category: 'genai',
-    shortDef: "ML model that produces new content (text, image, audio, code) by learning the distribution of training data. As opposed to a discriminative model that classifies." },
-  { termEN: 'Large Language Model (LLM)', termFR: 'Grand modèle de langage (LLM)', category: 'genai',
-    shortDef: "Generative model specialized in natural language, trained on massive text corpora. Examples: GPT-4, Claude, Llama. Foundation of conversational and content generation applications." },
-  { termEN: 'Foundation model', termFR: 'Foundation model', category: 'genai',
-    shortDef: "Large general-purpose model trained on a vast corpus, then specialized via fine-tuning or prompting for varied tasks. The term covers LLMs and multimodal models." },
-  { termEN: 'Hallucination', termFR: 'Hallucination', category: 'genai',
-    shortDef: "Generation by an LLM of plausible but factually false content. Major risk in business deployment. Mitigated by RAG, internal sources, and human verification." },
-  { termEN: 'RAG (Retrieval-Augmented Generation)', termFR: 'RAG (Retrieval-Augmented Generation)', category: 'genai',
-    shortDef: "Architecture that combines an LLM with a retrieval system in a corpus (e.g., internal documentation). The model generates answers grounded in real documents, reducing hallucinations." },
-  { termEN: 'Prompt engineering', termFR: 'Prompt engineering', category: 'genai',
-    shortDef: "Practice of formulating instructions to an LLM to obtain quality answers. Discipline emerging since 2022, applicable both to individuals and to systematic workflow design." },
-  { termEN: 'Fine-tuning', termFR: 'Fine-tuning', category: 'genai',
-    shortDef: "Specialization of a foundation model on specific data to adapt it to a domain or task. Less needed since RAG and recent LLMs handle many cases without fine-tuning." },
+  // ========================================================================
+  // GENERATIVE AI (7)
+  // ========================================================================
+  {
+    slug: 'modele-generatif',
+    termEN: 'Generative model',
+    termFR: 'Modèle génératif',
+    category: 'genai',
+    shortDef: "ML model that produces new content (text, image, audio, code) by learning the distribution of training data. As opposed to a discriminative model that classifies.",
+    longDef: "A generative model learns the underlying distribution of its training data and is capable of producing new plausible samples. Unlike a classifying model (which answers 'this image is a cat') or a predictive model (which answers 'this transaction has a 0.7% probability of being fraudulent'), a generative model produces new content: a text, an image, code, a synthetic voice.\n\nRecent generative models — GPT-4, Claude, Gemini for text; Midjourney, Stable Diffusion, DALL·E for images; Suno, Udio for audio — produced the public breakthrough of 2022-2024. For an organization, their business value requires rigorous framing: massive production of plausible content is not in itself a value — value emerges when the produced content integrates into a useful workflow (assistance with writing, research, programming, design).",
+    example: "Morgan Stanley uses OpenAI's GPT-4 in two assistants: AI @ Morgan Stanley Assistant to retrieve information in the internal corpus, and Debrief to synthesize client meeting notes. In both cases, the model is generative (it produces text) but the scope is strictly framed.",
+  },
+  {
+    slug: 'llm',
+    termEN: 'Large Language Model (LLM)',
+    termFR: 'Grand modèle de langage (LLM)',
+    category: 'genai',
+    shortDef: "Generative model specialized in natural language, trained on massive text corpora. Examples: GPT-4, Claude, Llama. Foundation of conversational and content generation applications.",
+    longDef: "A Large Language Model (LLM) is a particular type of foundation model specialized in language. These models are trained on very large text corpora (and increasingly multimodal: text + image + audio) and learn to predict the next token in a given context. This apparently simple task, at very large scale, produces emergent complex capabilities: question understanding, reasoning on texts, code generation, translation, summary.\n\nTwo main categories: proprietary models accessible only via API (OpenAI's GPT-4, Anthropic's Claude, Google's Gemini), and open models that can be downloaded and deployed in internal infrastructure (Meta's Llama, Mistral, open source community models). The choice between the two depends on criteria such as performance, cost, data control, regulatory requirements, internal expertise.",
+    example: "Morgan Stanley uses GPT-4 (proprietary LLM). GitHub Copilot relies on LLMs optimized for code. A European bank subject to strict GDPR constraints may prefer to deploy a Llama or Mistral internally to maintain control of prompts and data.",
+  },
+  {
+    slug: 'foundation-model',
+    termEN: 'Foundation model',
+    termFR: 'Foundation model',
+    category: 'genai',
+    shortDef: "Large general-purpose model trained on a vast corpus, then specialized via fine-tuning or prompting for varied tasks. The term covers LLMs and multimodal models.",
+    longDef: "The term 'foundation model' was popularized by Stanford researchers (notably Percy Liang) starting in 2021. It refers to very large models trained on massive corpora and designed to serve as a base ('foundation') for multiple downstream applications — through adaptation, fine-tuning, or simply prompting.\n\nLLMs (GPT-4, Claude, Gemini) are foundation models for text. But the concept goes beyond: foundation models are also discussed for vision (CLIP, Segment Anything), for robotics (Amazon's DeepFleet is one), for biology. The 'foundation' character lies in the generality of capabilities after pre-training, which allows economical reuse: a large model is trained once, then adapted for many tasks instead of starting from scratch each time.",
+    example: "DeepFleet, the Amazon foundation model for robotic fleet orchestration announced in 2025, is explicitly positioned by Amazon as an analogue of LLMs: a large model pre-trained on massive operational data, capable of orchestrating a heterogeneous fleet in real time.",
+  },
+  {
+    slug: 'hallucination',
+    termEN: 'Hallucination',
+    termFR: 'Hallucination',
+    category: 'genai',
+    shortDef: "Generation by an LLM of plausible but factually false content. Major risk in business deployment. Mitigated by RAG, internal sources, and human verification.",
+    longDef: "A hallucination is the production by an LLM of an assertion that seems credible and well-formulated but is factually false. It can concern dates, names, numbers, citations, entirely invented but syntactically convincing bibliographic references. This phenomenon is structural: an LLM optimizes the linguistic plausibility of the next token, not factual truth.\n\nHallucinations are a central reason never to deploy an LLM alone on high-stakes decisions. Several mechanisms reduce the risk without eliminating it: RAG (anchoring answers in a curated internal corpus and requiring citations), systematic human review, explicitly limited usage scopes, training users to recognize signs of hallucination, continuous monitoring.",
+    example: "Asking an LLM the list of scientific publications of a researcher can produce invented but formally credible references (plausible journal, correct citation format, coherent co-authors). It is a hallucination — that can only be detected by checking each reference.",
+  },
+  {
+    slug: 'rag',
+    termEN: 'RAG (Retrieval-Augmented Generation)',
+    termFR: 'RAG (Retrieval-Augmented Generation)',
+    category: 'genai',
+    shortDef: "Architecture combining an LLM with a search engine in an external corpus — reduces hallucinations and enables traceability.",
+    longDef: "Retrieval-Augmented Generation (RAG) is the most widely adopted architecture for deploying LLMs in business on serious use cases. The principle: at each user query, a search engine first identifies the most relevant documents in a curated internal corpus. The key passages are then injected into the LLM context with the original query. The LLM generation is thus conditioned by internal sources.\n\nThree structural benefits: (1) **traceability** — each answer can cite source documents, which is essential in finance, law, healthcare; (2) **freshness** — corpus updates are independent of the model, no need to retrain; (3) **hallucination reduction** — the model relies on provided sources rather than generating from memory. RAG does not totally eliminate hallucinations but substantially attenuates them when the corpus is of quality.",
+    example: "AI @ Morgan Stanley Assistant is a RAG system: at each advisor question, the system searches relevant documents in the internal corpus of more than 100,000 documents (research notes, reports), then asks the LLM to produce an answer grounded in these sources. The answer cites the documents used.",
+  },
+  {
+    slug: 'prompt-engineering',
+    termEN: 'Prompt engineering',
+    termFR: 'Prompt engineering',
+    category: 'genai',
+    shortDef: "Practice of formulating instructions to an LLM to obtain quality answers. Discipline emerging since 2022, applicable both to individuals and to systematic workflow design.",
+    longDef: "Prompt engineering is the art and practice of formulating queries (prompts) that obtain useful, precise answers from an LLM in the expected format. Several techniques have stabilized: explicit role definition, examples (few-shot), step-by-step reasoning request, specified output format (JSON, XML), length constraints, clear separation of instructions/context/data.\n\nPrompt engineering is not a purely individual competency: in business, good prompts are capitalized in internal libraries, versioned, tested, shared between teams. Prompt engineering work is progressively converging with software work — hence the appearance of dedicated tools (LangChain, LlamaIndex, prompt evaluation frameworks). However, this domain evolves rapidly: what works today may need adaptation with each new model version.",
+    example: "A poorly formulated prompt for a legal assistant can produce an unusable summary. A good prompt that explicitly requests the format (sections, citations of source clauses, risk highlighting) produces an exploitable answer. The difference in quality justifies the investment in prompt engineering.",
+  },
+  {
+    slug: 'fine-tuning',
+    termEN: 'Fine-tuning',
+    termFR: 'Fine-tuning',
+    category: 'genai',
+    shortDef: "Specialization of a pre-trained foundation model on specific data to adapt its behaviors to a domain.",
+    longDef: "Fine-tuning consists of taking a pre-trained foundation model and continuing its training on a smaller but specific dataset of the target domain or task. The objective is to adapt the model's behavior to a particular context — business vocabulary, expected style, format constraints, alignment with human preferences — while benefiting from the initial investment of the foundation model.\n\nSeveral variants exist: full fine-tuning (readjusts all parameters, costly), LoRA and other efficient adaptation techniques (only adjust a fraction of parameters, much less costly), instruction tuning (training to follow instructions), RLHF (Reinforcement Learning from Human Feedback, alignment to preferences). The choice between fine-tuning and alternatives (RAG, advanced prompt engineering) is a classical trade-off: fine-tuning gives more control but has a cost and freezes knowledge in the model, while RAG is more flexible but does not change the default behavior of the model.",
+    example: "A bank that wants an assistant adapted to its business vocabulary and internal processes can either fine-tune an open model (Llama, Mistral) or rely on RAG + prompt engineering with a proprietary model. The choice depends on the volume of data, budget, and desired control.",
+  },
 
-  // === Robotics (3) ===
-  { termEN: 'Robotics', termFR: 'Robotique', category: 'robotics',
-    shortDef: "Discipline of robots — physical machines capable of executing tasks. The current vague combines mechanics (improved sensors), software (AI for perception and decision), and economics (lower cost)." },
-  { termEN: 'Cobot (collaborative robot)', termFR: 'Cobot (robot collaboratif)', category: 'robotics',
-    shortDef: "Robot designed to operate in shared space with humans, with appropriate safety mechanisms (ISO/TS 15066). Democratization in industrial SMEs since ~2010." },
-  { termEN: 'AMR (Autonomous Mobile Robot)', termFR: 'AMR (Autonomous Mobile Robot)', category: 'robotics',
-    shortDef: "Mobile robot navigating autonomously in its environment without fixed guides. Massive deployments in logistics (Amazon: 1+ million AMRs in 2025)." },
+  // ========================================================================
+  // ROBOTICS (3)
+  // ========================================================================
+  {
+    slug: 'robotique',
+    termEN: 'Robotics',
+    termFR: 'Robotique',
+    category: 'robotics',
+    shortDef: "Discipline of robots — physical machines capable of executing tasks. The current wave combines mechanics (improved sensors), software (AI for perception and decision), and economics (lower cost).",
+    longDef: "Robotics combines mechanics, electronics, perception (sensors), planning, control, and increasingly AI. A major historical distinction: classical industrial robots (safety cages, repetitive tasks, high speed, heavy load) vs mobile and collaborative robotics (lighter, capable of operating near humans, more versatile).\n\nIn a business context, robotics deploys mainly in warehouse logistics (Amazon Robotics, AMR), manufacturing industry (Universal Robots, FANUC, ABB cobots), service (vacuum robots, delivery robots), and healthcare (surgical robots, assistance robots). The total cost of a robotics project is dominated not by the robot itself but by integration (sensors, tooling, business logic, safety) and change management.",
+    example: "Amazon Robotics operates one million robots in its global logistics network. Universal Robots equips industrial SMEs with cobots compliant with ISO/TS 15066. Both are robotics but with very different architectures and economics.",
+  },
+  {
+    slug: 'cobot',
+    termEN: 'Cobot (collaborative robot)',
+    termFR: 'Cobot (robot collaboratif)',
+    category: 'robotics',
+    shortDef: "Robot designed to operate in shared space with humans, with appropriate safety mechanisms (ISO/TS 15066). Democratization in industrial SMEs since ~2010.",
+    longDef: "The cobot — collaborative robot — is a category of robots specifically designed to coexist with humans without a safety cage. The ISO/TS 15066:2016 standard defines four collaborative operation methods: safety-rated monitored stop in case of human presence, manual guiding, monitored separation, and force and power limiting. The fourth is the most used for light cobots.\n\nThe absence of a cage transforms the economics of an automation project: less dedicated space, simpler integration, possibility of using the cobot on multiple workstations by rotation. This makes robotics accessible to industrial SMEs that could not have engaged a classical robotics project. On the other hand, cobots have limited useful capacity (modest loads, average speeds) — they do not replace classical industrial robots for very high cadence or very heavy load production.",
+    example: "Universal Robots is one of the world's main cobot manufacturers. Its range goes from the UR3e (3 kg load, electronics workshop) to the UR30 (30 kg, palletizing). An SME can buy a cobot, install it in a few days with a UR+ integrator, and redeploy it between several workstations as needed.",
+  },
+  {
+    slug: 'amr',
+    termEN: 'AMR (Autonomous Mobile Robot)',
+    termFR: 'AMR (Autonomous Mobile Robot)',
+    category: 'robotics',
+    shortDef: "Mobile robot navigating autonomously in its environment without fixed guides. Massive deployments in logistics (Amazon: 1+ million AMRs in 2025).",
+    longDef: "An Autonomous Mobile Robot (AMR) is capable of dynamically planning its trajectories, avoiding obstacles, and adapting to a changing environment — humans circulating, pallets moved, evolving warehouse configuration. This adaptation capacity distinguishes AMRs from classical AGVs (Automated Guided Vehicles) which follow materialized paths (rails, ground lines, magnetic markers).\n\nAMRs have become the backbone of modern warehouse logistics. Amazon Robotics operates several generations of AMRs (Hercules, Pegasus, Sequoia) that transport entire shelves in distribution centers. Beyond the warehouse, AMRs are deploying in healthcare (medication transport in hospitals), industry (inter-station handling), and service (last-meter delivery).",
+    example: "Amazon has reached the threshold of one million robots deployed worldwide, of which a large part are AMRs. The orchestration of this heterogeneous fleet is now driven by DeepFleet, a dedicated AI foundation model.",
+  },
 
-  // === Governance (7) ===
-  { termEN: 'Algorithmic bias', termFR: 'Biais algorithmique', category: 'governance',
-    shortDef: "Systematic distortion in an AI model's decisions, often inherited from training data. Critical in HR, credit, justice, healthcare. Mitigation via auditing and rebalancing." },
-  { termEN: 'AI Governance', termFR: 'Gouvernance IA', category: 'governance',
-    shortDef: "Set of processes and roles structuring AI decisions in an organization: which use cases, which oversight, which controls. NIST RMF and ISO 42001 are reference frameworks." },
-  { termEN: 'AI Risk Management', termFR: 'AI Risk Management', category: 'governance',
-    shortDef: "Discipline of identifying, evaluating, and mitigating risks specific to AI: technical, ethical, regulatory, reputational. Reference NIST AI RMF (4 functions: Govern, Map, Measure, Manage)." },
-  { termEN: 'EU AI Act', termFR: 'AI Act EU', category: 'governance',
-    shortDef: "EU Regulation 2024/1689 on AI. Risk-based approach: prohibited / high-risk / limited / minimal. Progressive entry into application 2025-2027. Extraterritorial like GDPR." },
-  { termEN: 'Explainability', termFR: 'Explicabilité', category: 'governance',
-    shortDef: "Ability to explain how a model arrives at its decision. Required by AI Act for high-risk uses. Tension between performance (often black-box deep models) and explainability." },
-  { termEN: 'Accountability', termFR: 'Accountability (responsabilité)', category: 'governance',
-    shortDef: "Identification of who is responsible for an AI system: design, deployment, oversight, end use. AI Act distinguishes provider, deployer, importer/distributor with distinct obligations." },
-  { termEN: 'Human-in-the-loop', termFR: 'Human-in-the-loop', category: 'governance',
-    shortDef: "Architecture where a human validates or controls the AI's decisions, particularly for sensitive cases. Best practice for high-impact uses (healthcare, justice, HR)." },
+  // ========================================================================
+  // GOVERNANCE AND SOCIETY (7)
+  // ========================================================================
+  {
+    slug: 'biais-algorithmique',
+    termEN: 'Algorithmic bias',
+    termFR: 'Biais algorithmique',
+    category: 'governance',
+    shortDef: "Systematic distortion in an AI model's decisions, often inherited from training data. Critical in HR, credit, justice, healthcare. Mitigation via auditing and rebalancing.",
+    longDef: "Algorithmic bias appears when an AI system produces systematically different results for different subgroups, without legitimate business justification. Main sources: bias in training data (under-representation of groups, biased labels, historical data reflecting past discrimination), design choices (proxy variables implicitly correlated with protected attributes), feedback loops (an initial bias reinforces itself through data generated by the system).\n\nAlgorithmic bias is one of the most mediatized risks of AI, and one of the most difficult to detect and address. Obligations are intensifying: EU AI Act requires 'data governance' including bias prevention and detection for high-risk systems, NIST AI RMF dedicates part of the Measure function to bias auditing, GDPR and anti-discrimination laws apply. Detection requires specific metrology (subgroup equity, fairness metrics) — which must be set from the design stage, not downstream.",
+    example: "A CV screening model trained on historical recruitment data can learn to implicitly penalize female CVs if past practices were biased — even if gender is not an explicit input variable (the system can infer gender from other signals). The system becomes discriminatory despite a neutral initial intent.",
+  },
+  {
+    slug: 'gouvernance-ia',
+    termEN: 'AI Governance',
+    termFR: 'Gouvernance IA',
+    category: 'governance',
+    shortDef: "Set of processes and roles structuring AI decisions in an organization: which use cases, which oversight, which controls. NIST RMF and ISO 42001 are reference frameworks.",
+    longDef: "AI governance goes beyond publishing an ethics charter. It structures an operational system: internal policies, roles and responsibilities (who decides, who validates, who oversees), processes (review, audit, incident management), training, integration with existing risk management processes (cybersecurity, compliance, operational). Without this organizational dimension, principles remain ornamental.\n\nThe NIST AI Risk Management Framework proposes a structure in four interrelated functions: Govern (transverse), Map (identify context and risks), Measure (analyze and quantify), Manage (prioritize and treat). This structure is now widely adopted as a foundation, including outside the United States. It articulates with legal obligations (EU AI Act, GDPR, sectoral) that governance operationalizes.",
+    example: "A corporate AI charter that says 'we respect human dignity' without specifying who validates deployments, who performs bias audits, who can suspend a system, who trains users, is not governance — it is a declaration of principles. Real governance is measured in processes, not in charters.",
+  },
+  {
+    slug: 'ai-risk-management',
+    termEN: 'AI Risk Management',
+    termFR: 'AI Risk Management',
+    category: 'governance',
+    shortDef: "Discipline of identifying, evaluating, and mitigating risks specific to AI: technical, ethical, regulatory, reputational. Reference NIST AI RMF (4 functions: Govern, Map, Measure, Manage).",
+    longDef: "AI Risk Management applies risk management disciplines well established in other domains (cybersecurity, operational, financial) to AI systems. The AI specificity lies in several factors: possible model opacity, dependence on training data, sometimes emergent behavior, rapid capability evolution, interaction with humans who do not master the underlying technology.\n\nThe NIST AI Risk Management Framework (AI RMF 1.0, published in January 2023) is the most internationally recognized operational framework. It structures the work in four functions (Govern, Map, Measure, Manage) with documented operational sub-categories. The framework is voluntary but widely adopted, including as a complement to legal obligations (notably EU AI Act). Other standards like ISO 42001 (AI Management System) or ISO 23894 (AI Risk Management) complete the ecosystem.",
+    example: "An organization deploying a high-risk credit scoring system (in the AI Act sense) must conduct a systematic risk analysis: discriminatory bias risks, robustness risks against adversarial inputs, temporal drift risks, cybersecurity risks. The NIST AI RMF provides the operational method to structure this analysis.",
+  },
+  {
+    slug: 'ai-act',
+    termEN: 'EU AI Act',
+    termFR: 'AI Act EU',
+    category: 'governance',
+    shortDef: "EU Regulation 2024/1689 on AI. Risk-based approach: prohibited / high-risk / limited / minimal. Progressive entry into application 2025-2027. Extraterritorial like GDPR.",
+    longDef: "The EU AI Act — Regulation (EU) 2024/1689 — is the world's first global and structured artificial intelligence regulatory framework. Adopted in May 2024, published in the Official Journal on July 12, 2024 and entered into force on August 1, 2024, it applies progressively until August 2027 according to obligations.\n\nRisk-based approach: four categories — prohibited practices (social scoring by authorities, cognitive manipulation, mass real-time biometric identification); high-risk (recruitment, credit scoring, justice, essential public services, critical infrastructure, medical devices); limited risk (chatbots, deepfakes — transparency obligations); minimal risk (the majority of uses, no specific obligations). General-purpose models (foundation models) have a dedicated chapter. Sanctions: up to €35M or 7% of worldwide turnover. Many 'ordinary' business uses fall under high-risk — classification of each AI use case is a critical step to be conducted now.",
+    example: "A CV screening system used in France falls under the high-risk category (Annex III, point 4 — employment). It must respect a dozen obligations: risk management system, data governance, technical documentation, transparency, human oversight, accuracy/robustness/cybersecurity, conformity assessment before market placement, registry in the European database.",
+  },
+  {
+    slug: 'explicabilite',
+    termEN: 'Explainability',
+    termFR: 'Explicabilité',
+    category: 'governance',
+    shortDef: "Ability to explain how a model arrives at its decision. Required by AI Act for high-risk uses. Tension between performance (often black-box deep models) and explainability.",
+    longDef: "Explainability (Explainable AI, XAI) is the capacity of an AI system to produce explanations of its decisions accessible to humans. It is required by several regulations (EU AI Act for high-risk systems, GDPR for automated decisions affecting persons), by the deontology of several professions (healthcare, finance, justice), and by the legitimate expectations of users and affected persons.\n\nTwo main approaches: intrinsically interpretable models (linear regression, simple decision trees — less powerful but readable), and post-hoc techniques that produce a posteriori explanations on complex models (LIME, SHAP, attention maps). Post-hoc techniques are an approximation and can themselves mislead — hence the importance of rigorous work on what we mean by 'explaining', to whom, with what objective. Explainability is not binary: it calibrates according to stakes.",
+    example: "A credit scoring system must be able to explain why an application was refused — which is required in France by the Informatique et Libertés law and at the European level by GDPR and the AI Act. An answer like 'the model calculated 0.32' is not an explanation; the main factors must be indicated (income, history, debt ratio).",
+  },
+  {
+    slug: 'accountability',
+    termEN: 'Accountability',
+    termFR: 'Accountability (responsabilité)',
+    category: 'governance',
+    shortDef: "Identification of who is responsible for an AI system: design, deployment, oversight, end use. AI Act distinguishes provider, deployer, importer/distributor with distinct obligations.",
+    longDef: "Accountability — a term imperfectly translated as responsibility — refers to the principle whereby identifiable persons or entities are responsible for the decisions and consequences of AI systems they deploy. This principle opposes the idea that 'the algorithm decides' and that there would be no one to hold accountable for an error or damage.\n\nIn practice, accountability translates into: designation of internal roles (AI manager, ethics committee, compliance function), documentation of design and deployment decisions, traceability of automated decisions (logs, journals), incident management and remediation processes, redress channels for affected persons. It is articulated with legal requirements (EU AI Act, GDPR, common civil and criminal liability law) and internal audit practices.",
+    example: "If a CV screening system wrongly rejects qualified candidates, who is responsible? The model provider? The employer who deploys it? The HR who validates? GDPR and the EU AI Act partly answer this question with shared responsibilities between provider and deployer. From the organization's side, the appointment of an AI manager and traceability of decisions are prerequisites.",
+  },
+  {
+    slug: 'human-in-the-loop',
+    termEN: 'Human-in-the-loop',
+    termFR: 'Human-in-the-loop',
+    category: 'governance',
+    shortDef: "Architecture where a human validates or controls the AI's decisions, particularly for sensitive cases. Best practice for high-impact uses (healthcare, justice, HR).",
+    longDef: "The human-in-the-loop (HITL) principle consists of maintaining a human in the decision chain of an AI system, rather than letting the system act in complete autonomy. This can take several forms: systematic validation of each decision before execution (typical in healthcare, justice, recruitment), a posteriori supervision with intervention capacity, continuous surveillance with possibility of suspension, automatic escalation to a human in complex or ambiguous cases.\n\nHITL is not just a philosophical choice. It is required by the EU AI Act for high-risk systems (Article 14 — effective human oversight), by medical deontology, by banking practices in credit matters. It is also an important operational guardrail: it allows detecting hallucinations, biases, drifts in production. The challenge is to avoid 'rubber stamping' — a human who systematically validates without truly examining.",
+    example: "The Mirai model (MIT) on breast cancer produces a risk score, not a diagnosis. The radiologist integrates this score with their judgment and the patient file — they keep the clinical decision. It is an emblematic example of HITL: AI augments the radiologist rather than replacing them.",
+  },
 
-  // === Methodology (3) ===
-  { termEN: 'AI roadmap', termFR: 'Roadmap IA', category: 'methodology',
-    shortDef: "Structured plan of AI integration in an organization, typically 12-24 months. 5 dimensions: vision, governance, skills, infrastructure, KPIs. Capstone deliverable of the program." },
-  { termEN: 'AI pilot', termFR: 'Pilote IA', category: 'methodology',
-    shortDef: "Limited-scope project to test the relevance and feasibility of an AI use case before generalization. Often confused with PoC: a pilot has measurable success criteria, a PoC explores." },
-  { termEN: 'Capstone', termFR: 'Capstone (projet final intégrateur)', category: 'methodology',
-    shortDef: "Final integrative project of a program. Here: building an AI roadmap for an organization, mobilizing the 6 modules. Defendable in C-suite or in consulting engagement." },
+  // ========================================================================
+  // METHODOLOGY (3)
+  // ========================================================================
+  {
+    slug: 'roadmap-ia',
+    termEN: 'AI roadmap',
+    termFR: 'Roadmap IA',
+    category: 'methodology',
+    shortDef: "Structured plan of AI integration in an organization, typically 12-24 months. 5 dimensions: vision, governance, skills, infrastructure, KPIs. Capstone deliverable of the program.",
+    longDef: "An AI roadmap is not a list of projects — it is a strategic document that articulates several coherent dimensions. The vision: why AI, for what business ambition, in what horizon. Priority use cases: which processes, which professions, in what order, with what expected value. Sequencing: which pilots in year 1, which scaling in year 2. Governance: who decides, who supervises, who audits, how to articulate with legal obligations (EU AI Act, sectoral). Resources: skills to recruit or train, budget, infrastructure. KPIs: how to measure real value, not just deliverables.\n\nA good roadmap balances ambition and realism. Too ambitious, it loses credibility from the first delays. Too conservative, it lets the organization fall structurally behind its competitors. The roadmap is also a living document: it is revised as the first pilots produce learnings.",
+    example: "A typical AI roadmap of an average French organization over 18-24 months: T0+3 months — maturity diagnostic and identification of 3-5 candidate use cases; T0+6 months — first pilot on the most promising case (RAG on internal documentation?); T0+12 months — pilot validated or abandoned, launch of 2-3 new parallel pilots + governance structuring; T0+18-24 months — scaling of validated pilots and roadmap for the future.",
+  },
+  {
+    slug: 'pilote-ia',
+    termEN: 'AI pilot',
+    termFR: 'Pilote IA',
+    category: 'methodology',
+    shortDef: "Limited-scope project to test the relevance and feasibility of an AI use case before generalization. Often confused with PoC: a pilot has measurable success criteria, a PoC explores.",
+    longDef: "An AI pilot is a reduced-scale but representative deployment, designed to rigorously measure the real value of a use case before possible scaling. It is distinguished from the Proof of Concept (PoC) — which demonstrates technical feasibility but often in an artificial environment — by its grounding in a real context: real users, real data, real processes.\n\nA good pilot follows a structured methodology: clearly defined scope (users, processes, duration), multiple metrics (productivity, quality, satisfaction, and ideally second-order effects), comparison to a control group if possible, sufficient duration to observe lasting effects, integrated change management. The joint GitHub × Accenture study on the impact of Copilot is an emblematic example of a rigorous pilot.",
+    example: "A GenAI pilot in a consulting firm could: (1) select 30 treatment consultants vs 30 control consultants, (2) measure for 3 months several dimensions (deliverable production speed, quality perceived by clients, consultant satisfaction, retention), (3) compare the two groups, (4) decide scaling / redesign / abandonment based on results.",
+  },
+  {
+    slug: 'capstone',
+    termEN: 'Capstone',
+    termFR: 'Capstone (projet final intégrateur)',
+    category: 'methodology',
+    shortDef: "Final integrative project of a program. Here: building an AI roadmap for an organization, mobilizing the 6 modules. Defendable in C-suite or in consulting engagement.",
+    longDef: "The term 'capstone' — the crowning stone of a building — refers in Anglo-Saxon pedagogical journeys to the final project that integrates all the program's concepts into a coherent production. In an executive AI training, the typical capstone is the construction of an AI roadmap for the learner's organization, mobilizing the entire journey: strategic framing (Module 1), evaluation of ML use cases (Module 2), GenAI pilot brief (Module 3), robotics opportunities if applicable (Module 4), governance and compliance (Module 5), long-term planning (Module 6).\n\nA good capstone is not a school deliverable — it is a document usable internally, defendable in the C-suite, that actually structures strategic decision. The typical format combines vision, diagnostic, priority use cases, sequencing, governance, budget, skills, KPIs, risks, compliance, and 12-24 month planning.",
+    example: "For an industrial SME, a realistic capstone could be: AI roadmap prioritizing a GenAI pilot on internal technical documentation (Module 3) and a cobot pilot on one of the most arduous workstations (Module 4), with simplified but real governance (Module 5) and 18-month planning coherent with available resources.",
+  },
 ];
 
 const categoryLabels: Record<Term['category'], string> = {
@@ -98,10 +339,10 @@ const categoryLabels: Record<Term['category'], string> = {
 
 const categoryDescriptions: Record<Term['category'], string> = {
   fundamentals: 'Concepts framing AI in general — definition, narrow vs general, automation, collective intelligence.',
-  ml: 'Machine learning — supervised, unsupervised, reinforcement, deep learning.',
+  ml: 'Machine learning — supervised, unsupervised, reinforcement, deep learning, training data.',
   genai: 'Generative AI — LLMs, foundation models, RAG, prompts, hallucinations, fine-tuning.',
   robotics: 'Industrial robotics, cobotics, autonomous mobile robots.',
-  governance: 'Risk management, EU AI Act, NIST RMF, biases, accountability, explainability.',
+  governance: 'Risk management, EU AI Act, NIST RMF, biases, accountability, explainability, human-in-the-loop.',
   methodology: 'AI project terms — pilot, roadmap, capstone.',
 };
 
@@ -114,14 +355,14 @@ const totalTerms = terms.length;
 
 <BaseLayout
   title={`Glossary — ${totalTerms} essential terms`}
-  description={`Glossary of ${totalTerms} essential AI terms in business, organized in 6 categories: fundamentals, machine learning, generative AI, robotics, governance, methodology. Brief definitions in English; detailed French definitions linked.`}
+  description={`Glossary of ${totalTerms} essential AI terms in business, organized in 6 categories: fundamentals, machine learning, generative AI, robotics, governance, methodology. Full definitions in English with business examples.`}
 >
   <HeroSecondary
     surtitle="Glossary"
     title={`${totalTerms} essential AI terms`}
-    lead={`Brief definitions of ${totalTerms} terms organized in 6 categories. The detailed definitions (with examples and cross-references) are in the French version.`}
+    lead={`Full definitions of ${totalTerms} terms organized in 6 categories. Each entry has a one-sentence summary, a full 2-3 paragraph definition, and a concrete business example. Click any term to expand.`}
   >
-    <span slot="stats">{totalTerms} terms · 6 categories · brief EN definitions · detailed FR definitions linked</span>
+    <span slot="stats">{totalTerms} terms · 6 categories · short + full definitions · business examples</span>
   </HeroSecondary>
 
   <div class="ai-container ai-glossary-page">
@@ -129,34 +370,49 @@ const totalTerms = terms.length;
       <section class="ai-glossary-intro">
         <p>
           This glossary brings together the {totalTerms} terms necessary to navigate the program
-          comfortably. The English definitions presented here are <strong>brief</strong> — they
-          give you the essence in 2-3 sentences. For <strong>detailed definitions</strong>
-          (with examples, common errors, cross-references between terms), see the
-          <a href={frGlossaireUrl}>French version</a>.
+          comfortably. Each entry presents a <strong>one-sentence summary</strong> and unfolds
+          on demand to reveal a <strong>2-3 paragraph definition</strong> with a
+          <strong>concrete business example</strong>. The
+          <a href={frGlossaireUrl}>French version</a> additionally contains cross-references
+          between terms and module/case study links.
         </p>
       </section>
 
       {orderedCategories.map((cat) => {
         const list = terms.filter((t) => t.category === cat);
         return (
-          <section class="ai-glossary-section">
+          <section class="ai-glossary-section" id={`category-${cat}`}>
             <header class="ai-glossary-section__head">
               <h2>{categoryLabels[cat]}</h2>
               <p>{categoryDescriptions[cat]} <span class="ai-glossary-section__count">({list.length} terms)</span></p>
             </header>
-            <dl class="ai-glossary-list">
+            <div class="ai-glossary-list">
               {list.map((t) => (
-                <div class="ai-glossary-item">
-                  <dt>
-                    <strong>{t.termEN}</strong>
-                    {t.termEN !== t.termFR && (
-                      <span class="ai-glossary-item__fr"> — <em>{t.termFR}</em></span>
+                <details class="ai-glossary-item" id={t.slug}>
+                  <summary class="ai-glossary-item__summary">
+                    <span class="ai-glossary-item__term">
+                      <strong>{t.termEN}</strong>
+                      {t.termEN !== t.termFR && (
+                        <span class="ai-glossary-item__fr"> — <em>{t.termFR}</em></span>
+                      )}
+                    </span>
+                    <span class="ai-glossary-item__short">{t.shortDef}</span>
+                  </summary>
+                  <div class="ai-glossary-item__details">
+                    <div class="ai-glossary-item__long">
+                      {t.longDef.split('\n\n').map((para) => (
+                        <p>{para}</p>
+                      ))}
+                    </div>
+                    {t.example && (
+                      <aside class="ai-glossary-item__example">
+                        <strong>Business example.</strong> {t.example}
+                      </aside>
                     )}
-                  </dt>
-                  <dd>{t.shortDef}</dd>
-                </div>
+                  </div>
+                </details>
               ))}
-            </dl>
+            </div>
           </section>
         );
       })}
@@ -187,7 +443,7 @@ const totalTerms = terms.length;
   }
   .ai-glossary-intro a:hover { text-decoration: underline; }
 
-  .ai-glossary-section { margin-block: var(--ai-space-7); }
+  .ai-glossary-section { margin-block: var(--ai-space-7); scroll-margin-block-start: var(--ai-space-7); }
   .ai-glossary-section__head {
     margin-block-end: var(--ai-space-4);
     padding-block-end: var(--ai-space-2);
@@ -215,13 +471,36 @@ const totalTerms = terms.length;
     margin: 0;
   }
   .ai-glossary-item {
-    padding: var(--ai-space-3);
     background: var(--ai-bg-base);
     border: 1px solid var(--ai-border-subtle);
     border-radius: var(--ai-radius-sm);
+    scroll-margin-block-start: var(--ai-space-7);
   }
-  .ai-glossary-item dt {
-    margin-block-end: var(--ai-space-1);
+  .ai-glossary-item[open] {
+    border-inline-start: 3px solid var(--ai-accent-primary);
+  }
+  .ai-glossary-item__summary {
+    padding: var(--ai-space-3);
+    cursor: pointer;
+    list-style: none;
+    display: grid;
+    gap: var(--ai-space-1);
+  }
+  .ai-glossary-item__summary::-webkit-details-marker { display: none; }
+  .ai-glossary-item__summary::marker { content: ''; }
+  .ai-glossary-item__summary::before {
+    content: '+';
+    float: inline-end;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-bold);
+    color: var(--ai-accent-primary);
+    margin-inline-start: var(--ai-space-2);
+    line-height: 1;
+  }
+  .ai-glossary-item[open] .ai-glossary-item__summary::before {
+    content: '−';
+  }
+  .ai-glossary-item__term {
     color: var(--ai-fg-primary);
   }
   .ai-glossary-item__fr {
@@ -229,9 +508,36 @@ const totalTerms = terms.length;
     font-size: var(--ai-text-sm);
     font-weight: var(--ai-weight-normal);
   }
-  .ai-glossary-item dd {
-    margin: 0;
+  .ai-glossary-item__short {
     color: var(--ai-fg-secondary);
     line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-glossary-item__details {
+    padding: 0 var(--ai-space-3) var(--ai-space-3);
+    border-block-start: 1px solid var(--ai-border-subtle);
+    margin-block-start: var(--ai-space-2);
+    padding-block-start: var(--ai-space-3);
+  }
+  .ai-glossary-item__long p {
+    margin: 0 0 var(--ai-space-3);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+  }
+  .ai-glossary-item__long p:last-child {
+    margin-block-end: 0;
+  }
+  .ai-glossary-item__example {
+    margin-block-start: var(--ai-space-3);
+    padding: var(--ai-space-3);
+    background: var(--ai-accent-subtle);
+    border-inline-start: 3px solid var(--ai-accent-primary);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-primary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-glossary-item__example strong {
+    color: var(--ai-fg-primary);
   }
 </style>
