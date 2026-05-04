@@ -10,6 +10,7 @@ import {
   podcastThemeDescriptions,
   countByTheme,
   TOTAL_PODCASTS,
+  podcasts,
   type PodcastTheme,
 } from '@/content/podcasts';
 import { getLocalizedUrl } from '@/i18n/helpers';
@@ -24,6 +25,14 @@ const themesOrdered: PodcastTheme[] = [
 ];
 
 const counts = countByTheme();
+
+// Comptage par statut de production
+const statusCounts = {
+  published: podcasts.filter((p) => p.status === 'published').length,
+  inProduction: podcasts.filter((p) => p.status === 'in-production').length,
+  planned: podcasts.filter((p) => p.status === 'planned').length,
+};
+const progressPct = Math.round((statusCounts.published / TOTAL_PODCASTS) * 100);
 
 // Liens dérivés
 const methodeUrl = getLocalizedUrl('/methode/', locale);
@@ -71,6 +80,65 @@ const programmeUrl = getLocalizedUrl('/programme/', locale);
           href={getLocalizedUrl('/podcasts/production/', locale)}
         >page de production</a>.
       </p>
+    </section>
+
+    {/* === SERIES PROGRESS BANNER === */}
+    <section class="ai-podcasts-progress" aria-labelledby="progress-title">
+      <header class="ai-podcasts-progress__head">
+        <h2 id="progress-title">État de la production</h2>
+        <span class="ai-podcasts-progress__pct">{progressPct}% publié</span>
+      </header>
+
+      <div class="ai-podcasts-progress__bar" role="progressbar"
+        aria-valuenow={statusCounts.published}
+        aria-valuemin="0"
+        aria-valuemax={TOTAL_PODCASTS}
+        aria-label={`${statusCounts.published} épisodes publiés sur ${TOTAL_PODCASTS}`}
+      >
+        <div
+          class="ai-podcasts-progress__bar-fill"
+          style={`width: ${progressPct}%`}
+        ></div>
+      </div>
+
+      <ul class="ai-podcasts-progress__legend">
+        <li class="ai-podcasts-progress__legend-item ai-podcasts-progress__legend-item--published">
+          <span class="ai-podcasts-progress__dot" aria-hidden="true"></span>
+          <strong>{statusCounts.published}</strong> {statusCounts.published === 1 ? 'épisode publié' : 'épisodes publiés'}
+        </li>
+        <li class="ai-podcasts-progress__legend-item ai-podcasts-progress__legend-item--in-production">
+          <span class="ai-podcasts-progress__dot" aria-hidden="true"></span>
+          <strong>{statusCounts.inProduction}</strong> en production
+        </li>
+        <li class="ai-podcasts-progress__legend-item ai-podcasts-progress__legend-item--planned">
+          <span class="ai-podcasts-progress__dot" aria-hidden="true"></span>
+          <strong>{statusCounts.planned}</strong> {statusCounts.planned === 1 ? 'planifié' : 'planifiés'}
+        </li>
+      </ul>
+
+      {statusCounts.published === 0 && (
+        <p class="ai-podcasts-progress__note">
+          La série est en phase de cadrage éditorial. Les briefs structurés
+          des 10 épisodes sont disponibles ci-dessous, et le <a
+            href={getLocalizedUrl('/podcasts/production/', locale)}
+          >workflow de production</a> est documenté publiquement. Les premiers
+          épisodes seront générés via Google NotebookLM dans les semaines à venir.
+        </p>
+      )}
+      {statusCounts.published > 0 && statusCounts.published < TOTAL_PODCASTS && (
+        <p class="ai-podcasts-progress__note">
+          {statusCounts.published} épisode{statusCounts.published > 1 ? 's' : ''} déjà
+          disponible{statusCounts.published > 1 ? 's' : ''}. Les autres sont en
+          production ou planifiés. Voir les <a
+            href={getLocalizedUrl('/podcasts/production/', locale)}
+          >coulisses</a> pour suivre l'avancement.
+        </p>
+      )}
+      {statusCounts.published === TOTAL_PODCASTS && (
+        <p class="ai-podcasts-progress__note">
+          La série est complète : tous les épisodes sont disponibles ci-dessous.
+        </p>
+      )}
     </section>
 
     {/* === THEMES OVERVIEW === */}
@@ -187,6 +255,100 @@ const programmeUrl = getLocalizedUrl('/programme/', locale);
     font-weight: var(--ai-weight-semibold);
   }
   .ai-podcasts-intro a:hover {
+    text-decoration: underline;
+  }
+
+  /* === PROGRESS BANNER === */
+  .ai-podcasts-progress {
+    margin-block: var(--ai-space-7);
+    padding: var(--ai-space-5);
+    background: var(--ai-bg-base);
+    border: 1px solid var(--ai-border-subtle);
+    border-radius: var(--ai-radius-md);
+  }
+  .ai-podcasts-progress__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ai-space-3);
+    margin-block-end: var(--ai-space-3);
+  }
+  .ai-podcasts-progress__head h2 {
+    margin: 0;
+    font-size: var(--ai-text-lg);
+    font-weight: var(--ai-weight-semibold);
+    color: var(--ai-fg-primary);
+  }
+  .ai-podcasts-progress__pct {
+    font-variant-numeric: tabular-nums;
+    color: var(--ai-accent-primary);
+    font-weight: var(--ai-weight-bold);
+    font-size: var(--ai-text-base);
+  }
+  .ai-podcasts-progress__bar {
+    height: 0.5rem;
+    background: var(--ai-bg-subtle);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-block-end: var(--ai-space-4);
+  }
+  .ai-podcasts-progress__bar-fill {
+    height: 100%;
+    background: var(--ai-accent-primary);
+    transition: width 600ms ease;
+  }
+  .ai-podcasts-progress__legend {
+    list-style: none;
+    margin: 0 0 var(--ai-space-3);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ai-space-4);
+  }
+  .ai-podcasts-progress__legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--ai-space-2);
+    color: var(--ai-fg-secondary);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-podcasts-progress__legend-item strong {
+    color: var(--ai-fg-primary);
+    font-weight: var(--ai-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-podcasts-progress__dot {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--ai-border-subtle);
+    flex-shrink: 0;
+  }
+  .ai-podcasts-progress__legend-item--published .ai-podcasts-progress__dot {
+    background: color-mix(in srgb, #5a8c63 70%, transparent);
+  }
+  .ai-podcasts-progress__legend-item--in-production .ai-podcasts-progress__dot {
+    background: color-mix(in srgb, #d4904a 70%, transparent);
+  }
+  .ai-podcasts-progress__legend-item--planned .ai-podcasts-progress__dot {
+    background: var(--ai-fg-muted);
+  }
+  .ai-podcasts-progress__note {
+    margin: 0;
+    padding: var(--ai-space-3);
+    background: var(--ai-bg-subtle);
+    border-radius: var(--ai-radius-sm);
+    color: var(--ai-fg-secondary);
+    line-height: var(--ai-leading-relaxed);
+    font-size: var(--ai-text-sm);
+  }
+  .ai-podcasts-progress__note a {
+    color: var(--ai-accent-primary);
+    text-decoration: none;
+    font-weight: var(--ai-weight-semibold);
+  }
+  .ai-podcasts-progress__note a:hover {
     text-decoration: underline;
   }
 

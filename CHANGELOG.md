@@ -77,7 +77,37 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 6 — Podcasts NotebookLM série narrative 10 épisodes~~ **→ EN COURS : sub-1 (architecture + 10 briefs structurés) et sub-2 (documentation production + 10 fiches détaillées + page transparence) publiés**, sub-3 (audio stubs + transcripts + workflow) restant.
+- ~~Phase 6 — Podcasts NotebookLM série narrative 10 épisodes~~ **→ ✅ COMPLÈTE : sub-1 (architecture + 10 briefs + index + page épisode dynamique) + sub-2 (workflow + 10 fiches + page transparence) + sub-3 (pipeline finalisé + dossier public + suivi de production) publiés**
+
+## 🎯 PHASE 6 COMPLÈTE — Série narrative 10 épisodes prête à produire
+
+Phase 6 est désormais terminée dans son intégralité. Le dispositif technique et éditorial est complet et **prêt pour la production réelle des MP3 via Google NotebookLM**. Récapitulatif :
+- **10 épisodes structurés** dans `src/content/podcasts.ts` (statut `planned`, briefs complets)
+- **2 composants nouveaux** : `PodcastCard` + `PodcastPlayer` (mode placeholder + mode published)
+- **13 pages livrées** : 1 index FR + 1 page production FR + 10 pages épisode dynamiques + 4 stubs EN/AR (index + production)
+- **Documentation contributeur** : workflow maître ~430 lignes + 10 fiches briefs détaillées (~75 KB total)
+- **Page publique de transparence** sur le mode de production (voix synthétiques, validation 8 critères, signalement d'erreur GitHub)
+- **Pipeline de publication validé** par test simulé : passer un épisode de `planned` à `published` avec dépôt MP3 + transcript active automatiquement le lecteur audio fonctionnel
+- 98 pages buildées au total, 0 erreur / 0 warning / 0 hint Astro check sur 141 fichiers
+- 29 composants Astro stables + 1 composant React (inchangés depuis Phase 5)
+
+- Phase 6 sub-3 — Finalisation du pipeline + suivi de production :
+  - **NEW STATIC ASSET — `public/podcasts/`** : nouveau dossier prêt à recevoir les fichiers livrés (MP3 + transcripts).
+    - **`public/podcasts/README.md`** (~80 lignes) — instructions pour le dépôt des fichiers : nomenclature `{slug}.mp3` + `{slug}-transcript.md`, spécifications techniques (MP3 128 kbps, métadonnées ID3 optionnelles), procédure de publication en 4 étapes, considérations Git LFS pour quand la taille cumulée dépassera 100 MB.
+    - **`public/podcasts/.gitkeep`** — assure que le dossier existe dans le dépôt.
+  - **NEW DOC — `docs/podcasts/transcript-template.md`** (~75 lignes) — template de transcript Markdown structuré à dupliquer pour chaque épisode publié. Contient : en-tête de méta (durée, date, outils), section « À propos » qui rappelle la nature générée, structure en chapitres avec timestamps, section erratum pour corrections a posteriori, crédits avec licence CC BY-NC-SA 4.0. Procédure d'utilisation détaillée en commentaire HTML en tête de fichier.
+  - **NEW PROGRESS BANNER** sur l'index podcasts (`src/pages/fr/podcasts/index.astro`) :
+    - Comptage automatique par statut (`published` / `in-production` / `planned`) calculé depuis `podcasts.ts`
+    - Pourcentage publié + barre de progression animée (transition `width 600ms ease`)
+    - Légende avec dots colorés (vert / orange / gris) et compteurs accordés en singulier/pluriel
+    - Note contextuelle adaptative : « phase de cadrage éditorial » si 0 épisodes publiés, « X épisodes déjà disponibles » si publication partielle, « série complète » si tous publiés
+    - Lien depuis la note vers la page production pour suivre l'avancement
+    - ARIA roles `progressbar` avec `aria-valuenow/min/max` pour accessibilité
+  - **MINOR UPDATE — `src/components/PodcastPlayer.astro`** : enrichissement du placeholder « épisode en production » avec un lien direct vers `/fr/podcasts/production/` pour aider le visiteur à comprendre comment ces épisodes sont produits. CSS ajouté pour styler les liens du placeholder (couleur accent + hover underline).
+  - **PIPELINE VALIDÉ** par test de bout en bout : EP01 simulé temporairement publié → vérification que le lecteur `<audio controls>` apparaît (au lieu du placeholder), barre de progression mise à jour à 10%, comptages corrects. EP01 ensuite remis en `planned` car aucun audio réel n'a été généré. Le test confirme que la procédure documentée fonctionne : déposer 2 fichiers + modifier 3 lignes dans `podcasts.ts` suffit pour publier un épisode.
+  - **MICRO-FIX** : accord singulier pour le compteur « épisode en production » qui utilisait `'en production' : 'en production'` (même valeur dans les deux branches) — simplifié en valeur unique.
+  - Build validé : 98 pages, 0 erreur / 0 warning / 0 hint Astro check sur 141 fichiers. La progression affiche correctement « 0% publié, 10 planifiés » dans l'état actuel, avec note contextuelle invitant à consulter la page production.
+  - Pattern : 0 nouveau composant. Toute l'infrastructure était déjà en place. Sub-3 complète le **dispositif éditorial** : maintenant un opérateur peut générer un épisode dans NotebookLM puis publier en 5 minutes en suivant le checklist du brief correspondant.
 
 - Phase 6 sub-2 — Documentation de production NotebookLM :
   - **NEW DOC — `docs/podcasts/production-workflow.md`** (~430 lignes) — Guide complet pour générer la série dans Google NotebookLM. Couvre :
