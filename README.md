@@ -10,7 +10,8 @@
 [![License: MIT (code)](https://img.shields.io/badge/license--code-MIT-blue.svg)](./LICENSE-CODE)
 [![License: CC BY-NC-SA 4.0 (content)](https://img.shields.io/badge/license--content-CC%20BY--NC--SA%204.0-lightgrey.svg)](./LICENSE-CONTENT)
 [![Astro](https://img.shields.io/badge/built%20with-Astro-FF5D01.svg)](https://astro.build/)
-[![Status: Phase 1](https://img.shields.io/badge/status-Phase%201%20Cadrage-yellow.svg)](./docs/cadrage/planning.md)
+[![Status: v1.0.0 trilingual](https://img.shields.io/badge/status-v1.0.0%20trilingual-success.svg)](./CHANGELOG.md)
+[![Languages: FR · EN · AR](https://img.shields.io/badge/languages-FR%20%C2%B7%20EN%20%C2%B7%20AR-blue.svg)](./README.md)
 
 ---
 
@@ -96,19 +97,40 @@ ai-strategy/
 
 ## 🚀 État d'avancement
 
-Le projet suit un **planning en 7 phases**. État courant :
+**Statut : v1.0.0 — production-ready trilingue.** Le projet a complété ses 7 phases de planning initial, et 7 étapes additionnelles d'approfondissement Post-Phase 7.
 
 | Phase | Statut | Description |
 | :--- | :--- | :--- |
-| **1. Cadrage et identité** | 🟡 En cours | Charte de cadrage, planning, décisions structurantes |
-| 2. Architecture et design system | ⚪ À venir | Sitemap, gabarits, design tokens, personas |
-| 3. Squelette technique | ⚪ À venir | Scaffolding Astro, i18n, CI/CD OVH |
-| 4. Contenus pédagogiques FR | ⚪ À venir | Pages web, modules, cas, glossaire |
-| 5. Composants interactifs et fiches | ⚪ À venir | Quiz, matrices, fiches PDF, roadmap builder |
-| 6. Prompts NotebookLM et médias | ⚪ À venir | Podcasts, slides, infographies |
-| 7. SEO, QA, traductions EN/AR | ⚪ À venir | Optimisation finale et internationalisation |
+| **1. Cadrage et identité** | ✅ Terminée | Charte de cadrage, planning, décisions structurantes |
+| **2. Architecture et design system** | ✅ Terminée | Sitemap, gabarits, design tokens, personas |
+| **3. Squelette technique** | ✅ Terminée | Scaffolding Astro, i18n FR/EN/AR, CI/CD |
+| **4. Contenus pédagogiques FR** | ✅ Terminée | 6 modules + 10 cas + glossaire 31 termes + 20 FAQ + capstone |
+| **5. Composants interactifs et fiches** | ✅ Terminée | Quiz, matrices, rubrics, capstone canvas |
+| **6. Prompts NotebookLM et médias** | ✅ Terminée | 10 prompts NotebookLM préparés (production podcasts FR pending) |
+| **7. SEO, QA, traductions EN/AR** | ✅ Terminée | Audit qualité trilingue + traductions |
 
-➡️ Détail complet : [docs/cadrage/planning.md](./docs/cadrage/planning.md)
+### 🌍 Post-Phase 7 — Approfondissement trilingue (v1.0.0)
+
+| Étape | Statut | Livrable |
+| :--- | :--- | :--- |
+| **1. Prompts NotebookLM** | ✅ | 10 prompts FR + README |
+| **2. Modules EN** | ✅ | M1–M6 traduits + 6 quiz EN |
+| **3. Cas détaillés EN** | ✅ | 10/10 cas traduits |
+| **4. Capstone EN** | ✅ | 1 082 lignes, parité FR (8 sections, exemple PME, rubrics 7×4) |
+| **5. Glossaire EN/AR** | ✅ | 31 termes longDef + example × 2 langues |
+| **A. Polish SEO trilingue** | ✅ | 66/66 pages clean (titles 25-65, descriptions 100-165) |
+| **D. FAQ EN/AR à parité** | ✅ | 20 questions × 3 langues = 60 entrées Q+A |
+| **E. Schema.org JSON-LD** | ✅ | Organization+WebSite (97 pages) + FAQPage (×3) + Course (×3) |
+
+➡️ Détail complet : [CHANGELOG.md](./CHANGELOG.md)
+
+### 📊 Couverture v1.0.0
+
+- **98 pages buildées** (39 FR + 29 EN + 29 AR + assets) en ~14 s
+- **Astro check** : 0 erreurs / 0 warnings / 0 hints sur 147 fichiers
+- **Audit SEO trilingue** : FR 28/28 + EN 28/28 + AR 10/10 pages clean
+- **Schema.org JSON-LD** : Organization global + WebSite global + FAQPage trilingue + Course trilingue
+- **Stubs `TranslationPending`** : 18 pages AR (modules / cas / capstone / podcasts) intentionnellement non traduites — design choice, signalé explicitement aux lecteurs avec lien vers FR équivalent.
 
 ## 🔬 Principes éditoriaux
 
@@ -143,4 +165,4 @@ Toutes les contributions de contenu doivent respecter les principes éditoriaux 
 
 ---
 
-*Dernière mise à jour de ce README : Phase 1, mai 2026.*
+*Dernière mise à jour de ce README : v1.0.0 — Post-Phase 7, mai 2026.*

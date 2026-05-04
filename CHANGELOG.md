@@ -81,7 +81,22 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 
 ## 🌍 Post-Phase 7 — Approfondissement des traductions EN
 
-Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean. **Étape D (FAQ EN/AR à parité) 100% complète** : 20 questions × 3 langues = 60 entrées Q+A. **Étape E (Schema.org JSON-LD trilingue) 100% complète** : 97 pages avec Organization + WebSite, 6 pages FAQ avec FAQPage, 6 pages programme avec Course.
+Approfondissement des traductions EN au-delà du périmètre Phase 7. **Étape 2 (Modules EN) 100% complète**. **Étape 3 (Cas détaillés EN) 100% complète** : 10/10 cas traduits. **Étape 4 (Capstone EN) 100% complète**. **Étape 5 (Glossaire EN/AR) 100% complète** : 31/31 termes enrichis dans les deux langues. **Étape A (Polish SEO trilingue) 100% complète** : 66/66 pages translatables clean. **Étape D (FAQ EN/AR à parité) 100% complète** : 20 questions × 3 langues = 60 entrées Q+A. **Étape E (Schema.org JSON-LD trilingue) 100% complète** : 97 pages avec Organization + WebSite, 6 pages FAQ avec FAQPage, 6 pages programme avec Course. **Étape F (Clôture v1.0.0) 100% complète** : version 1.0.0 taggée, README mis à jour, release notes publiées.
+
+### Étape F — Clôture v1.0.0 (terminée)
+
+Bascule formelle du projet de l'état "post-phase-7" vers la version stable **v1.0.0 production-ready trilingual**. Mise à jour des métadonnées projet, du README, et publication des release notes.
+
+- **MODIFIED — `package.json`** : version `0.1.0` → `1.0.0`. Marque l'achèvement des 7 phases initiales + 7 étapes Post-Phase 7 (Stages 1-5 + A + D + E).
+- **MODIFIED — `README.md`** : Refonte complète de la section "État d'avancement". Statut "Phase 1 Cadrage en cours" → "v1.0.0 production-ready trilingual". Tableau des 7 phases initiales mis à jour (toutes ✅ Terminées). Nouveau tableau "Post-Phase 7 — Approfondissement trilingue" listant les 8 étapes (Stages 1-5 + A + D + E + F) avec statut. Nouvelle section "📊 Couverture v1.0.0" avec métriques de qualité : 98 pages buildées, 0 erreurs Astro check, audit SEO 66/66, JSON-LD trilingue, 18 stubs AR intentionnels documentés. Badges README mis à jour : "Status: Phase 1" → "Status: v1.0.0 trilingual" + ajout d'un badge "Languages: FR · EN · AR". Timestamp final mis à jour.
+- **NEW — `RELEASE-1.0.0.md`** : Notes de release complètes en français (~3 500 mots). Sections : (1) Résumé en une phrase, (2) Périmètre livré (structure pédagogique FR/EN, pages structurelles 3 langues, stubs intentionnels AR, qualité éditoriale, Schema.org, contenu multimédia), (3) Stack technique, (4) Métriques (tableau quantitatif), (5) Évolution v0.1.0 → v1.0.0, (6) Suite possible (hébergement OVH, podcasts NotebookLM, approfondissement AR, sectoriels verticaux, contenu différencié AR), (7) Remerciements, (8) Licences double MIT/CC BY-NC-SA 4.0.
+- **TAG `v1.0.0`** : Tag Git annoté pointant sur le commit Stage F. Distinct des tags `phase-1-complete` à `phase-7-complete` qui restent en place comme jalons historiques. Le tag v1.0.0 marque la **première version stable, exhaustive et production-ready** du projet.
+- **VALIDATION FINALE** :
+  - Astro check : **0 erreurs / 0 warnings / 0 hints** sur 147 fichiers
+  - Build : **98 pages** en ~14 s — aucune régression
+  - Audit SEO Stage A préservé : FR 28/28, EN 28/28, AR 10/10 clean
+  - JSON-LD Stage E préservé : Organization + WebSite + FAQPage + Course sur HTML rendu
+  - Métriques v1.0.0 : 98 pages totales · 97 pages avec JSON-LD · 12 modules (6×2) · 20 cas (10×2) · 93 termes glossaire (31×3) · 60 FAQ entries (20×3) · 0 issues SEO
 
 ### Étape E — Schema.org JSON-LD trilingue (terminée)
 
