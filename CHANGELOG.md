@@ -77,7 +77,30 @@ et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/)
 - ~~Phase 4.2 à 4.6 : Modules 2 à 6 (un par sub-phase).~~ **→ ✅ TOUS LES 6 MODULES PUBLIÉS** (M1→M6 disponibles en français, stubs EN/AR pour Phase 7)
 - ~~Phase 4.7-4.8 : 10 études de cas (Morgan Stanley, Stripe, GitHub Copilot, Amazon, Klarna, Takeda, etc.).~~ **→ ✅ COMPLÈTE : 10/10 cas publiés**
 - ~~Phase 4.9 : Glossaire (~30 termes).~~ **→ ✅ COMPLÈTE : 31 termes publiés en 6 catégories**
-- ~~Phase 6 — Podcasts NotebookLM série narrative 10 épisodes~~ **→ ✅ COMPLÈTE : sub-1 (architecture + 10 briefs + index + page épisode dynamique) + sub-2 (workflow + 10 fiches + page transparence) + sub-3 (pipeline finalisé + dossier public + suivi de production) publiés**
+- ~~Phase 7 — Traductions EN + AR + polices IBM Plex~~ **→ EN COURS : sub-1 publié (polices IBM Plex Sans + IBM Plex Sans Arabic + IBM Plex Mono auto-hébergées + 3 pages EN-AR centrales : home EN, home AR, programme EN)**, sub-2 et sub-3 restants.
+
+- Phase 7 sub-1 — Polices IBM Plex auto-hébergées + premières traductions EN/AR :
+  - **NEW STATIC ASSETS — `public/fonts/`** : 8 fichiers .woff2 (244 KB total)
+    - `ibm-plex-sans-latin-{400,600,700}-normal.woff2` (Latin)
+    - `ibm-plex-sans-arabic-arabic-{400,600,700}-normal.woff2` (Arabe)
+    - `ibm-plex-mono-latin-{400,600}-normal.woff2` (Mono)
+    - Sources : paquets npm `@fontsource/ibm-plex-sans`, `@fontsource/ibm-plex-sans-arabic`, `@fontsource/ibm-plex-mono` (extraction des `.woff2` puis désinstallation des paquets — fichiers servis directement depuis `public/fonts/`)
+  - **NEW @FONT-FACE RULES** dans `src/styles/global.css` (~70 lignes ajoutées en tête, après `@import './tokens.css'`) :
+    - 3 graisses Sans Latin avec `unicode-range` Latin uniquement (~67 KB téléchargés sur pages FR/EN)
+    - 3 graisses Sans Arabic avec `unicode-range` U+0600-06FF + ranges complémentaires (téléchargées **uniquement sur pages AR** grâce à unicode-range — économie ~133 KB pour les lecteurs FR/EN)
+    - 2 graisses Mono Latin
+    - `font-display: swap` partout pour éviter le FOIT (Flash of Invisible Text)
+  - **NEW PRELOAD LINKS** dans `src/layouts/BaseLayout.astro` (en `<head>`, après favicon) :
+    - Toujours : preload de `ibm-plex-sans-latin-400-normal.woff2` (police primaire utilisée partout)
+    - Conditionnel `{locale === 'ar' && ...}` : preload de `ibm-plex-sans-arabic-arabic-400-normal.woff2` (uniquement sur pages AR)
+    - Attributs : `as="font" type="font/woff2" crossorigin` (requis pour réutilisation par fetch)
+  - **REWRITTEN — `src/pages/en/index.astro`** : refonte complète de la home anglaise. Auparavant : stub ~80 lignes avec contenu placeholder. Maintenant : ~115 lignes alignées au pattern FR (TrustBar + 3 AudienceCard + 6 ModuleCard + 4 blocs « How we work » + IndependenceNotice). Toutes les chaînes UI passent par `t(key, 'en')` (clés déjà présentes dans `translations.ts`).
+  - **REWRITTEN — `src/pages/ar/index.astro`** : refonte complète de la home arabe. Contenu rédigé en arabe (pas de traduction automatique) : « افهم، رتّب الأولويات، وانشر الذكاء الاصطناعي... ». RTL automatique via `dir="rtl"` géré par `BaseLayout` quand `locale === 'ar'`. Flèches `←` au lieu de `→` dans les CTA (sens de lecture inversé).
+  - **NEW PAGE — `src/pages/en/programme/index.astro`** (~330 lignes) : remplacement du stub par la version EN complète alignée au pattern FR (StatsBar, IdentityTable avec 8 lignes, ModulesTable avec 6 modules, OutcomesList 7 outcomes, BloomMatrix 6 compétences, CapstonePreview, FAQ excerpt 5 questions, CTA final). Tous les composants pédagogiques sont réutilisés tel quel — seuls les contenus textuels passent en EN.
+  - Build validé : 98 pages, 0 erreur / 0 warning / 0 hint Astro check sur 141 fichiers. Vérifications HTML : 8 polices servies depuis `dist/fonts/`, `@font-face` rules dans le bundle CSS final, preload conditionnel correct (FR = Latin seul, AR = Latin + Arabic), contenu EN home rendu, contenu AR home rendu en arabe.
+  - Pattern : 0 nouveau composant. Réutilisation totale des composants Astro existants. Polices auto-hébergées (pas de CDN externe — privacy-friendly). Stratégie d'optimisation : `unicode-range` pour ne télécharger les polices Arabic qu'à la lecture d'une page AR, économisant ~55% du poids total pour les lecteurs FR/EN.
+
+
 
 ## 🎯 PHASE 6 COMPLÈTE — Série narrative 10 épisodes prête à produire
 

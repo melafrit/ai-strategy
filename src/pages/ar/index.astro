@@ -1,76 +1,142 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import TrustBar from '@/components/TrustBar.astro';
+import AudienceCard from '@/components/AudienceCard.astro';
+import ModuleCard from '@/components/ModuleCard.astro';
 import IndependenceNotice from '@/components/IndependenceNotice.astro';
-import SourceTag from '@/components/SourceTag.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 import { t } from '@/i18n/translations';
 
 const locale = 'ar';
-const title = t('site.tagline', locale);
 const description =
-  'موقع تربوي ثلاثي اللغات مستوحى من برنامج MIT Sloan «الذكاء الاصطناعي: انعكاسات على استراتيجية الأعمال». استراتيجية الذكاء الاصطناعي، تعلّم الآلة، الذكاء التوليدي، الروبوتيات، الحوكمة.';
+  'موقع تربوي ثلاثي اللغات مستوحى من برنامج MIT Sloan «الذكاء الاصطناعي: انعكاسات على استراتيجية الأعمال». استراتيجية الذكاء الاصطناعي، تعلم الآلة، الذكاء التوليدي، الروبوتيات، الحوكمة.';
+
+const audiences = [
+  {
+    icon: 'briefcase' as const,
+    label: t('audiences.executive.label', locale),
+    description: t('audiences.executive.description', locale),
+    ctaLabel: t('audiences.executive.cta', locale),
+    ctaHref: getLocalizedUrl('/capstone/', locale),
+  },
+  {
+    icon: 'wrench' as const,
+    label: t('audiences.consultant.label', locale),
+    description: t('audiences.consultant.description', locale),
+    ctaLabel: t('audiences.consultant.cta', locale),
+    ctaHref: getLocalizedUrl('/ressources/', locale),
+  },
+  {
+    icon: 'graduation-cap' as const,
+    label: t('audiences.educator.label', locale),
+    description: t('audiences.educator.description', locale),
+    ctaLabel: t('audiences.educator.cta', locale),
+    ctaHref: getLocalizedUrl('/modules/', locale),
+  },
+];
+
+const modules = [
+  { number: 1 as const, titleKey: 'modules.module-1.title', summaryKey: 'modules.module-1.summary', slug: '01-introduction-ia', available: true },
+  { number: 2 as const, titleKey: 'modules.module-2.title', summaryKey: 'modules.module-2.summary', slug: '02-machine-learning', available: true },
+  { number: 3 as const, titleKey: 'modules.module-3.title', summaryKey: 'modules.module-3.summary', slug: '03-ia-generative', available: true },
+  { number: 4 as const, titleKey: 'modules.module-4.title', summaryKey: 'modules.module-4.summary', slug: '04-robotique', available: true },
+  { number: 5 as const, titleKey: 'modules.module-5.title', summaryKey: 'modules.module-5.summary', slug: '05-ia-societe', available: true },
+  { number: 6 as const, titleKey: 'modules.module-6.title', summaryKey: 'modules.module-6.summary', slug: '06-futur-ia', available: true },
+] as const;
+
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={t('site.tagline', locale)} description={description}>
   <section class="ai-container ai-hero">
     <p class="ai-hero__surtitle">{t('site.surtitle', locale)}</p>
     <h1 class="ai-hero__title">{t('site.tagline', locale)}</h1>
-    <p class="ai-hero__lead">{t('home.placeholder.lead', locale)}</p>
-
+    <p class="ai-hero__lead">
+      افهم، رتّب الأولويات، وانشر الذكاء الاصطناعي في مؤسستك. ست وحدات، نهج
+      يضع الأعمال أولاً، مصادر متدرّجة، واستقلالية معلنة عن البرنامج الأصلي
+      لـ MIT Sloan.
+    </p>
     <div class="ai-hero__actions">
-      <a class="ai-cta ai-cta--primary" href="https://github.com/melafrit/ai-strategy" rel="noopener noreferrer" target="_blank">
-        {t('home.placeholder.cta-github', locale)} ←
-      </a>
-      <a
-        class="ai-cta ai-cta--secondary"
-        href="https://github.com/melafrit/ai-strategy/tree/main/docs"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        {t('home.placeholder.cta-docs', locale)}
-      </a>
-    </div>
-
-    <div class="ai-hero__notice">
-      <IndependenceNotice variant="block" />
-    </div>
-
-    <div class="ai-hero__sample">
-      <h2 class="ai-hero__sample-title">معاينة — تدرّج المصادر</h2>
-      <p class="ai-hero__sample-lead">
-        كل محتوى الموقع يعرض مستوى الإثبات عبر مكوّن
-        <code lang="en" dir="ltr">&lt;SourceTag /&gt;</code>. خمسة مستويات معرّفة:
-      </p>
-      <div class="ai-hero__sample-row">
-        <SourceTag level="official-mit" inline />
-        <SourceTag level="recommended-complement" inline />
-        <SourceTag level="pedagogical-reconstruction" inline />
-        <SourceTag level="external-verifiable" inline />
-        <SourceTag level="to-verify" inline />
-      </div>
+      <a class="ai-cta ai-cta--primary" href={programmeUrl}>{t('cta.discover-program', locale)} ←</a>
+      <a class="ai-cta ai-cta--secondary" href={methodeUrl}>{t('cta.read-method', locale)}</a>
     </div>
   </section>
-</BaseLayout>
 
-<style>
-  .ai-hero { padding-block: var(--ai-space-7) var(--ai-space-8); }
-  .ai-hero__surtitle {
-    color: var(--ai-fg-secondary);
-    font-size: var(--ai-text-sm);
-    font-weight: var(--ai-weight-semibold);
-    margin: 0 0 var(--ai-space-3);
-  }
-  .ai-hero__title { max-width: 26ch; line-height: var(--ai-leading-snug); margin: 0 0 var(--ai-space-4); }
-  @media (min-width: 48em) { .ai-hero__title { font-size: var(--ai-text-5xl); } }
-  .ai-hero__lead { max-width: 60ch; color: var(--ai-fg-secondary); font-size: var(--ai-text-lg); line-height: var(--ai-leading-relaxed); margin: 0 0 var(--ai-space-6); }
-  .ai-hero__actions { display: flex; flex-wrap: wrap; gap: var(--ai-space-3); margin-block-end: var(--ai-space-7); }
-  .ai-cta { display: inline-flex; align-items: center; gap: var(--ai-space-2); padding: var(--ai-space-3) var(--ai-space-5); border-radius: var(--ai-radius-md); font-weight: var(--ai-weight-semibold); text-decoration: none; }
-  .ai-cta--primary { background: var(--ai-accent-primary); color: var(--ai-bg-primary); }
-  .ai-cta--primary:hover, .ai-cta--primary:focus-visible { background: var(--ai-accent-hover); }
-  .ai-cta--secondary { background: transparent; color: var(--ai-fg-primary); border: 1px solid var(--ai-border-default); }
-  .ai-cta--secondary:hover, .ai-cta--secondary:focus-visible { background: var(--ai-bg-muted); }
-  .ai-hero__notice { margin-block-end: var(--ai-space-7); max-width: var(--ai-container-md); }
-  .ai-hero__sample { border-block-start: 1px solid var(--ai-border-subtle); padding-block-start: var(--ai-space-6); }
-  .ai-hero__sample-title { font-size: var(--ai-text-xl); font-weight: var(--ai-weight-semibold); margin: 0 0 var(--ai-space-2); }
-  .ai-hero__sample-lead { color: var(--ai-fg-secondary); margin: 0 0 var(--ai-space-4); max-width: 60ch; }
-  .ai-hero__sample-row { display: flex; flex-wrap: wrap; gap: var(--ai-space-2); }
-</style>
+  <TrustBar />
+
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">{t('audiences.title', locale)}</h2>
+    <p class="ai-section__lead">
+      ثلاثة جماهير، ثلاث طرق لاستخدام الموقع. كل مسار يقود إلى محتوى عملي
+      وقابل للتنفيذ.
+    </p>
+    <div class="ai-audiences-grid">
+      {audiences.map((audience) => <AudienceCard {...audience} />)}
+    </div>
+  </section>
+
+  <section class="ai-section--full">
+    <div class="ai-container ai-section">
+      <h2 class="ai-section__title">{t('modules.preview.title', locale)}</h2>
+      <p class="ai-section__lead">{t('modules.preview.lead', locale)}</p>
+      <div class="ai-modules-grid">
+        {modules.map((m) => (
+          <ModuleCard
+            number={m.number}
+            title={t(m.titleKey, locale)}
+            summary={t(m.summaryKey, locale)}
+            href={getLocalizedUrl(`/modules/${m.slug}/`, locale)}
+            available={m.available}
+          />
+        ))}
+      </div>
+      <p class="ai-section__cta">
+        <a href={getLocalizedUrl('/modules/', locale)}>{t('cta.see-modules', locale)} ←</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">كيف نعمل</h2>
+    <div class="ai-method-grid">
+      <div class="ai-method-block">
+        <h3>تدرّج المصادر بشكل مرئي</h3>
+        <p>
+          كل ادعاء واقعي موسوم بمستوى دليله: مصدر رسمي من MIT، مكمّل ذي صلة
+          بـ MIT، إعادة بناء تربوية، مصدر خارجي قابل للتحقق، أو بحاجة إلى
+          تحقق. أنت تعلم دائماً مصدر كل معلومة.
+        </p>
+      </div>
+      <div class="ai-method-block">
+        <h3>استقلالية معلنة عن MIT</h3>
+        <p>
+          هذا الموقع غير منتسب ولا معتمد ولا مصدّق من MIT. هو مشروع تربوي
+          مستقل مستوحى من المواضيع العامة للبرنامج، مغنىً بمصادر مفتوحة قابلة
+          للتحقق.
+        </p>
+      </div>
+      <div class="ai-method-block">
+        <h3>إعادة البناء التربوية معلَنة</h3>
+        <p>
+          حين لا تسمح المصادر العامة بالتوثيق المباشر، يُعاد بناء المحتوى
+          تربوياً ويُشار إلى ذلك صراحة. القارئ يعرف ما هو موثّق وما هو
+          مُعاد صياغته.
+        </p>
+      </div>
+      <div class="ai-method-block">
+        <h3>الفرنسية أولاً، ثم الإنجليزية والعربية</h3>
+        <p>
+          المحتوى المرجعي مكتوب بالفرنسية. الترجمات الإنجليزية والعربية
+          تُنتج من هذا الأساس مع تكييفات ثقافية وبلاغية حيث يكون ذلك
+          ملائماً.
+        </p>
+      </div>
+    </div>
+    <p class="ai-section__cta">
+      <a href={methodeUrl}>{t('cta.read-method', locale)} ←</a>
+    </p>
+  </section>
+
+  <IndependenceNotice variant="block" />
+</BaseLayout>

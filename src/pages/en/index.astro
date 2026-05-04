@@ -1,80 +1,142 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import TrustBar from '@/components/TrustBar.astro';
+import AudienceCard from '@/components/AudienceCard.astro';
+import ModuleCard from '@/components/ModuleCard.astro';
 import IndependenceNotice from '@/components/IndependenceNotice.astro';
-import SourceTag from '@/components/SourceTag.astro';
+import { getLocalizedUrl } from '@/i18n/helpers';
 import { t } from '@/i18n/translations';
 
 const locale = 'en';
-const title = t('site.tagline', locale);
 const description =
   'Trilingual pedagogical site inspired by the MIT Sloan program Artificial Intelligence: Implications for Business Strategy. AI strategy, machine learning, generative AI, robotics, governance.';
+
+const audiences = [
+  {
+    icon: 'briefcase' as const,
+    label: t('audiences.executive.label', locale),
+    description: t('audiences.executive.description', locale),
+    ctaLabel: t('audiences.executive.cta', locale),
+    ctaHref: getLocalizedUrl('/capstone/', locale),
+  },
+  {
+    icon: 'wrench' as const,
+    label: t('audiences.consultant.label', locale),
+    description: t('audiences.consultant.description', locale),
+    ctaLabel: t('audiences.consultant.cta', locale),
+    ctaHref: getLocalizedUrl('/ressources/', locale),
+  },
+  {
+    icon: 'graduation-cap' as const,
+    label: t('audiences.educator.label', locale),
+    description: t('audiences.educator.description', locale),
+    ctaLabel: t('audiences.educator.cta', locale),
+    ctaHref: getLocalizedUrl('/modules/', locale),
+  },
+];
+
+const modules = [
+  { number: 1 as const, titleKey: 'modules.module-1.title', summaryKey: 'modules.module-1.summary', slug: '01-introduction-ia', available: true },
+  { number: 2 as const, titleKey: 'modules.module-2.title', summaryKey: 'modules.module-2.summary', slug: '02-machine-learning', available: true },
+  { number: 3 as const, titleKey: 'modules.module-3.title', summaryKey: 'modules.module-3.summary', slug: '03-ia-generative', available: true },
+  { number: 4 as const, titleKey: 'modules.module-4.title', summaryKey: 'modules.module-4.summary', slug: '04-robotique', available: true },
+  { number: 5 as const, titleKey: 'modules.module-5.title', summaryKey: 'modules.module-5.summary', slug: '05-ia-societe', available: true },
+  { number: 6 as const, titleKey: 'modules.module-6.title', summaryKey: 'modules.module-6.summary', slug: '06-futur-ia', available: true },
+] as const;
+
+const programmeUrl = getLocalizedUrl('/programme/', locale);
+const methodeUrl = getLocalizedUrl('/methode/', locale);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={t('site.tagline', locale)} description={description}>
   <section class="ai-container ai-hero">
     <p class="ai-hero__surtitle">{t('site.surtitle', locale)}</p>
     <h1 class="ai-hero__title">{t('site.tagline', locale)}</h1>
-    <p class="ai-hero__lead">{t('home.placeholder.lead', locale)}</p>
-
+    <p class="ai-hero__lead">
+      Understand, prioritize and deploy artificial intelligence in your organization.
+      Six modules, a business-first approach, hierarchical sources, and assumed independence
+      from the original MIT Sloan program.
+    </p>
     <div class="ai-hero__actions">
-      <a class="ai-cta ai-cta--primary" href="https://github.com/melafrit/ai-strategy" rel="noopener noreferrer" target="_blank">
-        {t('home.placeholder.cta-github', locale)} →
-      </a>
-      <a
-        class="ai-cta ai-cta--secondary"
-        href="https://github.com/melafrit/ai-strategy/tree/main/docs"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        {t('home.placeholder.cta-docs', locale)}
-      </a>
-    </div>
-
-    <div class="ai-hero__notice">
-      <IndependenceNotice variant="block" />
-    </div>
-
-    <div class="ai-hero__sample">
-      <h2 class="ai-hero__sample-title">Preview — Source hierarchy</h2>
-      <p class="ai-hero__sample-lead">
-        All site content will display its level of evidence via the
-        <code>&lt;SourceTag /&gt;</code> component. Five levels are defined:
-      </p>
-      <div class="ai-hero__sample-row">
-        <SourceTag level="official-mit" inline />
-        <SourceTag level="recommended-complement" inline />
-        <SourceTag level="pedagogical-reconstruction" inline />
-        <SourceTag level="external-verifiable" inline />
-        <SourceTag level="to-verify" inline />
-      </div>
+      <a class="ai-cta ai-cta--primary" href={programmeUrl}>{t('cta.discover-program', locale)} →</a>
+      <a class="ai-cta ai-cta--secondary" href={methodeUrl}>{t('cta.read-method', locale)}</a>
     </div>
   </section>
-</BaseLayout>
 
-<style>
-  /* Inherits the same hero styles as the FR home — scoped CSS keeps them
-     duplicated here for now; Phase 4 will extract them into a Hero.astro. */
-  .ai-hero { padding-block: var(--ai-space-7) var(--ai-space-8); }
-  .ai-hero__surtitle {
-    color: var(--ai-fg-secondary);
-    font-size: var(--ai-text-sm);
-    font-weight: var(--ai-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--ai-tracking-wide);
-    margin: 0 0 var(--ai-space-3);
-  }
-  .ai-hero__title { max-width: 22ch; line-height: var(--ai-leading-tight); letter-spacing: var(--ai-tracking-tight); margin: 0 0 var(--ai-space-4); }
-  @media (min-width: 48em) { .ai-hero__title { font-size: var(--ai-text-5xl); } }
-  .ai-hero__lead { max-width: 60ch; color: var(--ai-fg-secondary); font-size: var(--ai-text-lg); line-height: var(--ai-leading-relaxed); margin: 0 0 var(--ai-space-6); }
-  .ai-hero__actions { display: flex; flex-wrap: wrap; gap: var(--ai-space-3); margin-block-end: var(--ai-space-7); }
-  .ai-cta { display: inline-flex; align-items: center; gap: var(--ai-space-2); padding: var(--ai-space-3) var(--ai-space-5); border-radius: var(--ai-radius-md); font-weight: var(--ai-weight-semibold); text-decoration: none; }
-  .ai-cta--primary { background: var(--ai-accent-primary); color: var(--ai-bg-primary); }
-  .ai-cta--primary:hover, .ai-cta--primary:focus-visible { background: var(--ai-accent-hover); }
-  .ai-cta--secondary { background: transparent; color: var(--ai-fg-primary); border: 1px solid var(--ai-border-default); }
-  .ai-cta--secondary:hover, .ai-cta--secondary:focus-visible { background: var(--ai-bg-muted); }
-  .ai-hero__notice { margin-block-end: var(--ai-space-7); max-width: var(--ai-container-md); }
-  .ai-hero__sample { border-block-start: 1px solid var(--ai-border-subtle); padding-block-start: var(--ai-space-6); }
-  .ai-hero__sample-title { font-size: var(--ai-text-xl); font-weight: var(--ai-weight-semibold); margin: 0 0 var(--ai-space-2); }
-  .ai-hero__sample-lead { color: var(--ai-fg-secondary); margin: 0 0 var(--ai-space-4); max-width: 60ch; }
-  .ai-hero__sample-row { display: flex; flex-wrap: wrap; gap: var(--ai-space-2); }
-</style>
+  <TrustBar />
+
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">{t('audiences.title', locale)}</h2>
+    <p class="ai-section__lead">
+      Three audiences, three ways to use the site. Each path leads to practical and
+      operational content.
+    </p>
+    <div class="ai-audiences-grid">
+      {audiences.map((audience) => <AudienceCard {...audience} />)}
+    </div>
+  </section>
+
+  <section class="ai-section--full">
+    <div class="ai-container ai-section">
+      <h2 class="ai-section__title">{t('modules.preview.title', locale)}</h2>
+      <p class="ai-section__lead">{t('modules.preview.lead', locale)}</p>
+      <div class="ai-modules-grid">
+        {modules.map((m) => (
+          <ModuleCard
+            number={m.number}
+            title={t(m.titleKey, locale)}
+            summary={t(m.summaryKey, locale)}
+            href={getLocalizedUrl(`/modules/${m.slug}/`, locale)}
+            available={m.available}
+          />
+        ))}
+      </div>
+      <p class="ai-section__cta">
+        <a href={getLocalizedUrl('/modules/', locale)}>{t('cta.see-modules', locale)} →</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="ai-container ai-section">
+    <h2 class="ai-section__title">How we work</h2>
+    <div class="ai-method-grid">
+      <div class="ai-method-block">
+        <h3>Visible source hierarchy</h3>
+        <p>
+          Every factual claim is tagged with its level of evidence: official MIT source,
+          MIT-related complement, pedagogical reconstruction, verifiable external source,
+          or to be verified. You always know where the information comes from.
+        </p>
+      </div>
+      <div class="ai-method-block">
+        <h3>Assumed independence from MIT</h3>
+        <p>
+          This site is not affiliated with, validated by, or certified by MIT. It is an
+          independent pedagogical project inspired by the public themes of the program,
+          enriched with verifiable open sources.
+        </p>
+      </div>
+      <div class="ai-method-block">
+        <h3>Pedagogical reconstruction signaled</h3>
+        <p>
+          When the public sources do not allow for direct attestation, content is
+          reconstructed pedagogically — and clearly marked as such. The reader knows
+          what is documented and what is articulated.
+        </p>
+      </div>
+      <div class="ai-method-block">
+        <h3>French-first, then EN and AR</h3>
+        <p>
+          The reference content is written in French. English and Arabic translations
+          are produced from this base, with cultural and rhetorical adaptations where
+          relevant.
+        </p>
+      </div>
+    </div>
+    <p class="ai-section__cta">
+      <a href={methodeUrl}>{t('cta.read-method', locale)} →</a>
+    </p>
+  </section>
+
+  <IndependenceNotice variant="block" />
+</BaseLayout>

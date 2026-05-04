@@ -101,6 +101,25 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
     {/* Favicon — placeholder until Phase 7 produces final assets. */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    {/* Preload critical fonts: Latin 400 always, Arabic 400 only on /ar/ pages.
+        woff2 with crossorigin is required for fetch reuse. */}
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    {locale === 'ar' && (
+      <link
+        rel="preload"
+        href="/fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin
+      />
+    )}
+
     {/* Optional per-page head injection (JSON-LD, extra meta, etc.) */}
     <slot name="head" />
   </head>
